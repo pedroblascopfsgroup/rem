@@ -26,7 +26,7 @@ public class DtoDetalleOferta {
 	private Boolean checkSubasta;
 	private String titularesConfirmados;
 	private String importeOferta;
-
+	private Boolean enConcurrencia;
 
 	public String getId() {
 		return id;
@@ -154,6 +154,12 @@ public class DtoDetalleOferta {
 	}
 	public void setImporteOferta(String importeOferta) {
 		this.importeOferta = importeOferta;
+	}
+	public Boolean getEnConcurrencia() {
+		return enConcurrencia;
+	}
+	public void setEnConcurrencia(Boolean enConcurrencia) {
+		this.enConcurrencia = enConcurrencia;
 	}
 	
 }

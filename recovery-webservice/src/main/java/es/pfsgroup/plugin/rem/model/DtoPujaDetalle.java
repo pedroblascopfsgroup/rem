@@ -17,6 +17,7 @@ public class DtoPujaDetalle extends WebDto {
 	private Long idConcurrencia;
 	private Double importePuja;
 	private Date fechaCrear;
+	private Boolean enConcurrencia;
 	
 	public Long getId() {
 		return id;
@@ -53,6 +54,12 @@ public class DtoPujaDetalle extends WebDto {
 	}
 	public void setFechaCrear(Date fechaCrear) {
 		this.fechaCrear = fechaCrear;
+	}
+	public Boolean getEnConcurrencia() {
+		return enConcurrencia;
+	}
+	public void setEnConcurrencia(Boolean enConcurrencia) {
+		this.enConcurrencia = enConcurrencia;
 	}
 	
 }

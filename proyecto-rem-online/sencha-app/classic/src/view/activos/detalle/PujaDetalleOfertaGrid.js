@@ -21,8 +21,8 @@ Ext.define('HreRem.view.activos.detalle.PujaDetalleOfertaGrid', {
 		        },
 		        {   
 		        	text	 : HreRem.i18n('header.pujas.importe.historico'), 
-		        	dataIndex: 'importePujaFormateado',
-		        	flex:1 
+		        	dataIndex: 'importePuja',
+		        	flex:1
 		        }
         ];
         

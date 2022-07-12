@@ -79,21 +79,13 @@ Ext.define('HreRem.model.DetalleOfertaModel', {
 		{
 			name:'titularesConfirmados'
 		},
+   		{
+   			name: 'enConcurrencia',
+			type: 'boolean'
+   		},
 		{
 			name:'importeOferta'
-		},
-		{
-			name:'importeOfertaFormateado',
-			convert: function(value, record) {
-				//if (Ext.isEmpty(record.get('importeOferta'))) {
-					if (record.get('importeOferta') === undefined) {
-					return "*****";
-				} else {
-					return  record.get('importeOferta');
-				}
-			},
-			depends: 'importeOferta'
-		}
+    	}
     ],
 
 	proxy: {

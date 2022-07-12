@@ -61,7 +61,7 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 	
 	@Autowired
 	private GenericAdapter genericAdapter;
-		
+	
 	public boolean bloquearEditarOfertasPorConcurrenciaActivo(Activo activo) {
 		boolean bloquear = false;
 		if(activo != null) {
@@ -343,16 +343,15 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 				if (!Checks.isFechaNula(puja.getAuditoria().getFechaCrear())) {
 					dto.setFechaCrear(puja.getAuditoria().getFechaCrear());
 				}
-				Usuario usuPef=proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
-				boolean isHayaSuper =  genericAdapter.isSuper(usuPef);
-				if (!isHayaSuper && this.isActivoEnConcurrencia(activo)) {
-					if (puja.getImporte() != null) {
-						dto.setImportePuja(null);
-					} 
-				} else {
+		
+
+				if(puja.getImporte() != null) {
 					dto.setImportePuja(puja.getImporte());
 				}
-				
+				boolean isConcurrencia = concurrenciaDao.isActivoEnConcurrencia(idActivo);
+				if(isConcurrencia) {
+					dto.setEnConcurrencia(isConcurrencia);
+				}
 				dtoLista.add(dto);
 			}
 		}

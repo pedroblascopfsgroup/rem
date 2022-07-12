@@ -28,7 +28,8 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
         var activo = me.lookupController().getViewModel().get('activo').getData();
         var isBk = activo.isCarteraBankia;
 		var enConcurrencia = me.lookupController().getViewModel().getData().activo.get('enConcurrencia');
-        
+        var userPefSuper = $AU.userIsRol(CONST.PERFILES['HAYASUPER']);
+		
         me.columns= [
 		        {
 		        	dataIndex: 'numOferta',
@@ -95,9 +96,16 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		        {
 		        	//xtype: 'numbercolumn',
 					text: HreRem.i18n('header.oferta.importeOferta'),
-		            dataIndex: 'importeOfertaFormateado',
-		            flex: 1             	
-			       /* decimalPrecision: 2,
+		            dataIndex: 'importeOferta',
+		            flex: 1,
+			        renderer: function(value, metadata, record) {
+			        	if (!userPefSuper && enConcurrencia) {
+			        		return "*****";
+			        	} else {
+			        		return  value;
+			        	}
+			        }/*,
+			        decimalPrecision: 2,
 			        decimalSeparation: ',',
 			        thousandSeparation: '.',
 			        hidden: enConcurrencia*/

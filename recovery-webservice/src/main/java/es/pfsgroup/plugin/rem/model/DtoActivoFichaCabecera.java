@@ -424,7 +424,7 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private Long identificadorPlazaParking;
 	private Long identificadorTrastero;
 
-	private Boolean isConcurrencia;
+	private Boolean vistaDeConcurrencia;
 	private Boolean bloquearEdicionEstadoOfertas;
 	
 	public Boolean getTieneOfertaAlquilerViva() {
@@ -3164,12 +3164,12 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 		this.identificadorTrastero = identificadorTrastero;
 	}
 
-	public Boolean getIsConcurrencia() {
-		return isConcurrencia;
+	public Boolean getVistaDeConcurrencia() {
+		return vistaDeConcurrencia;
 	}
 
-	public void setIsConcurrencia(Boolean isConcurrencia) {
-		this.isConcurrencia = isConcurrencia;
+	public void setVistaDeConcurrencia(Boolean isConcurrencia) {
+		this.vistaDeConcurrencia = isConcurrencia;
 	}
 
 	public Boolean getBloquearEdicionEstadoOfertas() {

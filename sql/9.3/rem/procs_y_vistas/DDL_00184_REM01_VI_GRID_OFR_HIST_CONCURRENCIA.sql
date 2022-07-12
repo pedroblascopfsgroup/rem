@@ -50,7 +50,13 @@ BEGIN
   DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.VI_GRID_OFR_HIST_CONCURRENCIA...');
   V_MSQL := 'CREATE VIEW ' || V_ESQUEMA || '.VI_GRID_OFR_HIST_CONCURRENCIA
 	AS
-		 SELECT 
+	with lastConcu as (
+	    SELECT max(concu.con_id) as con_id, concu.act_id
+	    from con_concurrencia concu
+	    group by concu.act_id
+	)
+
+	 SELECT 
 			CON.CON_ID,
 			ACT.ACT_ID,
 			ACT.ACT_NUM_ACTIVO,
@@ -68,6 +74,7 @@ BEGIN
 		LEFT JOIN ' || V_ESQUEMA || '.ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = CON.AGR_ID AND AGR.BORRADO = 0
 		INNER JOIN ' || V_ESQUEMA || '.ACT_OFR AOF ON AOF.ACT_ID = ACT.ACT_ID
 		INNER JOIN ' || V_ESQUEMA || '.OFR_OFERTAS OFR ON OFR.OFR_ID = AOF.OFR_ID AND OFR.BORRADO = 0
+        INNER JOIN lastConcu lastConcu on lastConcu.con_id = con.con_id
 		WHERE CON.BORRADO = 0
     AND OFR.OFR_CONCURRENCIA IS NOT NULL
     AND OFR.OFR_ID IN (SELECT OFR_ID FROM ' || V_ESQUEMA || '.VI_GRID_OFR_ACT_AGR_CONCU)

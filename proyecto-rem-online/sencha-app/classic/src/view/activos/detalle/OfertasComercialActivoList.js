@@ -27,7 +27,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 
         var activo = me.lookupController().getViewModel().get('activo').getData();
         var isBk = activo.isCarteraBankia;
-		var enConcurrencia = me.lookupController().getViewModel().getData().activo.get('enConcurrencia');
+		var vistaDeConcurrencia = me.lookupController().getViewModel().getData().activo.get('vistaDeConcurrencia');
         
         me.columns= [
 		        {
@@ -85,22 +85,20 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		        {
 		        	dataIndex: 'canalDescripcion',
 		        	text: HreRem.i18n('header.canal.prescripcion'),
-		            flex: 1
+		            flex: 1,
+		            hidden: vistaDeConcurrencia
 		        },
 		        {
 		            dataIndex: 'precioPublicado',
 		            text: HreRem.i18n('header.oferta.precioPublicado'),
-		            flex: 1
+		            flex: 1,
+		            hidden: vistaDeConcurrencia
 		        },
 		        {
 		        	//xtype: 'numbercolumn',
 					text: HreRem.i18n('header.oferta.importeOferta'),
 		            dataIndex: 'importeOfertaFormateado',
 		            flex: 1             	
-			       /* decimalPrecision: 2,
-			        decimalSeparation: ',',
-			        thousandSeparation: '.',
-			        hidden: enConcurrencia*/
 		        },
 		        {
 		        	xtype: 'numbercolumn',
@@ -109,7 +107,8 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		            flex: 1,
 		            decimalPrecision: 2,
 			        decimalSeparation: ',',
-			        thousandSeparation: '.'
+			        thousandSeparation: '.',
+			        hidden: vistaDeConcurrencia
 		        },
 		        {
 		            dataIndex: 'codigoEstadoOferta',
@@ -196,6 +195,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 					dataIndex: 'ofertaExpress',
 					align	 : 'center',
 					hideable: false,
+					hidden: vistaDeConcurrencia,
 					renderer: function(data) {
 	                	if(data == 'true'){
 	                		var data = 'resources/images/green_16x16.png';
@@ -253,7 +253,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		        	dataIndex: 'estadoDeposito',
 		            text: HreRem.i18n('fieldlabel.estado.deposito'),
 					reference:'codigoEstadoDepositoRef'
-				}
+		        }
 		        
         ];
         

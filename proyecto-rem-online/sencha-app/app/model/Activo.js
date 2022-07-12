@@ -1443,7 +1443,7 @@ Ext.define('HreRem.model.Activo', {
 				type: 'boolean'
 			},
 			{
-            	name:'isConcurrencia',
+            	name:'vistaDeConcurrencia',
             	type: 'boolean'
             },
             {

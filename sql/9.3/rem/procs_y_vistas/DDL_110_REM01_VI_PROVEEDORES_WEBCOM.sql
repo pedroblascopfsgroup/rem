@@ -1,9 +1,9 @@
 --/*
 --##########################################
 --## AUTOR=Remus Ovidiu Viorel
---## FECHA_CREACION=20220516
+--## FECHA_CREACION=20220712
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.2
+--## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-8153
 --## PRODUCTO=NO
 --## Finalidad: Tabla para almacentar el historico de los proveedores enviadas a webcom.
@@ -19,6 +19,7 @@
 --##		0.7 IRC [REMVIP-9539] - Modificar orden de domicilio social para coger primero los que tienen telefono 
 --##		0.8 VRO [REMVIP-10495] - Modificar para que no duplique delegaciones
 --##		0.8 IRC [HREOS-17602] - Nuevos campos gestion APIs
+--##		0.9 PBO [HREOS-17602] - Corrección campos gestion APIs
 --##########################################
 --*/
 
@@ -276,7 +277,7 @@ BEGIN
                     ''YYYY-MM-DD"T"HH24:MM:SS'') AS VARCHAR2 (50 CHAR)) 		                AS FECHA_ULT_CONTRATO,
 		CAST(PVE.PVE_MOTIVO_BAJA AS VARCHAR2(100 CHAR)) 			                            AS MOTIVO_BAJA,
         
-	    CAST(COI.COI_PVE AS NUMBER(16,0))                                 			            AS CONDUCTAS_INAPROPIADAS_ID_CONDUCTA_INAPROPIADA,
+	    CAST(COI.COI_ID AS NUMBER(16,0))                                 			            AS CONDUCTAS_INAPROPIADAS_ID_CONDUCTA_INAPROPIADA,
         CAST(TO_CHAR(COI.FECHA, ''YYYY-MM-DD"T"HH24:MM:SS'') AS VARCHAR2 (50 CHAR)) 		    AS CONDUCTAS_INAPROPIADAS_FECHA_ALTA,
  		CAST(NVL(COI.USUARIO,NULL) AS VARCHAR2(100 CHAR)) 			    						AS CONDUCTAS_INAPROPIADAS_USUARIO_ALTA,
 	    CAST(COI.DD_TCI_CODIGO AS VARCHAR2(20 CHAR))                                         	AS CONDUCTAS_INAPROPIADAS_COD_TIPOLOGIA,
@@ -305,7 +306,7 @@ BEGIN
         LEFT JOIN '||V_ESQUEMA||'.DD_TPE_TIPO_PERSONA TPE ON TPE.DD_TPE_ID = PVE.DD_TPE_ID AND TPE.BORRADO = 0
         LEFT JOIN '||V_ESQUEMA||'.DD_EPR_ESTADO_PROVEEDOR EPR ON EPR.DD_EPR_ID = PVE.DD_EPR_ID AND EPR.BORRADO = 0
 		LEFT JOIN DOMICILIO_SOCIAL SOC ON SOC.PVE_ID = PVE.PVE_ID AND SOC.DD_TDP_CODIGO = ''01''
-    	LEFT JOIN DELEGACION DEL ON DEL.PVE_ID = PVE.PVE_ID AND DEL.DD_TDP_CODIGO = ''02''
+    	LEFT JOIN DELEGACION DEL ON DEL.PVE_ID = PVE.PVE_ID
     	LEFT JOIN '||V_ESQUEMA||'.ACT_ETP_ENTIDAD_PROVEEDOR ETP ON ETP.PVE_ID = PVE.PVE_ID
     	LEFT JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ETP.DD_CRA_ID
     	LEFT JOIN CONDUCTAS_INAPROPIADAS COI ON COI.COI_PVE = PVE.PVE_ID

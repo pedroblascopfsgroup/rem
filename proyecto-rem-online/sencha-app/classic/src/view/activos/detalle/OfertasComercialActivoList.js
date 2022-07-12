@@ -786,7 +786,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 			me.setTopBar(false);
 		} 
 		
-		if (activo.get('isConcurrencia') == true){
+		if (activo.get('vistaDeConcurrencia') == true){ 
 			me.setTopBar(false);
 		}
 		

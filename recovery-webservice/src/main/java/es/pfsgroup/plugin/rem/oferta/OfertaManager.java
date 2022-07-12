@@ -1099,10 +1099,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		
 		if(oferta != null && oferta.getConcurrencia() != null) {
 			Concurrencia concu = oferta.getConcurrencia();
-			if(concu.getFechaFin().after(new Date())) {
+			if(concu.getFechaFin().before(new Date())) {
 				errorsList.put("concurrencia", RestApi.MSJ_CONCURRENCIA_TERMINADA);
 			}
 		}
+		
+		Filter filtroConcurrencia = null;
 		
 		if(agr != null) {
 			if(agr.getActivoPrincipal() != null) {
@@ -1110,13 +1112,28 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}else if(!Checks.estaVacio(agr.getActivos()) && agr.getActivos().get(0) != null) {
 				activo = agr.getActivos().get(0).getActivo();
 			}
+			filtroConcurrencia = genericDao.createFilter(FilterType.EQUALS, "agrupacion.id", agr.getId());
 		}
+		
 		if(activo != null) {
 			Double precioVentaActivo = activoApi.getImporteValoracionActivoByCodigo(activo, DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA);
 			if(precioVentaActivo != null && ofertaDto.getImporte() < precioVentaActivo) {
 				errorsList.put("importe", RestApi.MSJ_ERROR_IMPORTE_MENOR_MINIMO);
 			}
 		}
+		
+		if(filtroConcurrencia != null && activo != null) {
+			filtroConcurrencia = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+
+		}
+		
+		if(filtroConcurrencia != null) {
+			Concurrencia concu = genericDao.get(Concurrencia.class, filtroConcurrencia);
+			if(concu.getFechaFin().before(new Date())) {
+				errorsList.put("concurrencia", RestApi.MSJ_CONCURRENCIA_TERMINADA);
+			}
+		}
+		
 
 		return errorsList;
 	}

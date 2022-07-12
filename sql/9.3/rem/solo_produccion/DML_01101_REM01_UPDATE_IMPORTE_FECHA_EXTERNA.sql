@@ -45,7 +45,27 @@ BEGIN
             EXECUTE IMMEDIATE V_SQL;
   
    COMMIT;
-    DBMS_OUTPUT.PUT_LINE('[FIN] Los activos se han actualizado correctamente');
+    DBMS_OUTPUT.PUT_LINE('[INFO] Actualizar los checks de los activos vendidos');
+
+    --Se actualizan los checks de los activos vendidos
+    V_SQL := 'UPDATE '||V_ESQUEMA||'.ACT_PAC_PERIMETRO_ACTIVO T1
+                SET PAC_CHECK_PUBLICAR = 0,
+                    PAC_FECHA_PUBLICAR = SYSDATE,
+                    PAC_CHECK_COMERCIALIZAR = 0,
+                    PAC_FECHA_COMERCIALIZAR = SYSDATE,
+                    USUARIOMODIFICAR = '''||V_USUARIO||''',
+                    FECHAMODIFICAR = SYSDATE
+                WHERE EXISTS (
+                    SELECT ACT_NUM_ACTIVO FROM '||V_ESQUEMA||'.AUX_ACT_TRASPASO_ACTIVO AUX
+                    JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO = AUX.ACT_NUM_ACTIVO_ANT
+                    JOIN '||V_ESQUEMA||'.ACT_PAC_PERIMETRO_ACTIVO PAC ON PAC.ACT_ID = ACT.ACT_ID
+                    WHERE T1.ACT_ID = ACT.ACT_ID)
+                             ';
+             EXECUTE IMMEDIATE V_SQL; 
+
+
+    COMMIT;
+    DBMS_OUTPUT.PUT_LINE('[FIN]: IMPORTES ACTUALIZADOS CORRECTAMENTE ');
 
 
 EXCEPTION

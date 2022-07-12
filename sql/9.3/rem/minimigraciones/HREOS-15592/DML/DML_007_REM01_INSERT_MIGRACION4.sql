@@ -74,9 +74,9 @@ BEGIN
 	SELECT
 	'||V_ESQUEMA||'.S_ACT_ADN_ADJNOJUDICIAL.NEXTVAL     ADN_ID,
 	ACT2.ACT_ID											ACT_ID,
-	TO_DATE(''18/02/2022'', ''DD/MM/YYYY'')              ADN_FECHA_TITULO,	
+	TO_DATE(''13/07/2022'', ''DD/MM/YYYY'')              ADN_FECHA_TITULO,	
 	NULL												 ADN_VALOR_ADQUISICION,
-   ''Antonio Perez Coca'' 								 ADN_TRAMITADOR_TITULO,
+   '''' 								 ADN_TRAMITADOR_TITULO,
 	NULL                               					 ADN_NUM_REFERENCIA,
 	0                                                 VERSION,
 	'''||V_USUARIO||'''                                 USUARIOCREAR,

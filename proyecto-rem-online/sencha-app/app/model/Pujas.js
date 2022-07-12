@@ -18,21 +18,20 @@ Ext.define('HreRem.model.Pujas', {
 	    {
 	    	name: 'idConcurrencia'
 	    },
+	    {
+   			name: 'enConcurrencia'
+   		},
     	{	
-    		name: 'importePuja'
-    	},
-		{
-			name:'importePujaFormateado',
-			convert: function(value, record) {
-				//if (Ext.isEmpty(record.get('importeOferta'))) {
-					if (record.get('importePuja') === undefined) {
+    		name: 'importePuja',
+			calculate: function(data) {
+				if(!$AU.userIsRol(CONST.PERFILES['HAYASUPER']) && data.enConcurrencia){
 					return "*****";
-				} else {
-					return  record.get('importePuja');
+				}else{
+					return data.importePuja;
 				}
 			},
-			depends: 'importePuja'
-		},
+			depends: 'enConcurrencia'
+    	},
    		{
    			name: 'fechaCrear',
 			type: 'date',

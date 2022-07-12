@@ -12,6 +12,9 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivo', {
 
     initComponent: function () {        
         var me = this;
+        var enConcurrencia = me.lookupController().getViewModel().getData().activo.get('enConcurrencia');
+    	var userPefSuper = $AU.userIsRol(CONST.PERFILES['HAYASUPER']);
+    	
         me.setTitle(HreRem.i18n("title.activos.listado.ofertas"));
 
         var items = [
@@ -326,10 +329,20 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivo', {
 										xtype: "textfield",
 										fieldLabel: HreRem.i18n('header.oferta.importeOferta'),
 										bind: {
-											value: '{detalleOfertaModel.importeOfertaFormateado}'
+											value: '{detalleOfertaModel.importeOferta}'
 										},
 									    readOnly: true,
-					    				width: 410
+					    				width: 410,
+					    				listeners: {
+					    					change: function(field, value) {
+						            			var me = this;
+						            			if(!userPefSuper && enConcurrencia){
+							            			field.setValue("*****");
+							            		}else{
+							            			field.setValue(value);
+							            		}
+						            		}
+						            	}
 					    			},
 									{
 									    xtype: 'textfield',

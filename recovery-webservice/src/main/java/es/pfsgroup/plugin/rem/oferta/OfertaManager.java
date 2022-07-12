@@ -4422,14 +4422,13 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				if (oferta.getFechaEntradaCRMSF() != null) {
 					dtoResponse.setFechaEntradaCRMSF(oferta.getFechaEntradaCRMSF());
 				}
-		 		Boolean isConcurrencia = concurrenciaDao.isActivoEnConcurrencia(oferta.getActivoPrincipal().getId());
-				Usuario usuPef=proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
-				boolean isHayaSuper =  genericAdapter.isSuper(usuPef);
-				if (!isHayaSuper && isConcurrencia) {
-					dtoResponse.setImporteOferta(null);
-				} else if (oferta.getImporteOferta() != null) {
+				if (oferta.getImporteOferta() != null) {
 					dtoResponse.setImporteOferta(oferta.getImporteOferta().toString());
 				}
+				Boolean isConcurrencia = concurrenciaDao.isActivoEnConcurrencia(oferta.getActivoPrincipal().getId());
+				if (isConcurrencia != null) {
+					dtoResponse.setEnConcurrencia(isConcurrencia);
+				}	
 
 				dtoResponse.setEmpleadoCaixa(isEmpleadoCaixaCliTit(oferta));
 				

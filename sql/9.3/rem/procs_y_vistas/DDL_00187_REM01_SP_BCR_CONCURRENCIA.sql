@@ -96,8 +96,8 @@ SALIDA := SALIDA || '[INFO] PARA LOS ACTIVOS QUE NO TENGAN REGISTROS EN LA TABLA
                               ELSE NULL
                            END AGR_ID
                            ,AUX.IMP_PRECIO_VENTA
-                           ,TO_DATE(AUX.FEC_INICIO_CONCURENCIA, ''yyyymmdd'')
-                           ,TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''yyyymmdd'')
+                           ,TO_DATE(AUX.FEC_INICIO_CONCURENCIA, ''yyyymmdd'') FEC_INICIO_CONCURENCIA
+                           ,TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''yyyymmdd'') FEC_FIN_CONCURENCIA
                      FROM '||V_ESQUEMA||'.AUX_APR_BCR_STOCK AUX
                      JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = AUX.NUM_IDENTIFICATIVO
                            AND ACT.BORRADO = 0
@@ -152,7 +152,7 @@ SALIDA := SALIDA ||'[INFO] 1.2 SE CREA UN NUEVO REGISTRO EN LA TABLA CPC_CMB_PER
    V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.CPC_CMB_PERIODO_CONCURRENCIA T1
                USING (
                   SELECT
-                        CON.CON_ID
+                      CON.CON_ID
                      ,ACO.DD_ACO_ID
                      ,TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''yyyymmdd'') CPC_FECHA_FIN
                   FROM '||V_ESQUEMA||'.AUX_APR_BCR_STOCK AUX
@@ -241,7 +241,7 @@ SALIDA := SALIDA ||'[INFO] PARA LOS ACTIVOS QUE TENGAN REGISTROS EN LA TABLA CON
                                        AND CON1.CON_FECHA_FIN = FUT.FEC_FIN_CONCURENCIA
                                        )
                   )SELECT
-                        CONCU.CON_ID
+                      CONCU.CON_ID
                      ,CONCU.ACT_ID
                      ,CONCU.AGR_ID
                      ,CONCU.CON_IMPORTE_MIN_OFR
@@ -337,7 +337,7 @@ SALIDA := SALIDA ||'[INFO] 2.1 SE CREA UN NUEVO REGISTRO EN LA TABLA CPC_CMB_PER
    V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.CPC_CMB_PERIODO_CONCURRENCIA T1
                USING (
                   SELECT
-                        CON.CON_ID
+                      CON.CON_ID
                      ,ACO.DD_ACO_ID
                      ,TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''yyyymmdd'') CPC_FECHA_FIN
                   FROM '||V_ESQUEMA||'.AUX_APR_BCR_STOCK AUX
@@ -385,7 +385,7 @@ SALIDA := SALIDA ||'[INFO] 2.2 SE CREA UN NUEVO REGISTRO EN LA TABLA AUX_CORREOS
    V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.AUX_CORREOS_CAMBIOS_CONCURRENCIA_STOCK T1
                USING (
                   SELECT
-                        CON.CON_ID
+                      CON.CON_ID
                      ,ACO.DD_ACO_ID
                      ,TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''yyyymmdd'') CPC_FECHA_FIN
                   FROM '||V_ESQUEMA||'.AUX_APR_BCR_STOCK AUX
@@ -404,7 +404,7 @@ SALIDA := SALIDA ||'[INFO] 2.2 SE CREA UN NUEVO REGISTRO EN LA TABLA AUX_CORREOS
                         (T1.CON_ID = T2.CON_ID AND T1.DD_ACO_ID = T2.DD_ACO_ID AND TRUNC(T1.FECHACREAR) <> TRUNC(SYSDATE)))
                WHEN NOT MATCHED THEN 
                INSERT(
-                  CCS_ID
+                   CCS_ID
                   ,CON_ID
                   ,DD_ACO_ID
                   ,VERSION
@@ -431,8 +431,8 @@ SALIDA := SALIDA ||'[INFO] 2.3 SE MODIFICA REGISTRO EXISTENTE EN LA TABLA CON_CO
    V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.CON_CONCURRENCIA T1
                USING (
                   SELECT
-                        CON.CON_ID
-                     ,TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''yyyymmdd'')
+                      CON.CON_ID
+                     ,TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''yyyymmdd'') FEC_FIN_CONCURENCIA
                   FROM '||V_ESQUEMA||'.AUX_APR_BCR_STOCK AUX
                   JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = AUX.NUM_IDENTIFICATIVO
                      AND ACT.BORRADO = 0
@@ -461,7 +461,7 @@ SALIDA := SALIDA ||'[INFO] 3.1 SE CREA UN NUEVO REGISTRO EN LA TABLA CPC_CMB_PER
    V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.CPC_CMB_PERIODO_CONCURRENCIA T1
                USING (
                   SELECT
-                        CON.CON_ID
+                     CON.CON_ID
                      ,ACO.DD_ACO_ID
                      ,TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''yyyymmdd'') CPC_FECHA_FIN
                   FROM '||V_ESQUEMA||'.AUX_APR_BCR_STOCK AUX
@@ -479,7 +479,7 @@ SALIDA := SALIDA ||'[INFO] 3.1 SE CREA UN NUEVO REGISTRO EN LA TABLA CPC_CMB_PER
                ) T2 ON (T1.CON_ID = T2.CON_ID AND TRUNC(T1.FECHACREAR) = TRUNC(SYSDATE))
                WHEN NOT MATCHED THEN 
                INSERT(
-                  CPC_ID
+                   CPC_ID
                   ,CON_ID
                   ,DD_ACO_ID
                   ,CPC_FECHA_FIN
@@ -509,7 +509,7 @@ SALIDA := SALIDA ||'[INFO] 3.2 SE CREA UN NUEVO REGISTRO EN LA TABLA AUX_CORREOS
    V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.AUX_CORREOS_CAMBIOS_CONCURRENCIA_STOCK T1
                USING (
                   SELECT
-                        CON.CON_ID
+                      CON.CON_ID
                      ,ACO.DD_ACO_ID
                      ,TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''yyyymmdd'') CPC_FECHA_FIN
                   FROM '||V_ESQUEMA||'.AUX_APR_BCR_STOCK AUX

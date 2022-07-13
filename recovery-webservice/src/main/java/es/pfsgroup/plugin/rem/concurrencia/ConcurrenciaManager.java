@@ -344,7 +344,6 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 					dto.setFechaCrear(puja.getAuditoria().getFechaCrear());
 				}
 		
-
 				if(puja.getImporte() != null) {
 					dto.setImportePuja(puja.getImporte());
 				}

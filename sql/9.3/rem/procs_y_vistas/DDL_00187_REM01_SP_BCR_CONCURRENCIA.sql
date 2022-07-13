@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20220706
+--## FECHA_CREACION=20220713
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-18260
@@ -75,8 +75,8 @@ SALIDA := SALIDA || '[INFO] PARA LOS ACTIVOS QUE NO TENGAN REGISTROS EN LA TABLA
                               ELSE NULL
                            END AGR_ID
                            ,AUX.IMP_PRECIO_VENTA
-                           ,TO_DATE(AUX.FEC_INICIO_CONCURENCIA, ''dd/mm/yy'') FEC_INICIO_CONCURENCIA
-                           ,TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''dd/mm/yy'') FEC_FIN_CONCURENCIA
+                           ,TO_DATE(AUX.FEC_INICIO_CONCURENCIA, ''yyyymmdd'') FEC_INICIO_CONCURENCIA
+                           ,TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''yyyymmdd'') FEC_FIN_CONCURENCIA
                      FROM '||V_ESQUEMA||'.AUX_APR_BCR_STOCK AUX
                      JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = AUX.NUM_IDENTIFICATIVO
                            AND ACT.BORRADO = 0
@@ -154,7 +154,7 @@ SALIDA := SALIDA ||'[INFO] 1.2 SE CREA UN NUEVO REGISTRO EN LA TABLA CPC_CMB_PER
                   SELECT
                         CON.CON_ID
                      ,ACO.DD_ACO_ID
-                     ,TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''dd/mm/yy'') CPC_FECHA_FIN
+                     ,TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''yyyymmdd'') CPC_FECHA_FIN
                   FROM '||V_ESQUEMA||'.AUX_APR_BCR_STOCK AUX
                   JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = AUX.NUM_IDENTIFICATIVO
                      AND ACT.BORRADO = 0
@@ -209,8 +209,8 @@ SALIDA := SALIDA ||'[INFO] PARA LOS ACTIVOS QUE TENGAN REGISTROS EN LA TABLA CON
                               ELSE NULL
                            END AGR_ID
                            ,AUX.IMP_PRECIO_VENTA
-                           ,TO_DATE(AUX.FEC_INICIO_CONCURENCIA, ''dd/mm/yy'') FEC_INICIO_CONCURENCIA
-                           ,TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''dd/mm/yy'') FEC_FIN_CONCURENCIA
+                           ,TO_DATE(AUX.FEC_INICIO_CONCURENCIA, ''yyyymmdd'') FEC_INICIO_CONCURENCIA
+                           ,TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''yyyymmdd'') FEC_FIN_CONCURENCIA
                      FROM '||V_ESQUEMA||'.AUX_APR_BCR_STOCK AUX
                      JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = AUX.NUM_IDENTIFICATIVO
                            AND ACT.BORRADO = 0
@@ -220,8 +220,8 @@ SALIDA := SALIDA ||'[INFO] PARA LOS ACTIVOS QUE TENGAN REGISTROS EN LA TABLA CON
                            AND AGA.BORRADO = 0
                      WHERE TRUNC(CON.CON_FECHA_INI) >  TRUNC(SYSDATE)
                      AND TRUNC(CON.FECHACREAR) <> TRUNC(SYSDATE)
-                     AND TRUNC(TO_DATE(AUX.FEC_INICIO_CONCURENCIA, ''dd/mm/yy'')) <> TRUNC(CON.CON_FECHA_INI)
-                     AND TRUNC(TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''dd/mm/yy'')) <> TRUNC(CON.CON_FECHA_FIN)
+                     AND TRUNC(TO_DATE(AUX.FEC_INICIO_CONCURENCIA, ''yyyymmdd'')) <> TRUNC(CON.CON_FECHA_INI)
+                     AND TRUNC(TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''yyyymmdd'')) <> TRUNC(CON.CON_FECHA_FIN)
                      AND AUX.FLAG_EN_REM = '|| FLAG_EN_REM ||'
                   ), CONCURRENCIA AS (
                      SELECT DISTINCT 
@@ -276,8 +276,8 @@ SALIDA := SALIDA ||'[INFO] 1.4 SE CREA MODIFICA LA FECHA FIN EN LA TABLA CPC_CMB
                               ELSE NULL
                            END AGR_ID
                            ,AUX.IMP_PRECIO_VENTA
-                           ,TO_DATE(AUX.FEC_INICIO_CONCURENCIA, ''dd/mm/yy'') FEC_INICIO_CONCURENCIA
-                           ,TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''dd/mm/yy'') FEC_FIN_CONCURENCIA
+                           ,TO_DATE(AUX.FEC_INICIO_CONCURENCIA, ''yyyymmdd'') FEC_INICIO_CONCURENCIA
+                           ,TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''yyyymmdd'') FEC_FIN_CONCURENCIA
                      FROM '||V_ESQUEMA||'.AUX_APR_BCR_STOCK AUX
                      JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = AUX.NUM_IDENTIFICATIVO
                            AND ACT.BORRADO = 0
@@ -289,9 +289,9 @@ SALIDA := SALIDA ||'[INFO] 1.4 SE CREA MODIFICA LA FECHA FIN EN LA TABLA CPC_CMB
                            AND CPC.BORRADO = 0
                      WHERE TRUNC(CON.CON_FECHA_INI) >  TRUNC(SYSDATE)
                      AND TRUNC(CON.FECHACREAR) <> TRUNC(SYSDATE)
-                     AND TRUNC(TO_DATE(AUX.FEC_INICIO_CONCURENCIA, ''dd/mm/yy'')) = TRUNC(CON.CON_FECHA_INI)
-                     AND TRUNC(TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''dd/mm/yy'')) = TRUNC(CON.CON_FECHA_FIN)
-                     AND CPC.CPC_FECHA_FIN <> TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''dd/mm/yy'')
+                     AND TRUNC(TO_DATE(AUX.FEC_INICIO_CONCURENCIA, ''yyyymmdd'')) = TRUNC(CON.CON_FECHA_INI)
+                     AND TRUNC(TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''yyyymmdd'')) = TRUNC(CON.CON_FECHA_FIN)
+                     AND CPC.CPC_FECHA_FIN <> TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''yyyymmdd'')
                      AND AUX.FLAG_EN_REM = '|| FLAG_EN_REM ||'
                   ), CONCURRENCIA AS (
                      SELECT DISTINCT 
@@ -339,7 +339,7 @@ SALIDA := SALIDA ||'[INFO] 2.1 SE CREA UN NUEVO REGISTRO EN LA TABLA CPC_CMB_PER
                   SELECT
                         CON.CON_ID
                      ,ACO.DD_ACO_ID
-                     ,TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''dd/mm/yy'') CPC_FECHA_FIN
+                     ,TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''yyyymmdd'') CPC_FECHA_FIN
                   FROM '||V_ESQUEMA||'.AUX_APR_BCR_STOCK AUX
                   JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = AUX.NUM_IDENTIFICATIVO
                      AND ACT.BORRADO = 0
@@ -350,8 +350,8 @@ SALIDA := SALIDA ||'[INFO] 2.1 SE CREA UN NUEVO REGISTRO EN LA TABLA CPC_CMB_PER
                   LEFT JOIN '||V_ESQUEMA||'.CPC_CMB_PERIODO_CONCURRENCIA CPC ON CPC.CON_ID = CON.CON_ID
                      AND CPC.BORRADO = 0
                   WHERE TRUNC(SYSDATE) BETWEEN TRUNC(CON.CON_FECHA_INI) AND TRUNC(CON.CON_FECHA_FIN)
-                  AND TRUNC(TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''dd/mm/yy'')) > TRUNC(CON.CON_FECHA_FIN) 
-                  AND TRUNC(TO_DATE(AUX.FEC_INICIO_CONCURENCIA, ''dd/mm/yy'')) = TRUNC(CON.CON_FECHA_INI)
+                  AND TRUNC(TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''yyyymmdd'')) > TRUNC(CON.CON_FECHA_FIN) 
+                  AND TRUNC(TO_DATE(AUX.FEC_INICIO_CONCURENCIA, ''yyyymmdd'')) = TRUNC(CON.CON_FECHA_INI)
                   AND AUX.FLAG_EN_REM = '|| FLAG_EN_REM ||'
                ) T2 ON (T1.CON_ID = T2.CON_ID AND TRUNC(T1.FECHACREAR) = TRUNC(SYSDATE))
                WHEN NOT MATCHED THEN 
@@ -387,7 +387,7 @@ SALIDA := SALIDA ||'[INFO] 2.2 SE CREA UN NUEVO REGISTRO EN LA TABLA AUX_CORREOS
                   SELECT
                         CON.CON_ID
                      ,ACO.DD_ACO_ID
-                     ,TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''dd/mm/yy'') CPC_FECHA_FIN
+                     ,TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''yyyymmdd'') CPC_FECHA_FIN
                   FROM '||V_ESQUEMA||'.AUX_APR_BCR_STOCK AUX
                   JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = AUX.NUM_IDENTIFICATIVO
                      AND ACT.BORRADO = 0
@@ -396,8 +396,8 @@ SALIDA := SALIDA ||'[INFO] 2.2 SE CREA UN NUEVO REGISTRO EN LA TABLA AUX_CORREOS
                   JOIN '||V_ESQUEMA||'.DD_ACO_ACCIONES_CONCURRENCIA ACO ON ACO.DD_ACO_CODIGO = ''02'' 
                      AND ACO.BORRADO = 0
                   WHERE TRUNC(SYSDATE) BETWEEN TRUNC(CON.CON_FECHA_INI) AND TRUNC(CON.CON_FECHA_FIN)
-                  AND TRUNC(TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''dd/mm/yy'')) > TRUNC(CON.CON_FECHA_FIN) 
-                  AND TRUNC(TO_DATE(AUX.FEC_INICIO_CONCURENCIA, ''dd/mm/yy'')) = TRUNC(CON.CON_FECHA_INI)
+                  AND TRUNC(TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''yyyymmdd'')) > TRUNC(CON.CON_FECHA_FIN) 
+                  AND TRUNC(TO_DATE(AUX.FEC_INICIO_CONCURENCIA, ''yyyymmdd'')) = TRUNC(CON.CON_FECHA_INI)
                   AND AUX.FLAG_EN_REM = '|| FLAG_EN_REM ||'
                ) T2 ON ((T1.CON_ID = T2.CON_ID AND T1.DD_ACO_ID = T2.DD_ACO_ID AND TRUNC(T1.FECHACREAR) = TRUNC(SYSDATE))
                            OR
@@ -439,8 +439,8 @@ SALIDA := SALIDA ||'[INFO] 2.3 SE MODIFICA REGISTRO EXISTENTE EN LA TABLA CON_CO
                   JOIN '||V_ESQUEMA||'.CON_CONCURRENCIA CON ON CON.ACT_ID = ACT.ACT_ID
                      AND CON.BORRADO = 0
                   WHERE TRUNC(SYSDATE) BETWEEN TRUNC(CON.CON_FECHA_INI) AND TRUNC(CON.CON_FECHA_FIN)
-                  AND TRUNC(TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''dd/mm/yy'')) > TRUNC(CON.CON_FECHA_FIN) 
-                  AND TRUNC(TO_DATE(AUX.FEC_INICIO_CONCURENCIA, ''dd/mm/yy'')) = TRUNC(CON.CON_FECHA_INI) 
+                  AND TRUNC(TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''yyyymmdd'')) > TRUNC(CON.CON_FECHA_FIN) 
+                  AND TRUNC(TO_DATE(AUX.FEC_INICIO_CONCURENCIA, ''yyyymmdd'')) = TRUNC(CON.CON_FECHA_INI) 
                   AND AUX.FLAG_EN_REM = '|| FLAG_EN_REM ||'
                ) T2 ON (T1.CON_ID = T2.CON_ID)
                WHEN MATCHED THEN UPDATE SET
@@ -463,7 +463,7 @@ SALIDA := SALIDA ||'[INFO] 3.1 SE CREA UN NUEVO REGISTRO EN LA TABLA CPC_CMB_PER
                   SELECT
                         CON.CON_ID
                      ,ACO.DD_ACO_ID
-                     ,TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''dd/mm/yy'') CPC_FECHA_FIN
+                     ,TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''yyyymmdd'') CPC_FECHA_FIN
                   FROM '||V_ESQUEMA||'.AUX_APR_BCR_STOCK AUX
                   JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = AUX.NUM_IDENTIFICATIVO
                      AND ACT.BORRADO = 0
@@ -472,9 +472,9 @@ SALIDA := SALIDA ||'[INFO] 3.1 SE CREA UN NUEVO REGISTRO EN LA TABLA CPC_CMB_PER
                   JOIN '||V_ESQUEMA||'.DD_ACO_ACCIONES_CONCURRENCIA ACO ON ACO.DD_ACO_CODIGO = ''03'' 
                      AND ACO.BORRADO = 0
                   WHERE TRUNC(SYSDATE) BETWEEN TRUNC(CON.CON_FECHA_INI) AND TRUNC(CON.CON_FECHA_FIN)
-                  AND TRUNC(TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''dd/mm/yy'')) < TRUNC(CON.CON_FECHA_FIN) 
-                  AND TRUNC(TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''dd/mm/yy'')) = TRUNC(SYSDATE) 
-                  AND TRUNC(TO_DATE(AUX.FEC_INICIO_CONCURENCIA, ''dd/mm/yy'')) = TRUNC(CON.CON_FECHA_INI)
+                  AND TRUNC(TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''yyyymmdd'')) < TRUNC(CON.CON_FECHA_FIN) 
+                  AND TRUNC(TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''yyyymmdd'')) = TRUNC(SYSDATE) 
+                  AND TRUNC(TO_DATE(AUX.FEC_INICIO_CONCURENCIA, ''yyyymmdd'')) = TRUNC(CON.CON_FECHA_INI)
                   AND AUX.FLAG_EN_REM = '|| FLAG_EN_REM ||'
                ) T2 ON (T1.CON_ID = T2.CON_ID AND TRUNC(T1.FECHACREAR) = TRUNC(SYSDATE))
                WHEN NOT MATCHED THEN 
@@ -511,7 +511,7 @@ SALIDA := SALIDA ||'[INFO] 3.2 SE CREA UN NUEVO REGISTRO EN LA TABLA AUX_CORREOS
                   SELECT
                         CON.CON_ID
                      ,ACO.DD_ACO_ID
-                     ,TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''dd/mm/yy'') CPC_FECHA_FIN
+                     ,TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''yyyymmdd'') CPC_FECHA_FIN
                   FROM '||V_ESQUEMA||'.AUX_APR_BCR_STOCK AUX
                   JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = AUX.NUM_IDENTIFICATIVO
                      AND ACT.BORRADO = 0
@@ -520,9 +520,9 @@ SALIDA := SALIDA ||'[INFO] 3.2 SE CREA UN NUEVO REGISTRO EN LA TABLA AUX_CORREOS
                   JOIN '||V_ESQUEMA||'.DD_ACO_ACCIONES_CONCURRENCIA ACO ON ACO.DD_ACO_CODIGO = ''03'' 
                      AND ACO.BORRADO = 0
                   WHERE TRUNC(SYSDATE) BETWEEN TRUNC(CON.CON_FECHA_INI) AND TRUNC(CON.CON_FECHA_FIN)
-                  AND TRUNC(TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''dd/mm/yy'')) < TRUNC(CON.CON_FECHA_FIN) 
-                  AND TRUNC(TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''dd/mm/yy'')) = TRUNC(SYSDATE) 
-                  AND TRUNC(TO_DATE(AUX.FEC_INICIO_CONCURENCIA, ''dd/mm/yy'')) = TRUNC(CON.CON_FECHA_INI)
+                  AND TRUNC(TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''yyyymmdd'')) < TRUNC(CON.CON_FECHA_FIN) 
+                  AND TRUNC(TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''yyyymmdd'')) = TRUNC(SYSDATE) 
+                  AND TRUNC(TO_DATE(AUX.FEC_INICIO_CONCURENCIA, ''yyyymmdd'')) = TRUNC(CON.CON_FECHA_INI)
                   AND AUX.FLAG_EN_REM = '|| FLAG_EN_REM ||'
                ) T2 ON ((T1.CON_ID = T2.CON_ID AND T1.DD_ACO_ID = T2.DD_ACO_ID AND TRUNC(T1.FECHACREAR) = TRUNC(SYSDATE))
                            OR
@@ -558,16 +558,16 @@ SALIDA := SALIDA ||'[INFO] 3.3 SE MODIFICA REGISTRO EXISTENTE EN LA TABLA CON_CO
                USING (
                   SELECT
                       CON.CON_ID
-                     ,TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''dd/mm/yy'') FEC_FIN_CONCURENCIA
+                     ,TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''yyyymmdd'') FEC_FIN_CONCURENCIA
                   FROM '||V_ESQUEMA||'.AUX_APR_BCR_STOCK AUX
                   JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = AUX.NUM_IDENTIFICATIVO
                      AND ACT.BORRADO = 0
                   JOIN '||V_ESQUEMA||'.CON_CONCURRENCIA CON ON CON.ACT_ID = ACT.ACT_ID
                      AND CON.BORRADO = 0
                   WHERE TRUNC(SYSDATE) BETWEEN TRUNC(CON.CON_FECHA_INI) AND TRUNC(CON.CON_FECHA_FIN)
-                  AND TRUNC(TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''dd/mm/yy'')) < TRUNC(CON.CON_FECHA_FIN) 
-                  AND TRUNC(TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''dd/mm/yy'')) = TRUNC(SYSDATE) 
-                  AND TRUNC(TO_DATE(AUX.FEC_INICIO_CONCURENCIA, ''dd/mm/yy'')) = TRUNC(CON.CON_FECHA_INI) 
+                  AND TRUNC(TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''yyyymmdd'')) < TRUNC(CON.CON_FECHA_FIN) 
+                  AND TRUNC(TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''yyyymmdd'')) = TRUNC(SYSDATE) 
+                  AND TRUNC(TO_DATE(AUX.FEC_INICIO_CONCURENCIA, ''yyyymmdd'')) = TRUNC(CON.CON_FECHA_INI) 
                   AND AUX.FLAG_EN_REM = '|| FLAG_EN_REM ||'
                ) T2 ON(T1.CON_ID = T2.CON_ID)
                WHEN MATCHED THEN UPDATE SET

@@ -18,8 +18,10 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.DtoTiposAlquilerNoComercial;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoOfertaAlquiler;
 
 @Service("tramiteAlquilerNoComercialManager")
 public class TramiteAlquilerNoComercialManager implements TramiteAlquilerNoComercialApi {
@@ -193,6 +195,67 @@ public class TramiteAlquilerNoComercialManager implements TramiteAlquilerNoComer
 	public String avanzaAprobarPbcAlquiler(TareaExterna tareaExterna) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	@Override
+	public boolean esAlquilerSocial(TareaExterna tareaExterna) {
+		ExpedienteComercial eco = expedienteComercialApi.tareaExternaToExpedienteComercial(tareaExterna);
+		Oferta ofr = eco.getOferta();
+		if(DDSubtipoOfertaAlquiler.CODIGO_ALQUILER_SOCIAL_DACION.equals(ofr.getSubtipoOfertaAlquiler().getCodigo()) 
+				|| DDSubtipoOfertaAlquiler.CODIGO_ALQUILER_SOCIAL_EJECUCION.equals(ofr.getSubtipoOfertaAlquiler().getCodigo())
+				|| DDSubtipoOfertaAlquiler.CODIGO_OCUPA.equals(ofr.getSubtipoOfertaAlquiler().getCodigo())) {
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public boolean esSubrogacionCompraVenta(TareaExterna tareaExterna) {
+		ExpedienteComercial eco = expedienteComercialApi.tareaExternaToExpedienteComercial(tareaExterna);
+		Oferta ofr = eco.getOferta();
+		if(DDSubtipoOfertaAlquiler.CODIGO_SUBROGACION_DACION.equals(ofr.getSubtipoOfertaAlquiler().getCodigo())) {
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public boolean esRenovacion(TareaExterna tareaExterna) {
+		ExpedienteComercial eco = expedienteComercialApi.tareaExternaToExpedienteComercial(tareaExterna);
+		Oferta ofr = eco.getOferta();
+		if(DDSubtipoOfertaAlquiler.CODIGO_NOVACIONES.equals(ofr.getSubtipoOfertaAlquiler().getCodigo())
+				|| DDSubtipoOfertaAlquiler.CODIGO_RENOVACIONES.equals(ofr.getSubtipoOfertaAlquiler().getCodigo())) {
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public boolean esSubrogacionHipoteca(TareaExterna tareaExterna) {
+		ExpedienteComercial eco = expedienteComercialApi.tareaExternaToExpedienteComercial(tareaExterna);
+		Oferta ofr = eco.getOferta();
+		if(DDSubtipoOfertaAlquiler.CODIGO_SUBROGACION_EJECUCION.equals(ofr.getSubtipoOfertaAlquiler().getCodigo())) {
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public boolean rechazaMenosDosVeces(TareaExterna tareaExterna) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
+	@Override
+	public boolean conAdenda(TareaExterna tareaExterna) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
+	@Override
+	public boolean esCarteraConcertada(TareaExterna tareaExterna) {
+		// TODO Auto-generated method stub
+		return true;
 	}
 	
 }

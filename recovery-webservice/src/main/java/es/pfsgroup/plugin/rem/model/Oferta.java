@@ -48,6 +48,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDRiesgoOperacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSistemaOrigen;
 import es.pfsgroup.plugin.rem.model.dd.DDSnsSiNoNosabe;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoOfertaAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTfnTipoFinanciacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAdenda;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
@@ -522,6 +523,10 @@ public class Oferta implements Serializable, Auditable {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DD_TAD_ID")
 	private DDTipoAdenda tipoAdenda;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_SOA_ID")
+    private DDSubtipoOfertaAlquiler subtipoOfertaAlquiler;
 
 	public Date getFechaAlta() {
 		return fechaAlta;
@@ -1646,6 +1651,14 @@ public class Oferta implements Serializable, Auditable {
 
 	public void setTipoAdenda(DDTipoAdenda tipoAdenda) {
 		this.tipoAdenda = tipoAdenda;
+	}
+	
+	public DDSubtipoOfertaAlquiler getSubtipoOfertaAlquiler() {
+		return subtipoOfertaAlquiler;
+	}
+
+	public void setSubtipoOfertaAlquiler(DDSubtipoOfertaAlquiler subtipoOfertaAlquiler) {
+		this.subtipoOfertaAlquiler = subtipoOfertaAlquiler;
 	}
 	
 }

@@ -30,5 +30,19 @@ public interface TramiteAlquilerNoComercialApi {
 
 	String avanzaScoring(TareaExterna tareaExterna, String comboReqAnalisisTec);
 	
+	boolean esAlquilerSocial (TareaExterna tareaExterna);
+	
+	boolean esSubrogacionCompraVenta (TareaExterna tareaExterna);
+	
+	boolean esRenovacion (TareaExterna tareaExterna);
+	
+	boolean esSubrogacionHipoteca (TareaExterna tareaExterna);
+	
+	boolean rechazaMenosDosVeces(TareaExterna tareaExterna);
+	
+	boolean conAdenda(TareaExterna tareaExterna);
+	
+	boolean esCarteraConcertada(TareaExterna tareaExterna);
+	
 }
 

@@ -855,6 +855,34 @@
             def checkIBANValido (String numIban) {
             	def tramiteAlquilerManager = ctx.getBean("tramiteAlquilerManager");
 				return tramiteAlquilerManager.checkIBANValido(tareaExterna, numIban);
+			}
+            def esAlquilerSocial = {
+            	def tramiteAlquilerNoComercialManager = ctx.getBean("tramiteAlquilerNoComercialManager");
+            	return tramiteAlquilerNoComercialManager.esAlquilerSocial(tareaExterna);
+            }
+            def esSubrogacionCompraVenta = {
+            	def tramiteAlquilerNoComercialManager = ctx.getBean("tramiteAlquilerNoComercialManager");
+            	return tramiteAlquilerNoComercialManager.esSubrogacionCompraVenta(tareaExterna);
+            }
+            def esRenovacion = {
+            	def tramiteAlquilerNoComercialManager = ctx.getBean("tramiteAlquilerNoComercialManager");
+            	return tramiteAlquilerNoComercialManager.esRenovacion(tareaExterna);
+            }
+            def esSubrogacionHipoteca = {
+            	def tramiteAlquilerNoComercialManager = ctx.getBean("tramiteAlquilerNoComercialManager");
+            	return tramiteAlquilerNoComercialManager.esSubrogacionHipoteca(tareaExterna);
+            }
+            def rechazaMenosDosVeces = {
+            	def tramiteAlquilerNoComercialManager = ctx.getBean("tramiteAlquilerNoComercialManager");
+            	return tramiteAlquilerNoComercialManager.rechazaMenosDosVeces(tareaExterna);
+            }
+            def conAdenda = {
+            	def tramiteAlquilerNoComercialManager = ctx.getBean("tramiteAlquilerNoComercialManager");
+            	return tramiteAlquilerNoComercialManager.conAdenda(tareaExterna);
+            }
+            def esCarteraConcertada = {
+            	def tramiteAlquilerNoComercialManager = ctx.getBean("tramiteAlquilerNoComercialManager");
+            	return tramiteAlquilerNoComercialManager.esCarteraConcertada(tareaExterna);
             }
            
   			 ]]></value>

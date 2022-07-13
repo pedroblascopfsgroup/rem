@@ -11,7 +11,9 @@ import es.pfsgroup.plugin.rem.api.*;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.HistoricoTareaPbc;
+import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoOfertaAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTareaPbc;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -179,4 +181,5 @@ public class FuncionesTramitesManager implements FuncionesTramitesApi {
 				ComercialUserAssigantionService.CODIGO_T017_BLOQUEOSCORING};
 		return Arrays.asList(tareasBloqueoScoring);
 	}
+
 }

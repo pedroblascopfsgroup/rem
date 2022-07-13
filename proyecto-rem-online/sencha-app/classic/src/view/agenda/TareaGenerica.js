@@ -3966,45 +3966,45 @@
         });
 	},
 	
-	T018_DefinicionOfertaValidacion: function(){
-		var me = this;
-		var comboTipoOferta = me.down('[name=tipoOfertaAlquiler]');
-		var comboIsVulnerable = me.down('[name=isVulnerable]');
-		var numContratoAnterior = me.down('[name=numContratoAnterior]');
-		var fechaContratoAnt = me.down('[name=fechaContratoAnt]');
-		 
-		me.deshabilitarCampo(numContratoAnterior);
-		me.deshabilitarCampo(fechaContratoAnt);
-		
-		comboTipoOferta.addListener('change', function(combo) {
-			if(CONST.SUBTIPO_OFERTA_ALQUILER_NO_COMERCIAL['CODIGO_ALQUILER_SOCIAL_DACION'] === comboTipoOferta.getValue()
-					||CONST.SUBTIPO_OFERTA_ALQUILER_NO_COMERCIAL['CODIGO_ALQUILER_SOCIAL_EJECUCION'] === comboTipoOferta.getValue()
-					||CONST.SUBTIPO_OFERTA_ALQUILER_NO_COMERCIAL['CODIGO_OCUPA'] === comboTipoOferta.getValue()){
-
-				me.campoObligatorio(comboIsVulnerable);
-				numContratoAnterior.setValue('');
-				me.habilitarCampo(numContratoAnterior);
-				numContratoAnterior.allowBlank = true;
-				fechaContratoAnt.setValue('');
-				me.habilitarCampo(fechaContratoAnt);
-				fechaContratoAnt.allowBlank = true;	
-			}else if(CONST.SUBTIPO_OFERTA_ALQUILER_NO_COMERCIAL['CODIGO_NOVACIONES'] === comboTipoOferta.getValue()
-					||CONST.SUBTIPO_OFERTA_ALQUILER_NO_COMERCIAL['CODIGO_RENOVACIONES'] === comboTipoOferta.getValue()){
-				me.habilitarCampo(numContratoAnterior);
-				numContratoAnterior.allowBlank = false;
-				me.habilitarCampo(fechaContratoAnt);
-				fechaContratoAnt.allowBlank = false;		
-				me.campoNoObligatorio(comboIsVulnerable);
-			}else{
-				numContratoAnterior.setValue('');
-				comboIsVulnerable.setValue('');
-				me.deshabilitarCampo(numContratoAnterior);
-				me.campoNoObligatorio(comboIsVulnerable);
-				fechaContratoAnt.setValue('');
-				me.deshabilitarCampo(fechaContratoAnt);
-			}
-        });
-	},
+//	T018_DefinicionOfertaValidacion: function(){
+//		var me = this;
+//		var comboTipoOferta = me.down('[name=tipoOfertaAlquiler]');
+//		var comboIsVulnerable = me.down('[name=isVulnerable]');
+//		var numContratoAnterior = me.down('[name=numContratoAnterior]');
+//		var fechaContratoAnt = me.down('[name=fechaContratoAnt]');
+//		 
+//		me.deshabilitarCampo(numContratoAnterior);
+//		me.deshabilitarCampo(fechaContratoAnt);
+//		
+//		comboTipoOferta.addListener('change', function(combo) {
+//			if(CONST.SUBTIPO_OFERTA_ALQUILER_NO_COMERCIAL['CODIGO_ALQUILER_SOCIAL_DACION'] === comboTipoOferta.getValue()
+//					||CONST.SUBTIPO_OFERTA_ALQUILER_NO_COMERCIAL['CODIGO_ALQUILER_SOCIAL_EJECUCION'] === comboTipoOferta.getValue()
+//					||CONST.SUBTIPO_OFERTA_ALQUILER_NO_COMERCIAL['CODIGO_OCUPA'] === comboTipoOferta.getValue()){
+//
+//				me.campoObligatorio(comboIsVulnerable);
+//				numContratoAnterior.setValue('');
+//				me.habilitarCampo(numContratoAnterior);
+//				numContratoAnterior.allowBlank = true;
+//				fechaContratoAnt.setValue('');
+//				me.habilitarCampo(fechaContratoAnt);
+//				fechaContratoAnt.allowBlank = true;	
+//			}else if(CONST.SUBTIPO_OFERTA_ALQUILER_NO_COMERCIAL['CODIGO_NOVACIONES'] === comboTipoOferta.getValue()
+//					||CONST.SUBTIPO_OFERTA_ALQUILER_NO_COMERCIAL['CODIGO_RENOVACIONES'] === comboTipoOferta.getValue()){
+//				me.habilitarCampo(numContratoAnterior);
+//				numContratoAnterior.allowBlank = false;
+//				me.habilitarCampo(fechaContratoAnt);
+//				fechaContratoAnt.allowBlank = false;		
+//				me.campoNoObligatorio(comboIsVulnerable);
+//			}else{
+//				numContratoAnterior.setValue('');
+//				comboIsVulnerable.setValue('');
+//				me.deshabilitarCampo(numContratoAnterior);
+//				me.campoNoObligatorio(comboIsVulnerable);
+//				fechaContratoAnt.setValue('');
+//				me.deshabilitarCampo(fechaContratoAnt);
+//			}
+//        });
+//	},
 		
 	T018_RevisionBcYCondicionesValidacion: function(){
 		var me = this;

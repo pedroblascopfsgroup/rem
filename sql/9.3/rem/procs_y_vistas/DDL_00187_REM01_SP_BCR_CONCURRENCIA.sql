@@ -96,8 +96,8 @@ SALIDA := SALIDA || '[INFO] PARA LOS ACTIVOS QUE NO TENGAN REGISTROS EN LA TABLA
                               ELSE NULL
                            END AGR_ID
                            ,AUX.IMP_PRECIO_VENTA
-                           ,AUX.FEC_INICIO_CONCURENCIA
-                           ,AUX.FEC_FIN_CONCURENCIA
+                           ,TO_DATE(AUX.FEC_INICIO_CONCURENCIA, ''yyyymmdd'')
+                           ,TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''yyyymmdd'')
                      FROM '||V_ESQUEMA||'.AUX_APR_BCR_STOCK AUX
                      JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = AUX.NUM_IDENTIFICATIVO
                            AND ACT.BORRADO = 0
@@ -162,8 +162,8 @@ SALIDA := SALIDA ||'[INFO] 1.2 SE CREA UN NUEVO REGISTRO EN LA TABLA CPC_CMB_PER
                      AND CON.BORRADO = 0
                   JOIN '||V_ESQUEMA||'.DD_ACO_ACCIONES_CONCURRENCIA ACO ON ACO.DD_ACO_CODIGO = ''01'' 
                      AND ACO.BORRADO = 0
-                  WHERE CON.CON_FECHA_INI = AUX.FEC_INICIO_CONCURENCIA
-                  AND CON.CON_FECHA_FIN = AUX.FEC_FIN_CONCURENCIA
+                  WHERE CON.CON_FECHA_INI = TO_DATE(AUX.FEC_INICIO_CONCURENCIA, ''yyyymmdd'')
+                  AND CON.CON_FECHA_FIN = TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''yyyymmdd'')
                   AND TRUNC(CON.FECHACREAR) = TRUNC(SYSDATE)
                   AND CON.USUARIOCREAR = ''apr_alta_assets_from_caixabank''
                   AND AUX.FLAG_EN_REM = '|| FLAG_EN_REM ||'
@@ -432,7 +432,7 @@ SALIDA := SALIDA ||'[INFO] 2.3 SE MODIFICA REGISTRO EXISTENTE EN LA TABLA CON_CO
                USING (
                   SELECT
                         CON.CON_ID
-                     ,AUX.FEC_FIN_CONCURENCIA
+                     ,TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''yyyymmdd'')
                   FROM '||V_ESQUEMA||'.AUX_APR_BCR_STOCK AUX
                   JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = AUX.NUM_IDENTIFICATIVO
                      AND ACT.BORRADO = 0

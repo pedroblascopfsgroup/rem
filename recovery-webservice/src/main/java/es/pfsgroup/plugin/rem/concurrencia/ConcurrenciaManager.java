@@ -1,17 +1,24 @@
 package es.pfsgroup.plugin.rem.concurrencia;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
+import javax.annotation.Resource;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.ModelMap;
 
 import es.capgemini.devon.beans.Service;
-import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -21,9 +28,11 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.api.BoardingComunicacionApi;
 import es.pfsgroup.plugin.rem.api.ConcurrenciaApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.concurrencia.dao.ConcurrenciaDao;
+import es.pfsgroup.plugin.rem.logTrust.LogTrustWebService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
@@ -38,13 +47,35 @@ import es.pfsgroup.plugin.rem.model.VGridCambiosPeriodoConcurrencia;
 import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionConcurrencia;
 import es.pfsgroup.plugin.rem.model.VGridOfertasActivosConcurrencia;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
+import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientFacade;
+import es.pfsgroup.plugin.rem.restclient.registro.dao.RestLlamadaDao;
+import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
 import es.pfsgroup.plugin.rem.thread.CaducaOfertasAsync;
-import es.pfsgroup.recovery.api.UsuarioApi;
+import net.sf.json.JSONObject;
 
 
 @Service("concurrenciaManager")
 public class ConcurrenciaManager  implements ConcurrenciaApi { 
 	
+	private final Log logger = LogFactory.getLog(getClass());
+	
+	private static final String REST_CLIENT_CONCURRENCIA_ENVIO_CORREO_SFMC = "rest.client.concurrencia.envio.correo.sfmc";
+	private static final String REM3_URL = "rem3.base.url";
+    private static final String POST_METHOD = "POST";
+	
+    @Resource
+    private Properties appProperties;
+    
+    @Autowired
+    private HttpClientFacade httpClientFacade;
+    
+    @Autowired
+    private RestLlamadaDao llamadaDao;
+
+    @Autowired
+    private LogTrustWebService trustMe;
+    
 	@Autowired
 	private GenericABMDao genericDao;
 	
@@ -183,7 +214,7 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 	@Override
 	public boolean isOfertaEnConcurrencia(Oferta ofr){
 
-		if(ofr != null && ofr.getIsEnConcurrencia()){
+		if(ofr != null && ofr.getIsEnConcurrencia() != null && ofr.getIsEnConcurrencia()){
 			return true;
 		}
 
@@ -246,33 +277,47 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 
 	@Override
 	@Transactional
-	public void caducaOfertasRelacionadasConcurrencia(Long idActivo, Long idOferta){
+	public void caducaOfertasRelacionadasConcurrencia(Long idActivo, Long idOferta, String codigoEnvioCorreo){
 		Activo act = genericDao.get(Activo.class, genericDao.createFilter(FilterType.EQUALS, "id", idActivo));
 		if(act != null){
 			List<ActivoOferta> ofertas = act.getOfertas();
 			HashMap<Long, List<Long>> noEntraDeposito = new HashMap<Long, List<Long>>();
 			List<Long> idOfertasRechazadas = new ArrayList<Long>();
+			List<Long> idOfertaList = new ArrayList<Long>();
+
 			if(ofertas != null && !ofertas.isEmpty()) {
 				for(ActivoOferta actOfr: ofertas){
 					if(actOfr != null && actOfr.getOferta() != null && !idOferta.toString().equals(actOfr.getOferta().toString())
 							&& !actOfr.getPrimaryKey().getOferta().esOfertaAnulada()){
 						Oferta ofr = actOfr.getPrimaryKey().getOferta();
-						if(!ofr.esOfertaAnulada() && !this.entraEnTiempoDeposito(ofr)){
+						if(!ofr.esOfertaAnulada() && !this.entraEnTiempoDeposito(ofr) || ConcurrenciaApi.COD_OFERTAS_PERDEDORAS.equals(codigoEnvioCorreo)){
 							noEntraDeposito.put(actOfr.getOferta(), rellenaMapOfertaCorreos(ofr));
 							ofertaApi.rechazoOfertaNew(ofr, null);
+							ofertaApi.inicioRechazoDeOfertaSinLlamadaBC(ofr, null);
+							idOfertaList.add(ofr.getId());
 						}
 						genericDao.save(Oferta.class, ofr);
 					}
 				}
 			}
 			
-			
 			for(Long id:idOfertasRechazadas){
                 ofertaApi.llamarCambioEstadoReplicarNoSession(id, DDEstadoOferta.CODIGO_RECHAZADA);
             }
+
+			if(!idOfertaList.isEmpty()) {
+				try {				
+					comunicacionSFMC(idOfertaList, codigoEnvioCorreo, ConcurrenciaApi.TIPO_ENVIO_UNICO, new ModelMap());		
+				} catch (IOException ioex) {
+					logger.error(ioex.getMessage());
+					ioex.printStackTrace();
+				} catch (Exception exc) {
+					logger.error(exc.getMessage());
+					exc.printStackTrace();
+				}
+			}
 		}
-		
-		
+
 	}
 
 	@Override
@@ -286,7 +331,7 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 			principalCaducada = true;
 		}
 
-		Thread hilo = new Thread(new CaducaOfertasAsync(idActivo, idOferta,genericAdapter.getUsuarioLogado().getUsername()));
+		Thread hilo = new Thread(new CaducaOfertasAsync(idActivo, idOferta, genericAdapter.getUsuarioLogado().getUsername(), ConcurrenciaApi.COD_ANULACION_OFERTA_FALTA_CONFIRMACION_DEPOSITO));
 		hilo.start();
 		
 		return principalCaducada;
@@ -297,15 +342,29 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 	private HashMap<Long, List<Long>> caducaOfertaPrincipal(Long idOferta){
 		Oferta ofr = genericDao.get(Oferta.class, genericDao.createFilter(FilterType.EQUALS, "id", idOferta));
 		HashMap<Long, List<Long>> noEntraDeposito = new HashMap<Long, List<Long>>();
+		List<Long> idOfertaList = new ArrayList<Long>();
 
 		if(ofr != null){
 			
 			if(!this.entraEnTiempoDeposito(ofr)){
 				noEntraDeposito.put(ofr.getId(), rellenaMapOfertaCorreos(ofr));
 				ofertaApi.inicioRechazoDeOfertaSinLlamadaBC(ofr, null);
+				idOfertaList.add(ofr.getId());
 			}
 		
 			genericDao.save(Oferta.class, ofr);
+			
+			if(!idOfertaList.isEmpty()) {
+				try {
+					comunicacionSFMC(idOfertaList, ConcurrenciaApi.COD_ANULACION_OFERTA_FALTA_CONFIRMACION_DEPOSITO, ConcurrenciaApi.TIPO_ENVIO_UNICO, new ModelMap());		
+				} catch (IOException ioex) {
+					logger.error(ioex.getMessage());
+					ioex.printStackTrace();
+				} catch (Exception exc) {
+					logger.error(exc.getMessage());
+					exc.printStackTrace();
+				}
+			}
 		}
 		
 		return noEntraDeposito;
@@ -434,4 +493,77 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 
 		return calendar.getTime(); // Devuelve el objeto Date con las nuevas horas añadidas
 	}
+	
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public void comunicacionSFMC(List<Long> idOfertaList, String codigoEnvio, String tipoEnvio, ModelMap model) throws IOException {
+		
+		Map<String, String> headers = new HashMap<String, String>();
+        headers.put("Content-Type", "application/json");
+
+        model.put("idOfertaList", idOfertaList);
+
+        ObjectMapper mapper = new ObjectMapper();
+        
+        String json = mapper.writeValueAsString(model);
+	
+		String urlBase = !Checks.esNulo(appProperties.getProperty(REM3_URL)) 
+				? appProperties.getProperty(REM3_URL) : "";
+		String endpointComunicacionSFMC = !Checks.esNulo(appProperties.getProperty(REST_CLIENT_CONCURRENCIA_ENVIO_CORREO_SFMC))
+		        ? appProperties.getProperty(REST_CLIENT_CONCURRENCIA_ENVIO_CORREO_SFMC) : "";
+		
+		StringBuilder urlComunicacionSFMC = new StringBuilder();
+		urlComunicacionSFMC.append(urlBase);
+		urlComunicacionSFMC.append(endpointComunicacionSFMC);
+		urlComunicacionSFMC.append("/").append(codigoEnvio);
+		urlComunicacionSFMC.append("/").append(tipoEnvio);
+    	
+		logger.debug("[ENVIO CORREO SFMC (CONCURRENCIA)] URL (REM-API): " + urlComunicacionSFMC.toString());
+        logger.debug("[ENVIO CORREO SFMC (CONCURRENCIA)] BODY: " + json.toString());
+		
+		JSONObject respuesta = null;
+		String ex = null;
+		
+		try {			
+			respuesta = procesarPeticion(this.httpClientFacade, urlComunicacionSFMC.toString(), POST_METHOD, headers, json, BoardingComunicacionApi.TIMEOUT_2_MINUTOS, "UTF-8");	
+		} catch (HttpClientException exHttpClient) {
+			exHttpClient.printStackTrace();
+			ex = exHttpClient.getMessage();
+		} catch (Exception exc) {
+			logger.error("Error al enviar correo SFMC (Concurrencia)", exc);
+			logger.error(exc.getMessage());
+			ex = exc.getMessage();
+		}
+
+		String response = mapper.writeValueAsString(respuesta);
+		logger.debug("[ENVIO CORREO SFMC (CONCURRENCIA)] RESPONSE: " + mapper.writeValueAsString(respuesta));
+	
+		registrarLlamada(urlComunicacionSFMC.toString(), json.toString(), response != null && !response.isEmpty() ? response : null, ex);
+		
+	}
+	
+	private JSONObject procesarPeticion(HttpClientFacade httpClientFacade, String serviceUrl, String sendMethod, Map<String, String> headers, String jsonString, int responseTimeOut, String charSet) 
+			throws HttpClientException {
+        return httpClientFacade.processRequest(serviceUrl, sendMethod, headers, jsonString, responseTimeOut, charSet);
+    }
+	
+	private void registrarLlamada(String endPoint, String request, String result, String exception) {
+        RestLlamada registro = new RestLlamada();
+        registro.setMetodo("WEBSERVICE");
+        registro.setEndpoint(endPoint);
+        registro.setRequest(request);
+        logger.debug(request);
+        logger.debug("-------------------");
+        logger.debug(result);
+        registro.setException(exception);    
+        try {
+            registro.setResponse(result);
+            llamadaDao.guardaRegistro(registro);
+            trustMe.registrarLlamadaServicioWeb(registro);
+        } catch (Exception e) {
+            logger.error("Error al trazar la llamada al WS", e);
+        }
+    }
+
 }

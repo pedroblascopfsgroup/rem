@@ -19,15 +19,6 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
-import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionDao;
-import es.pfsgroup.plugin.rem.api.*;
-import es.pfsgroup.plugin.rem.model.*;
-import es.pfsgroup.plugin.rem.model.dd.*;
-import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
-import es.capgemini.pfs.persona.model.DDTipoPersona;
-import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
-import es.pfsgroup.plugin.rem.constants.TareaProcedimientoConstants;
-import es.pfsgroup.plugin.rem.service.InterlocutorGenericService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.servlet.ModelAndView;
-import edu.emory.mathcs.backport.java.util.Collections;
+
 import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
@@ -56,7 +47,6 @@ import es.capgemini.pfs.persona.model.DDTipoPersona;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.users.UsuarioManager;
-import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
@@ -193,7 +183,6 @@ import es.pfsgroup.plugin.rem.model.OfertaTestigos;
 import es.pfsgroup.plugin.rem.model.OfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.ProveedorGestorCajamar;
-import es.pfsgroup.plugin.rem.model.Puja;
 import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.TextosOferta;
@@ -283,6 +272,7 @@ import es.pfsgroup.plugin.rem.rest.dto.TestigosOfertaDto;
 import es.pfsgroup.plugin.rem.restclient.caixabc.CaixaBcRestClient;
 import es.pfsgroup.plugin.rem.restclient.caixabc.ReplicarOfertaDto;
 import es.pfsgroup.plugin.rem.service.InterlocutorCaixaService;
+import es.pfsgroup.plugin.rem.service.InterlocutorGenericService;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.ActivoTareaExternaDao;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.TareaActivoDao;
 import es.pfsgroup.plugin.rem.thread.EnviarOfertaHayaHomeRem3;
@@ -3083,6 +3073,23 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						estadoOferta =  DDEstadoOferta.CODIGO_PDTE_DEPOSITO;
 					}else if (DDEstadoOferta.CODIGO_RECHAZADA.equals(estadoOferta) ||  DDEstadoOferta.CODIGO_CADUCADA.equals(estadoOferta)) {
 						depositoApi.modificarEstadoDepositoSiIngresado(oferta);
+						
+						if(oferta.getIsEnConcurrencia() != null && oferta.getIsEnConcurrencia()) {
+							
+							List<Long> idOfertaList = new ArrayList<Long>();
+							idOfertaList.add(oferta.getId());
+							
+							try {
+								concurrenciaApi.comunicacionSFMC(idOfertaList, ConcurrenciaApi.COD_OFERTA_ANULADA_FORMA_MANUAL, ConcurrenciaApi.TIPO_ENVIO_UNICO, new ModelMap());		
+							} catch (IOException ioex) {
+								logger.error(ioex.getMessage());
+								ioex.printStackTrace();
+							} catch (Exception exc) {
+								logger.error(exc.getMessage());
+								exc.printStackTrace();
+							}
+							
+						}
 					}
 				}else {
 					oferta.setFechaAlta(fechaAccion);
@@ -3146,7 +3153,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		//CADUCAR OFERTAS
 		if(previousState != null && DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION.equals(previousState.getCodigo())
 				&& DDEstadoOferta.CODIGO_PDTE_DEPOSITO.equals(estadoOferta)) {
-			concurrenciaApi.caducaOfertasRelacionadasConcurrencia(idActivo,idOferta);
+			concurrenciaApi.caducaOfertaConcurrencia(idActivo,idOferta);
 		}
 
 		ofertaDao.saveOrUpdate(oferta);
@@ -8770,7 +8777,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			
 			//CADUCAR OFERTAS
 			if(DDEstadoOferta.CODIGO_PDTE_DEPOSITO.equals(codigoEstado)) {
-				concurrenciaApi.caducaOfertasRelacionadasConcurrencia(oferta.getActivoPrincipal().getId(),idOferta);
+				concurrenciaApi.caducaOfertaConcurrencia(oferta.getActivoPrincipal().getId(),idOferta);
 			}
 			
 			ofertaDao.saveOrUpdate(oferta);

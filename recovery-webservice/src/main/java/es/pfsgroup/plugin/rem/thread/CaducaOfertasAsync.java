@@ -26,12 +26,14 @@ public class CaducaOfertasAsync implements Runnable {
 	private String userName = null;
 	private Long idActivo = null;
 	private Long idOferta = null;
+	private String codigoEnvioCorreo = null;
 
-	public CaducaOfertasAsync(Long idActivo, Long idOferta, String userName) {
+	public CaducaOfertasAsync(Long idActivo, Long idOferta, String userName, String codigoEnvioCorreo) {
 		SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
 		this.userName = userName;
 		this.idActivo = idActivo;
 		this.idOferta = idOferta;
+		this.codigoEnvioCorreo = codigoEnvioCorreo;
 	}
 
 	@Override
@@ -40,7 +42,7 @@ public class CaducaOfertasAsync implements Runnable {
 		try {
 			restApi.doSessionConfig(this.userName);
 			
-			concurrenciaApi.caducaOfertasRelacionadasConcurrencia(idActivo, idOferta);
+			concurrenciaApi.caducaOfertasRelacionadasConcurrencia(idActivo, idOferta, codigoEnvioCorreo);
 			
 		} catch (Exception e) {
 			logger.error("error caducando ofertas en concurrencia", e);

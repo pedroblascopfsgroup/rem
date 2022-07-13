@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=Ivan Rubio
---## FECHA_CREACION=20220630
+--## AUTOR=Alejandra García
+--## FECHA_CREACION=20220711
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-18255
+--## INCIDENCIA_LINK=HREOS-18261
 --## PRODUCTO=NO
 --##
 --## Finalidad: Script que añade los datos del array en DD_ACO_ACCIONES_CONCURRENCIA
 --## INSTRUCCIONES:
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial - [HREOS-18255] - Ivan Rubio
+--##        0.2 Añadir valor columna CÓDIGO_URL - [HREOS-18261] - Alejandra García
 --##########################################
 --*/
 
@@ -31,14 +32,14 @@ DECLARE
     V_ID NUMBER(16);
     V_TABLA VARCHAR2(50 CHAR):= 'DD_ACO_ACCIONES_CONCURRENCIA';
     V_CHARS VARCHAR2(3 CHAR):= 'ACO';
-    V_USUARIO VARCHAR2(25 CHAR):= 'HREOS-18255';
+    V_USUARIO VARCHAR2(25 CHAR):= 'HREOS-18261';
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-            -- CODIGO  			DESCRIPCION     DESCRIPCION_LARGA
-      T_TIPO_DATA('01',			'Alta',			'Alta'),
-      T_TIPO_DATA('02',			'Ampliación',	'Ampliación'),
-      T_TIPO_DATA('03',			'Cancelación',	'Cancelación')
+            -- CODIGO  			DESCRIPCION     DESCRIPCION_LARGA     CÓDIGO_URL
+      T_TIPO_DATA('01',			'Alta',			    'Alta',               ''),
+      T_TIPO_DATA('02',			'Ampliación',	  'Ampliación',         'CAPC'),
+      T_TIPO_DATA('03',			'Cancelación',	'Cancelación',        'CANPC')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
    
@@ -66,6 +67,7 @@ BEGIN
           SET 
             DD_'||V_CHARS||'_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(2))||''',
             DD_'||V_CHARS||'_DESCRIPCION_LARGA = '''||TRIM(V_TMP_TIPO_DATA(3))||''',
+            CODIGO_URL  = '''||TRIM(V_TMP_TIPO_DATA(4))||''',
 	    USUARIOMODIFICAR = '''||V_USUARIO||''',
             FECHAMODIFICAR = SYSDATE
 			    WHERE DD_'||V_CHARS||'_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
@@ -80,13 +82,14 @@ BEGIN
         
         V_MSQL := '
           	INSERT INTO '|| V_ESQUEMA ||'.'||V_TABLA||' (
-				DD_'||V_CHARS||'_ID, DD_'||V_CHARS||'_CODIGO, DD_'||V_CHARS||'_DESCRIPCION, DD_'||V_CHARS||'_DESCRIPCION_LARGA, 
+				DD_'||V_CHARS||'_ID, DD_'||V_CHARS||'_CODIGO, DD_'||V_CHARS||'_DESCRIPCION, DD_'||V_CHARS||'_DESCRIPCION_LARGA, CODIGO_URL
 				VERSION, USUARIOCREAR, FECHACREAR)
           	SELECT 
 	            '|| V_ID || ',
 	            '''||V_TMP_TIPO_DATA(1)||''',
 	            '''||V_TMP_TIPO_DATA(2)||''',
 	            '''||TRIM(V_TMP_TIPO_DATA(3))||''',
+              '''||TRIM(V_TMP_TIPO_DATA(4))||''',
 	            0, '''||V_USUARIO||''', SYSDATE FROM DUAL';
         EXECUTE IMMEDIATE V_MSQL;
         DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE');

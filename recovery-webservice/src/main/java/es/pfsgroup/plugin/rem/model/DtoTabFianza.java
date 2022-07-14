@@ -11,12 +11,20 @@ public class DtoTabFianza extends WebDto {
 	 */
 	private static final long serialVersionUID = 1L;
 	
+	private Long id;
 	private Long idFianza;
 	private Date agendacionIngreso;
 	private Double importeFianza;
 	private Date fechaIngreso;
 	private String cuentaVirtual;
 	private String ibanDevolucion;
+	
+	public Long getId() {
+		return id;
+	}
+	public void setId(Long id) {
+		this.id = id;
+	}
 	
 	public Date getAgendacionIngreso() {
 		return agendacionIngreso;

@@ -63,6 +63,7 @@ import es.pfsgroup.plugin.rem.model.DtoScoringGarantias;
 import es.pfsgroup.plugin.rem.model.DtoScreening;
 import es.pfsgroup.plugin.rem.model.DtoSeguroRentas;
 import es.pfsgroup.plugin.rem.model.DtoSlideDatosCompradores;
+import es.pfsgroup.plugin.rem.model.DtoTabFianza;
 import es.pfsgroup.plugin.rem.model.DtoTanteoActivoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoTanteoYRetractoOferta;
 import es.pfsgroup.plugin.rem.model.DtoTestigos;
@@ -1522,5 +1523,6 @@ public interface ExpedienteComercialApi {
 
 	String devolverEstadoCancelacionBCEco(Oferta oferta, ExpedienteComercial eco);
 
+	Boolean saveTabFianza(DtoTabFianza dto, Long id);
 
 }

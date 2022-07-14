@@ -111,6 +111,7 @@ import es.pfsgroup.plugin.rem.model.DtoRespuestaBCGenerica;
 import es.pfsgroup.plugin.rem.model.DtoScreening;
 import es.pfsgroup.plugin.rem.model.DtoSeguroRentas;
 import es.pfsgroup.plugin.rem.model.DtoSlideDatosCompradores;
+import es.pfsgroup.plugin.rem.model.DtoTabFianza;
 import es.pfsgroup.plugin.rem.model.DtoTanteoActivoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoTanteoYRetractoOferta;
 import es.pfsgroup.plugin.rem.model.DtoTestigos;
@@ -3252,4 +3253,23 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		}
 		return createModelAndViewJson(model);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveTabFianza(DtoTabFianza dto, @RequestParam Long id, ModelMap model,
+			HttpServletRequest request) {
+		try {
+			model.put(RESPONSE_DATA_KEY, expedienteComercialApi.saveTabFianza(dto, id));
+			model.put(RESPONSE_SUCCESS_KEY, true);
+		} catch (Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put("error", false);
+			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController ", e);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
 }

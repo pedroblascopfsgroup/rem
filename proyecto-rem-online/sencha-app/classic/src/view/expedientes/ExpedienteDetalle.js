@@ -121,6 +121,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 	        var esBankia = me.lookupController().getViewModel().get('expediente').get('esBankia');
 	        var ofertaConDeposto = me.lookupController().getViewModel().get('expediente').get('ofertaConDeposito')
 	        var items = [];
+	        var tipoExpedienteCodigo = me.lookupController().getViewModel().get('expediente').get('tipoExpedienteCodigo');
+	        var ecoConFianza = me.lookupController().getViewModel().get('expediente').get('ecoConFianza');
 	    	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'datosbasicosexpediente', funPermEdition: ['EDITAR_TAB_DATOS_BASICOS_EXPEDIENTES']})}, ['TAB_DATOS_BASICOS_EXPEDIENTES']);
 	        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'ofertaexpediente', ocultarBotonesEdicion: true})}, ['TAB_OFERTA_EXPEDIENTES']);
 	        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'condicionesexpediente', funPermEdition: ['EDITAR_TAB_CONDICIONES_EXPEDIENTES']})}, ['TAB_CONDICIONES_EXPEDIENTES']);
@@ -176,6 +178,12 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 			
 			items.push({xtype: 'scoringexpediente'});
         	items.push({xtype: 'segurorentasexpediente'});
+        	
+        	if ((CONST.TIPOS_EXPEDIENTE_COMERCIAL['ALQUILER'] == tipoExpedienteCodigo 
+        		|| CONST.TIPOS_EXPEDIENTE_COMERCIAL['ALQUILER_NO_COMERCIAL'] == tipoExpedienteCodigo)
+        		&& ecoConFianza) {
+	        	items.push({xtype: 'fianzaexpediente', ocultarBotonesEdicion: false, funPermEdition: ['EDITAR_TAB_FORMALIZACION_EXPEDIENTES']});
+	        }
 
 	        me.addPlugin({ptype: 'lazyitems', items: items});
 	        me.callParent();

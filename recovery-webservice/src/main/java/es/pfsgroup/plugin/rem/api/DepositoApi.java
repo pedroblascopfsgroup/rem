@@ -52,4 +52,5 @@ public interface DepositoApi {
 	boolean isDepositoDecidido(Deposito deposito);
 
 	CuentasVirtualesAlquiler vincularCuentaVirtualAlquiler(String codigoSubTipoOferta);
+
 }

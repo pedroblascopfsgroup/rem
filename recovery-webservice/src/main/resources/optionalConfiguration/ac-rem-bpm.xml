@@ -43,7 +43,7 @@
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteAprobacionInformeComercial.xml" p:version="255"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteSancionOfertaAlquiler.xml" p:version="2042"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteSancionOferta.xml" p:version="200"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteComercialAlquiler.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteComercialAlquiler.xml" p:version="200"/>
     <bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteComunicacionGENCAT.xml" p:version="-1"/>
     <bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteSancionOfertaApple.xml" p:version="-1"/>
     <bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteAlquilerNoComercial.xml" p:version="-1"/>
@@ -840,21 +840,21 @@
             	def funcionesTramitesManager = ctx.getBean("funcionesTramitesManager");
             	return funcionesTramitesManager.tieneCampoClasificacionRelleno(tareaExterna);
             }
-            def getValorFianzaExonerada = {
+            def getRespuestaHistReagendacionMayor = {
             	def tramiteAlquilerManager = ctx.getBean("tramiteAlquilerManager");
-            	return tramiteAlquilerManager.getValorFianzaExonerada(tareaExterna);
+            	return tramiteAlquilerManager.getRespuestaHistReagendacionMayor(tareaExterna);
             }
-            def getValorFechaAgendacion = {
+            def getRespuestaHistReagendacionMenor = {
             	def tramiteAlquilerManager = ctx.getBean("tramiteAlquilerManager");
-            	return tramiteAlquilerManager.getValorFechaAgendacion(tareaExterna);
-            }
-            def getFianzaExoneradaAndHistReagendacion = {
-            	def tramiteAlquilerManager = ctx.getBean("tramiteAlquilerManager");
-            	return tramiteAlquilerManager.getFianzaExoneradaAndHistReagendacion(tareaExterna);
+            	return tramiteAlquilerManager.getRespuestaHistReagendacionMenor(tareaExterna);
             }
             def checkIBANValido (String numIban) {
             	def tramiteAlquilerManager = ctx.getBean("tramiteAlquilerManager");
 				return tramiteAlquilerManager.checkIBANValido(tareaExterna, numIban);
+			}
+			def checkCuentasVirtualesAlquilerLibres = {
+            	def tramiteAlquilerManager = ctx.getBean("tramiteAlquilerManager");
+				return tramiteAlquilerManager.checkCuentasVirtualesAlquilerLibres(tareaExterna);
 			}
             def esAlquilerSocial = {
             	def tramiteAlquilerNoComercialManager = ctx.getBean("tramiteAlquilerNoComercialManager");

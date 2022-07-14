@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20220620
+--## AUTOR=Vicente Martinez
+--## FECHA_CREACION=20220713
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=REMVIP-11188
+--## INCIDENCIA_LINK=HREOS-18353
 --## PRODUCTO=NO
 --## Finalidad: Tabla para almacentar el historico del stock de activos enviados a webcom.
 --##           
@@ -42,6 +42,7 @@
 --##		0.25 Versión Julián Dolz -> HREOS-16549 - Añadir campo CAT_CORRECTO
 --##		0.26 Versión IRC -> REMVIP-11188 - Añadimos gestor comercial de alquiler
 --##		0.26 Versión Jesus J -> REMVIP-11865 - Eliminar campos WS Activo
+--##        0.27 Añadir campos concurrencia - Vicente Martinez - [HREOS-18353]
 --##########################################
 --*/
 
@@ -428,7 +429,12 @@ BEGIN/*Versión 0.18*/
 		CAST(GALQ.USU_TELEFONO AS VARCHAR2(14 CHAR)) 												AS TELEFONO_GESTOR_COMERCIAL_ALQUILER,
 		CAST(GALQ.USU_MAIL AS VARCHAR2(60 CHAR)) 													AS EMAIL_GESTOR_COMERCIAL_ALQUILER,
         CAST(PRO.PRO_NOMBRE AS VARCHAR2(20 CHAR))                                                   AS PRO_NOMBRE,
-        CAT.CAT_CORRECTO
+        CAT.CAT_CORRECTO,
+        ACO.CON_FECHA_INI                                                                           AS DESDE_PERIODO_CONCURRENCIA,
+        ACO.CON_FECHA_FIN                                                                           AS HASTA_PERIODO_CONCURRENCIA,
+        ACO.CON_ID                                                                                  AS ID_PERIODO_CONCURRENCIA
+
+
     	FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
 		INNER JOIN '||V_ESQUEMA||'.ACT_LOC_LOCALIZACION LOC ON LOC.ACT_ID = ACT.ACT_ID
 		INNER JOIN '||V_ESQUEMA||'.BIE_LOCALIZACION BLOC ON BLOC.BIE_LOC_ID = LOC.BIE_LOC_ID
@@ -607,6 +613,7 @@ BEGIN/*Versión 0.18*/
 		LEFT JOIN '||V_ESQUEMA||'.ACT_PAC_PROPIETARIO_ACTIVO PAC on PAC.ACT_ID = act.ACT_ID 
 		LEFT JOIN '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO PRO on PAC.PRO_ID = PRO.PRO_ID 
 		LEFT JOIN GCALQ GALQ ON GALQ.ACT_ID = ACT.ACT_ID
+		LEFT JOIN '||V_ESQUEMA||'.ACTIVOS_CONCURRENCIA ACO ON ACT.ACT_ID = ACO.ACT_ID
 		where act.borrado = 0';
 
 

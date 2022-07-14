@@ -5917,6 +5917,22 @@ comprobarFormatoModificar: function() {
 				campo.setValue(null);
 	    	} 		     
 		});	 
+	},
+	
+	onClickDesbloqueoExpediente: function(btn) {
+		var me = this;
+		var idOferta = me.getView().getViewModel().getData().expediente.getData().idOferta;
+		Ext.Ajax.request({
+		     url: $AC.getRemoteUrl('expedientecomercial/desbloquearExpediente'),
+		     method: 'POST',
+			     params: {idOferta: idOferta},
+			     success: function(response, opts) {
+					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+			     },
+			    failure: function (a, operation) {
+			    	 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			 	}
+		});
 	}
 	
 });

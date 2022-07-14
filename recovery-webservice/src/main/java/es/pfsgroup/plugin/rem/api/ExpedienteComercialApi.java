@@ -1522,5 +1522,7 @@ public interface ExpedienteComercialApi {
 
 	String devolverEstadoCancelacionBCEco(Oferta oferta, ExpedienteComercial eco);
 
+	void desbloquearExpediente(Long idOferta) throws Exception;
+
 
 }

@@ -4774,6 +4774,9 @@ public class ActivoAdapter {
 			estadoOferta = (DDEstadoOferta) utilDiccionarioApi
 					.dameValorDiccionarioByCod(DDEstadoOferta.class, codigoEstado);
 			oferta.setEstadoOferta(estadoOferta);
+			if (DDEstadoOferta.CODIGO_PENDIENTE.equals(oferta.getEstadoOferta().getCodigo()) && oferta.getFechaOfertaPendiente() == null){
+				oferta.setFechaOfertaPendiente(new Date());
+			}
 			ofertaApi.setEstadoOfertaBC(oferta, null);
 		}
 		return codigoEstado;

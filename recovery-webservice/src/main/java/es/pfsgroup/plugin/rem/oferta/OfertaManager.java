@@ -2995,6 +2995,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 		ofertaDao.saveOrUpdate(oferta);
 
+		if (DDEstadoOferta.CODIGO_PENDIENTE.equals(oferta.getEstadoOferta().getCodigo()) && oferta.getFechaOfertaPendiente() == null){
+			oferta.setFechaOfertaPendiente(new Date());
+		}
+
+
 		return oferta;
 	}
 
@@ -8605,6 +8610,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				codigoEstado = DDEstadoOferta.CODIGO_CONGELADA;
 			}
 			oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoEstado)));
+			if (DDEstadoOferta.CODIGO_PENDIENTE.equals(oferta.getEstadoOferta().getCodigo()) && oferta.getFechaOfertaPendiente() == null){
+				oferta.setFechaOfertaPendiente(new Date());
+			}
 			ofertaDao.saveOrUpdate(oferta);
 			
 			setEstadoOfertaBC(oferta, null);
@@ -9386,9 +9394,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			return;
 
     	oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PENDIENTE)));
+		if (oferta.getFechaOfertaPendiente() == null){
+			oferta.setFechaOfertaPendiente(new Date());
+		}
 		genericDao.save(Oferta.class, oferta);
-		
 		setEstadoOfertaBC(oferta, oferta.getOfertaCaixa());
+
 	}
 	
 	@Override
@@ -9584,6 +9595,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				updateStateDispComercialActivosByOferta(oferta);
 				genericDao.save(Oferta.class, oferta);
 				ofertaEstadoHash.put(idOferta,oferta.getEstadoOferta().getCodigo());
+			}
+			if (DDEstadoOferta.CODIGO_PENDIENTE.equals(oferta.getEstadoOferta().getCodigo()) && oferta.getFechaOfertaPendiente() == null){
+				oferta.setFechaOfertaPendiente(new Date());
 			}
 		}
 		

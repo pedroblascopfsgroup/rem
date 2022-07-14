@@ -1,16 +1,17 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20220713
+--## FECHA_CREACION=20220714
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-18260
+--## INCIDENCIA_LINK=HREOS-18366
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial - [HREOS-18260] - Alejandra García
+--##        0.2 Quitar céntimos del campo IMP_PRECIO_VENTA dividiendo entre 100 - [HREOS-18366] - Alejandra García
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -74,7 +75,7 @@ SALIDA := SALIDA || '[INFO] PARA LOS ACTIVOS QUE NO TENGAN REGISTROS EN LA TABLA
                               WHEN AGA.ACT_ID IS NOT NULL THEN AGA.AGR_ID
                               ELSE NULL
                            END AGR_ID
-                           ,AUX.IMP_PRECIO_VENTA
+                           ,TO_NUMBER(AUX.IMP_PRECIO_VENTA)/100 IMP_PRECIO_VENTA
                            ,TO_DATE(AUX.FEC_INICIO_CONCURENCIA, ''yyyymmdd'') FEC_INICIO_CONCURENCIA
                            ,TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''yyyymmdd'') FEC_FIN_CONCURENCIA
                      FROM '||V_ESQUEMA||'.AUX_APR_BCR_STOCK AUX
@@ -95,7 +96,7 @@ SALIDA := SALIDA || '[INFO] PARA LOS ACTIVOS QUE NO TENGAN REGISTROS EN LA TABLA
                               WHEN AGA.ACT_ID IS NOT NULL THEN AGA.AGR_ID
                               ELSE NULL
                            END AGR_ID
-                           ,AUX.IMP_PRECIO_VENTA
+                           ,TO_NUMBER(AUX.IMP_PRECIO_VENTA)/100 IMP_PRECIO_VENTA
                            ,TO_DATE(AUX.FEC_INICIO_CONCURENCIA, ''yyyymmdd'') FEC_INICIO_CONCURENCIA
                            ,TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''yyyymmdd'') FEC_FIN_CONCURENCIA
                      FROM '||V_ESQUEMA||'.AUX_APR_BCR_STOCK AUX
@@ -208,7 +209,7 @@ SALIDA := SALIDA ||'[INFO] PARA LOS ACTIVOS QUE TENGAN REGISTROS EN LA TABLA CON
                               WHEN AGA.ACT_ID IS NOT NULL THEN AGA.AGR_ID
                               ELSE NULL
                            END AGR_ID
-                           ,AUX.IMP_PRECIO_VENTA
+                           ,TO_NUMBER(AUX.IMP_PRECIO_VENTA)/100 IMP_PRECIO_VENTA
                            ,TO_DATE(AUX.FEC_INICIO_CONCURENCIA, ''yyyymmdd'') FEC_INICIO_CONCURENCIA
                            ,TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''yyyymmdd'') FEC_FIN_CONCURENCIA
                      FROM '||V_ESQUEMA||'.AUX_APR_BCR_STOCK AUX
@@ -275,7 +276,7 @@ SALIDA := SALIDA ||'[INFO] 1.4 SE CREA MODIFICA LA FECHA FIN EN LA TABLA CPC_CMB
                               WHEN AGA.ACT_ID IS NOT NULL THEN AGA.AGR_ID
                               ELSE NULL
                            END AGR_ID
-                           ,AUX.IMP_PRECIO_VENTA
+                           ,TO_NUMBER(AUX.IMP_PRECIO_VENTA)/100 IMP_PRECIO_VENTA
                            ,TO_DATE(AUX.FEC_INICIO_CONCURENCIA, ''yyyymmdd'') FEC_INICIO_CONCURENCIA
                            ,TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''yyyymmdd'') FEC_FIN_CONCURENCIA
                      FROM '||V_ESQUEMA||'.AUX_APR_BCR_STOCK AUX
@@ -387,7 +388,6 @@ SALIDA := SALIDA ||'[INFO] 2.2 SE CREA UN NUEVO REGISTRO EN LA TABLA AUX_CORREOS
                   SELECT
                       CON.CON_ID
                      ,ACO.DD_ACO_ID
-                     ,TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''yyyymmdd'') CPC_FECHA_FIN
                   FROM '||V_ESQUEMA||'.AUX_APR_BCR_STOCK AUX
                   JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = AUX.NUM_IDENTIFICATIVO
                      AND ACT.BORRADO = 0
@@ -399,9 +399,7 @@ SALIDA := SALIDA ||'[INFO] 2.2 SE CREA UN NUEVO REGISTRO EN LA TABLA AUX_CORREOS
                   AND TRUNC(TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''yyyymmdd'')) > TRUNC(CON.CON_FECHA_FIN) 
                   AND TRUNC(TO_DATE(AUX.FEC_INICIO_CONCURENCIA, ''yyyymmdd'')) = TRUNC(CON.CON_FECHA_INI)
                   AND AUX.FLAG_EN_REM = '|| FLAG_EN_REM ||'
-               ) T2 ON ((T1.CON_ID = T2.CON_ID AND T1.DD_ACO_ID = T2.DD_ACO_ID AND TRUNC(T1.FECHACREAR) = TRUNC(SYSDATE))
-                           OR
-                        (T1.CON_ID = T2.CON_ID AND T1.DD_ACO_ID = T2.DD_ACO_ID AND TRUNC(T1.FECHACREAR) <> TRUNC(SYSDATE)))
+               ) T2 ON (T1.CON_ID = T2.CON_ID)
                WHEN NOT MATCHED THEN 
                INSERT(
                    CCS_ID
@@ -511,7 +509,6 @@ SALIDA := SALIDA ||'[INFO] 3.2 SE CREA UN NUEVO REGISTRO EN LA TABLA AUX_CORREOS
                   SELECT
                       CON.CON_ID
                      ,ACO.DD_ACO_ID
-                     ,TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''yyyymmdd'') CPC_FECHA_FIN
                   FROM '||V_ESQUEMA||'.AUX_APR_BCR_STOCK AUX
                   JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = AUX.NUM_IDENTIFICATIVO
                      AND ACT.BORRADO = 0
@@ -524,9 +521,7 @@ SALIDA := SALIDA ||'[INFO] 3.2 SE CREA UN NUEVO REGISTRO EN LA TABLA AUX_CORREOS
                   AND TRUNC(TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''yyyymmdd'')) = TRUNC(SYSDATE) 
                   AND TRUNC(TO_DATE(AUX.FEC_INICIO_CONCURENCIA, ''yyyymmdd'')) = TRUNC(CON.CON_FECHA_INI)
                   AND AUX.FLAG_EN_REM = '|| FLAG_EN_REM ||'
-               ) T2 ON ((T1.CON_ID = T2.CON_ID AND T1.DD_ACO_ID = T2.DD_ACO_ID AND TRUNC(T1.FECHACREAR) = TRUNC(SYSDATE))
-                           OR
-                     (T1.CON_ID = T2.CON_ID AND T1.DD_ACO_ID = T2.DD_ACO_ID AND TRUNC(T1.FECHACREAR) <> TRUNC(SYSDATE)))
+               ) T2 ON (T1.CON_ID = T2.CON_ID)
                WHEN NOT MATCHED THEN 
                INSERT(
                   CCS_ID

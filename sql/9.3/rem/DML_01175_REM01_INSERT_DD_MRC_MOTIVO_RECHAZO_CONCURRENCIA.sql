@@ -1,16 +1,17 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20220713
+--## FECHA_CREACION=20220714
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-18259
+--## INCIDENCIA_LINK=HREOS-18366
 --## PRODUCTO=NO
 --##
 --## Finalidad: Script que modifica en DD_MRC_MOTIVO_RECHAZO_CONCURRENCIA los datos añadidos de T_ARRAY_DATA
 --## INSTRUCCIONES:
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial - [HREOS-18259] - Alejandra García
+--##        0.2 Resolución incidencia, nueva validación para que no puedan entrar en concurrencia activos sin precio venta web - [HREOS-18366] - Alejandra García
 --##########################################
 --*/
 
@@ -41,6 +42,7 @@ DECLARE
 		    , T_TIPO_DATA('F05' ,'El activo es no comercializable o está fuera de perímetro haya' , '1', 'JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = AUX.NUM_IDENTIFICATIVO AND ACT.BORRADO = 0 JOIN '||V_ESQUEMA||'.ACT_PAC_PERIMETRO_ACTIVO PAC ON PAC.ACT_ID = ACT.ACT_ID AND PAC.BORRADO = 0 WHERE PAC.PAC_INCLUIDO = 0 OR PAC.PAC_CHECK_COMERCIALIZAR = 0 ' )
 		    , T_TIPO_DATA('F06' ,'El activo no tiene un periodo vivo y recibe una fecha de inicio concurrencia anterior a hoy' , '1', 'JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = AUX.NUM_IDENTIFICATIVO AND ACT.BORRADO = 0 LEFT JOIN '||V_ESQUEMA||'.CON_CONCURRENCIA CON ON CON.ACT_ID = ACT.ACT_ID AND CON.BORRADO = 0 WHERE (( TRUNC(SYSDATE) < TRUNC(TO_DATE(AUX.FEC_INICIO_CONCURENCIA,''''yyyymmdd'''')) OR TRUNC(SYSDATE) > TRUNC(TO_DATE(AUX.FEC_FIN_CONCURENCIA,''''yyyymmdd''''))) OR CON.CON_ID IS NULL) AND TRUNC(TO_DATE(AUX.FEC_INICIO_CONCURENCIA, ''''yyyymmdd'''')) < TRUNC(SYSDATE)' )
         , T_TIPO_DATA('F07' ,'El activo recibe una fecha fin menor a la de inicio' , '1', 'WHERE TO_DATE(AUX.FEC_INICIO_CONCURENCIA, ''''yyyymmdd'''') > TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''''yyyymmdd'''')' )
+        , T_TIPO_DATA('F08' ,'El activo no está recibiendo un precio venta web' , '1', 'WHERE AUX.IMP_PRECIO_VENTA IS NULL' )
 		); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

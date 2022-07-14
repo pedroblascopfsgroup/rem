@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.security.Key;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -2189,5 +2190,32 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 		return listaDDEstadoOferta;
 	}
-
+	
+	@Override
+	public Date changeTipoDatoADate(String valor) {
+		Date fecha = null;
+		if (valor != null) {
+			try {
+				fecha= new SimpleDateFormat("dd/MM/yy").parse(valor);
+			} catch (ParseException e) {
+				logger.error("error en ExpedienteComercialManager", e);
+			}
+		}
+		return fecha;
+	}
+	
+	@Override
+	public void saveCuentaVirtualAlquiler(Activo activo, Fianzas fiaN) {
+		Filter filterCva =  genericDao.createFilter(FilterType.EQUALS, "subcartera", activo.getSubcartera());
+		List <CuentasVirtualesAlquiler> cva = genericDao.getList(CuentasVirtualesAlquiler.class, filterCva);
+		if (cva != null) {
+			for (CuentasVirtualesAlquiler cuentasVirtualesAlquiler : cva) {
+				if (Checks.isFechaNula(cuentasVirtualesAlquiler.getFechaInicio())) {
+					fiaN.setCuentaVirtualAlquiler(cuentasVirtualesAlquiler);
+					break;
+				}
+				genericDao.save(CuentasVirtualesAlquiler.class, cuentasVirtualesAlquiler);
+			}
+		}
+	}
 }

@@ -37,6 +37,8 @@ public class UpdaterServiceSancionOfertaAlquilerNegociacionClausulasAlquiler imp
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaAlquilerNegociacionClausulasAlquiler.class);
     	
 	private static final String COMBO_RESULTADO = "comboResultado";
+	private static final String FECHA = "fecha";
+	private static final String CAMPO_JUSTIFICACION = "justificacion";
 	private static final String CAMPO_OBSERVACIONES = "observaciones";
 
 	private static final String CODIGO_T015_NEGOCIACION_CLAUSULAS_ALQUILER = "T015_NegociacionClausulasAlquiler";
@@ -51,6 +53,9 @@ public class UpdaterServiceSancionOfertaAlquilerNegociacionClausulasAlquiler imp
 		boolean aprueba = false;
 		String estadoExp = null;
 		String estadoBc = null;
+		String comboResultado = null;
+		String fecha = null;
+		String justificacion = null;
 		String observaciones = null;
 		
 		for(TareaExternaValor valor :  valores){
@@ -58,6 +63,7 @@ public class UpdaterServiceSancionOfertaAlquilerNegociacionClausulasAlquiler imp
 			if(COMBO_RESULTADO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 				if (DDSiNo.SI.equals(valor.getValor())) {					
 					aprueba = true;
+					comboResultado = valor.getValor();
 				}
 			}
 			if(CAMPO_OBSERVACIONES.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
@@ -71,7 +77,7 @@ public class UpdaterServiceSancionOfertaAlquilerNegociacionClausulasAlquiler imp
 			estadoBc =  DDEstadoExpedienteBc.CODIGO_IMPORTE_FINAL_APROBADO;*/
 		} else{
 			//estadoExp =  DDEstadosExpedienteComercial.DENEGADO;
-			estadoBc =  DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO;
+			//estadoBc =  DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO;
 			/*Oferta oferta = expedienteComercial.getOferta();
 			expedienteComercial.setFechaAnulacion(new Date());
 			expedienteComercial.setMotivoAnulacion(genericDao.get(DDMotivoAnulacionExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoAnulacionExpediente.COD_CAIXA_RECHAZADO_PBC)));
@@ -82,10 +88,10 @@ public class UpdaterServiceSancionOfertaAlquilerNegociacionClausulasAlquiler imp
 			}*/
 		}
 		
-		expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoExp)));
+		/*expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoExp)));
 		expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoBc)));
 		estadoBcModificado = true;
-		genericDao.save(ExpedienteComercial.class, expedienteComercial);	
+		genericDao.save(ExpedienteComercial.class, expedienteComercial);	*/
 	}
 
 	public String[] getCodigoTarea() {

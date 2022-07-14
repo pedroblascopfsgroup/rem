@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.List;
 
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.pfsgroup.plugin.rem.model.DtoCondicionantesExpediente;
+import es.pfsgroup.plugin.rem.model.DtoTabFianza;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 
 public interface TramiteAlquilerApi {
@@ -42,13 +44,19 @@ public interface TramiteAlquilerApi {
 
 	boolean siUsuarioTieneFuncionAvanzarPBC();
 
-	boolean getValorFianzaExonerada(TareaExterna tareaExterna);
-
-	Date getValorFechaAgendacion(TareaExterna tareaExterna);
-
-	String getFianzaExoneradaAndHistReagendacion(TareaExterna tareaExterna);
-
 	boolean checkIBANValido(TareaExterna tareaExterna, String numIban);
+
+	boolean checkFechaAgendacionRelleno(Long idExpediente);
+
+	DtoCondicionantesExpediente getFianzaExonerada(Long idExpediente);
+
+	DtoTabFianza getFechaAgendacionIngreso(Long idExpediente);
+
+	boolean getRespuestaHistReagendacionMayor(TareaExterna tareaExterna);
+	
+	boolean getRespuestaHistReagendacionMenor(TareaExterna tareaExterna);
+
+	boolean checkCuentasVirtualesAlquilerLibres(TareaExterna tareaExterna);
 	
 }
 

@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.api;
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import es.capgemini.devon.dto.WebDto;
@@ -1524,5 +1525,4 @@ public interface ExpedienteComercialApi {
 	String devolverEstadoCancelacionBCEco(Oferta oferta, ExpedienteComercial eco);
 
 	Boolean saveTabFianza(DtoTabFianza dto, Long id);
-
 }

@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.api;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +16,7 @@ import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorReducido;
 import es.pfsgroup.plugin.rem.model.AuthenticationData;
 import es.pfsgroup.plugin.rem.model.AvanzarDatosPBCDto;
@@ -26,6 +28,7 @@ import es.pfsgroup.plugin.rem.model.DtoMenuItem;
 import es.pfsgroup.plugin.rem.model.DtoPropietario;
 import es.pfsgroup.plugin.rem.model.DtoUsuarios;
 import es.pfsgroup.plugin.rem.model.Ejercicio;
+import es.pfsgroup.plugin.rem.model.Fianzas;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDCondicionIndicadorPrecio;
@@ -407,4 +410,8 @@ public interface GenericApi {
 	Boolean avanzaDatosPbc(AvanzarDatosPBCDto dto) throws Exception;
 
 	public List<DDEstadoOferta> getDiccionarioEstadosOfertasAgrupacion(Long idAgrupacion);
+
+	Date changeTipoDatoADate(String valor);
+
+	void saveCuentaVirtualAlquiler(Activo activo, Fianzas fiaN);
 }

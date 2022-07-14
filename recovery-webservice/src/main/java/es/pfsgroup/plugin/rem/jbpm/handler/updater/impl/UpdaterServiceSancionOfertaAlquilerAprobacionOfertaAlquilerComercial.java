@@ -36,7 +36,10 @@ public class UpdaterServiceSancionOfertaAlquilerAprobacionOfertaAlquilerComercia
 	
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaAlquilerAprobacionOfertaAlquilerComercial.class);
     	
-	private static final String COMBO_RESULTADO = "comboResultado";
+	private static final String COMBO_CONDICIONES = "comboCodiciones";
+	private static final String COMBO_APROBADO_API = "comboAprobApi";
+	private static final String COMBO_BORRADO_CONTRATO_API = "comboBorradorContratoApi";
+	private static final String COMBO_MODELO_CONTRATO = "comboModeloContrato";
 	private static final String CAMPO_OBSERVACIONES = "observaciones";
 
 	private static final String CODIGO_T015_APROBACION_OFERTA_ALQUILER_COMERCIAL = "T015_AprobacionOfertaAlquilerComercial";
@@ -51,13 +54,30 @@ public class UpdaterServiceSancionOfertaAlquilerAprobacionOfertaAlquilerComercia
 		boolean aprueba = false;
 		String estadoExp = null;
 		String estadoBc = null;
+		String comboCodiciones = null;
+		String comboAprobApi = null;
+		String comboBorradorContratoApi = null;
+		String comboModeloContrato = null;
 		String observaciones = null;
 		
 		for(TareaExternaValor valor :  valores){
 			
-			if(COMBO_RESULTADO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+			if(COMBO_CONDICIONES.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 				if (DDSiNo.SI.equals(valor.getValor())) {					
 					aprueba = true;
+					comboCodiciones = valor.getValor();
+				}
+			}
+			if(COMBO_APROBADO_API.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+				if (DDSiNo.SI.equals(valor.getValor())) {					
+					aprueba = true;
+					comboAprobApi = valor.getValor();
+				}
+			}
+			if(COMBO_BORRADO_CONTRATO_API.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+				if (DDSiNo.SI.equals(valor.getValor())) {					
+					aprueba = true;
+					comboBorradorContratoApi = valor.getValor();
 				}
 			}
 			if(CAMPO_OBSERVACIONES.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
@@ -71,7 +91,7 @@ public class UpdaterServiceSancionOfertaAlquilerAprobacionOfertaAlquilerComercia
 			estadoBc =  DDEstadoExpedienteBc.CODIGO_IMPORTE_FINAL_APROBADO;*/
 		} else{
 			//estadoExp =  DDEstadosExpedienteComercial.DENEGADO;
-			estadoBc =  DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO;
+			//estadoBc =  DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO;
 			/*Oferta oferta = expedienteComercial.getOferta();
 			expedienteComercial.setFechaAnulacion(new Date());
 			expedienteComercial.setMotivoAnulacion(genericDao.get(DDMotivoAnulacionExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoAnulacionExpediente.COD_CAIXA_RECHAZADO_PBC)));
@@ -82,10 +102,10 @@ public class UpdaterServiceSancionOfertaAlquilerAprobacionOfertaAlquilerComercia
 			}*/
 		}
 		
-		expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoExp)));
+		/*expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoExp)));
 		expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoBc)));
 		estadoBcModificado = true;
-		genericDao.save(ExpedienteComercial.class, expedienteComercial);	
+		genericDao.save(ExpedienteComercial.class, expedienteComercial);	*/
 	}
 
 	public String[] getCodigoTarea() {

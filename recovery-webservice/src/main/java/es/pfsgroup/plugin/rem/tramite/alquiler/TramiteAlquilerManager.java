@@ -32,6 +32,10 @@ import es.pfsgroup.plugin.rem.api.TramiteAlquilerApi;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
+import es.pfsgroup.plugin.rem.model.CuentasVirtualesAlquiler;
+import es.pfsgroup.plugin.rem.model.DtoCondicionantesExpediente;
+import es.pfsgroup.plugin.rem.model.DtoDocPostVenta;
+import es.pfsgroup.plugin.rem.model.DtoTabFianza;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Fianzas;
 import es.pfsgroup.plugin.rem.model.HistoricoReagendacion;
@@ -333,41 +337,9 @@ public class TramiteAlquilerManager implements TramiteAlquilerApi {
 		return resultado;
 	}
 	
-	
 	@Override
-	public boolean getValorFianzaExonerada(TareaExterna tareaExterna){
-		boolean campo = false;
-		ExpedienteComercial eco = expedienteComercialApi.tareaExternaToExpedienteComercial(tareaExterna);
-		if (eco != null) {
-			Filter filterEco =  genericDao.createFilter(FilterType.EQUALS, "expediente.id", eco.getId());
-			CondicionanteExpediente coe = genericDao.get(CondicionanteExpediente.class, filterEco);
-			if(coe != null && coe.getFianzaExonerada() != null) {
-				campo = coe.getFianzaExonerada();
-			}
-		}
-		
-		return campo;
-	}
-	
-	@Override
-	public Date getValorFechaAgendacion(TareaExterna tareaExterna){
-		Date fechaAgendacion = null;
-		ExpedienteComercial eco = expedienteComercialApi.tareaExternaToExpedienteComercial(tareaExterna);
-		if (eco != null && eco.getOferta() != null) {
-			Filter filterEco =  genericDao.createFilter(FilterType.EQUALS, "oferta.id", eco.getOferta().getId());
-			Fianzas fia = genericDao.get(Fianzas.class, filterEco);
-			if(fia != null && !Checks.isFechaNula(fia.getFechaAgendacionIngreso())) {
-				fechaAgendacion = fia.getFechaAgendacionIngreso();
-			}
-		}
-		
-		return fechaAgendacion;
-	}
-	
-	@Override
-	public String getFianzaExoneradaAndHistReagendacion(TareaExterna tareaExterna){
-		String resultado = "";
-		//IBANValidator.DEFAULT_IBAN_VALIDATOR.equals(obj);
+	public boolean getRespuestaHistReagendacionMayor(TareaExterna tareaExterna){
+		boolean resultado = false;
 		ExpedienteComercial eco = expedienteComercialApi.tareaExternaToExpedienteComercial(tareaExterna);
 		if (eco != null && eco.getOferta() != null) {
 			Filter filterEco =  genericDao.createFilter(FilterType.EQUALS, "oferta.id", eco.getOferta().getId());
@@ -377,9 +349,28 @@ public class TramiteAlquilerManager implements TramiteAlquilerApi {
 				List <HistoricoReagendacion> histReag = genericDao.getList(HistoricoReagendacion.class, filterFia);
 				if (histReag != null && !histReag.isEmpty()) {
 					if (histReag.size() >= 3) {
-						resultado = "EsMayorA3";
-					} else if (histReag.size() < 3) {
-						resultado = "EsMenorA3";
+						resultado = true;
+					}
+				}
+			}
+		}
+		
+		return resultado;
+	}
+	
+	@Override
+	public boolean getRespuestaHistReagendacionMenor(TareaExterna tareaExterna){
+		boolean resultado = false;
+		ExpedienteComercial eco = expedienteComercialApi.tareaExternaToExpedienteComercial(tareaExterna);
+		if (eco != null && eco.getOferta() != null) {
+			Filter filterEco =  genericDao.createFilter(FilterType.EQUALS, "oferta.id", eco.getOferta().getId());
+			Fianzas fia = genericDao.get(Fianzas.class, filterEco);
+			if(fia != null) {
+				Filter filterFia =  genericDao.createFilter(FilterType.EQUALS, "fianza.id", fia.getId());
+				List <HistoricoReagendacion> histReag = genericDao.getList(HistoricoReagendacion.class, filterFia);
+				if (histReag != null && !histReag.isEmpty()) {
+					if (histReag.size() < 3) {
+						resultado = true;
 					}
 				}
 			}
@@ -402,4 +393,71 @@ public class TramiteAlquilerManager implements TramiteAlquilerApi {
 		return resultado;
 	}
 	
+	@Override
+	public boolean checkCuentasVirtualesAlquilerLibres(TareaExterna tareaExterna) {
+		boolean resultado = false;
+		ExpedienteComercial eco = expedienteComercialApi.tareaExternaToExpedienteComercial(tareaExterna);
+		if (eco != null && eco.getOferta() != null) {
+			Oferta ofr = eco.getOferta();
+			if (ofr != null) {
+				Filter filterCva =  genericDao.createFilter(FilterType.EQUALS, "subcartera", ofr.getActivoPrincipal().getSubcartera());
+				List <CuentasVirtualesAlquiler> cva = genericDao.getList(CuentasVirtualesAlquiler.class, filterCva);
+				if (cva != null && cva.size() >= 1 && !cva.isEmpty()) {
+					for (CuentasVirtualesAlquiler cuentasVirtualesAlquiler : cva) {
+						if (Checks.isFechaNula(cuentasVirtualesAlquiler.getFechaInicio())) {
+							resultado = true;
+							break;
+						}
+					}
+				}
+			}
+		}
+			
+		return resultado;
+	}
+	
+	@Override
+	public boolean checkFechaAgendacionRelleno(Long idExpediente){
+		boolean resultado = false;
+		ExpedienteComercial eco = expedienteComercialDao.get(idExpediente);
+		if (eco != null && eco.getOferta() != null) {
+			Filter filterEco =  genericDao.createFilter(FilterType.EQUALS, "oferta.id", eco.getOferta().getId());
+			Fianzas fia = genericDao.get(Fianzas.class, filterEco);
+			if(fia != null && !Checks.isFechaNula(fia.getFechaAgendacionIngreso())) {
+				resultado = true;
+			}
+		}
+		
+		return resultado;
+	}
+	
+	@Override
+	public DtoCondicionantesExpediente getFianzaExonerada(Long idExpediente) {
+		DtoCondicionantesExpediente dto = new DtoCondicionantesExpediente();
+		ExpedienteComercial eco = expedienteComercialApi.findOne(idExpediente);
+		CondicionanteExpediente coe = eco.getCondicionante();
+		if (coe != null) {
+			dto.setFianzaExonerada(coe.getFianzaExonerada());
+		}		
+		
+		return dto;
+	}
+	
+	@Override
+	public DtoTabFianza getFechaAgendacionIngreso(Long idExpediente) {
+		DtoTabFianza dto = new DtoTabFianza();
+		ExpedienteComercial eco = expedienteComercialApi.findOne(idExpediente);
+		Oferta ofr = eco.getOferta();
+		if (ofr != null) {
+			Filter filterEco =  genericDao.createFilter(FilterType.EQUALS, "oferta.id", ofr.getId());
+			Fianzas fia = genericDao.get(Fianzas.class, filterEco);
+			if (fia != null) {
+				dto.setAgendacionIngreso(fia.getFechaAgendacionIngreso());
+				dto.setImporteFianza(fia.getImporte());
+				dto.setIbanDevolucion(fia.getIbanDevolucion());
+			}	
+		}
+		
+		return dto;
+	}
 }

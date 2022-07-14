@@ -47,7 +47,7 @@ DECLARE
         T_TIPO_DATA('T015_AprobacionOfertaAlquilerComercial'	,'combobox', 	'1'		,'comboCodiciones'	        ,'Debe indicar si se Aprueba o No'                  ,'false'   ,'DDSiNo'	    ,'Condiciones pactadas aprobadas'),
         T_TIPO_DATA('T015_AprobacionOfertaAlquilerComercial'	,'combobox', 	'2'		,'comboAprobApi'	          ,'Debe indicar si se Aprueba o No'                  ,'false'   ,'DDSiNo'	    ,'Aprobación comunicada a API'),
         T_TIPO_DATA('T015_AprobacionOfertaAlquilerComercial'	,'combobox', 	'3'		,'comboBorradorContratoApi'	,'Debe indicar si se Aprueba o No'                  ,'false'   ,'DDSiNo'	    ,'Borrador de contrato enviado a API'),
-        T_TIPO_DATA('T015_AprobacionOfertaAlquilerComercial'	,'combobox', 	'4'		,'comboModeloContrato'	    ,''                                                 ,null      ,'DDSiNo'	    ,'Modelo contrato'),
+        T_TIPO_DATA('T015_AprobacionOfertaAlquilerComercial'	,'combobox', 	'4'		,'comboModeloContrato'	    ,''                                                 ,null      ,null	        ,'Modelo contrato'),
     	  T_TIPO_DATA('T015_AprobacionOfertaAlquilerComercial'	,'textarea', 	'5'		,'observaciones'	          ,''                                                 ,null      ,null		      ,'Observaciones')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;

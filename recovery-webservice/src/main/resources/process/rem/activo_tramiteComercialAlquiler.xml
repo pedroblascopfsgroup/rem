@@ -266,7 +266,7 @@
 	
 	<decision name ="T015_FirmaDecision" expression="#{T015_FirmaDecision}">
 		<transition to="Fin" name="Anulada"></transition>
-		<transition to="Fin" name="Firmado"></transition>
+		<transition to="T015_CierreContrato" name="Firmado"></transition>
 		<transition to="Fin" name="Fin"></transition>
     </decision>
 
@@ -600,8 +600,8 @@
 		</event>
 		<transition to="Fin" name="avanzaBPM"></transition>
 	</state>
-	
-	<state name="T015_AprobacionOfertaAlquilerComercial">
+    
+    <state name="T015_AprobacionOfertaAlquilerComercial">
 		<event type="node-enter">
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
@@ -620,12 +620,8 @@
 				</targetBean>
 			</action>
 		</event>
-		<transition to="T015_AprobacionOfertaAlquilerComercialDecision" name="avanzaBPM"></transition>
+		<transition to="T015_AprobacionClienteClausulas" name="avanzaBPM"></transition>
     </state>
-    
-    <decision name ="T015_AprobacionOfertaAlquilerComercialDecision" expression="#{T015_AprobacionOfertaAlquilerComercialDecision}">
-        <transition to="T015_AprobacionClienteClausulas" name="OK"></transition>
-    </decision>
     
    	<state name="T015_AprobacionClienteClausulas">
 		<event type="node-enter">

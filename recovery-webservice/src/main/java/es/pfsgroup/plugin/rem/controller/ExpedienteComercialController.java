@@ -3272,4 +3272,54 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView tieneFechaAgendacionRelleno(Long idExpediente, ModelMap model) {
+		try{
+			model.put(RESPONSE_DATA_KEY, tramiteAlquilerApi.checkFechaAgendacionRelleno(idExpediente));
+		} catch (JsonViewerException e) {
+			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.warn("Error controlado en ExpedienteComercialController", e);
+		} catch (Exception e) {
+			logger.error("error en ExpedienteComercialController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getFianzaExonerada(ModelMap model, Long idExpediente) {
+		try {
+			model.put(RESPONSE_DATA_KEY, tramiteAlquilerApi.getFianzaExonerada(idExpediente));
+			model.put(RESPONSE_SUCCESS_KEY, true);
+
+		} catch (Exception e) {
+			model.put("error", false);
+			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController", e);
+		}
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getFechaAgendacionIngreso(ModelMap model, Long idExpediente) {
+		try {
+			model.put(RESPONSE_DATA_KEY, tramiteAlquilerApi.getFechaAgendacionIngreso(idExpediente));
+			model.put(RESPONSE_SUCCESS_KEY, true);
+
+		} catch (Exception e) {
+			model.put("error", false);
+			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController", e);
+		}
+
+		return createModelAndViewJson(model);
+	}
 }

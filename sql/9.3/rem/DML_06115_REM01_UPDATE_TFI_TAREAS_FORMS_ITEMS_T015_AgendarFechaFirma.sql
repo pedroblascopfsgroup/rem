@@ -44,12 +44,12 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(800);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        T_TIPO_DATA('T015_AgendarFechaFirma'	,'combobox'     ,'6'		,'comboFianza'	          ,'Debe indicar si se Acepta o No'                   ,'false'   ,'getValorFianzaExonerada()' ,'DDSiNo'	    ,'Fianza exonerada'),
-        T_TIPO_DATA('T015_AgendarFechaFirma'	,'datefield'    ,'7'		,'fechaAgendacionIngreso' ,''                                                 ,'false'   ,'getValorFechaAgendacion()' ,null         ,'Agendación de ingreso'),
-        T_TIPO_DATA('T015_AgendarFechaFirma'	,'combobox'     ,'8'		,'comboReagendarIngreso'  ,''                                                 ,null      ,null                        ,'DDSiNo'     ,'Reagendación de ingreso'),
-        T_TIPO_DATA('T015_AgendarFechaFirma'	,'numberfield'  ,'8'		,'importe'      	        ,''                                                 ,'false'   ,null                        ,null         ,'Importe'),
-        T_TIPO_DATA('T015_AgendarFechaFirma'	,'textfield'    ,'9'		,'ibanDev'      	        ,''                                                 ,'false'   ,null                        ,null         ,'IBAN de devolución'),
-        T_TIPO_DATA('T015_AgendarFechaFirma'	,'textarea'     ,'10'	  ,'justificacion'	        ,''                                                 ,null      ,null                        ,null         ,'Justificación'),
+        T_TIPO_DATA('T015_AgendarFechaFirma'	,'combobox'     ,'6'		,'comboFianza'	          ,'Debe indicar si se Acepta o No'                   ,'false'   ,null                        ,'DDSiNo'	    ,'Fianza exonerada'),
+        T_TIPO_DATA('T015_AgendarFechaFirma'	,'datefield'    ,'7'		,'fechaAgendacionIngreso' ,''                                                 ,null      ,null                        ,null         ,'Agendación de ingreso'),
+        T_TIPO_DATA('T015_AgendarFechaFirma'	,'datefield'    ,'8'		,'fechaReagendarIngreso'  ,''                                                 ,null      ,null                        ,null         ,'Reagendación de ingreso'),
+        T_TIPO_DATA('T015_AgendarFechaFirma'	,'numberfield'  ,'9'		,'importe'      	        ,''                                                 ,null      ,null                        ,null         ,'Importe'),
+        T_TIPO_DATA('T015_AgendarFechaFirma'	,'textfield'    ,'10'		,'ibanDev'      	        ,''                                                 ,null      ,null                        ,null         ,'IBAN de devolución'),
+        T_TIPO_DATA('T015_AgendarFechaFirma'	,'textarea'     ,'11'	  ,'justificacion'	        ,''                                                 ,null      ,null                        ,null         ,'Justificación'),
     	  T_TIPO_DATA('T015_AgendarFechaFirma'	,'textarea'     ,'12'	  ,'observaciones'	        ,''                                                 ,null      ,null                        ,null		      ,'Observaciones')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;

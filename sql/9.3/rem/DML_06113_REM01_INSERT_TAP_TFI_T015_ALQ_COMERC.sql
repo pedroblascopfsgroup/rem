@@ -36,7 +36,7 @@ DECLARE
 		T_TIPO_DATA('T015_AprobacionOfertaAlquilerComercial', 'Aprobación oferta alquiler comercial', '', '', ''),
 		T_TIPO_DATA('T015_AprobacionClienteClausulas', 'Aprobacion de cliente a las cláusulas', '', '', ''),
 		T_TIPO_DATA('T015_NegociacionClausulasAlquiler', 'Negociación cláusulas alquiler', '', '', ''),
-		T_TIPO_DATA('T015_EntregaFianzas', 'Entrega de fianzas/Garantías', '', '', ''),
+		T_TIPO_DATA('T015_EntregaFianzas', 'Entrega de Fianzas/Garantías', '', '', ''),
 		T_TIPO_DATA('T015_RespuestaBcReagendacion', 'Respuesta BC sobre reagendación', '', '', '')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;

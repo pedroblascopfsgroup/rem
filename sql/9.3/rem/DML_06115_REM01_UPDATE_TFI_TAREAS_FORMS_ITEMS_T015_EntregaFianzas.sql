@@ -45,7 +45,7 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
         T_TIPO_DATA('T015_EntregaFianzas'	,'combobox'   ,'1'		,'comboFianza'	          ,'Debe indicar si se Aprueba o No'                  ,'false'   ,'DDSiNo'	    ,'Fianza abonada'),
-        T_TIPO_DATA('T015_EntregaFianzas'	,'datefield'  ,'2'		,'fechaAbono'		          ,''                                                 ,'false'   ,null          ,'Fecha de abono'),
+        T_TIPO_DATA('T015_EntregaFianzas'	,'datefield'  ,'2'		,'fechaAbono'		          ,''                                                 ,null      ,null          ,'Fecha de abono'),
         T_TIPO_DATA('T015_EntregaFianzas'	,'textarea'   ,'3'		,'justificacion'	        ,''                                                 ,null      ,null          ,'Justificación'),
     	  T_TIPO_DATA('T015_EntregaFianzas'	,'textarea'   ,'4'		,'observaciones'	        ,''                                                 ,null      ,null		      ,'Observaciones')
     ); 

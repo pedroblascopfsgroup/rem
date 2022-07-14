@@ -44,7 +44,8 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(800);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        T_TIPO_DATA('T015_Firma'	,'combobox'   ,'2'		,'comboFirma'	          ,'Debe indicar si se Firma o No'                  ,'false'   ,'DDSiNo'	    ,'Firmado')
+        T_TIPO_DATA('T015_Firma'	,'combobox'   ,'1'		,'comboFirma'	          ,'Debe indicar si se Firma o No'                  ,null   ,'DDSiNo'	    ,'Firmado'),
+        T_TIPO_DATA('T015_Firma'	,'datefield'  ,'2'		,'fechaFirma'	          ,null                                             ,null   ,null	        ,'Fecha firma')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 BEGIN

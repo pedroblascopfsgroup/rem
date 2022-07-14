@@ -25,6 +25,7 @@ DECLARE
     V_NUM NUMBER(16);
     V_NUM2 NUMBER(16);
     V_NUM3 NUMBER(16);
+    V_ESTA_TABLA NUMBER(16);
     V_TABLA_TEXT VARCHAR2(4000 CHAR) := 'CAG_CONFIG_ACCESO_GESTORIAS';
     V_USUARIO VARCHAR2(100 CHAR):='REMVIP-12064';
 
@@ -84,39 +85,51 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]: ');
                 V_MSQL :='SELECT DD_TGE_ID FROM '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR TGE WHERE TGE.DD_TGE_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(3))||'''';
                 EXECUTE IMMEDIATE V_MSQL INTO V_NUM3;
 
-                V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.CAG_CONFIG_ACCESO_GESTORIAS CAG (
-                                CAG_ID,
-                                DD_IGE_ID,
-                                CAG_USU_GRUPO,
-                                DD_TGE_ID,
-                                VERSION,
-                                USUARIOCREAR,
-                                FECHACREAR,
-                                BORRADO
-                            )
-                            ( 
-                                SELECT
-                                    '||V_ESQUEMA||'.S_CAG_CONFIG_ACCESO_GESTORIAS.NEXTVAL AS CAG_ID,
-                                    '||V_NUM2||',
-                                    '||V_NUM||',
-                                    '||V_NUM3||',
-                                    0 AS VERSION,
-                                    '''||V_USUARIO||''' AS USUARIOCREAR,
-                                    SYSDATE AS FECHACREAR,
-                                    0 AS BORRADO
-                                FROM DUAL
-                                )';
-                EXECUTE IMMEDIATE V_MSQL;
+                DBMS_OUTPUT.PUT_LINE('[INFO]: COMPROBAMOS SI EXISTE YA EN TABLA... ');
 
-                DBMS_OUTPUT.PUT_LINE('[SUCCESS]: INSERTADA CONFIGURACCION CORRECTAMENTE');
+                V_MSQL :='SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA_TEXT||' 
+                WHERE DD_IGE_ID='||V_NUM2||' AND CAG_USU_GRUPO = '||V_NUM||' AND DD_TGE_ID= '||V_NUM3||' ';
+                EXECUTE IMMEDIATE V_MSQL INTO V_ESTA_TABLA;
 
-                V_NUM := NULL;
-                V_NUM2 := NULL;
-                V_NUM3 := NULL;
+                IF V_ESTA_TABLA = 0 THEN
+                    DBMS_OUTPUT.PUT_LINE('[INFO]: NO EXISTE, SE INSERTA ');
 
+                    V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TABLA_TEXT||' CAG (
+                                    CAG_ID,
+                                    DD_IGE_ID,
+                                    CAG_USU_GRUPO,
+                                    DD_TGE_ID,
+                                    VERSION,
+                                    USUARIOCREAR,
+                                    FECHACREAR,
+                                    BORRADO
+                                )
+                                ( 
+                                    SELECT
+                                        '||V_ESQUEMA||'.S_'||V_TABLA_TEXT||'.NEXTVAL AS CAG_ID,
+                                        '||V_NUM2||',
+                                        '||V_NUM||',
+                                        '||V_NUM3||',
+                                        0 AS VERSION,
+                                        '''||V_USUARIO||''' AS USUARIOCREAR,
+                                        SYSDATE AS FECHACREAR,
+                                        0 AS BORRADO
+                                    FROM DUAL
+                                    )';
+                    EXECUTE IMMEDIATE V_MSQL;
+
+                    DBMS_OUTPUT.PUT_LINE('[SUCCESS]: INSERTADA CONFIGURACCION CORRECTAMENTE');
+
+                    V_NUM := NULL;
+                    V_NUM2 := NULL;
+                    V_NUM3 := NULL;
                 ELSE
-                    DBMS_OUTPUT.PUT_LINE('[ERROR]: FALTAN VALORES ');
+                DBMS_OUTPUT.PUT_LINE('[ERROR]: EL REGISTRO YA EXISTE EN LA TABLA '||V_TABLA_TEXT);
+
                 END IF;
+            ELSE
+                DBMS_OUTPUT.PUT_LINE('[ERROR]: FALTAN VALORES ');
+            END IF;
         END LOOP;
     ELSE
         DBMS_OUTPUT.PUT_LINE(' [INFO] NO EXISTE LA TABLA'||V_TABLA_TEXT);

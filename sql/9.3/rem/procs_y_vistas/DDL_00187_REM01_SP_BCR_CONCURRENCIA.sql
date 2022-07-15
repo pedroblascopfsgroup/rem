@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20220714
+--## FECHA_CREACION=20220715
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-18369
@@ -13,6 +13,7 @@
 --##        0.1 Versión inicial - [HREOS-18260] - Alejandra García
 --##        0.2 Quitar céntimos del campo IMP_PRECIO_VENTA dividiendo entre 100 - [HREOS-18366] - Alejandra García
 --##        0.3 Controlar el FLAG NUEVO_PRECIO_CONCURRENCIA - [HREOS-18369] - Alejandra García
+--##        0.4 Modificar el FLAG NUEVO_PRECIO_CONCURRENCIA = 0  - [HREOS-18369] - Alejandra García
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -334,17 +335,23 @@ SALIDA := SALIDA ||'[INFO] 1.5 SE MODIFICA EL FLAG NUEVO_PRECIO_CONCURRENCIA EN 
 
    V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.ACT_ACTIVO_CAIXA T1
                USING (
-                  SELECT 
-                     ACT.ACT_ID
-                  FROM '||V_ESQUEMA||'.AUX_APR_BCR_STOCK AUX
-                  JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = AUX.NUM_IDENTIFICATIVO
-                     AND ACT.BORRADO = 0
-                  JOIN '||V_ESQUEMA||'.CON_CONCURRENCIA CON ON CON.ACT_ID = ACT.ACT_ID
-                     AND CON.BORRADO = 0
-                  WHERE (TRUNC(CON.FECHACREAR) = TRUNC(SYSDATE)
-                  OR
-                  TO_NUMBER(AUX.IMP_PRECIO_VENTA)/100 <> CON.CON_IMPORTE_MIN_OFR)
-                  AND AUX.FLAG_EN_REM = '|| FLAG_EN_REM ||'
+                        SELECT
+                           ACT.ACT_ID
+                        FROM '||V_ESQUEMA||'.AUX_APR_BCR_STOCK AUX
+                        JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = AUX.NUM_IDENTIFICATIVO
+                           AND ACT.BORRADO = 0
+                        JOIN '||V_ESQUEMA||'.CON_CONCURRENCIA CON ON CON.ACT_ID = ACT.ACT_ID
+                           AND CON.BORRADO = 0
+                        JOIN '||V_ESQUEMA||'.ACT_VAL_VALORACIONES VAL ON VAL.ACT_ID = ACT.ACT_ID
+                           AND VAL.BORRADO = 0
+                        JOIN '||V_ESQUEMA||'.DD_TPC_TIPO_PRECIO TPC ON TPC.DD_TPC_ID =  VAL.DD_TPC_ID
+                           AND TPC.BORRADO = 0
+                        WHERE (TRUNC(CON.FECHACREAR) = TRUNC(SYSDATE)
+                        OR
+                        TO_NUMBER(AUX.IMP_PRECIO_VENTA)/100 <> VAL.VAL_IMPORTE)
+                        AND TPC.DD_TPC_CODIGO = ''02''
+                        AND VAL.VAL_FECHA_FIN IS NULL
+                        AND AUX.FLAG_EN_REM = '|| FLAG_EN_REM ||'
                )T2 ON (T1.ACT_ID = T2.ACT_ID )
                WHEN MATCHED THEN UPDATE SET
                   T1.NUEVO_PRECIO_CONCURRENCIA = 0

@@ -29,7 +29,7 @@ AS
   V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMA_MASTER#';
   V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.  
 
-  V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
+  V_SQL VARCHAR2(8000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
 
 BEGIN
 

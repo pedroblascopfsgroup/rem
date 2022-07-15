@@ -28,9 +28,11 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionIncAnuladas;
+import es.pfsgroup.plugin.rem.model.dd.DDDevolucionReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
+import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.reserva.dao.ReservaDao;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
@@ -271,5 +273,46 @@ public class ReservaManager extends BusinessOperationOverrider<ReservaApi> imple
 	@Override
 	public boolean tieneReservaFirmada(ExpedienteComercial eco) {
 		return DDEstadosReserva.tieneReservaFirmada(eco.getReserva());
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public void devolucionReservaNoProcede(ExpedienteComercial expediente) {
+		if (!Checks.esNulo(expediente)) {
+			Filter filtroTanteo = genericDao.createFilter(FilterType.EQUALS, "codigo", DDResultadoTanteo.CODIGO_EJERCIDO);
+			expediente.getOferta().setResultadoTanteo(genericDao.get(DDResultadoTanteo.class, filtroTanteo));
+			
+			genericDao.save(ExpedienteComercial.class, expediente);
+			
+			Reserva reserva = expediente.getReserva();
+			if(!Checks.esNulo(reserva)){
+				reserva.setIndicadorDevolucionReserva(0);
+				Filter filtroEstadoReserva = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosReserva.CODIGO_RESUELTA_POSIBLE_REINTEGRO);
+				DDEstadosReserva estadoReserva = genericDao.get(DDEstadosReserva.class, filtroEstadoReserva);
+				reserva.setEstadoReserva(estadoReserva);
+				Filter filtroDevolucionReserva = genericDao.createFilter(FilterType.EQUALS, "codigo", DDDevolucionReserva.CODIGO_NO);
+				reserva.setDevolucionReserva(genericDao.get(DDDevolucionReserva.class, filtroDevolucionReserva));
+				
+				genericDao.save(Reserva.class, reserva);
+			}
+		}
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public void devolucionReserva(ExpedienteComercial expediente, String devolucionReserva) {
+		if (!Checks.esNulo(expediente) && !Checks.esNulo(devolucionReserva)) {			
+			Reserva reserva = expediente.getReserva();
+			if(!Checks.esNulo(reserva)){
+				reserva.setIndicadorDevolucionReserva(1);
+				Filter filtroEstadoReserva = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosReserva.CODIGO_PENDIENTE_DEVOLUCION);
+				DDEstadosReserva estadoReserva = genericDao.get(DDEstadosReserva.class, filtroEstadoReserva);
+				reserva.setEstadoReserva(estadoReserva);
+				Filter filtroDevolucionReserva = genericDao.createFilter(FilterType.EQUALS, "codigo", devolucionReserva);
+				reserva.setDevolucionReserva(genericDao.get(DDDevolucionReserva.class, filtroDevolucionReserva));
+	
+				genericDao.save(Reserva.class, reserva);
+			}
+		}
 	}
 }

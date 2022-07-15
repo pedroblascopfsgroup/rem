@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Santi Monzó
---## FECHA_CREACION=20220701
+--## FECHA_CREACION=20220715
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-18228
@@ -62,7 +62,7 @@ BEGIN
                 SELECT DISTINCT
                             act.ACT_NUM_ACTIVO AS ZZEXTERNALID,
                             '''' AS PARTNER,                         
-                            ''Z00501'' AS ROLE,
+                            ''Z00503'' AS ROLE,
                             TO_CHAR(NULL,''YYYYMMDD'') AS VALIDFROM,
                             TO_CHAR(NULL,''YYYYMMDD'') AS VALIDTO,
                             NULL AS ADDRTYPE

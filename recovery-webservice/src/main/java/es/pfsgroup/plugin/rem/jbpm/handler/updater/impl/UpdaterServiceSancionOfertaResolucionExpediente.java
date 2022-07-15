@@ -1,7 +1,6 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
 import es.capgemini.devon.exception.UserException;
-import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -23,7 +22,6 @@ import es.pfsgroup.plugin.rem.model.ActivoOferta.ActivoOfertaPk;
 import es.pfsgroup.plugin.rem.model.dd.*;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 import es.pfsgroup.plugin.rem.rest.dto.WSDevolBankiaDto;
-import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateOfertaApi;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,16 +45,10 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
     private ActivoAdapter activoAdapter;
 
     @Autowired
-    private UvemManagerApi uvemManagerApi;
-
-    @Autowired
     private ExpedienteComercialApi expedienteComercialApi;
 
     @Autowired
     private UtilDiccionarioApi utilDiccionarioApi;
-	
-	@Autowired
-	private UpdaterStateOfertaApi updaterStateOfertaApi;
 	
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
@@ -82,7 +74,7 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
 	
 	@Autowired
-	private TareaActivoApi tareaActivoApi;
+	private ReservaApi reservaApi;
 	
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaResolucionExpediente.class);
 
@@ -100,7 +92,7 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 
 		ArrayList<Long> idActivoActualizarPublicacion = new ArrayList<Long>();
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
-		Boolean mandaCorreo = false;
+		String codigoEec = DDEstadosExpedienteComercial.ANULADO;
 		if(!Checks.esNulo(ofertaAceptada)) {
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
 			String estadoOriginal = null;
@@ -113,7 +105,7 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 			Activo activo = expediente.getOferta().getActivoPrincipal();
 			boolean checkFormalizar = false;
 			boolean clonarYAnular = false;
-			boolean rechazar = false;
+			boolean tieneReserva = false;
 			
 			if(!Checks.esNulo(activo)){
 				PerimetroActivo pac = genericDao.get(PerimetroActivo.class, genericDao.createFilter(FilterType.EQUALS, "activo", activo));
@@ -121,8 +113,6 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 			}
 
 			if(!Checks.esNulo(expediente)) {
-
-				boolean tieneReserva = false;
 				if(valores != null && !valores.isEmpty()){
 					tieneReserva = ofertaApi.checkReserva(valores.get(0).getTareaExterna()) && !Checks.esNulo(expediente.getReserva()) && 
 							!Checks.esNulo(expediente.getReserva().getEstadoReserva()) &&
@@ -222,25 +212,9 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 				}
 
 				if(valores != null && !valores.isEmpty()) {
-					if(tieneReserva && !DDDevolucionReserva.CODIGO_NO.equals(valorComboProcede) && DDCartera.CODIGO_CARTERA_LIBERBANK.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())){
-						// Anula el expediente con pendiente de devolución si tiene reserva y es de cartera Liberbank.
-						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO_PDTE_DEVOLUCION);
-						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
+					if(!tieneReserva || (tieneReserva && !DDDevolucionReserva.CODIGO_NO.equals(valorComboProcede) && DDCartera.CODIGO_CARTERA_LIBERBANK.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo()))){
 						expediente.setFechaVenta(null);
-						expediente.setEstado(estado);
-						recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
-
 						expediente.setFechaAnulacion(new Date());
-					}else if(!tieneReserva){
-						// Anula el expediente si NO tiene reserva.
-						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO);
-						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
-						expediente.setFechaVenta(null);
-						expediente.setEstado(estado);
-						recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
-
-						expediente.setFechaAnulacion(new Date());
-						mandaCorreo=true;
 					}
 					
 					// --- INICIO --- HREOS-5052 ---
@@ -310,13 +284,9 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 					// --- FIN --- HREOS-5052 ---
 				
 					if (!tieneReserva) {
-						rechazar = true;
-						
-						if (mandaCorreo) {
-							if (!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getOferta()) && !Checks.esNulo(activo)) {
-								Oferta oferta = expediente.getOferta();
-								notificationOfertaManager.sendNotificationDND(oferta, activo);
-							}
+						if (!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getOferta()) && !Checks.esNulo(activo)) {
+							Oferta oferta = expediente.getOferta();
+							notificationOfertaManager.sendNotificationDND(oferta, activo);
 						}
 					}
 					
@@ -350,9 +320,17 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 				ofertaApi.calculoComiteLBK(agrupada.getOfertaPrincipal().getId(), null);
 			}
 			
-			if(rechazar) {
-				ofertaApi.inicioRechazoDeOfertaSinLlamadaBC(ofertaAceptada, DDEstadosExpedienteComercial.ANULADO);
+			if(!Checks.esNulo(valorComboProcede) && tieneReserva) {
+				if(DDDevolucionReserva.CODIGO_NO.equals(valorComboProcede)) {
+					reservaApi.devolucionReservaNoProcede(expediente);
+				} else {
+					codigoEec = DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo()) 
+							? DDEstadosExpedienteComercial.ANULADO_PDTE_DEVOLUCION : DDEstadosExpedienteComercial.EN_DEVOLUCION;
+					reservaApi.devolucionReserva(expediente,valorComboProcede);
+				}
 			}
+
+			ofertaApi.inicioRechazoDeOfertaSinLlamadaBC(ofertaAceptada, codigoEec);
 		}
 	}
 

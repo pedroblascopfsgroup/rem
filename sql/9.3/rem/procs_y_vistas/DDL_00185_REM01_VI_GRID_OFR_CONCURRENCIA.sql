@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Ivan Rubio
---## FECHA_CREACION=20220527
+--## FECHA_CREACION=20220703
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-17991
@@ -11,6 +11,7 @@
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##         0.1 Versión inicial
+--##         0.2 Juan Jose Sanjuan - añadir importe Oferta 
 --##########################################
 --*/
 
@@ -51,7 +52,9 @@ BEGIN
   V_MSQL := 'CREATE VIEW ' || V_ESQUEMA || '.VI_GRID_OFR_CONCURRENCIA
 	AS
 		SELECT ofr.OFR_ID AS ID
+    ,NVL2(AGR.AGR_NUM_AGRUP_REM, AGR.AGR_NUM_AGRUP_REM, ACT.ACT_NUM_ACTIVO) AS NUM_ACTIVO_AGRUPACION
 		,ofr.OFR_NUM_OFERTA AS NUMOFERTA
+    ,ofr.OFR_IMPORTE AS IMPORTEOFERTA
 		,CLC.CLC_NOMBRE || '' '' ||  CLC.CLC_APELLIDOS AS OFERTANTE
 		,TOF.DD_TOF_codigo AS TIPOOFERTACODIGO		
 		,TOF.DD_TOF_DESCRIPCION AS TIPOOFERTA
@@ -71,6 +74,7 @@ BEGIN
 		join '|| V_ESQUEMA ||'.act_Activo act on act.act_id = aof.act_id
 		join '|| V_ESQUEMA ||'.con_concurrencia cnc on act.act_id = cnc.act_id
 		JOIN '|| V_ESQUEMA ||'.CLC_CLIENTE_COMERCIAL CLC ON CLC.CLC_ID = OFR.CLC_ID
+    LEFT JOIN ' || V_ESQUEMA || '.ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = cnc.AGR_ID AND AGR.BORRADO = 0
 		LEFT JOIN '|| V_ESQUEMA ||'.DEP_DEPOSITO DEP ON DEP.OFR_ID = OFR.OFR_ID and DEP.borrado = 0
 		LEFT JOIN '|| V_ESQUEMA ||'.DD_EDP_EST_DEPOSITO EDP ON EDP.DD_EDP_ID = DEP.DD_EDP_ID
 		WHERE ofr.ofr_concurrencia  = 1  and ofr.borrado = 0  and ofr.fechacrear BETWEEN cnc.con_fecha_ini AND cnc.con_fecha_fin ';

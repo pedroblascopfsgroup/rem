@@ -3715,7 +3715,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		idActivo = activo.get('id');
 
 		if (!Ext.isEmpty(grid.selection)) {
-			idOferta = record.get("idOferta");
+			idOferta = record.get("idOferta") ? record.get("idOferta") : record.get("id");
+			//idOferta = record.get("idOferta");
 		}
 
 		var fieldset = me.lookupReference('detalleOfertaFieldsetref');
@@ -7517,8 +7518,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 	onSelectedRow : function(grid, record, index) {
 		me = this;
+
 		if (!Ext.isEmpty(record)) {
-			idOferta = record.data.idOferta;
+			idOferta = record.data.idOferta ? record.data.idOferta: record.data.id;
 			if (idOferta && !Ext.isEmpty(me.view.down('[reference=cloneExpedienteButton]'))) {
 				var hideButton = record.data.codigoEstadoOferta != CONST.ESTADOS_OFERTA['RECHAZADA'] && record.data.codigoEstadoOferta != CONST.ESTADOS_OFERTA['CADUCADA'];
 	    		me.view.down('[reference=cloneExpedienteButton]').setDisabled(hideButton); 

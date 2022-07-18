@@ -3299,7 +3299,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			model: 'HreRem.model.OfertantesOfertaDetalleModel',
 			proxy: {
 				type: 'uxproxy',
-				remoteUrl: 'ofertas/getOfertantesByOfertaId'
+				remoteUrl: 'ofertas/getOfertantesByOfertaId'/*,
+				extraParams: {
+					ofertaID: '{ofertaRecord.idOferta}'
+						, idOferta: '{ofertaRecord.idOferta}'
+						}*/
 			}
 		},
 
@@ -4664,7 +4668,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {diccionario: 'segmentacionCartera'}
 			}
 		},
-
 		storeComparativaRefCatastral:{
 			model: 'HreRem.model.ComparativaReferenciaCatastralGridModel',
 			proxy: {

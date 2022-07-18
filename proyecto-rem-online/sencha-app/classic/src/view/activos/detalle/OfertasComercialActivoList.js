@@ -24,13 +24,13 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 
     initComponent: function () {
         var me = this;
-
+      
         var activo = me.lookupController().getViewModel().get('activo').getData();
         var isBk = activo.isCarteraBankia;
 		var vistaDeConcurrencia = me.lookupController().getViewModel().getData().activo.get('vistaDeConcurrencia');
 		var enConcurrencia = me.lookupController().getViewModel().getData().activo.get('enConcurrencia');
         var userPefSuper = $AU.userIsRol(CONST.PERFILES['HAYASUPER']);
-		
+     
         me.columns= [
 		        {
 		        	dataIndex: 'numOferta',
@@ -45,7 +45,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		            items: [{
 			            tooltip: HreRem.i18n('tooltip.ver.activo.agrupacion'),
 			            getClass: function(v, metadata, record ) {
-			            	if (Ext.isEmpty(record.get("idAgrupacion"))) {
+			            	if (Ext.isEmpty(record.get("numAgrupacion"))) {
 			            		return 'app-list-ico ico-ver-activov2';
 			            	}
 			            	else{
@@ -57,8 +57,8 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 			        renderer: function(value, metadata, record) {
 			        	return '<div style="float:left; margin-top:3px; font-size: 11px; line-height: 1em;">'+ value+'</div>';
 			        },
-		            flex     : 1,            
-		            align: 'right',
+		            flex     : 1,
+		            align: 'center',
 		            hideable: false,
 		            sortable: true
 		        },
@@ -97,7 +97,6 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		            hidden: vistaDeConcurrencia
 		        },
 		        {
-		        	//xtype: 'numbercolumn',
 					text: HreRem.i18n('header.oferta.importeOferta'),
 		            dataIndex: 'importeOferta',
 		            flex: 1,
@@ -107,11 +106,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 			        	} else {
 			        		return  value;
 			        	}
-			        }/*,
-			        decimalPrecision: 2,
-			        decimalSeparation: ',',
-			        thousandSeparation: '.',
-			        hidden: enConcurrencia*/
+			        }
 		        },
 		        {
 		        	xtype: 'numbercolumn',
@@ -124,13 +119,13 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 			        hidden: vistaDeConcurrencia
 		        },
 		        {
-		            dataIndex: 'codigoEstadoOferta',
+		            dataIndex: 'descripcionEstadoOferta',
 		            text: HreRem.i18n('header.oferta.estadoOferta'),
 		            reference: 'estadoOferta',
 					editor: {
 						xtype: 'combobox',
 						reference:'estadoOfertaCombo',
-						store: new Ext.data.Store({
+		        		store: new Ext.data.Store({
 							model: 'HreRem.model.ComboBase',
 							proxy: {
 								type: 'uxproxy',
@@ -151,6 +146,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 			        		var me = this,
 			        		comboEditor = me.columns  && me.columns[colIndex].getEditor ? me.columns[colIndex].getEditor() : me.getEditor ? me.getEditor() : null,
 			        		store, record;
+			       
 			        		if(!Ext.isEmpty(comboEditor)) {
 				        		store = comboEditor.getStore(),							        		
 				        		record = store.findRecord("codigo", value);
@@ -162,7 +158,8 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 				        				record = store.findRecord("codigo", value);
 				        				return record.get("descripcion");
 				        			}else{
-					        			comboEditor.setValue(value);	
+					        			//comboEditor.setValue(value);
+				        				return value;
 				        			}
 				        		}
 			        		}
@@ -263,10 +260,12 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		            flex: 1
 		        },
 		        {
-		        	dataIndex: 'estadoDeposito',
+		            dataIndex: 'descripcionEstadoDeposito',
 		            text: HreRem.i18n('fieldlabel.estado.deposito'),
-					reference:'codigoEstadoDepositoRef'
+		            flex: 1,
+		            hidden: false
 		        }
+		        
 		        
         ];
         
@@ -895,5 +894,5 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 			return 0;
 		}
 	}
-
+	
 });

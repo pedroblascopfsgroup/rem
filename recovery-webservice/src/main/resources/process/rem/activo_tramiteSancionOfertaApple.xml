@@ -506,6 +506,7 @@
 	<decision name ="T017_AgendarPosicionamientoDecision" expression="#{T017_AgendarPosicionamientoDecision}">
         <transition to="T017_ConfirmarFechaEscritura" name="OK"></transition>
 		<transition to="T017_PBCReserva" name="ReagendarArras"></transition>
+		<transition to="T017_PBCVenta" name="ReagendarVenta"></transition>
 	</decision>
 	
 	<state name="T017_ConfirmarFechaEscritura">
@@ -533,6 +534,7 @@
         <transition to="T017_AgendarPosicionamiento" name="noConfirmado"></transition>
 		<transition to="T017_FirmaContrato" name="Confirmado"></transition>
 		<transition to="T017_PBCReserva" name="ReagendarArras"></transition>
+		<transition to="T017_PBCVenta" name="ReagendarVenta"></transition>
 	</decision>
 	
 	<state name="T017_FirmaContrato">
@@ -560,6 +562,7 @@
         <transition to="T017_AgendarPosicionamiento" name="KO"></transition>
 		<transition to="forkFirmado" name="OK"></transition>
 		<transition to="T017_PBCReserva" name="ReagendarArras"></transition>
+		<transition to="T017_PBCVenta" name="ReagendarVenta"></transition>
 	</decision>
 	
     <state name="T017_PosicionamientoYFirma">

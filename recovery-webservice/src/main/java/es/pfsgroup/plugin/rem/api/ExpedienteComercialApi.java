@@ -367,6 +367,9 @@ public interface ExpedienteComercialApi {
 	 */
 	DtoPage getSubsanacionesExpediente(Long idExpediente);
 
+	@Transactional(readOnly = false)
+	boolean deletePosicionamientoMotivoAplazamiento(Long idPosicionamiento, String codEstado);
+
 	/**
 	 * Método que obtiene los notarios del expediente
 	 *
@@ -1445,5 +1448,6 @@ public interface ExpedienteComercialApi {
 
 	String devolverEstadoCancelacionBCEco(Oferta oferta, ExpedienteComercial eco);
 
+	void calculoFormalizacionCajamar(Oferta oferta);
 
 }

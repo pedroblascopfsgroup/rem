@@ -166,7 +166,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPatrimonio', {
 								value: '{patrimonio.pazSocial}',
 								hidden: '{!patrimonio.isCarteraCerberusDivarian}'	
 							}
-						},		
+						},
 						{
 							xtype: 'comboboxfieldbasedd',
 							fieldLabel: HreRem.i18n('combolabel.patrimonio.combo.cesion.de.uso'),
@@ -237,7 +237,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPatrimonio', {
 						{
 							xtype : 'comboboxfieldbase',
 							fieldLabel: HreRem.i18n('fieldlabel.renucia.derecho.tanteo'),
-							colspan: 1,
+							colspan: 3,
 							bind: {
 								store: '{comboSiNoBoolean}',
 								value: '{patrimonio.renunciaDerechoTanteo}',

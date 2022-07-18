@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import es.pfsgroup.plugin.rem.model.dd.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,9 +27,6 @@ import es.pfsgroup.plugin.rem.model.DtoExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.DtoPosicionamiento;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDMotivosEstadoBC;
 
 @Component
 public class UpdaterServiceAgendarPosicionamiento implements UpdaterService {
@@ -53,6 +51,7 @@ public class UpdaterServiceAgendarPosicionamiento implements UpdaterService {
     private static final String MESES_FIANZA = "mesesFianza";
     private static final String IMPORTE_FIANZA = "importeFianza";
     private static final String TIPO_OPERACION = "tipoOperacion";
+	private static final String COMBO_RIESGO = "cambioRiesgo";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -67,6 +66,7 @@ public class UpdaterServiceAgendarPosicionamiento implements UpdaterService {
 		Double importe = null;
 		Integer mesesFianza = null;
 		String estadoBC = null;
+		boolean vuelvePBC = false;
 		String fechaPropuesta = null;
 		Map<String, Boolean> campos = new HashMap<String,Boolean>();
 		try {
@@ -98,22 +98,37 @@ public class UpdaterServiceAgendarPosicionamiento implements UpdaterService {
 						}
 						
 					}
+					if(COMBO_RIESGO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+						if(DDSiNo.SI.equals(valor.getValor())) {
+							if(expediente.getUltimoPosicionamiento() != null){
+								DtoPosicionamiento dto = new DtoPosicionamiento();
+								dto.setIdPosicionamiento(expediente.getUltimoPosicionamiento().getId());
+								dto.setMotivoAplazamiento("Aplazamiento automático por cálculo riesgo");
+								dto.setMotivoAnulacionBc(DDMotivoAnulacionBC.CODIGO_PENDIENTE_PBC);
+								dto.setValidacionBCPosi(DDMotivosEstadoBC.CODIGO_ANULADA);
+								expedienteComercialApi.savePosicionamiento(dto);
+							}
+							expediente.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO)));
+							estadoBC = DDEstadoExpedienteBc.PTE_SANCION_PBC_SERVICER;
+							vuelvePBC = true;
+						}
+					}
 				}
 
 				if (vuelveArras) {		
 					campos.put(TIPO_OPERACION, true);			
 					expedienteComercialApi.createReservaAndCondicionesReagendarArras(expediente, importe, mesesFianza, ofertaAceptada);
 
-				}else {
+				}else if(!vuelvePBC){
 					DtoExpedienteComercial dto = expedienteComercialApi.getExpedienteComercialByOferta(ofertaAceptada.getNumOferta());	
 					dtoPosicionamiento.setValidacionBCPosi(DDMotivosEstadoBC.CODIGO_PDTE_VALIDACION);
 					expedienteComercialApi.createOrUpdateUltimoPosicionamientoEnviado(dto.getId(), dtoPosicionamiento);
-					estadoBC = DDEstadoExpedienteBc.CODIGO_VALIDACION_DE_FIRMA_DE_CONTRATO_POR_BC;
+					estadoBC = estadoBC != null ? estadoBC : DDEstadoExpedienteBc.CODIGO_VALIDACION_DE_FIRMA_DE_CONTRATO_POR_BC;
 				}
 				
 				expediente.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoBC)));
 				genericDao.save(ExpedienteComercial.class, expediente);
-
+				
 				if (!campos.isEmpty() && boardingComunicacionApi.modoRestClientBloqueoCompradoresActivado())
 					boardingComunicacionApi.enviarBloqueoCompradoresCFV(ofertaAceptada, campos ,BoardingComunicacionApi.TIMEOUT_1_MINUTO);
 			}

@@ -1448,6 +1448,4 @@ public interface ExpedienteComercialApi {
 
 	String devolverEstadoCancelacionBCEco(Oferta oferta, ExpedienteComercial eco);
 
-	void calculoFormalizacionCajamar(Oferta oferta);
-
 }

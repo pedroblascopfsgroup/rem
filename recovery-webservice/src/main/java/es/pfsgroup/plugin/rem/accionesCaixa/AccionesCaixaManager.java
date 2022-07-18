@@ -685,7 +685,16 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
     @Override
     @Transactional
     public Boolean avanzarTareaGenerico(net.sf.json.JSONObject dto) throws Exception {
-        return adapter.save(createRequestAvanzarTareaGenerico(dto));
+        CaixaBcReplicationDataHolder dataHolder = new CaixaBcReplicationDataHolder();
+        dataHolder.setIdTarea(Long.parseLong(dto.get("idTarea").toString()));
+        dataHolder.setPreviousStateExpedienteBcCod(expedienteComercialApi.getEstadoExpedienteBcFromIdTarea(dataHolder.getIdTarea()));
+        boolean success = adapter.save(createRequestAvanzarTareaGenerico(dto));
+
+        if(success){
+            replicacionOfertasApi.callReplicateOferta(dataHolder, success);
+        }
+
+        return success;
     }
 
     public Map<String, String[]> createRequestAvanzarTareaGenerico(net.sf.json.JSONObject dto) throws ParseException {

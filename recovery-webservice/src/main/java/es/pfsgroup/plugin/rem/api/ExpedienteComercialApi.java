@@ -5,7 +5,6 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.files.FileItem;
@@ -101,7 +100,16 @@ import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaUVEMDto;
 import es.pfsgroup.plugin.rem.rest.dto.ResolucionComiteDto;
 import es.pfsgroup.plugin.rem.rest.dto.TitularUVEMDto;
+import es.pfsgroup.plugin.rem.model.*;
+import es.pfsgroup.plugin.rem.model.dd.*;
+import es.pfsgroup.plugin.rem.rest.dto.*;
 import es.pfsgroup.plugin.rem.restclient.caixabc.ReplicarOfertaDto;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 
 public interface ExpedienteComercialApi {
 	/**
@@ -448,6 +456,9 @@ public interface ExpedienteComercialApi {
 	 * @return
 	 */
 	DtoPage getSubsanacionesExpediente(Long idExpediente);
+
+	@Transactional(readOnly = false)
+	boolean deletePosicionamientoMotivoAplazamiento(Long idPosicionamiento, String codEstado);
 
 	/**
 	 * Método que obtiene los notarios del expediente
@@ -1512,8 +1523,6 @@ public interface ExpedienteComercialApi {
 		
 	boolean esTitulizada(TareaExterna tareaExterna);
 
-	void calculoFormalizacionCajamar(Oferta oferta);
-
 	public String getEstadoExpedienteBcFromNumExpediente(Long numExpediente);
 
 	public String getEstadoExpedienteBcFromNumOferta(Long numOferta);
@@ -1525,4 +1534,6 @@ public interface ExpedienteComercialApi {
 	String devolverEstadoCancelacionBCEco(Oferta oferta, ExpedienteComercial eco);
 
 	Boolean saveTabFianza(DtoTabFianza dto, Long id);
+
+	void calculoFormalizacionCajamar(Oferta oferta);
 }

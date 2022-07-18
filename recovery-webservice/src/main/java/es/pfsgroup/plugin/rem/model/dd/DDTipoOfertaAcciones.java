@@ -61,6 +61,7 @@ public class DDTipoOfertaAcciones implements Auditable, Dictionary {
 	public static final String ACCION_SOLICITUD_DOC_MINIMA = "997";
 	public static final String ACCION_CONFIRMACION_REP_OFERTAS = "998";
 	public static final String ACCION_CONFIRMACION_REP_INTERVINIENTE = "999";
+	public static final String CONFIRMACION_REPOSICIONAMIENTO_PBC = "993";
 	
 	private static final long serialVersionUID = 1L;
 

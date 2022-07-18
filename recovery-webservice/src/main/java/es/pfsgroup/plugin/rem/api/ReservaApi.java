@@ -45,4 +45,10 @@ public interface ReservaApi {
 
 	boolean tieneReservaFirmada(ExpedienteComercial eco);
 
+
+	void devolucionReservaNoProcede(ExpedienteComercial expediente);
+
+
+	void devolucionReserva(ExpedienteComercial expediente, String devolucionReserva);
+
 }

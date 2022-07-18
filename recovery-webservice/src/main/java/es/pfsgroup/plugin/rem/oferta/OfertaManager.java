@@ -8114,84 +8114,43 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 	
 	@Override
-	public String actualizarOfertaBoarding(TareaExterna tareaExterna) {
-		Oferta oferta = tareaExternaToOferta(tareaExterna);
-		return this.actualizarOfertaBoarding(oferta, tareaExterna.getTareaProcedimiento().getCodigo(), tareaExterna);
+	public void actualizarOfertaBoarding(Oferta oferta, TareaExterna tareaExterna) {
+
+		if(boardingComunicacionApi.modoRestClientBoardingActivado()) {
+			try {
+				ExpedienteComercial expedienteComercial = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
+				ComunicacionBoardingResponse response = null;
+				
+				if (oferta != null && expedienteComercial != null && esOfertaValidaCFVByCarteraSubcartera(oferta) 
+						&& !esOfertaExpressOrEspecial(oferta) && esTareaValidaEnvioCFV(oferta, tareaExterna)) {
+					response = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS);
+				}
+				
+				if(response != null && !response.getSuccess() && boardingComunicacionApi.comunicacionBoardingActivada()) {
+					throw new UserException(response.getMensaje() == null ? ComunicacionBoardingResponse.KO_ACTUALIZACION_OFERTA_BOARDING : response.getMensaje());
+				}
+			} catch (Exception e) {
+				throw new UserException(e.getMessage());
+			}
+		}
 	}
 	
-	@Override
-	public String actualizarOfertaBoarding(Oferta oferta, String codigo, TareaExterna tareaExterna) {
-
-		if(!boardingComunicacionApi.modoRestClientBoardingActivado()) {
-			return null;
-		}
-		
-		ExpedienteComercial expedienteComercial = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
-		Activo activo = oferta.getActivoPrincipal();
-		Reserva reserva = expedienteComercial.getReserva();
-		ComunicacionBoardingResponse response = null;
-		PerimetroActivo perimetro = activoApi.getPerimetroByIdActivo(oferta.getActivoPrincipal().getId());
-		
-		String resultado = null;
-		String codSubCartera = !Checks.esNulo(activo.getSubcartera()) ? activo.getSubcartera().getCodigo() : null;
-		
-		Boolean obtencionReservaFinalizada = false;
-		Boolean solicitaReserva = checkReserva(oferta);
-		Filter filtroTbj = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", expedienteComercial.getTrabajo().getId());
-		ActivoTramite tramite = genericDao.get(ActivoTramite.class, filtroTbj);
-		
-		if(solicitaReserva) {
-			if(tieneTarea(tramite, CODIGO_T017_PBCRESERVA) == 0 
-					&& tieneTarea(tramite, CODIGO_T017_INSTRUCCIONES_RESERVA) == 0 
-					&& tieneTarea(tramite, CODIGO_T017_OBTENCION_CONTRATO_RESERVA) == 0
-					&& tieneTarea(tramite, CODIGO_T017_PBC_VENTA) == 0) {
-				obtencionReservaFinalizada = true;
-			}else {				
-				obtencionReservaFinalizada = tieneTarea(tramite, CODIGO_T017_OBTENCION_CONTRATO_RESERVA) == 2;
-			}
-		}
-		
-		if (oferta != null && expedienteComercial != null && esOfertaValidaCFVByCarteraSubcartera(oferta) && (oferta.getOfertaEspecial() == null || !oferta.getOfertaEspecial()) && (oferta.getOfertaExpress() == null || !oferta.getOfertaExpress())) {
-			
-			if (CODIGO_T013_DEFINICION_OFERTA.equals(codigo) 
-					&& ((checkAtribuciones(oferta) && perimetro.getAplicaFormalizar() == 1))) {
-				
-				response = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS);
-				
-			} else if (CODIGO_T013_RESOLUCION_COMITE.equals(codigo) 
-					|| CODIGO_T013_RATIFICACION_COMITE.equals(codigo)) {
-				
-				response = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS);
-				
-			} else if (CODIGO_T017_RESOLUCION_CES.equals(codigo)
-					|| CODIGO_T017_RATIFIACION_COMITE_CES.equals(codigo)) {
-				response = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS);
-				
-			} else if (CODIGO_T013_RESOLUCION_TANTEO.equals(codigo) 
-					&& ((!Checks.esNulo(reserva) && !DDEstadosReserva.CODIGO_FIRMADA.equals(reserva.getEstadoReserva().getCodigo())) || Checks.esNulo(reserva))) {
-				
-				response = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS);
-				
-			} else if ((CODIGO_T013_RESPUESTA_OFERTANTE.equals(codigo) 
-					|| CODIGO_T017_RESPUESTA_OFERTANTE_CES.equals(codigo))
-					&& !trabajoApi.checkBankia(expedienteComercial.getTrabajo())) {
-				
-				response = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS);
-				
-			} else if ((CODIGO_T013_RESULTADO_PBC.equals(codigo) 
-					|| CODIGO_T017_PBC_VENTA.equals(codigo))
-					&& DDSubcartera.CODIGO_OMEGA.equals(codSubCartera)) {
-				
-				response = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS);			
-			}
-		}
-		
-		
-		if(response != null && !response.getSuccess() && boardingComunicacionApi.comunicacionBoardingActivada()) {
-			resultado = response.getMensaje() == null ? ComunicacionBoardingResponse.KO_ACTUALIZACION_OFERTA_BOARDING : response.getMensaje() ;
-		}
-		
-		return resultado;
+	private boolean esOfertaExpressOrEspecial(Oferta oferta) {
+		return (oferta.getOfertaEspecial() != null && oferta.getOfertaEspecial()) 
+				|| (oferta.getOfertaExpress() != null || oferta.getOfertaExpress());
+	}
+	
+	private boolean esTareaValidaEnvioCFV(Oferta oferta,TareaExterna tareaExterna) {
+		String codTarea = tareaExterna.getTareaProcedimiento().getCodigo();
+		Activo activoPrincipal = oferta.getActivoPrincipal();
+		PerimetroActivo perimetro = activoApi.getPerimetroByIdActivo(activoPrincipal.getId());
+		return (CODIGO_T013_DEFINICION_OFERTA.equals(codTarea) && perimetro.getAplicaFormalizar() == 1)
+				|| CODIGO_T013_RESPUESTA_OFERTANTE.equals(codTarea)  
+				|| CODIGO_T013_RESOLUCION_COMITE.equals(codTarea) 
+				|| CODIGO_T013_RATIFICACION_COMITE.equals(codTarea)
+				|| CODIGO_T017_RESOLUCION_CES.equals(codTarea) 
+				|| CODIGO_T017_RATIFIACION_COMITE_CES.equals(codTarea)
+				|| (CODIGO_T017_RESPUESTA_OFERTANTE_CES.equals(codTarea) && DDCartera.isCarteraCerberus(activoPrincipal.getCartera()));
 	}
 	
 	public void saveTextoOfertaWS(DtoTextosOferta dto, Oferta oferta) throws UserException {

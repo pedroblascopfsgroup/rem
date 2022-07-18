@@ -940,7 +940,6 @@ public class GenericController extends ParadiseJsonController{
 
 		restApi.sendResponse(response, model, request);
 	}
-
 	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getTipoApunteByUsuarioLog(){

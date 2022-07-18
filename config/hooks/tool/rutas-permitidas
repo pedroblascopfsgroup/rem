@@ -333,5 +333,7 @@ func-rem-deposito|R-Baalina
 func-rem-proveedoresNoHomologables|R-Nagami
 func-rem-datosProveedores|R-Nagami
 rem_mirror|version-@-rem
-func-rem-proveedoresNoHomologables|R-Nagami
-func-rem-datosProveedores|R-Nagami
+func-rem-HREOS-16365|R-Caracara
+func-rem-reposicionamientoCalculoRiesgo|R-Caracara
+func-rem-deposito|R-Baal
+remvip-11238-rem|R-Caracara

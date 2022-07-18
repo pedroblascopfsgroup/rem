@@ -327,7 +327,7 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 		boolean principalCaducada = false;
 		
 		noEntraDeposito = this.caducaOfertaPrincipal(idOferta);
-		if(noEntraDeposito.isEmpty()) {
+		if(!noEntraDeposito.isEmpty()) {
 			principalCaducada = true;
 		}
 
@@ -473,7 +473,7 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 	public boolean entraEnTiempoDeposito(Oferta oferta){
 		if (oferta != null) {
 			Deposito deposito = oferta.getDeposito();
-			if(oferta != null && oferta.getIsEnConcurrencia() != null && oferta.getIsEnConcurrencia() && deposito != null){
+			if(oferta != null && oferta.getIsEnConcurrencia() != null && oferta.getIsEnConcurrencia() && deposito != null && deposito.getFechaInicio() != null){
 				Date fechaTopeOferta = this.sumarRestarHorasFecha(deposito.getFechaInicio(), 120);
 				Date fechaHoy = new Date();
 	

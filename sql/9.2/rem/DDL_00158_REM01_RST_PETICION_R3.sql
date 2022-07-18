@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=Vicente Martinez Cifre
---## FECHA_CREACION=20211222
+--## AUTOR=Adrián Molina
+--## FECHA_CREACION=20220419
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-16471
+--## INCIDENCIA_LINK=HREOS-17668
 --## PRODUCTO=NO
 --## Finalidad: Tabla para gestionar LOS OPERADORES DE LA REST API DE REM 3
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 Aumenar tamaño campo IP
 --##########################################
 --*/
 
@@ -68,7 +69,7 @@ BEGIN
 		RST_PETICION_ID           				NUMBER(16)                  NOT NULL,
 		RST_PETICION_TOKEN				        VARCHAR2(20 CHAR) 			NULL,	
 		RST_BROKER_ID           				NUMBER(16)      			NULL,
-		RST_PETICION_IP					        VARCHAR2(20 CHAR) 			NOT NULL,
+		RST_PETICION_IP					        VARCHAR2(50 CHAR) 			NOT NULL,
 		RST_PETICION_METODO				        VARCHAR2(50 CHAR) 			NOT NULL,
 		RST_PETICION_QUERY				        VARCHAR2(300 CHAR) 			NOT NULL,
 		RST_PETICION_DATA				        CLOB 			            NULL,

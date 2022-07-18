@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import es.pfsgroup.plugin.rem.model.dd.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,10 +29,6 @@ import es.pfsgroup.plugin.rem.model.DtoPosicionamiento;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.Posicionamiento;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionBC;
-import es.pfsgroup.plugin.rem.model.dd.DDMotivosEstadoBC;
 
 @Component
 public class UpdaterServiceFirmaContrato implements UpdaterService {
@@ -61,6 +58,7 @@ public class UpdaterServiceFirmaContrato implements UpdaterService {
     private static final String IMPORTE_FIANZA = "importeFianza";
     private static final String COMBO_FIRMA = "comboFirma";
     private static final String TIPO_OPERACION = "tipoOperacion";
+	private static final String COMBO_RIESGO = "cambioRiesgo";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -75,6 +73,7 @@ public class UpdaterServiceFirmaContrato implements UpdaterService {
 		Integer mesesFianza = null;
 		boolean aplaza = false;
 		boolean aprueba = false;
+		boolean vuelvePBC = false;
 		DtoPosicionamiento dtoPos = new DtoPosicionamiento();
 		Map<String, Boolean> campos = new HashMap<String,Boolean>();
 		try {
@@ -124,6 +123,21 @@ public class UpdaterServiceFirmaContrato implements UpdaterService {
 								aprueba = true;
 							}
 						}
+						if(COMBO_RIESGO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+							if(DDSiNo.SI.equals(valor.getValor())) {
+								if(expediente.getUltimoPosicionamiento() != null){
+									DtoPosicionamiento dto = new DtoPosicionamiento();
+									dto.setIdPosicionamiento(expediente.getUltimoPosicionamiento().getId());
+									dto.setMotivoAplazamiento("Aplazamiento automático por cálculo riesgo");
+									dto.setMotivoAnulacionBc(DDMotivoAnulacionBC.CODIGO_PENDIENTE_PBC);
+									dto.setValidacionBCPosi(DDMotivosEstadoBC.CODIGO_ANULADA);
+									expedienteComercialApi.savePosicionamiento(dto);
+								}
+								estadoExp = DDEstadosExpedienteComercial.APROBADO;
+								estadoBc = DDEstadoExpedienteBc.PTE_SANCION_PBC_SERVICER;
+								vuelvePBC = true;
+							}
+						}
 					}
 					if (vuelveArras) {	
 						campos.put(TIPO_OPERACION, true);										
@@ -143,25 +157,28 @@ public class UpdaterServiceFirmaContrato implements UpdaterService {
 						}
 					}else if(aplaza){
 						estadoExp = DDEstadosExpedienteComercial.PTE_AGENDAR_FIRMA;
-						estadoBc = DDEstadoExpedienteBc.CODIGO_IMPORTE_FINAL_APROBADO;
+						estadoBc = estadoBc != null ? estadoBc :  DDEstadoExpedienteBc.CODIGO_IMPORTE_FINAL_APROBADO;
 						dtoPos.setMotivoAnulacionBc(DDMotivosEstadoBC.CODIGO_APLAZADA);
 						dtoPos.setFechaFinPosicionamiento(new Date());
 						expedienteComercialApi.createOrUpdateUltimoPosicionamiento(expediente.getId(), dtoPos);
-					}else {
+					}else if(!vuelvePBC){
 						if(aprueba) {
 							estadoExp = DDEstadosExpedienteComercial.FIRMADO;
-							estadoBc = DDEstadoExpedienteBc.CODIGO_CONTRATO_FIRMADO;
+							estadoBc = estadoBc != null ? estadoBc :  DDEstadoExpedienteBc.CODIGO_CONTRATO_FIRMADO;
 						}else {
 							estadoExp = DDEstadosExpedienteComercial.ANULADO;
 							estadoBc = expedienteComercialApi.devolverEstadoCancelacionBCEco(expediente.getOferta(),  expediente);
 							if(reservaApi.tieneReservaFirmada(expediente)) {
+								estadoBc = estadoBc != null ? estadoBc :  DDEstadoExpedienteBc.CODIGO_SOLICITAR_DEVOLUCION_DE_RESERVA_Y_O_ARRAS_A_BC;
 								if(Checks.isFechaNula(expediente.getFechaAnulacion())) {
 						        	expediente.setFechaAnulacion(new Date());
 						        }
-							}
-							
-							if(DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO.equals(estadoBc) || DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA.equals(estadoBc)) {
-								ofertaApi.finalizarOferta(ofertaAceptada);
+							}else {
+								Boolean finalizar = estadoBc == null;
+								estadoBc = estadoBc != null ? estadoBc :  DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO;
+								if(finalizar){
+									ofertaApi.finalizarOferta(ofertaAceptada);
+								}
 							}
 						}
 					}

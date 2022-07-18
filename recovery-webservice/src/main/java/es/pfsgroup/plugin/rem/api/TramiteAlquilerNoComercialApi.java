@@ -44,5 +44,7 @@ public interface TramiteAlquilerNoComercialApi {
 	
 	boolean esCarteraConcertada(TareaExterna tareaExterna);
 	
+	boolean fianzaExonerada(TareaExterna tareaExterna);
+	
 }
 

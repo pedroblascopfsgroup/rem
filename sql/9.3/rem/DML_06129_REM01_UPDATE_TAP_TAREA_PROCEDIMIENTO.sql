@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Adrián Molina
---## FECHA_CREACION=20220711
+--## FECHA_CREACION=20220716
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-18268
@@ -18,7 +18,7 @@ SET SERVEROUTPUT ON;
 SET DEFINE OFF;
 
 DECLARE
-	V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar     
+	V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar
     V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
     V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
     V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
@@ -39,7 +39,7 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('[INFO] Registro actualizado en '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO');
 	
 	/*Decision para T018_AprobacionAlquilerSocial*/
-	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_DECISION = ''valores[''''T018_AprobacionAlquilerSocial''''][''''comboResultado''''] == DDSiNo.NO ? ''''rechaza'''' : ''''acepta'''''' 
+	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_DECISION = ''valores[''''T018_AprobacionAlquilerSocial''''][''''comboResultado''''] == DDSiNo.NO ? ''''rechazar'''' : ''''aceptar'''''' 
 	WHERE TAP_CODIGO = ''T018_AprobacionAlquilerSocial''';
 	DBMS_OUTPUT.PUT_LINE(V_MSQL);
 	EXECUTE IMMEDIATE V_MSQL;
@@ -146,6 +146,13 @@ BEGIN
 	/*Decision para T018_FirmaContrato*/
 	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_DECISION = ''valores[''''T018_FirmaContrato''''][''''comboResultado''''] == DDSiNo.SI ?  ''''acepta'''' : ''''rechaza'''''' 
 	WHERE TAP_CODIGO = ''T018_FirmaContrato''';
+	DBMS_OUTPUT.PUT_LINE(V_MSQL);
+	EXECUTE IMMEDIATE V_MSQL;
+	DBMS_OUTPUT.PUT_LINE('[INFO] Registro actualizado en '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO');
+	
+	/*Decision para T018_AgendarFirma*/
+	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_DECISION = ''fianzaExonerada() ? ''''conFianzaExonerada'''' : ''''sinFianzaExonerada'''''' 
+	WHERE TAP_CODIGO = ''T018_AgendarFirma''';
 	DBMS_OUTPUT.PUT_LINE(V_MSQL);
 	EXECUTE IMMEDIATE V_MSQL;
 	DBMS_OUTPUT.PUT_LINE('[INFO] Registro actualizado en '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO');

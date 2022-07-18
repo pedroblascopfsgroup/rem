@@ -351,8 +351,8 @@
 		<transition to="Fin" name="Fin"></transition>
 	</state> 
 	<decision name ="T018_AprobacionAlquilerSocialDecision" expression="#{T018_AprobacionAlquilerSocialDecision}">
-		<transition to="T018_AgendarYFirmar" name="acepta"></transition>
-		<transition to="T018_RespuestaContraofertaBC" name="rechaza"></transition>
+		<transition to="T018_AgendarFirma" name="aceptar"></transition>
+		<transition to="T018_RespuestaContraofertaBC" name="rechazar"></transition>
 	</decision>
 	
 	<state name="T018_RespuestaContraofertaBC">
@@ -379,8 +379,8 @@
 	</state> 
 	<decision name ="T018_RespuestaContraofertaBCDecision" expression="#{T018_RespuestaContraofertaBCDecision}">
 		<transition to="T018_AprobacionAlquilerSocial" name="aceptaAlquilerSocial"></transition>
-		<transition to="T018_AgendarYFirmar" name="aceptaRenovacion"></transition>
-		<transition to="T018_ProponerRecisionCliente" name="rechazaRenovacion"></transition>
+		<transition to="T018_AgendarFirma" name="aceptaRenovacion"></transition>
+		<transition to="T018_ProponerRescisionCliente" name="rechazaRenovacion"></transition>
 		<transition to="Fin" name="rechazaAlquilerSocial"></transition>
 	</decision>
 	
@@ -410,7 +410,7 @@
 		<transition to="T018_FirmaContrato" name="acepta"></transition>
 		<transition to="T018_RespuestaContraofertaBC" name="rechazaAlquilerSocial"></transition>
 		<transition to="T018_RespuestaReagendacionBC" name="rechazaRenovacion"></transition>
-		<transition to="T018_AgendarYFirmar" name="rechazaMenosDosVecesRenovacion"></transition>
+		<transition to="T018_AgendarFirma" name="rechazaMenosDosVecesRenovacion"></transition>
 	</decision>
 	
 	<state name="T018_AprobacionOferta">
@@ -437,7 +437,7 @@
 	</state> 
 	<decision name ="T018_AprobacionOfertaDecision" expression="#{T018_AprobacionOfertaDecision}">
 		<transition to="T018_ComunicarSubrogacion" name="aceptaSubrogacionDacion"></transition>
-		<transition to="T018_ComunicarSubrogacion" name="aceptaRenovacion"></transition>
+		<transition to="T018_AgendarFirma" name="aceptaRenovacion"></transition>
 		<transition to="T018_RespuestaContraofertaBC" name="rechazaRenovacion"></transition>
 		<transition to="Fin" name="rechazaSubrogacionDacion"></transition>
 	</decision>
@@ -575,8 +575,8 @@
 		<transition to="Fin" name="Fin"></transition>
 	</state> 
 	<decision name ="T018_RespuestaReagendacionBCDecision" expression="#{T018_RespuestaReagendacionBCDecision}">
-		<transition to="T018_AgendarYFirmar" name="aceptar"></transition>
-		<transition to="T018_ProponerRecisionCliente" name="rechazar"></transition>
+		<transition to="T018_AgendarFirma" name="aceptar"></transition>
+		<transition to="T018_ProponerRescisionCliente" name="rechazar"></transition>
 	</decision>
 	
 	<state name="T018_FirmaAdenda">
@@ -598,10 +598,10 @@
 				</targetBean>
 			</action>
 		</event>
-		<transition to="T018_FirmaAdendaDecsion" name="avanzaBPM"></transition>
+		<transition to="T018_FirmaAdendaDecision" name="avanzaBPM"></transition>
 		<transition to="Fin" name="Fin"></transition>
 	</state> 
-	<decision name ="T018_FirmaAdendaDecsion" expression="#{T018_FirmaAdendaDecsion}">
+	<decision name ="T018_FirmaAdendaDecision" expression="#{T018_FirmaAdendaDecision}">
 		<transition to="T018_AltaContratoAlquilerAdenda" name="acepta"></transition>
 		<transition to="T018_AgendarFirmaAdenda" name="rechaza"></transition>
 	</decision>
@@ -652,10 +652,10 @@
 				</targetBean>
 			</action>
 		</event>
-		<transition to="T018_ProponerRecisionClienteDecision" name="avanzaBPM"></transition>
+		<transition to="T018_ProponerRescisionClienteDecision" name="avanzaBPM"></transition>
 		<transition to="Fin" name="Fin"></transition>
 	</state> 
-	<decision name ="T018_ProponerRecisionClienteDecision" expression="#{T018_ProponerRecisionClienteDecision}">
+	<decision name ="T018_ProponerRescisionClienteDecision" expression="#{T018_ProponerRescisionClienteDecision}">
 		<transition to="T018_FirmaRescisionContrato" name="acepta"></transition>
 		<transition to="Fin" name="rechazaNoCarteraConcertadaResidencial"></transition>
 		<transition to="T018_RespuestaOfertaBC" name="rechazaCarteraConcertadaResidencial"></transition>
@@ -742,6 +742,34 @@
 		<transition to="Fin" name="rechaza"></transition>
 	</decision>
 	
+	<state name="T018_AgendarFirma">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="T018_AgendarFirmaDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state> 
+	
+	<decision name ="T018_AgendarFirmaDecision" expression="#{T018_AgendarFirmaDecision}">
+		<transition to="T018_FirmaContrato" name="conFianzaExonerada"></transition>
+        <transition to="T018_EntregaFianzas" name="sinFianzaExonerada"></transition>
+	</decision>
+	
 	<state name="T018_PbcAlquiler">
 		<event type="node-enter">
 			<action name="miTarea"
@@ -770,35 +798,6 @@
 		<transition to="T018_AprobacionOferta" name="aceptaRenovacion"></transition>
 		<transition to="T018_AprobacionContrato" name="aceptaSubrogacionHipoteca"></transition>
         <transition to="Fin" name="rechaza"></transition>
-	</decision>
-	
-	
-	<state name="T018_AgendarYFirmar">
-		<event type="node-enter">
-			<action name="miTarea"
-				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
-				config-type="bean">
-				<targetBean>
-					activoGenericEnterActionHandler
-				</targetBean>
-			</action>
-		</event>
-		<event type="node-leave">
-			<action name="miTarea"
-				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
-				config-type="bean">
-				<targetBean>
-					activoGenericLeaveActionHandler
-				</targetBean>
-			</action>
-		</event>
-		<transition to="T018_AgendarYFirmarDecision" name="avanzaBPM"></transition>
-		<transition to="Fin" name="Fin"></transition>
-	</state> 
-	
-	<decision name ="T018_AgendarYFirmarDecision" expression="#{T018_AgendarYFirmarDecision}">
-		<transition to="T018_FirmaContrato" name="clRodSi"></transition>
-        <transition to="T018_EntregaFianzas" name="clRodNo"></transition>
 	</decision>
 	
 	<state name="T018_CierreContrato">

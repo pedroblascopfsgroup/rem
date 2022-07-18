@@ -257,5 +257,11 @@ public class TramiteAlquilerNoComercialManager implements TramiteAlquilerNoComer
 		// TODO Auto-generated method stub
 		return true;
 	}
+
+	@Override
+	public boolean fianzaExonerada(TareaExterna tareaExterna) {
+		// TODO Auto-generated method stub
+		return true;
+	}
 	
 }

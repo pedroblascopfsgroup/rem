@@ -840,17 +840,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		}
 
 		updateEjercicio(gastoProveedor);
-
-		DtoFichaGastoProveedor dtoFin = gastoToDtoFichaGasto(gastoProveedor);
-
-		boolean cambios = hayCambiosGasto(dtoIni, dtoFin, gastoProveedor);
-
-		if (!cambios && (DDEstadoGasto.RECHAZADO_ADMINISTRACION.equals(gastoProveedor.getEstadoGasto().getCodigo())
-				|| DDEstadoGasto.RECHAZADO_PROPIETARIO.equals(gastoProveedor.getEstadoGasto().getCodigo())
-				|| DDEstadoGasto.SUBSANADO.equals(gastoProveedor.getEstadoGasto().getCodigo()))) {
-		} else {
-			updaterStateApi.updaterStates(gastoProveedor, null);
-		}
+		
 		GastoSuplido gastoSuplido = genericDao.get(GastoSuplido.class,
 				genericDao.createFilter(FilterType.EQUALS, "gastoProveedorSuplido", gastoProveedor), filtroBorrado);
 
@@ -936,6 +926,17 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			Filter filtroNifTitularCartaPago = genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", dto.getBuscadorNifTitularCartaPago());
 			ActivoPropietario propietarioTitularCartaPago = genericDao.get(ActivoPropietario.class, filtroNifTitularCartaPago);
 			gastoProveedor.setTitularCartaPago(propietarioTitularCartaPago);
+		}
+		
+		DtoFichaGastoProveedor dtoFin = gastoToDtoFichaGasto(gastoProveedor);
+
+		boolean cambios = hayCambiosGasto(dtoIni, dtoFin, gastoProveedor);
+
+		if (!cambios && (DDEstadoGasto.RECHAZADO_ADMINISTRACION.equals(gastoProveedor.getEstadoGasto().getCodigo())
+				|| DDEstadoGasto.RECHAZADO_PROPIETARIO.equals(gastoProveedor.getEstadoGasto().getCodigo())
+				|| DDEstadoGasto.SUBSANADO.equals(gastoProveedor.getEstadoGasto().getCodigo()))) {
+		} else {
+			updaterStateApi.updaterStates(gastoProveedor, null);
 		}
 
 		return true;

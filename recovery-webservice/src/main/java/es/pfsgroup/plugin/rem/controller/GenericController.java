@@ -1,22 +1,23 @@
 package es.pfsgroup.plugin.rem.controller;
 
-import java.io.FileOutputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.xml.bind.DatatypeConverter;
-
+import es.capgemini.devon.dto.WebDto;
+import es.capgemini.devon.exception.UserException;
+import es.capgemini.devon.files.FileItem;
+import es.capgemini.devon.files.WebFileItem;
+import es.capgemini.pfs.diccionarios.Dictionary;
+import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
+import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.*;
+import es.pfsgroup.plugin.rem.logTrust.LogTrustAcceso;
 import es.pfsgroup.plugin.rem.model.*;
+import es.pfsgroup.plugin.rem.model.dd.*;
+import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.*;
+import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
+import es.pfsgroup.plugin.rem.restclient.exception.RestClientException;
+import es.pfsgroup.plugin.rem.utils.ImagenWebDto;
+import net.sf.json.JSONObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,26 +33,12 @@ import org.springframework.web.servlet.view.json.JsonWriterConfiguratorTemplateR
 import org.springframework.web.servlet.view.json.writer.sojo.SojoConfig;
 import org.springframework.web.servlet.view.json.writer.sojo.SojoJsonWriterConfiguratorTemplate;
 
-import es.capgemini.devon.dto.WebDto;
-import es.capgemini.devon.exception.UserException;
-import es.capgemini.devon.files.FileItem;
-import es.capgemini.devon.files.WebFileItem;
-import es.capgemini.pfs.diccionarios.Dictionary;
-import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
-import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
-import es.pfsgroup.plugin.rem.logTrust.LogTrustAcceso;
-import es.pfsgroup.plugin.rem.model.dd.DDCartera;
-import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
-import es.pfsgroup.plugin.rem.model.dd.DDTareaDestinoSalto;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
-import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
-import es.pfsgroup.plugin.rem.rest.api.RestApi;
-import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
-import es.pfsgroup.plugin.rem.restclient.exception.RestClientException;
-import es.pfsgroup.plugin.rem.utils.ImagenWebDto;
-import net.sf.json.JSONObject;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.xml.bind.DatatypeConverter;
+import java.io.FileOutputStream;
+import java.util.*;
 
 
 @Controller
@@ -954,6 +941,24 @@ public class GenericController extends ParadiseJsonController{
 		restApi.sendResponse(response, model, request);
 	}
 
+	@RequestMapping(method = RequestMethod.POST, value = "/generic/avanzaTarea")
+	public void avanzaTarea(ModelMap model, RestRequestWrapper request, HttpServletResponse response) {
+
+		JSONObject jsonData = null;
+		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
+
+		try {
+			jsonData = (JSONObject) request.getRequestData(JSONObject.class);
+			accionesCaixaApi.avanzarTareaGenerico(jsonData);
+			model.put("success", true);
+		} catch (Exception e) {
+			model.put("error", e.getMessage());
+			model.put("descError", "No se ha podido avanzar la tarea");
+			model.put("success", false);
+		}finally {
+			restApi.sendResponse(response, model, request);
+		}
+	}
 	@RequestMapping(method = RequestMethod.POST, value = "/generic/generaDeposito")
 	public void generaDeposito(ModelMap model, RestRequestWrapper request, HttpServletResponse response){
 		GeneraDepositoRequestDto jsonData = null;

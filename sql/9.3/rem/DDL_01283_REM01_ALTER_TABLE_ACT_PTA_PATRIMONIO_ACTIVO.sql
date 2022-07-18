@@ -1,16 +1,17 @@
 --/*
 --##########################################
 --## AUTOR=Ivan Rubio
---## FECHA_CREACION=20220708
+--## FECHA_CREACION=20220718
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-18346
+--## INCIDENCIA_LINK=HREOS-18382
 --## PRODUCTO=NO
 --## Finalidad: Ampliar la tabla ACT_PTA_PATRIMONIO_ACTIVO nuevo campo APLICA_ALQUILER_SOCIAL
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial 20220708 HREOS-18346
+--##        0.2 Insercion nueva columna FECHA_CAMBIO_ALQUILER_SOCIAL
 --##########################################
 --*/
 
@@ -44,7 +45,8 @@ DECLARE
     TYPE T_ARRAY_ALTER IS TABLE OF T_ALTER;
     V_ALTER T_ARRAY_ALTER := T_ARRAY_ALTER(
     			-- NOMBRE CAMPO						TIPO CAMPO							DESCRIPCION
-		T_ALTER(  'APLICA_ALQUILER_SOCIAL',			'NUMBER(1,0)',					'Aplica alquiler social (SI/NO)'	)
+		T_ALTER(  'APLICA_ALQUILER_SOCIAL',			'NUMBER(1,0)',					'Aplica alquiler social (SI/NO)'	),
+		T_ALTER(  'FECHA_CAMBIO_ALQUILER_SOCIAL',			'DATE',					'Fecha cambio alquiler social'	)
 		);
     V_T_ALTER T_ALTER;
     

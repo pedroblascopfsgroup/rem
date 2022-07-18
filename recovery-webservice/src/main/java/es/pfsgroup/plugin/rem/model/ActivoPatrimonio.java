@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -99,6 +100,9 @@ public class ActivoPatrimonio implements Serializable, Auditable {
 	@ManyToOne
 	@JoinColumn(name = "APLICA_ALQUILER_SOCIAL")
 	private DDSinSiNo aplicaAlquilerSocial;
+	  
+    @Column(name = "FECHA_CAMBIO_ALQUILER_SOCIAL")
+    private Date fechaCambioAlquilerSocial;
 	
 	@Version
 	private Long version;
@@ -240,6 +244,14 @@ public class ActivoPatrimonio implements Serializable, Auditable {
 
 	public void setAplicaAlquilerSocial(DDSinSiNo aplicaAlquilerSocial) {
 		this.aplicaAlquilerSocial = aplicaAlquilerSocial;
+	}
+
+	public Date getFechaCambioAlquilerSocial() {
+		return fechaCambioAlquilerSocial;
+	}
+
+	public void setFechaCambioAlquilerSocial(Date fechaCambioAlquilerSocial) {
+		this.fechaCambioAlquilerSocial = fechaCambioAlquilerSocial;
 	}	
 	
 }

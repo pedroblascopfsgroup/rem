@@ -10,10 +10,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
-import es.pfsgroup.plugin.rem.api.ActivoApi;
-import es.pfsgroup.plugin.rem.api.DepositoApi;
-import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
-import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.*;
 import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDeposito;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
@@ -49,6 +46,9 @@ public class DepositoManager extends BusinessOperationOverrider<DepositoApi> imp
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
 
+	@Autowired
+	private ConcurrenciaApi concurrenciaApi;
+
 	@Override
 	public String managerName() {
 		return "depositoManager";
@@ -61,7 +61,7 @@ public class DepositoManager extends BusinessOperationOverrider<DepositoApi> imp
 		
 		if(oferta != null && oferta.getActivoPrincipal() != null 
 				&& oferta.getActivoPrincipal().getSubcartera() != null && DDTipoOferta.isTipoVenta(oferta.getTipoOferta())) {
-			return esNecesarioDepositoBySubcartera(oferta.getActivoPrincipal().getSubcartera().getCodigo());
+			return esNecesarioDepositoBySubcartera(oferta.getActivoPrincipal().getSubcartera().getCodigo()) || concurrenciaApi.isOfertaEnConcurrencia(oferta);
 		}
 		
 		return false;
@@ -122,13 +122,13 @@ public class DepositoManager extends BusinessOperationOverrider<DepositoApi> imp
 	}
 	
 	@Override
-	public boolean esNecesarioDepositoNuevaOferta(Activo ActivoCuentaVirtual) {
+	public boolean esNecesarioDepositoNuevaOferta(Activo activo) {
 		
-		if(ActivoCuentaVirtual != null 
-				&& ActivoCuentaVirtual.getSubcartera() != null ) {
+		if(activo != null
+				&& activo.getSubcartera() != null ) {
 			ConfiguracionDeposito conDep = genericDao.get(ConfiguracionDeposito.class
-					,genericDao.createFilter(FilterType.EQUALS,"subcartera.codigo", ActivoCuentaVirtual.getSubcartera().getCodigo()));
-			if(conDep != null && conDep.getDepositoNecesario()) {
+					,genericDao.createFilter(FilterType.EQUALS,"subcartera.codigo", activo.getSubcartera().getCodigo()));
+			if((conDep != null && conDep.getDepositoNecesario()) || concurrenciaApi.isActivoEnConcurrencia(activo)) {
 				return true;
 			}
 		}

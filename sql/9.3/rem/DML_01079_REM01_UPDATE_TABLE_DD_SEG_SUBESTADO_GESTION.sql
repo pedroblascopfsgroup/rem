@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Ivan Rubio
---## FECHA_CREACION=20220719
+--## FECHA_CREACION=20220720
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-18402
@@ -37,7 +37,6 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
 
-        T_TIPO_DATA('PDTE_DOC'),
         T_TIPO_DATA('GEST_CP'),
         T_TIPO_DATA('NGCO')
 	    

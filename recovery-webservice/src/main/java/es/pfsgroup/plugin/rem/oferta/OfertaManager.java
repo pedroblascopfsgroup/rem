@@ -8769,7 +8769,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	@Transactional
 	public Boolean actualizaEstadoOferta(Long idOferta, String codigoEstado) {
 		Oferta oferta = ofertaDao.get(idOferta);
-
+		boolean actualizar =true;
 		if(oferta != null && codigoEstado != null){
 			if(DDEstadoOferta.CODIGO_PENDIENTE.equals(codigoEstado) && debeCongelarOfertaCaixa(oferta)) {
 				codigoEstado = DDEstadoOferta.CODIGO_CONGELADA;
@@ -8778,14 +8778,19 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			
 			//CADUCAR OFERTAS
 			if(DDEstadoOferta.CODIGO_PDTE_DEPOSITO.equals(codigoEstado)) {
-				concurrenciaApi.caducaOfertaConcurrencia(oferta.getActivoPrincipal().getId(),idOferta);
+				actualizar = !concurrenciaApi.caducaOfertaConcurrencia(oferta.getActivoPrincipal().getId(),idOferta);
 			}
 			
-			ofertaDao.saveOrUpdate(oferta);
+			if(DDEstadoOferta.CODIGO_ACEPTADA.equals(codigoEstado) && oferta.getIsEnConcurrencia() != null && oferta.getIsEnConcurrencia()) {
+				actualizar = !concurrenciaApi.isOfertaEnPlazoConcu(false,  this.getListaOfertasByActivo(oferta.getActivoPrincipal()));
+			}
 			
-			setEstadoOfertaBC(oferta, null);
+			if(actualizar) {
+				ofertaDao.saveOrUpdate(oferta);
+				setEstadoOfertaBC(oferta, null);
+				return true;
+			}
 
-			return true;
 		}
 
 		return false;

@@ -180,7 +180,7 @@ public class OfertaDto implements Serializable {
 	private String codMotivoRechazoRCDC;
 	private String ibanDevolucion;
 	
-	private Boolean enConcurrencia;
+	private Boolean creadaConcurrencia;
 	
 	public Long getIdOfertaWebcom() {
 		return idOfertaWebcom;
@@ -759,11 +759,11 @@ public class OfertaDto implements Serializable {
 		this.codMotivoRechazoRCDC = codMotivoRechazoRCDC;
 	}
 
-	public Boolean getEnConcurrencia() {
-		return enConcurrencia;
+	public Boolean getCreadaConcurrencia() {
+		return creadaConcurrencia;
 	}
-	public void setEnConcurrencia(Boolean enConcurrencia) {
-		this.enConcurrencia = enConcurrencia;
+	public void setCreadaConcurrencia(Boolean creadaConcurrencia) {
+		this.creadaConcurrencia = creadaConcurrencia;
 	}
 	public String getIbanDevolucion() {
 		return ibanDevolucion;

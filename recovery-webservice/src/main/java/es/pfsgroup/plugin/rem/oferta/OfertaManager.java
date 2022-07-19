@@ -1701,7 +1701,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}
 			}
 			
-			oferta.setIsEnConcurrencia(ofertaDto.getEnConcurrencia());
+			oferta.setIsEnConcurrencia(ofertaDto.getCreadaConcurrencia());
 			oferta.getActivoPrincipal();
 			
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", oferta.getActivoPrincipal().getId());
@@ -1932,7 +1932,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 
 	private void crearPuja(OfertaDto ofertaDto, Oferta oferta, ActivoAgrupacion agrup, Activo activo) {
-		if(ofertaDto.getEnConcurrencia() != null && ofertaDto.getEnConcurrencia() ) {
+		if(ofertaDto.getCreadaConcurrencia() != null && ofertaDto.getCreadaConcurrencia() ) {
 			Concurrencia concurrencia = null;
 			if(ofertaDto.getCodigoAgrupacionComercialRem() != null) {
 				concurrencia = concurrenciaApi.getUltimaConcurrenciaByAgrupacion(agrup);
@@ -9913,13 +9913,13 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	
 	private void checkIsConcurrencia(OfertaDto ofertaDto, HashMap<String, String> errorsList, Activo activoConcurrencia,ActivoAgrupacion agrupacionConcurrencia) {
 		if(agrupacionConcurrencia != null 
-				&& ((concurrenciaApi.isAgrupacionEnConcurrencia(agrupacionConcurrencia) && ofertaDto.getEnConcurrencia() != null && !ofertaDto.getEnConcurrencia()) 
-						|| (concurrenciaApi.isAgrupacionEnConcurrencia(agrupacionConcurrencia) && ofertaDto.getEnConcurrencia() == null))){
-			errorsList.put("enConcurrencia", MSJ_ERROR_NO_CONCURRENCIA);
+				&& ((concurrenciaApi.isAgrupacionEnConcurrencia(agrupacionConcurrencia) && ofertaDto.getCreadaConcurrencia() != null && !ofertaDto.getCreadaConcurrencia()) 
+						|| (concurrenciaApi.isAgrupacionEnConcurrencia(agrupacionConcurrencia) && ofertaDto.getCreadaConcurrencia() == null))){
+			errorsList.put("creadaConcurrencia", MSJ_ERROR_NO_CONCURRENCIA);
 		}else if(activoConcurrencia != null 
-				&& ((concurrenciaApi.isActivoEnConcurrencia(activoConcurrencia) && ofertaDto.getEnConcurrencia() != null && !ofertaDto.getEnConcurrencia())
-						|| (concurrenciaApi.isActivoEnConcurrencia(activoConcurrencia) && ofertaDto.getEnConcurrencia() == null))){
-			errorsList.put("enConcurrencia", MSJ_ERROR_NO_CONCURRENCIA);
+				&& ((concurrenciaApi.isActivoEnConcurrencia(activoConcurrencia) && ofertaDto.getCreadaConcurrencia() != null && !ofertaDto.getCreadaConcurrencia())
+						|| (concurrenciaApi.isActivoEnConcurrencia(activoConcurrencia) && ofertaDto.getCreadaConcurrencia() == null))){
+			errorsList.put("creadaConcurrencia", MSJ_ERROR_NO_CONCURRENCIA);
 		}
 	}
 	

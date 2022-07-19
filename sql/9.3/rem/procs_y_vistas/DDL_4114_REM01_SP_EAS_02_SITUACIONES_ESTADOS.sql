@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=PIER GOTTA
---## FECHA_CREACION=20220630
+--## FECHA_CREACION=20220719
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-18226
@@ -53,7 +53,7 @@ BEGIN
                     ''PA'' AS CODIGO_SITUACION,
                     ''Posesión activo'' AS DESCRIPCION_SITUACION,
                     EQV.DD_CODIGO_CAIXA AS CODIGO_ESTADO,
-                    CAI.FEC_EST_POSESORIO_BC AS FECHA_INICIO,
+                    TO_CHAR(CAI.FEC_EST_POSESORIO_BC,''YYYYMMDD'') AS FECHA_INICIO,
                     NULL AS FECHA_FIN,
 		    NULL AS NOTAS
 		     FROM ' || V_ESQUEMA || '.ACT_AGR_AGRUPACION AGR 
@@ -71,7 +71,7 @@ BEGIN
                      ''TA'' AS CODIGO_SITUACION,
                      ''Situación técnica activo'' AS DESCRIPCION_SITUACION,
                      EQV.DD_CODIGO_CAIXA AS CODIGO_ESTADO,
-            	     CAI.FECHA_EAT_EST_TECNICO AS FECHA_INICIO,
+            	     TO_CHAR(CAI.FECHA_EAT_EST_TECNICO,''YYYYMMDD'') AS FECHA_INICIO,
             	    NULL AS FECHA_FIN,
 		    NULL AS NOTAS
 		     FROM ' || V_ESQUEMA || '.ACT_AGR_AGRUPACION AGR 
@@ -89,7 +89,7 @@ BEGIN
 		    ''CA'' AS CODIGO_SITUACION,
 		    ''Situación comercial alquiler'' AS DESCRIPCION_SITUACION,
 		    EQV.DD_CODIGO_CAIXA AS CODIGO_ESTADO,
-		    CAI.FECHA_ECA_EST_COM_ALQUILER AS FECHA_INICIO,
+		    TO_CHAR(CAI.FECHA_ECA_EST_COM_ALQUILER,''YYYYMMDD'') AS FECHA_INICIO,
 		    NULL AS FECHA_FIN,
 		    NULL AS NOTAS
 		    FROM ' || V_ESQUEMA || '.ACT_AGR_AGRUPACION AGR 

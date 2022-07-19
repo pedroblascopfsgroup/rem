@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=PIER GOTTA
---## FECHA_CREACION=20220706
+--## FECHA_CREACION=20220719
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-18229
@@ -43,7 +43,7 @@ BEGIN
 		     SELECT 9 AS TREGISTRO, 
 		     ACT.ACT_NUM_ACTIVO AS ZZEXTERNALID, 
                     ''0001'' AS CONDITION_TYPE,
-                    val.VAL_FECHA_INICIO AS VALID_FROM,
+                    TO_CHAR(val.VAL_FECHA_INICIO,''YYYYMMDD'') AS VALID_FROM,
                     NULL AS VALID_TO,
                     VAL.VAL_IMPORTE AS UNIT_PRICE
 		     FROM ' || V_ESQUEMA || '.ACT_AGR_AGRUPACION AGR 
@@ -57,7 +57,7 @@ BEGIN
                     SELECT 9 AS TREGISTRO, 
 		     ACT.ACT_NUM_ACTIVO AS ZZEXTERNALID, 
                     ''0006'' AS CONDITION_TYPE,
-                    val.VAL_FECHA_INICIO AS VALID_FROM,
+                    TO_CHAR(val.VAL_FECHA_INICIO,''YYYYMMDD'') AS VALID_FROM,
                     NULL AS VALID_TO,
                     VAL.VAL_IMPORTE AS UNIT_PRICE
 		     FROM ' || V_ESQUEMA || '.ACT_AGR_AGRUPACION AGR 
@@ -71,7 +71,7 @@ BEGIN
              SELECT 9 AS TREGISTRO, 
 		     ACT.ACT_NUM_ACTIVO AS ZZEXTERNALID, 
                     ''0008'' AS CONDITION_TYPE,
-                    val.VAL_FECHA_INICIO AS VALID_FROM,
+                    TO_CHAR(val.VAL_FECHA_INICIO,''YYYYMMDD'') AS VALID_FROM,
                     NULL AS VALID_TO,
                     VAL.VAL_IMPORTE AS UNIT_PRICE
 		     FROM ' || V_ESQUEMA || '.ACT_AGR_AGRUPACION AGR 

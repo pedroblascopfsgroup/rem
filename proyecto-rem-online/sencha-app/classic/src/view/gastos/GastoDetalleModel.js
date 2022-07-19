@@ -425,7 +425,12 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
                         }
                 }
                 return false;
-        }
+        },
+		
+		esPropietarioBBVA : function(){
+			var me = this;
+			return CONST.CARTERA['BBVA'] == me.getData().gasto.get('carteraPropietarioCodigo');
+		}
 	},
 
 	stores : {

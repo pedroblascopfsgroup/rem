@@ -41,13 +41,13 @@ public class VGridOfertasActivosConcurrencia implements Serializable {
 	private String codigoEstadoOferta;
 	
 	@Column(name = "ESTADOOFERTA")  
-	private String descripcionEstadoOferta;
+	private String estadoOferta;
 	
 	@Column(name = "ESTADODEPOSITOCODIGO")  
 	private String codigoEstadoDeposito;
 	
 	@Column(name = "ESTADODEPOSITO")  
-	private String descripcionEstadoDeposito;
+	private String estadoDeposito;
 	
 	@Column(name = "FECHAALTA")
 	private Date fechaCreacion;
@@ -63,6 +63,15 @@ public class VGridOfertasActivosConcurrencia implements Serializable {
 	
 	@Column(name = "CON_ID")  
 	private Long idConcurrencia;
+	
+	@Column(name = "ECO_ID")
+	private Long idExpediente;
+	
+	@Column(name = "ECO_NUM_EXPEDIENTE")
+	private Long numExpediente;
+	
+	@Column(name = "DD_EEC_DESCRIPCION")
+	private String descripcionEstadoExpediente;
 
 	public Long getId() {
 		return id;
@@ -112,12 +121,12 @@ public class VGridOfertasActivosConcurrencia implements Serializable {
 		this.codigoEstadoOferta = codigoEstadoOferta;
 	}
 
-	public String getDescripcionEstadoOferta() {
-		return descripcionEstadoOferta;
+	public String getEstadoOferta() {
+		return estadoOferta;
 	}
 
-	public void setDescripcionEstadoOferta(String descripcionEstadoOferta) {
-		this.descripcionEstadoOferta = descripcionEstadoOferta;
+	public void setEstadoOferta(String estadoOferta) {
+		this.estadoOferta = estadoOferta;
 	}
 
 	public String getCodigoEstadoDeposito() {
@@ -128,12 +137,12 @@ public class VGridOfertasActivosConcurrencia implements Serializable {
 		this.codigoEstadoDeposito = codigoEstadoDeposito;
 	}
 
-	public String getDescripcionEstadoDeposito() {
-		return descripcionEstadoDeposito;
+	public String getEstadoDeposito() {
+		return estadoDeposito;
 	}
 
-	public void setDescripcionEstadoDeposito(String descripcionEstadoDeposito) {
-		this.descripcionEstadoDeposito = descripcionEstadoDeposito;
+	public void setEstadoDeposito(String estadoDeposito) {
+		this.estadoDeposito = estadoDeposito;
 	}
 
 	public Date getFechaCreacion() {
@@ -190,6 +199,30 @@ public class VGridOfertasActivosConcurrencia implements Serializable {
 
 	public void setNumActivoAgrupacion(Long numActivoAgrupacion) {
 		this.numActivoAgrupacion = numActivoAgrupacion;
+	}
+
+	public Long getIdExpediente() {
+		return idExpediente;
+	}
+
+	public void setIdExpediente(Long idExpediente) {
+		this.idExpediente = idExpediente;
+	}
+
+	public Long getNumExpediente() {
+		return numExpediente;
+	}
+
+	public void setNumExpediente(Long numExpediente) {
+		this.numExpediente = numExpediente;
+	}
+
+	public String getDescripcionEstadoExpediente() {
+		return descripcionEstadoExpediente;
+	}
+
+	public void setDescripcionEstadoExpediente(String descripcionEstadoExpediente) {
+		this.descripcionEstadoExpediente = descripcionEstadoExpediente;
 	}
 	
 }

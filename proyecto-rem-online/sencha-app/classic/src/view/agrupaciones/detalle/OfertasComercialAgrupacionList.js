@@ -73,7 +73,7 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 			        hidden: enConcurrencia
 		        },
 		        {
-		            dataIndex: 'codigoEstadoOferta',
+		            dataIndex: 'estadoOferta',
 		            text: HreRem.i18n('header.oferta.estadoOferta'),
 					editor: {
 						xtype: 'combobox',								        		

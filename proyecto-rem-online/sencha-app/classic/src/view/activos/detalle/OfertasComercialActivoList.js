@@ -119,7 +119,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 			        hidden: vistaDeConcurrencia
 		        },
 		        {
-		            dataIndex: 'descripcionEstadoOferta',
+		            dataIndex: 'estadoOferta',
 		            text: HreRem.i18n('header.oferta.estadoOferta'),
 		            reference: 'estadoOferta',
 					editor: {
@@ -260,7 +260,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		            flex: 1
 		        },
 		        {
-		            dataIndex: 'descripcionEstadoDeposito',
+		            dataIndex: 'estadoDeposito',
 		            text: HreRem.i18n('fieldlabel.estado.deposito'),
 		            flex: 1,
 		            hidden: false
@@ -442,7 +442,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 	
 	editFuncion: function(editor, context){
 		var me= this;
-		var estado = context.record.get("codigoEstadoOferta");
+		var estado = context.record.get("estadoOferta");
         var codigoTipoOferta = context.record.get('codigoTipoOferta');
         var enConcurrencia = me.lookupController().getViewModel().getData().activo.get('enConcurrencia');
         

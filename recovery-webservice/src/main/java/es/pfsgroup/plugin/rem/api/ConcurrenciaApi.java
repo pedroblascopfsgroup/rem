@@ -15,6 +15,7 @@ import es.pfsgroup.plugin.rem.model.DtoHistoricoConcurrencia;
 import es.pfsgroup.plugin.rem.model.DtoPujaDetalle;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.VGridCambiosPeriodoConcurrencia;
+import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionConcurrencia;
 import es.pfsgroup.plugin.rem.model.VGridOfertasActivosConcurrencia;
 
 public interface ConcurrenciaApi {
@@ -78,5 +79,7 @@ public interface ConcurrenciaApi {
 
 	void comunicacionSFMC(List<Long> idOfertaList, String codigoEnvio, String tipoEnvio, ModelMap model)
 			throws JsonGenerationException, JsonMappingException, IOException;
+
+	List<VGridOfertasActivosAgrupacionConcurrencia> getListOfertasTerminadasConcurrentes(Long idActivo, Long idConcurrencia);
 
 }

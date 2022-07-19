@@ -11,6 +11,7 @@ import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
 import es.pfsgroup.plugin.rem.concurrencia.dao.ConcurrenciaDao;
 import es.pfsgroup.plugin.rem.model.Concurrencia;
 import es.pfsgroup.plugin.rem.model.VGridCambiosPeriodoConcurrencia;
+import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionConcurrencia;
 import es.pfsgroup.plugin.rem.model.VGridOfertasActivosConcurrencia;
 
 @Repository("concurrenciaDao")
@@ -63,6 +64,27 @@ public class ConcurrenciaDaoImpl extends AbstractEntityDao<Concurrencia, Long> i
 
 		
 		return (List<VGridOfertasActivosConcurrencia>) this.getSessionFactory().getCurrentSession()
+				.createQuery(hb.toString()).list();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<VGridOfertasActivosAgrupacionConcurrencia> getListOfertasTerminadasConcurrentes(Long idActivo, Long idConcurrencia) {
+
+		String hql = " from VGridOfertasActivosAgrupacionConcurrencia voaac ";
+
+		HQLBuilder hb = new HQLBuilder(hql);
+
+		if(idActivo != null) {
+			hb.appendWhere(" voaac.idActivo = "+idActivo);
+		}
+		
+		if(idConcurrencia != null) {
+			hb.appendWhere(" voaac.idConcurrencia = "+ idConcurrencia);
+		}
+
+		
+		return (List<VGridOfertasActivosAgrupacionConcurrencia>) this.getSessionFactory().getCurrentSession()
 				.createQuery(hb.toString()).list();
 	}
 

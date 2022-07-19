@@ -256,6 +256,11 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 	}
 	
 	@Override
+	public List<VGridOfertasActivosAgrupacionConcurrencia> getListOfertasTerminadasConcurrentes(Long idActivo, Long idConcurrencia) {
+		return concurrenciaDao.getListOfertasTerminadasConcurrentes(idActivo, idConcurrencia);
+	}
+	
+	@Override
 	public boolean isConcurrenciaOfertasEnProgresoActivo(Activo activo) {
 		return this.isActivoEnConcurrencia(activo) || this.tieneActivoOfertasDeConcurrencia(activo);
 	}

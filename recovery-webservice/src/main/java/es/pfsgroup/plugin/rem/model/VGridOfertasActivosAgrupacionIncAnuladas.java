@@ -290,6 +290,5 @@ public class VGridOfertasActivosAgrupacionIncAnuladas implements Serializable {
 	public void setEstadoDeposito(String estadoDeposito) {
 		this.estadoDeposito = estadoDeposito;
 	}	
-	
 
 }

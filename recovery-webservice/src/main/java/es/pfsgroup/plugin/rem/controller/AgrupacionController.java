@@ -389,11 +389,15 @@ public class AgrupacionController extends ParadiseJsonController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListOfertasAgrupacion(Long id, WebDto webDto, ModelMap model, HttpServletRequest request) {
-		if(concurrenciaApi.isConcurrenciaTerminadaOfertasEnProgresoAgrupacion(adapter.getAgrupacionObjectById(id))){
+		
+		if(concurrenciaApi.isAgrupacionEnConcurrencia(adapter.getAgrupacionObjectById(id))) {
 			model.put("data", adapter.getListOfertasVivasConcurrenciaAgrupacion(id));
-		}else {
+		} else if(concurrenciaApi.isConcurrenciaTerminadaOfertasEnProgresoAgrupacion(adapter.getAgrupacionObjectById(id))) {
+			model.put("data", adapter.getListOfertasTerminadasConcurrenciaAgrupacion(id));
+		} else {
 			model.put("data", adapter.getListOfertasAgrupacion(id));
 		}
+		
 		return createModelAndViewJson(model);
 	}
 

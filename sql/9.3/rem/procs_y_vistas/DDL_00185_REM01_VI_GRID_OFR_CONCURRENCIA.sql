@@ -1,17 +1,18 @@
 --/*
 --##########################################
---## AUTOR=Ivan Rubio
---## FECHA_CREACION=20220703
+--## AUTOR=Alejandro Valverde
+--## FECHA_CREACION=20220719
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-17991
+--## INCIDENCIA_LINK=HREOS-18405
 --## PRODUCTO=NO
 --## Finalidad: VI_GRID_OFR_CONCURRENCIA
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##         0.1 Versión inicial
+--##         0.1 Versión inicial (HREOS-17991)
 --##         0.2 Juan Jose Sanjuan - añadir importe Oferta 
+--##         0.3 Alejandro Valverde (HREOS-18405) - Añadir datos Expediente Comercial
 --##########################################
 --*/
 
@@ -66,7 +67,10 @@ BEGIN
 		,ROUND(CON_FECHA_FIN-CON_FECHA_INI, 0) AS DIASCONCURRENCIA
 		,act.ACT_ID		
 		,act.ACT_NUM_ACTIVO
-		,cnc.CON_ID 
+		,cnc.CON_ID
+		,ECO.ECO_NUM_EXPEDIENTE
+		,ECO.ECO_ID
+		,EEC.DD_EEC_DESCRIPCION
 		FROM '|| V_ESQUEMA ||'.ofr_ofertas ofr
 		INNER JOIN '|| V_ESQUEMA ||'.DD_TOF_TIPOS_OFERTA TOF ON TOF.DD_TOF_ID = OFR.DD_TOF_ID
 		INNER JOIN '|| V_ESQUEMA ||'.DD_EOF_ESTADOS_OFERTA EOF ON EOF.DD_EOF_ID = OFR.DD_EOF_ID
@@ -77,7 +81,9 @@ BEGIN
     LEFT JOIN ' || V_ESQUEMA || '.ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = cnc.AGR_ID AND AGR.BORRADO = 0
 		LEFT JOIN '|| V_ESQUEMA ||'.DEP_DEPOSITO DEP ON DEP.OFR_ID = OFR.OFR_ID and DEP.borrado = 0
 		LEFT JOIN '|| V_ESQUEMA ||'.DD_EDP_EST_DEPOSITO EDP ON EDP.DD_EDP_ID = DEP.DD_EDP_ID
-		WHERE ofr.ofr_concurrencia  = 1  and ofr.borrado = 0  and ofr.fechacrear BETWEEN cnc.con_fecha_ini AND cnc.con_fecha_fin ';
+		LEFT JOIN ' || V_ESQUEMA || '.ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.OFR_ID = OFR.OFR_ID
+		LEFT JOIN ' || V_ESQUEMA || '.DD_EEC_EST_EXP_COMERCIAL EEC ON EEC.DD_EEC_ID = ECO.DD_EEC_ID
+		WHERE ofr.ofr_concurrencia  = 1  and ofr.borrado = 0';
 
   EXECUTE IMMEDIATE	V_MSQL;
     
@@ -97,6 +103,9 @@ BEGIN
   EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_GRID_OFR_CONCURRENCIA.ACT_ID IS ''Identificador del activo''';
   EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_GRID_OFR_CONCURRENCIA.ACT_NUM_ACTIVO IS ''Número del activo''';
   EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_GRID_OFR_CONCURRENCIA.CON_ID IS ''Código identificador único de la concurrencia relacionado con el activo de la oferta''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_GRID_OFR_CONCURRENCIA.ECO_NUM_EXPEDIENTE IS ''Número del expediente comercial relacionado con la oferta''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_GRID_OFR_CONCURRENCIA.ECO_ID IS ''Código identificador único del expediente comercial relacionado con la oferta''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_GRID_OFR_CONCURRENCIA.DD_EEC_DESCRIPCION IS ''Estado del expediente comercial relacionado con la oferta''';
 
   
   DBMS_OUTPUT.PUT_LINE('Creados los comentarios en CREATE VIEW '|| V_ESQUEMA ||'.VI_GRID_OFR_CONCURRENCIA...Creada OK');

@@ -65,8 +65,8 @@ import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.api.AgrupacionAvisadorApi;
-import es.pfsgroup.plugin.rem.api.DepositoApi;
 import es.pfsgroup.plugin.rem.api.ConcurrenciaApi;
+import es.pfsgroup.plugin.rem.api.DepositoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
@@ -74,7 +74,6 @@ import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.api.TramitacionOfertasApi;
 import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
-import es.pfsgroup.plugin.rem.concurrencia.dao.ConcurrenciaDao;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
@@ -133,6 +132,7 @@ import es.pfsgroup.plugin.rem.model.VCondicionantesAgrDisponibilidad;
 import es.pfsgroup.plugin.rem.model.VFechasPubCanalesAgr;
 import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionConcurrencia;
 import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionIncAnuladas;
+import es.pfsgroup.plugin.rem.model.VGridOfertasActivosConcurrencia;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
@@ -5664,8 +5664,23 @@ public class AgrupacionAdapter {
 		dto.setTipoAgrupacion(dto.getTipoAgrupacionDescripcion());
 		return this.createAgrupacion(dto);
 	}
+	
+	public List<VGridOfertasActivosConcurrencia> getListOfertasVivasConcurrenciaAgrupacion(Long idAgrupacion) {
 
-	public List<VGridOfertasActivosAgrupacionConcurrencia> getListOfertasVivasConcurrenciaAgrupacion(Long idAgrupacion) {
+		List<VGridOfertasActivosConcurrencia> ofertasAgrupacion = new ArrayList<VGridOfertasActivosConcurrencia>();
+		
+		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(idAgrupacion);
+		
+		if(agrupacion != null && agrupacion.getNumAgrupRem() != null) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "numActivoAgrupacion", agrupacion.getNumAgrupRem());
+			ofertasAgrupacion = genericDao.getList(VGridOfertasActivosConcurrencia.class, filtro);
+		}
+
+		return ofertasAgrupacion;
+
+	}
+
+	public List<VGridOfertasActivosAgrupacionConcurrencia> getListOfertasTerminadasConcurrenciaAgrupacion(Long idAgrupacion) {
 
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idAgrupacion", idAgrupacion);
 

@@ -9499,19 +9499,21 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if(eco.getTrabajo() != null && noPdteDevolucion) {
 				Trabajo trabajo = eco.getTrabajo();
 				List<ActivoTramite> tramites = activoTramiteApi.getTramitesActivoTrabajoList(trabajo.getId());
-				ActivoTramite tramite = tramites.get(0);
-				Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_TRAMITE_FINALIZADO);
-				tramite.setEstadoTramite(genericDao.get(DDEstadoProcedimiento.class, filtroEstadoTramite));
-				
-				Set<TareaActivo> tareasTramite = tramite.getTareas();
-				for (TareaActivo tarea : tareasTramite) {
-					if (Checks.esNulo(tarea.getFechaFin())) {
-						tarea.setFechaFin(new Date());
-						tarea.getAuditoria().setBorrado(true);
+				ActivoTramite tramite = !Checks.esNulo(tramites) && !tramites.isEmpty() ? tramites.get(0) : null;
+				if (!Checks.esNulo(tramite)){
+					Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_TRAMITE_FINALIZADO);
+					tramite.setEstadoTramite(genericDao.get(DDEstadoProcedimiento.class, filtroEstadoTramite));
+					
+					Set<TareaActivo> tareasTramite = tramite.getTareas();
+					for (TareaActivo tarea : tareasTramite) {
+						if (Checks.esNulo(tarea.getFechaFin())) {
+							tarea.setFechaFin(new Date());
+							tarea.getAuditoria().setBorrado(true);
+						}
 					}
+					
+					genericDao.save(ActivoTramite.class, tramite);
 				}
-				
-				genericDao.save(ActivoTramite.class, tramite);
 			}
 			
 			genericDao.save(ExpedienteComercial.class, eco);

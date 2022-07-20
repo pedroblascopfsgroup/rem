@@ -8137,7 +8137,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	
 	private boolean esOfertaExpressOrEspecial(Oferta oferta) {
 		return (oferta.getOfertaEspecial() != null && oferta.getOfertaEspecial()) 
-				|| (oferta.getOfertaExpress() != null || oferta.getOfertaExpress());
+				|| (oferta.getOfertaExpress() != null && oferta.getOfertaExpress());
 	}
 	
 	private boolean esTareaValidaEnvioCFV(Oferta oferta,TareaExterna tareaExterna) {

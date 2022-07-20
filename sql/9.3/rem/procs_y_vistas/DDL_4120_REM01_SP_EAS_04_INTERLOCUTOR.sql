@@ -19,7 +19,7 @@ SET DEFINE OFF;
 
 
 
-CREATE OR REPLACE PROCEDURE SP_EAS_05_INTERLOCUTOR
+CREATE OR REPLACE PROCEDURE SP_EAS_04_INTERLOCUTOR
    ( 
    SALIDA OUT VARCHAR2
    )
@@ -61,10 +61,10 @@ BEGIN
 
                 SELECT DISTINCT
                             act.ACT_NUM_ACTIVO AS ZZEXTERNALID,
-                            '''' AS PARTNER,                         
+                            ''500001067'' AS PARTNER,                         
                             ''Z00503'' AS ROLE,
-                            TO_CHAR(NULL,''YYYYMMDD'') AS VALIDFROM,
-                            TO_CHAR(NULL,''YYYYMMDD'') AS VALIDTO,
+                            ''20211115'' AS VALIDFROM,
+                            NULL AS VALIDTO,
                             NULL AS ADDRTYPE
                                            
                                            
@@ -114,6 +114,6 @@ EXCEPTION
       SALIDA := SALIDA || CHR(10) ||'    '||ERR_MSG;
       ROLLBACK;
       RAISE;
-END SP_EAS_05_INTERLOCUTOR;
+END SP_EAS_04_INTERLOCUTOR;
 /
 EXIT;

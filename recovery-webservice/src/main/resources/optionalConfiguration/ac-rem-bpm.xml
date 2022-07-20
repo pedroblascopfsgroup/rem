@@ -844,10 +844,6 @@
             	def tramiteAlquilerManager = ctx.getBean("tramiteAlquilerManager");
             	return tramiteAlquilerManager.getRespuestaHistReagendacionMayor(tareaExterna);
             }
-            def getRespuestaHistReagendacionMenor = {
-            	def tramiteAlquilerManager = ctx.getBean("tramiteAlquilerManager");
-            	return tramiteAlquilerManager.getRespuestaHistReagendacionMenor(tareaExterna);
-            }
             def checkIBANValido (String numIban) {
             	def tramiteAlquilerManager = ctx.getBean("tramiteAlquilerManager");
 				return tramiteAlquilerManager.checkIBANValido(tareaExterna, numIban);

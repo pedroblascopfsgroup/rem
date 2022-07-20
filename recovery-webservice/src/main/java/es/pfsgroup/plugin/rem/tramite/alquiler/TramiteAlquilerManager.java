@@ -359,27 +359,6 @@ public class TramiteAlquilerManager implements TramiteAlquilerApi {
 	}
 	
 	@Override
-	public boolean getRespuestaHistReagendacionMenor(TareaExterna tareaExterna){
-		boolean resultado = false;
-		ExpedienteComercial eco = expedienteComercialApi.tareaExternaToExpedienteComercial(tareaExterna);
-		if (eco != null && eco.getOferta() != null) {
-			Filter filterEco =  genericDao.createFilter(FilterType.EQUALS, "oferta.id", eco.getOferta().getId());
-			Fianzas fia = genericDao.get(Fianzas.class, filterEco);
-			if(fia != null) {
-				Filter filterFia =  genericDao.createFilter(FilterType.EQUALS, "fianza.id", fia.getId());
-				List <HistoricoReagendacion> histReag = genericDao.getList(HistoricoReagendacion.class, filterFia);
-				if (histReag != null && !histReag.isEmpty()) {
-					if (histReag.size() < 3) {
-						resultado = true;
-					}
-				}
-			}
-		}
-		
-		return resultado;
-	}
-	
-	@Override
 	public boolean checkIBANValido(TareaExterna tareaExterna, String numIban) {
 		boolean resultado = false;
 		IBANCheckDigit iban = new IBANCheckDigit();
@@ -444,7 +423,7 @@ public class TramiteAlquilerManager implements TramiteAlquilerApi {
 	}
 	
 	@Override
-	public DtoTabFianza getFechaAgendacionIngreso(Long idExpediente) {
+	public DtoTabFianza getDtoFianza(Long idExpediente) {
 		DtoTabFianza dto = new DtoTabFianza();
 		ExpedienteComercial eco = expedienteComercialApi.findOne(idExpediente);
 		Oferta ofr = eco.getOferta();

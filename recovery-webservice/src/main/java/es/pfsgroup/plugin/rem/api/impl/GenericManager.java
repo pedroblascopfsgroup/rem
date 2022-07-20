@@ -2192,19 +2192,6 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	}
 	
 	@Override
-	public Date changeTipoDatoADate(String valor) {
-		Date fecha = null;
-		if (valor != null) {
-			try {
-				fecha= new SimpleDateFormat("dd/MM/yy").parse(valor);
-			} catch (ParseException e) {
-				logger.error("error en ExpedienteComercialManager", e);
-			}
-		}
-		return fecha;
-	}
-	
-	@Override
 	public void saveCuentaVirtualAlquiler(Activo activo, Fianzas fiaN) {
 		Filter filterCva =  genericDao.createFilter(FilterType.EQUALS, "subcartera", activo.getSubcartera());
 		List <CuentasVirtualesAlquiler> cva = genericDao.getList(CuentasVirtualesAlquiler.class, filterCva);
@@ -2212,9 +2199,11 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 			for (CuentasVirtualesAlquiler cuentasVirtualesAlquiler : cva) {
 				if (Checks.isFechaNula(cuentasVirtualesAlquiler.getFechaInicio())) {
 					fiaN.setCuentaVirtualAlquiler(cuentasVirtualesAlquiler);
+					cuentasVirtualesAlquiler.setFechaInicio(new Date());
+					genericDao.save(CuentasVirtualesAlquiler.class, cuentasVirtualesAlquiler);
+					genericDao.save(Fianzas.class, fiaN);
 					break;
 				}
-				genericDao.save(CuentasVirtualesAlquiler.class, cuentasVirtualesAlquiler);
 			}
 		}
 	}

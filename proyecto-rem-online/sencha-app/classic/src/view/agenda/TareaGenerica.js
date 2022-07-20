@@ -3965,15 +3965,21 @@
 			me.down('[name=comboFianza]').addListener('change', function(combo) {
 				if (combo.value == '01') { //SI
 					Ext.Ajax.request({
-						url: $AC.getRemoteUrl('expedientecomercial/getFechaAgendacionIngreso'),
+						url: $AC.getRemoteUrl('expedientecomercial/getDtoFianza'),
 						params: {idExpediente : idExpediente},
 					    success: function(response, opts) {
 					    	var data = Ext.decode(response.responseText);
 					    	var dto = data.data;
-					    	if(!Ext.isEmpty(dto)){		
-					    		fechaAgendacionIngreso.setValue(Ext.Date.format(new Date(dto.agendacionIngreso), 'd/m/Y'));
-					    		importe.setValue(dto.importeFianza);
-					    		ibanDevolucion.setValue(dto.ibanDevolucion);
+					    	if(!Ext.isEmpty(dto)){
+					    		if (!Ext.isEmpty(dto.agendacionIngreso)) {
+					    			fechaAgendacionIngreso.setValue(Ext.Date.format(new Date(dto.agendacionIngreso), 'd/m/Y'));
+								}
+								if (!Ext.isEmpty(dto.importeFianza)) {
+									importe.setValue(dto.importeFianza);								
+								}
+								if (!Ext.isEmpty(dto.ibanDevolucion)) {
+									ibanDevolucion.setValue(dto.ibanDevolucion);
+								}
 					    	}
 					    	if (!Ext.isEmpty(dto.agendacionIngreso)) {
 					    		me.bloquearCampo(fechaAgendacionIngreso);
@@ -3987,6 +3993,9 @@
 					    }
 					});
 					
+					me.habilitarCampo(fechaAgendacionIngreso);
+					me.desbloquearCampo(fechaAgendacionIngreso);
+					fechaAgendacionIngreso.allowBlank = false;
 					me.habilitarCampo(importe);
 					me.desbloquearCampo(importe);
 					importe.allowBlank = false;
@@ -3997,15 +4006,21 @@
 				} else { //NO
 					
 					Ext.Ajax.request({
-						url: $AC.getRemoteUrl('expedientecomercial/getFechaAgendacionIngreso'),
+						url: $AC.getRemoteUrl('expedientecomercial/getDtoFianza'),
 						params: {idExpediente : idExpediente},
 					    success: function(response, opts) {
 					    	var data = Ext.decode(response.responseText);
 					    	var dto = data.data;
-					    	if(!Ext.isEmpty(dto)){		
-					    		fechaAgendacionIngreso.setValue(Ext.Date.format(new Date(dto.agendacionIngreso), 'd/m/Y'));
-					    		importe.setValue(dto.importeFianza);
-					    		ibanDevolucion.setValue(dto.ibanDevolucion);
+					    	if(!Ext.isEmpty(dto)){
+					    		if (!Ext.isEmpty(dto.agendacionIngreso)) {
+					    			fechaAgendacionIngreso.setValue(Ext.Date.format(new Date(dto.agendacionIngreso), 'd/m/Y'));
+								}
+								if (!Ext.isEmpty(dto.importeFianza)) {
+									importe.setValue(dto.importeFianza);								
+								}
+								if (!Ext.isEmpty(dto.ibanDevolucion)) {
+									ibanDevolucion.setValue(dto.ibanDevolucion);
+								}
 					    	}
 					    }
 					});

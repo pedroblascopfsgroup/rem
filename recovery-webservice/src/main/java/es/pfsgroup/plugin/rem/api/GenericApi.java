@@ -411,7 +411,5 @@ public interface GenericApi {
 
 	public List<DDEstadoOferta> getDiccionarioEstadosOfertasAgrupacion(Long idAgrupacion);
 
-	Date changeTipoDatoADate(String valor);
-
 	void saveCuentaVirtualAlquiler(Activo activo, Fianzas fiaN);
 }

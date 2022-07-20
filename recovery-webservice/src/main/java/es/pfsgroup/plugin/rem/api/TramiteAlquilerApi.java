@@ -50,11 +50,9 @@ public interface TramiteAlquilerApi {
 
 	DtoCondicionantesExpediente getFianzaExonerada(Long idExpediente);
 
-	DtoTabFianza getFechaAgendacionIngreso(Long idExpediente);
+	DtoTabFianza getDtoFianza(Long idExpediente);
 
 	boolean getRespuestaHistReagendacionMayor(TareaExterna tareaExterna);
-	
-	boolean getRespuestaHistReagendacionMenor(TareaExterna tareaExterna);
 
 	boolean checkCuentasVirtualesAlquilerLibres(TareaExterna tareaExterna);
 	

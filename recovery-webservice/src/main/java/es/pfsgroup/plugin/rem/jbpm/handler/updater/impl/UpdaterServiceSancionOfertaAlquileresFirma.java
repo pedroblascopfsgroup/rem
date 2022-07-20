@@ -281,6 +281,7 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
 						fia.getAuditoria().setUsuarioBorrar(usu.getUsername());
 						fia.getAuditoria().setFechaBorrar(new Date());
 						fia.getAuditoria().setBorrado(true);
+						genericDao.save(Fianzas.class, fia);
 					}
 				} else {
 					if (fia != null) {
@@ -288,9 +289,11 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
 							fia.setOferta(oferta);
 						}
 						if (fechaAgendacionValor != null) {
-							Date fechaAgendacion = genericApi.changeTipoDatoADate(fechaAgendacionValor);
-							if (fechaAgendacion != null) {
-								fia.setFechaAgendacionIngreso(fechaAgendacion);
+							try {
+								fia.setFechaAgendacionIngreso(ft.parse(fechaAgendacionValor));
+							} catch (ParseException e) {
+								logger.error("error en UpdaterServiceSancionOfertaAlquileresFirma", e);
+								e.printStackTrace();
 							}
 						}
 						if (importe != null) {
@@ -300,15 +303,18 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
 							fia.setIbanDevolucion(ibanDevolucion);
 						}
 						fianza = fia;
+						genericDao.save(Fianzas.class, fia);
 					} else {
 						Fianzas fiaN = new Fianzas();
 						if (oferta != null) {
 							fiaN.setOferta(oferta);
 						}
 						if (fechaAgendacionValor != null) {
-							Date fechaAgendacion = genericApi.changeTipoDatoADate(fechaAgendacionValor);
-							if (fechaAgendacion != null) {
-								fiaN.setFechaAgendacionIngreso(fechaAgendacion);
+							try {
+								fiaN.setFechaAgendacionIngreso(ft.parse(fechaAgendacionValor));
+							} catch (ParseException e) {
+								logger.error("error en UpdaterServiceSancionOfertaAlquileresFirma", e);
+								e.printStackTrace();
 							}
 						}
 						if (importe != null) {
@@ -325,15 +331,17 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
 					if (fechaReagendacionRelleno) {
 						HistoricoReagendacion histReagendacion = new HistoricoReagendacion();
 						histReagendacion.setFianza(fianza);
-						Date fechaReagendacion = genericApi.changeTipoDatoADate(fechaReagendarIngresoValor);
-						if (fechaReagendacion != null) {
-							histReagendacion.setFechaReagendacionIngreso(fechaReagendacion);
+						if (fechaReagendarIngresoValor != null) {
+							try {
+								histReagendacion.setFechaReagendacionIngreso(ft.parse(fechaReagendarIngresoValor));
+							} catch (ParseException e) {
+								logger.error("error en UpdaterServiceSancionOfertaAlquileresFirma", e);
+								e.printStackTrace();
+							}
 						}
 						genericDao.save(HistoricoReagendacion.class, histReagendacion);
 					}
-					
 				}
-				genericDao.save(Fianzas.class, fia);
 			}
 			
 			if(DDCartera.isCarteraBk(activo.getCartera())) {

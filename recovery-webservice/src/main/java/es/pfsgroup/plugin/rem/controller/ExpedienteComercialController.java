@@ -3308,9 +3308,9 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView getFechaAgendacionIngreso(ModelMap model, Long idExpediente) {
+	public ModelAndView getDtoFianza(ModelMap model, Long idExpediente) {
 		try {
-			model.put(RESPONSE_DATA_KEY, tramiteAlquilerApi.getFechaAgendacionIngreso(idExpediente));
+			model.put(RESPONSE_DATA_KEY, tramiteAlquilerApi.getDtoFianza(idExpediente));
 			model.put(RESPONSE_SUCCESS_KEY, true);
 
 		} catch (Exception e) {

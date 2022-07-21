@@ -290,6 +290,7 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
         String[] observacionesBC = {dto.getObservacionesBC()};
         String[] fechaPropuesta = {dto.getFechaPropuesta() != null ? sdf.format(sdfEntrada.parse(dto.getFechaPropuesta())) : null};
         String[] fechaRespuesta = {dto.getFechaRespuesta() != null ? sdf.format(sdfEntrada.parse(dto.getFechaRespuesta())) : null};
+        String[] comboReagendacion = {dto.getComboReagendacion()};
 
         map.put("idTarea", idTarea);
         map.put("comboValidacionBC", comboValidacionBC);
@@ -297,6 +298,8 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
         map.put("fechaPropuesta", fechaPropuesta);
         map.put("fechaRespuesta", fechaRespuesta);
         map.put("comboArras", new  String[]{DDSiNo.NO});
+        map.put("fechaRespuesta", fechaRespuesta);
+        map.put("comboReagendacion", comboReagendacion);
 
         return map;
     }
@@ -853,6 +856,13 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
         }
         return true;
         
+    }
+    
+    @Override
+    @Transactional
+    public Boolean avanzarTareaGenericoSinReplicar(net.sf.json.JSONObject dto) throws Exception {
+
+        return adapter.save(createRequestAvanzarTareaGenerico(dto));
     }
 
 }

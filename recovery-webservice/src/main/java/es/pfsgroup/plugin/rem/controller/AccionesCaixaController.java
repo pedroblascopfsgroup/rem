@@ -613,4 +613,32 @@ public class AccionesCaixaController extends ParadiseJsonController {
 
         return createModelAndViewJson(model);
     }
+    
+    public ModelAndView accionNegociacionClausulasAlquiler(JSONObject dto){
+    	ModelMap model = new ModelMap();
+        try {
+            boolean success = accionesCaixaApi.avanzarTareaGenericoSinReplicar(dto);
+            model.put("success", success);
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.put("success", false);
+            model.put("msgError", e.getMessage() == null ? RestApi.REST_MSG_UNEXPECTED_ERROR : e.getMessage());
+        }
+
+        return createModelAndViewJson(model);
+    }
+    
+    public ModelAndView accionEntregaFianzas(JSONObject dto){
+    	ModelMap model = new ModelMap();
+        try {
+            boolean success = accionesCaixaApi.avanzarTareaGenericoSinReplicar(dto);
+            model.put("success", success);
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.put("success", false);
+            model.put("msgError", e.getMessage() == null ? RestApi.REST_MSG_UNEXPECTED_ERROR : e.getMessage());
+        }
+
+        return createModelAndViewJson(model);
+    }
 }

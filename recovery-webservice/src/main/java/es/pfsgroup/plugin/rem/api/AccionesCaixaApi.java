@@ -73,4 +73,6 @@ public interface AccionesCaixaApi {
 
     @Transactional
     boolean incautaODevuelveDeposito(String codEstado, Long numOferta);
+    
+    Boolean avanzarTareaGenericoSinReplicar(JSONObject dto) throws Exception;
 }

@@ -57,6 +57,10 @@ public class DDTipoOfertaAcciones implements Auditable, Dictionary {
 	public static final String ACCION_INCAUTACION_RESERVA_CONT = "035";
 	public static final String CODIGO_BLOQUEO_SCORING = "042";
 	public static final String CODIGO_DESBLOQUEO_SCORING = "043";
+	public static final String ACCION_FIANZA_ABONADA = "052";
+    public static final String ACCION_FIANZA_NO_ABONADA = "053";
+    public static final String ACCION_CLAUSULADO_NO_NEGOCIABLE = "054";
+    public static final String ACCION_BORRADOR_ENVIADO = "055";
 	public static final String ACCION_TAREA_DATOS_PBC = "996";
 	public static final String ACCION_SOLICITUD_DOC_MINIMA = "997";
 	public static final String ACCION_CONFIRMACION_REP_OFERTAS = "998";

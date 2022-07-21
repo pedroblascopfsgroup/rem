@@ -27,7 +27,7 @@ Ext.define('HreRem.model.Pujas', {
 				if(!$AU.userIsRol(CONST.PERFILES['HAYASUPER']) && data.enConcurrencia){
 					return "*****";
 				}else{
-					return data.importePuja;
+					return parseFloat(data.importePuja);
 				}
 			},
 			depends: 'enConcurrencia'

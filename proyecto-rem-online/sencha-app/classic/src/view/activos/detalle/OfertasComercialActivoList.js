@@ -731,7 +731,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
     		var response = Ext.JSON.decode(operation.getResponse().responseText);
 			if(!Ext.isEmpty(response) && !Ext.isEmpty(response.advertencia)) {
 	    		me.fireEvent("warnToast", response.advertencia);
-	    	}else if(oferta.get('codigoEstadoOferta') == CONST.ESTADOS_OFERTA['ACEPTADA']){
+	    	}else if(oferta.get('estadoOferta') == CONST.ESTADOS_OFERTA['ACEPTADA']){
 				me.mask(HreRem.i18n("msg.mask.espere"));
 	    		Ext.Ajax.request({
 					url : $AC.getRemoteUrl('tramitacionofertas/doTramitacionOferta'),

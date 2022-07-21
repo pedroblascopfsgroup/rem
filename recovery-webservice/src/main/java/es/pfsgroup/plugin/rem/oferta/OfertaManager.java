@@ -8137,7 +8137,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	
 	private boolean esOfertaExpressOrEspecial(Oferta oferta) {
 		return (oferta.getOfertaEspecial() != null && oferta.getOfertaEspecial()) 
-				|| (oferta.getOfertaExpress() != null || oferta.getOfertaExpress());
+				|| (oferta.getOfertaExpress() != null && oferta.getOfertaExpress());
 	}
 	
 	private boolean esTareaValidaEnvioCFV(Oferta oferta,TareaExterna tareaExterna) {
@@ -9499,19 +9499,21 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if(eco.getTrabajo() != null && noPdteDevolucion) {
 				Trabajo trabajo = eco.getTrabajo();
 				List<ActivoTramite> tramites = activoTramiteApi.getTramitesActivoTrabajoList(trabajo.getId());
-				ActivoTramite tramite = tramites.get(0);
-				Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_TRAMITE_FINALIZADO);
-				tramite.setEstadoTramite(genericDao.get(DDEstadoProcedimiento.class, filtroEstadoTramite));
-				
-				Set<TareaActivo> tareasTramite = tramite.getTareas();
-				for (TareaActivo tarea : tareasTramite) {
-					if (Checks.esNulo(tarea.getFechaFin())) {
-						tarea.setFechaFin(new Date());
-						tarea.getAuditoria().setBorrado(true);
+				ActivoTramite tramite = !Checks.esNulo(tramites) && !tramites.isEmpty() ? tramites.get(0) : null;
+				if (!Checks.esNulo(tramite)){
+					Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_TRAMITE_FINALIZADO);
+					tramite.setEstadoTramite(genericDao.get(DDEstadoProcedimiento.class, filtroEstadoTramite));
+					
+					Set<TareaActivo> tareasTramite = tramite.getTareas();
+					for (TareaActivo tarea : tareasTramite) {
+						if (Checks.esNulo(tarea.getFechaFin())) {
+							tarea.setFechaFin(new Date());
+							tarea.getAuditoria().setBorrado(true);
+						}
 					}
+					
+					genericDao.save(ActivoTramite.class, tramite);
 				}
-				
-				genericDao.save(ActivoTramite.class, tramite);
 			}
 			
 			genericDao.save(ExpedienteComercial.class, eco);
@@ -9624,7 +9626,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				estadoOferta = DDEstadoOferta.CODIGO_RECHAZADA;
 				deposito.setEstadoDeposito(genericDao.get(DDEstadoDeposito.class, genericDao.createFilter(FilterType.EQUALS, "codigo",DDEstadoDeposito.CODIGO_PDTE_DECISION_DEVOLUCION_INCAUTACION)));
 				genericDao.save(Deposito.class, deposito);
-				//oferta.setMotivoRechazo(genericDao.get(DDMotivoRechazoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoRechazoOferta.COD_CAIXA_OTRA_OFR)));
+				oferta.setMotivoRechazo(genericDao.get(DDMotivoRechazoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoRechazoOferta.COD_CAIXA_OTRA_OFR)));
 			}else{
 				estadoOferta = DDEstadoOferta.CODIGO_CONGELADA;
 			}

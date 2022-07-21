@@ -428,8 +428,13 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
         },
 		
 		esPropietarioBBVA : function(){
-			var me = this;
-			return CONST.CARTERA['BBVA'] == me.getData().gasto.get('carteraPropietarioCodigo');
+			var me = this,
+                gasto = me.getData().gasto;
+
+			if (!Ext.isEmpty(gasto)) {
+                return CONST.CARTERA['BBVA'] == gasto.get('carteraPropietarioCodigo');
+            }
+            return false;
 		}
 	},
 

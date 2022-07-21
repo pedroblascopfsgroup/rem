@@ -51,6 +51,7 @@ import es.pfsgroup.plugin.rem.alaskaComunicacion.AlaskaComunicacionManager;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.BoardingComunicacionApi;
+import es.pfsgroup.plugin.rem.api.ConcurrenciaApi;
 import es.pfsgroup.plugin.rem.api.DepositoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.FuncionesTramitesApi;
@@ -264,6 +265,9 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 
 	@Autowired
 	private FuncionesTramitesApi funcionesTramitesApi;
+	
+	@Autowired
+	private ConcurrenciaApi concurrenciaApi;
 
 	@Override
 	@Transactional(readOnly = false)
@@ -308,13 +312,28 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			activo = activoAdapter.getActivoById(dto.getIdActivo());
 		}
 
-		final Oferta oferta = saveOferta(dto, activo, esAgrupacion, agrupacion, asincrono);
+		Oferta oferta = genericDao.get(Oferta.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdOferta()));
+		boolean saveOferta = true;
+		
+		if(DDEstadoOferta.CODIGO_PDTE_DEPOSITO.equals(dto.getEstadoOferta())) {
+			saveOferta = !concurrenciaApi.caducaOfertaConcurrencia(oferta.getActivoPrincipal().getId(), oferta.getId());
+		} else if(DDEstadoOferta.CODIGO_ACEPTADA.equals(dto.getEstadoOferta()) && oferta.getIsEnConcurrencia() != null && oferta.getIsEnConcurrencia()) {
+			saveOferta = !concurrenciaApi.isOfertaEnPlazoConcu(false,  ofertaApi.getListaOfertasByActivo(oferta.getActivoPrincipal()));
+		}
+		
+		DtoSaveAndReplicateResult dtoSaveAndReplicateResult = new DtoSaveAndReplicateResult();
+		dtoSaveAndReplicateResult.setSuccess(saveOferta);
+		
+		if(saveOferta) {
+			oferta = saveOferta(dto, activo, esAgrupacion, agrupacion, asincrono);
+			dtoSaveAndReplicateResult.setReplicateToBc(oferta.getReplicateBC());
+		} else {
+			dtoSaveAndReplicateResult.setReplicateToBc(false);
+		}
+		
+		dtoSaveAndReplicateResult.setNumOferta(oferta.getNumOferta());
 
-		return new DtoSaveAndReplicateResult(){{
-			setSuccess(true);
-			setReplicateToBc(oferta.getReplicateBC());
-			setNumOferta(oferta.getNumOferta());
-		}};
+		return dtoSaveAndReplicateResult;
 	}
 
 

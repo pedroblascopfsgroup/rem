@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Santi Monzó
---## FECHA_CREACION=20220715
+--## FECHA_CREACION=20220721
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-18228
@@ -52,7 +52,7 @@ BEGIN
        V_MSQL := ' MERGE INTO '|| V_ESQUEMA ||'.AUX_APR_INTERLOCUTOR inter
 				using (   
 
-                    WITH ACTIVO_MATRIZ AS (SELECT AGA.AGR_ID, ACT.ACT_ID
+                    WITH ACTIVO_MATRIZ AS (SELECT AGA.AGR_ID, ACT.ACT_ID, ACT.ACT_NUM_ACTIVO_CAIXA
                                 FROM ACT_AGR_AGRUPACION AGR
                                 JOIN '|| V_ESQUEMA ||'.ACT_AGA_AGRUPACION_ACTIVO aga ON aga.AGR_ID = AGR.AGR_ID AND aga.BORRADO = 0
                                 JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_ID = aga.ACT_ID AND ACT.BORRADO = 0                                                              
@@ -81,6 +81,7 @@ BEGIN
                             AND AGR.DD_TAG_ID = (SELECT DD_TAG_ID FROM '|| V_ESQUEMA ||'.DD_TAG_TIPO_AGRUPACION WHERE DD_TAG_CODIGO = ''16'')
                             AND agr.AGR_FECHA_BAJA IS NULL
                             AND AGA.AGA_PRINCIPAL = 0
+                            AND MAT.ACT_NUM_ACTIVO_CAIXA IS NOT NULL
 
                              ) us ON (us.ZZEXTERNALID = inter.ZZEXTERNALID)                          
 

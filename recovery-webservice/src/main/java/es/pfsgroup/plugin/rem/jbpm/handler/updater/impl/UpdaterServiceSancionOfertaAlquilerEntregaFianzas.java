@@ -13,9 +13,11 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.TramiteAlquilerApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -33,6 +35,9 @@ public class UpdaterServiceSancionOfertaAlquilerEntregaFianzas implements Update
     
 	@Autowired
 	private OfertaApi ofertaApi;
+	
+	@Autowired
+	private TramiteAlquilerApi tramiteAlquilerApi;
 	
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaAlquilerEntregaFianzas.class);
     	
@@ -54,6 +59,7 @@ public class UpdaterServiceSancionOfertaAlquilerEntregaFianzas implements Update
 		String estadoExp = null;
 		String estadoBc = null;
 		String observaciones = null;
+		DDEstadoExpedienteBc estadoExpBC = null;
 		
 		for(TareaExternaValor valor :  valores){
 			
@@ -69,9 +75,19 @@ public class UpdaterServiceSancionOfertaAlquilerEntregaFianzas implements Update
 		}
 		
 		if (aprueba) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigoC4C", "740");
+			estadoExpBC = genericDao.get(DDEstadoExpedienteBc.class,filtro);
 			/*estadoExp =  DDEstadosExpedienteComercial.PTE_ENVIO;
 			estadoBc =  DDEstadoExpedienteBc.CODIGO_IMPORTE_FINAL_APROBADO;*/
 		} else{
+			boolean reagendaMas2Veces = tramiteAlquilerApi.getRespuestaHistReagendacionMayor(tareaExternaActual);
+			if(reagendaMas2Veces) {
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigoC4C", "120");
+				estadoExpBC = genericDao.get(DDEstadoExpedienteBc.class,filtro);
+			}else {
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigoC4C", "100");
+				estadoExpBC = genericDao.get(DDEstadoExpedienteBc.class,filtro);
+			}
 			//estadoExp =  DDEstadosExpedienteComercial.DENEGADO;
 			//estadoBc =  DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO;
 			/*Oferta oferta = expedienteComercial.getOferta();
@@ -84,10 +100,10 @@ public class UpdaterServiceSancionOfertaAlquilerEntregaFianzas implements Update
 			}*/
 		}
 		
-		/*expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoExp)));
-		expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoBc)));
+		/*expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoExp)));*/
+		expedienteComercial.setEstadoBc(estadoExpBC);
 		estadoBcModificado = true;
-		genericDao.save(ExpedienteComercial.class, expedienteComercial);	*/
+		genericDao.save(ExpedienteComercial.class, expedienteComercial);
 	}
 
 	public String[] getCodigoTarea() {

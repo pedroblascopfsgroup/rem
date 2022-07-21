@@ -14,6 +14,7 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
@@ -56,6 +57,7 @@ public class UpdaterServiceSancionOfertaAlquilerRespuestaBcReagendacion implemen
 		String estadoBc = null;
 		String comboReagendacion = null;
 		String observaciones = null;
+		DDEstadoExpedienteBc estadoExpBC = null;
 		
 		for(TareaExternaValor valor :  valores){
 			
@@ -72,11 +74,14 @@ public class UpdaterServiceSancionOfertaAlquilerRespuestaBcReagendacion implemen
 		}
 		
 		if (aprueba) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigoC4C", "120");
+			estadoExpBC = genericDao.get(DDEstadoExpedienteBc.class,filtro);
 			/*estadoExp =  DDEstadosExpedienteComercial.PTE_ENVIO;
 			estadoBc =  DDEstadoExpedienteBc.CODIGO_IMPORTE_FINAL_APROBADO;*/
 		} else{
 			estadoExp =  DDEstadosExpedienteComercial.DENEGADO;
-			estadoBc =  DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO;
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigoC4C", "20");
+			estadoExpBC = genericDao.get(DDEstadoExpedienteBc.class,filtro);
 			Oferta oferta = expedienteComercial.getOferta();
 			expedienteComercial.setFechaAnulacion(new Date());
 			expedienteComercial.setMotivoAnulacion(genericDao.get(DDMotivoAnulacionExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoAnulacionExpediente.COD_CAIXA_RECHAZADO_PBC)));
@@ -92,10 +97,10 @@ public class UpdaterServiceSancionOfertaAlquilerRespuestaBcReagendacion implemen
 			genericDao.save(ExpedienteComercial.class, expedienteComercial);
 		}
 		
-		/*expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoExp)));
-		expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoBc)));
+		/*expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoExp)));*/
+		expedienteComercial.setEstadoBc(estadoExpBC);
 		estadoBcModificado = true;
-		genericDao.save(ExpedienteComercial.class, expedienteComercial);*/
+		genericDao.save(ExpedienteComercial.class, expedienteComercial);
 	}
 
 	public String[] getCodigoTarea() {

@@ -21,6 +21,7 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 
 @Component
 public class UpdaterServiceSancionOfertaAlquilerNegociacionClausulasAlquiler implements UpdaterService {
@@ -57,6 +58,7 @@ public class UpdaterServiceSancionOfertaAlquilerNegociacionClausulasAlquiler imp
 		String fecha = null;
 		String justificacion = null;
 		String observaciones = null;
+		DDEstadoExpedienteBc estadoExpBC = null;
 		
 		for(TareaExternaValor valor :  valores){
 			
@@ -73,9 +75,13 @@ public class UpdaterServiceSancionOfertaAlquilerNegociacionClausulasAlquiler imp
 		}
 		
 		if (aprueba) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigoC4C", "780");
+			estadoExpBC = genericDao.get(DDEstadoExpedienteBc.class,filtro);
 			/*estadoExp =  DDEstadosExpedienteComercial.PTE_ENVIO;
 			estadoBc =  DDEstadoExpedienteBc.CODIGO_IMPORTE_FINAL_APROBADO;*/
 		} else{
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigoC4C", "790");
+			estadoExpBC = genericDao.get(DDEstadoExpedienteBc.class,filtro);
 			//estadoExp =  DDEstadosExpedienteComercial.DENEGADO;
 			//estadoBc =  DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO;
 			/*Oferta oferta = expedienteComercial.getOferta();
@@ -88,10 +94,10 @@ public class UpdaterServiceSancionOfertaAlquilerNegociacionClausulasAlquiler imp
 			}*/
 		}
 		
-		/*expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoExp)));
-		expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoBc)));
+		/*expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoExp)));*/
+		expedienteComercial.setEstadoBc(estadoExpBC);
 		estadoBcModificado = true;
-		genericDao.save(ExpedienteComercial.class, expedienteComercial);	*/
+		genericDao.save(ExpedienteComercial.class, expedienteComercial);
 	}
 
 	public String[] getCodigoTarea() {

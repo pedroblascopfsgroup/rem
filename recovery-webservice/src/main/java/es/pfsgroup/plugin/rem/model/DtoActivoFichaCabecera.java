@@ -425,6 +425,7 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private Long identificadorTrastero;
 
 	private Boolean vistaDeConcurrencia;
+	private Boolean historicoDeConcurrencia;
 	private Boolean bloquearEdicionEstadoOfertas;
 	
 	public Boolean getTieneOfertaAlquilerViva() {
@@ -3178,6 +3179,14 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setBloquearEdicionEstadoOfertas(Boolean bloquearEdicionEstadoOfertas) {
 		this.bloquearEdicionEstadoOfertas = bloquearEdicionEstadoOfertas;
+	}
+
+	public Boolean getHistoricoDeConcurrencia() {
+		return historicoDeConcurrencia;
+	}
+
+	public void setHistoricoDeConcurrencia(Boolean historicoDeConcurrencia) {
+		this.historicoDeConcurrencia = historicoDeConcurrencia;
 	}
 	
 }

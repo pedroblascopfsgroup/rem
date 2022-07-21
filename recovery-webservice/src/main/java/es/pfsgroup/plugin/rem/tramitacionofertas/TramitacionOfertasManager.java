@@ -298,11 +298,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 
 		Activo activo = null;
 		ActivoAgrupacion agrupacion = null;
-		/* 
-		if(dto.getIdOferta() == null) {
-			dto.setIdOferta(dto.getId());
-		}
-		*/
+
 		if (esAgrupacion) {
 			agrupacion = genericDao.get(ActivoAgrupacion.class,
 					genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdAgrupacion()));

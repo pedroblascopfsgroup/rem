@@ -82,4 +82,6 @@ public interface ConcurrenciaApi {
 
 	List<VGridOfertasActivosAgrupacionConcurrencia> getListOfertasTerminadasConcurrentes(Long idActivo, Long idConcurrencia);
 
+	boolean getTabConcurrenciaByActivo(Activo activo);
+
 }

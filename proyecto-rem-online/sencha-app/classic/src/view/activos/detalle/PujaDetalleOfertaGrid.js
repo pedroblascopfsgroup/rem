@@ -16,7 +16,7 @@ Ext.define('HreRem.view.activos.detalle.PujaDetalleOfertaGrid', {
 		        {   
 			    	text	 : HreRem.i18n('header.pujas.fecha.historico'), 
 		        	dataIndex: 'fechaCrear',
-		        	formatter: 'date("d/m/Y")',
+		        	formatter: 'date("d/m/Y h:m:s")',
 		        	flex:1
 		        },
 		        {   

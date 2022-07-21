@@ -1375,6 +1375,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		activoDto.setActivoOfertasConcurrencia(activoTieneConcurrencia);
 		
 		activoDto.setVistaDeConcurrencia(concurrenciaApi.isActivoEnConcurrencia(activo) || concurrenciaApi.tieneActivoOfertasDeConcurrencia(activo));
+		activoDto.setHistoricoDeConcurrencia(concurrenciaApi.getTabConcurrenciaByActivo(activo));
 		
 		activoDto.setBloquearEdicionEstadoOfertas(concurrenciaApi.bloquearEditarOfertasPorConcurrenciaActivo(activo));
 		

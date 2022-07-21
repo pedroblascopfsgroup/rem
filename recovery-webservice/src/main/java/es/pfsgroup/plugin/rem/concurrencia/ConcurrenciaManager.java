@@ -145,6 +145,17 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 		
 		return concurrencia;
 	}
+
+	//Mostramos la pestaña de concurrencia Siempre que un activo
+	//haya estado en concurrencia (este en vigor o no la concurrencia)
+	@Override
+	public boolean getTabConcurrenciaByActivo(Activo activo) {
+		List<Concurrencia> concurrenciaList = genericDao.getList(Concurrencia.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
+		if(concurrenciaList != null && !concurrenciaList.isEmpty()) {
+			return true;
+		}
+		return false;
+	}
 	
 	@Override
 	public Concurrencia getUltimaConcurrenciaByAgrupacion(ActivoAgrupacion agrupacion) {
@@ -171,7 +182,7 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 		
 		return isEnConcurrencia;
 	}
-	
+		
 	@Override
 	public boolean tieneActivoOfertasDeConcurrencia(Activo activo) {
 		boolean tieneOfertasDeConcurrencia = false;

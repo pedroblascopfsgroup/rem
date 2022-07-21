@@ -320,7 +320,6 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
         
     },
 	
-    //SOY
 	onAddClick: function (btn) {
 
 		var me = this;

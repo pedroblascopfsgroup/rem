@@ -1083,10 +1083,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 		
 		oferta = this.getOfertaByTipoId(ofertaDto);
-		if(oferta != null && ofertaDto.getImporte() != null && oferta.getImporteOferta() != null && ofertaDto.getImporte() < oferta.getImporteOferta()) {
-			errorsList.put("importe", RestApi.MSJ_ERROR_IMPORTE_MENOR_PUJA);
-		}
-		
+	
 		if(oferta != null && oferta.getConcurrencia() != null) {
 			Concurrencia concu = oferta.getConcurrencia();
 			if(concu.getFechaFin().before(new Date())) {

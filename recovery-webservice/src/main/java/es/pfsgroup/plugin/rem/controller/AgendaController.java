@@ -535,10 +535,6 @@ public class AgendaController extends TareaController {
 					}
 				}								
 			}
-			
-			Oferta oferta = eco.getOferta();
-			
-			caixaBcRestClient.callReplicateOferta(oferta.getNumOferta());
 			model.put("success", salto);
 
 		} catch (JsonViewerException e) {

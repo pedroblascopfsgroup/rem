@@ -76,7 +76,7 @@ public class UpdaterServiceSancionOfertaRespuestaOfertanteCES implements Updater
 	 		Activo activo = ofertaAceptada.getActivoPrincipal();
 	 		OfertaExclusionBulk ofertaExclusionBulkNew = null;
 	 		boolean rechazar = false;
-	 		
+	 		boolean aprueba = false;
 	 		for (TareaExternaValor valor : valores) {			
 	 			if (FECHA_RESPUESTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 	 				SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd");
@@ -84,6 +84,7 @@ public class UpdaterServiceSancionOfertaRespuestaOfertanteCES implements Updater
 	 				genericDao.save(Oferta.class, ofertaAceptada);
 	 			}else if (COMBO_RESPUESTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 	 				if (DDResolucionComite.CODIGO_APRUEBA.equals(valor.getValor())) {
+	 					aprueba = true;
 	 					ofertaApi.congelarOfertasAndReplicate(activo, ofertaAceptada);
 
 						Filter f1 = null;
@@ -181,7 +182,10 @@ public class UpdaterServiceSancionOfertaRespuestaOfertanteCES implements Updater
 	 		
 	 		if (rechazar) {
 	 			ofertaApi.inicioRechazoDeOfertaSinLlamadaBC(ofertaAceptada, DDEstadosExpedienteComercial.DENEGADA_OFERTA_CES);
+	 		} else if (aprueba) {
+				ofertaApi.actualizarOfertaBoarding(ofertaAceptada,tareaExternaActual);
 	 		}
+	 		
 	 	}catch(ParseException e) {
 	 		 e.printStackTrace();
 	 	}

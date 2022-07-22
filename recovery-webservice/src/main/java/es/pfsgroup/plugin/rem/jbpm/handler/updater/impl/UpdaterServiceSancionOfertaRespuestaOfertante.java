@@ -233,6 +233,8 @@ public class UpdaterServiceSancionOfertaRespuestaOfertante implements UpdaterSer
 					ofertaApi.inicioRechazoDeOfertaSinLlamadaBC(ofertaAceptada,
 							DDCartera.CODIGO_CARTERA_GIANTS.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo()) ? 
 							DDEstadosExpedienteComercial.CONTRAOFERTA_DENEGADA : DDEstadosExpedienteComercial.ANULADO);
+				} else {
+					ofertaApi.actualizarOfertaBoarding(ofertaAceptada,tareaExternaActual);
 				}
 			}
 		}

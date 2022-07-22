@@ -111,6 +111,7 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 		Activo activo = ofertaAceptada.getActivoPrincipal();
 		GestorEntidadDto ge = new GestorEntidadDto();
 		String tipoTramite = tramite.getTipoTramite().getCodigo();
+		boolean esT013 = !T017.equals(tipoTramite);
 
 		if (!Checks.esNulo(ofertaAceptada) && !Checks.esNulo(expediente)) {	
 			boolean tieneAtribuciones = ofertaApi.checkAtribuciones(tramite.getTrabajo());
@@ -300,6 +301,8 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 				
 				genericDao.save(HistoricoTareaPbc.class, htp);
 			}
+			
+			if (esT013 && tieneAtribuciones) ofertaApi.actualizarOfertaBoarding(ofertaAceptada,tareaExternaActual);
 		}
 	}
 

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
+import es.pfsgroup.plugin.rem.jbpm.handler.updater.impl.UpdaterServiceSancionOfertaCierreEconomico;
 import org.jbpm.graph.exe.ExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -49,8 +50,11 @@ public class ActivoGenericSaveActionHandler extends ActivoGenericLeaveActionHand
 		List<TareaExternaValor> valores = activoTareaExternaManagerApi.obtenerValoresTarea(tareaExterna.getId());
 				
 		UpdaterService dataUpdater = updaterServiceFactory.getService(tareaProcedimiento.getCodigo());
-		
-		dataUpdater.saveValues(tramite, tareaExterna, valores);
+
+		if (dataUpdater instanceof UpdaterServiceSancionOfertaCierreEconomico)
+			((UpdaterServiceSancionOfertaCierreEconomico) dataUpdater).saveValuesNoMail(tramite, tareaExterna, valores);
+		else
+			dataUpdater.saveValues(tramite, tareaExterna, valores);
 			
 		logger.debug("\tGuardamos los datos de la tarea: " + getNombreNodo(executionContext));
 	}

@@ -393,6 +393,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("segmentacionCartera", DDCarteraBc.class);
 		mapa.put("motivoExoneracionCee", DDMotivoExoneracionCee.class);
 		mapa.put("incidenciaCee", DDIncidenciaCee.class);
+		mapa.put("estadoAdenda", DDTipoAdenda.class);
 
 		return Collections.unmodifiableMap(mapa);
 	}

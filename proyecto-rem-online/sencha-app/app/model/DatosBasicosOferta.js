@@ -340,7 +340,13 @@ Ext.define('HreRem.model.DatosBasicosOferta', {
             {
             	name:'modificarFormalizacionCajamar',
     			type: 'boolean'   	
-            }
+            },
+    		{
+    			name: 'codigoTipoAdenda'
+    		},
+    		{
+    			name: 'descripcionTipoAdenda'
+    		}
             
     		
     ],

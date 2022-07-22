@@ -191,6 +191,10 @@ public class DtoDatosBasicosOferta extends WebDto {
 	
 	private Boolean modificarFormalizacionCajamar;
 	
+	private String codigoTipoAdenda;
+	
+	private String descripcionTipoAdenda;
+	
 	public Boolean getEstadoAprobadoLbk() {
 		return estadoAprobadoLbk;
 	}
@@ -937,6 +941,22 @@ public class DtoDatosBasicosOferta extends WebDto {
 
 	public void setFechaForzadoCajamar(Date fechaForzadoCajamar) {
 		this.fechaForzadoCajamar = fechaForzadoCajamar;
+	}
+
+	public String getCodigoTipoAdenda() {
+		return codigoTipoAdenda;
+	}
+
+	public void setCodigoTipoAdenda(String codigoTipoAdenda) {
+		this.codigoTipoAdenda = codigoTipoAdenda;
+	}
+
+	public String getDescripcionTipoAdenda() {
+		return descripcionTipoAdenda;
+	}
+
+	public void setDescripcionTipoAdenda(String descripcionTipoAdenda) {
+		this.descripcionTipoAdenda = descripcionTipoAdenda;
 	}
 	
 }

@@ -23,6 +23,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
     initComponent: function () {
 
         var me = this;
+        var esEditableTabOfertaExpedientes = $AU.userHasFunction('TAB_DATOS_BASICOS_EXPEDIENTES') || $AU.userHasFunction('EDITAR_TAB_DATOS_BASICOS_OFERTA_EXPEDIENTES') || $AU.userIsRol(CONST.PERFILES['HAYASUPER']);
 
 		/*var storeNecesitaFinanciacion = Ext.create('Ext.data.Store', {
 		data : [
@@ -191,6 +192,21 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 								readOnly: true
 							}
 						},
+						{
+		    				xtype : 'comboboxfieldbase',
+							fieldLabel : HreRem.i18n('fieldlabel.tipo.adenda'),
+							reference: 'estadoAdenda',
+							bind : {
+								store : '{comboEstadoAdenda}',
+								value : '{datosbasicosoferta.codigoTipoAdenda}',
+								hidden: '{!datosbasicosoferta.codigoTipoAdenda}',
+								readOnly: '{!esEditableTabOfertaExpedientes}'
+							}/*,
+							readOnly: false,
+							width: 410,
+		    				colspan: 2
+		    				*/
+		    			},
 						{
 							xtype : 'comboboxfieldbase',
 							fieldLabel : HreRem.i18n('fieldlabel.detalle.oferta.alquiler.documentacion.completa'),

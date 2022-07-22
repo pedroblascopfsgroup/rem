@@ -186,6 +186,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubestadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDTfnTipoFinanciacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAdenda;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoBloqueo;
@@ -1493,6 +1494,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			
 		}
 		
+		if (dto.getCodigoTipoAdenda() != null) {
+			DDTipoAdenda tipoAdenda = (DDTipoAdenda) utilDiccionarioApi
+					.dameValorDiccionarioByCod(DDTipoAdenda.class, dto.getCodigoTipoAdenda());
+		
+			oferta.setTipoAdenda(tipoAdenda);
+		}
+		
 		genericDao.save(ExpedienteComercial.class, expedienteComercial);
 		genericDao.save(Oferta.class, oferta);
 		// Si se ha modificado el importe de la oferta o de la contraoferta actualizamos
@@ -1527,7 +1535,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		if(cambioEstadoOferta) {
 			ofertaApi.llamaReplicarCambioEstado(oferta.getId(), oferta.getEstadoOferta().getCodigo());
 		}
-
+		
 		return true;
 	}
 
@@ -2439,6 +2447,27 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				dto.setModificarFormalizacionCajamar(true);						
 			}	
 		}
+		
+		
+			
+	
+			if(DDCartera.CODIGO_CAIXA.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) && 
+					(DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo()) || DDTipoOferta.CODIGO_ALQUILER_NO_COMERCIAL.equals(oferta.getTipoOferta().getCodigo()))) {
+				if (oferta.getTipoAdenda() != null) {
+					DDTipoAdenda tipoAdenda = (DDTipoAdenda) utilDiccionarioApi
+					.dameValorDiccionarioByCod(DDTipoAdenda.class, oferta.getTipoAdenda().getCodigo());
+						dto.setCodigoTipoAdenda(tipoAdenda.getCodigo());
+						dto.setDescripcionTipoAdenda(tipoAdenda.getDescripcion());
+				} else {
+					dto.setCodigoTipoAdenda(" ");
+				}
+			} else {
+				dto.setCodigoTipoAdenda(null);
+			}
+			
+		
+	
+		
 		return dto;
 	}
 

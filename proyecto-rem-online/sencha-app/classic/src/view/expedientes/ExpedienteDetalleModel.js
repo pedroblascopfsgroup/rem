@@ -1689,6 +1689,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 				}
 			}
 		},
+		comboEstadoAdenda: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'estadoAdenda'}
+			},
+			autoLoad: true
+		},
 		
 		testigosOferta:{
 			pageSize: $AC.getDefaultPageSize(),

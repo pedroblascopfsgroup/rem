@@ -2812,6 +2812,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 		ofertaDao.saveOrUpdate(oferta);
 
+		if (DDEstadoOferta.CODIGO_PENDIENTE.equals(oferta.getEstadoOferta().getCodigo()) && oferta.getFechaOfertaPendiente() == null){
+			oferta.setFechaOfertaPendiente(new Date());
+		}
+
+
 		return oferta;
 	}
 
@@ -7935,84 +7940,43 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 	
 	@Override
-	public String actualizarOfertaBoarding(TareaExterna tareaExterna) {
-		Oferta oferta = tareaExternaToOferta(tareaExterna);
-		return this.actualizarOfertaBoarding(oferta, tareaExterna.getTareaProcedimiento().getCodigo(), tareaExterna);
+	public void actualizarOfertaBoarding(Oferta oferta, TareaExterna tareaExterna) {
+
+		if(boardingComunicacionApi.modoRestClientBoardingActivado()) {
+			try {
+				ExpedienteComercial expedienteComercial = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
+				ComunicacionBoardingResponse response = null;
+				
+				if (oferta != null && expedienteComercial != null && esOfertaValidaCFVByCarteraSubcartera(oferta) 
+						&& !esOfertaExpressOrEspecial(oferta) && esTareaValidaEnvioCFV(oferta, tareaExterna)) {
+					response = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS);
+				}
+				
+				if(response != null && !response.getSuccess() && boardingComunicacionApi.comunicacionBoardingActivada()) {
+					throw new UserException(response.getMensaje() == null ? ComunicacionBoardingResponse.KO_ACTUALIZACION_OFERTA_BOARDING : response.getMensaje());
+				}
+			} catch (Exception e) {
+				throw new UserException(e.getMessage());
+			}
+		}
 	}
 	
-	@Override
-	public String actualizarOfertaBoarding(Oferta oferta, String codigo, TareaExterna tareaExterna) {
-
-		if(!boardingComunicacionApi.modoRestClientBoardingActivado()) {
-			return null;
-		}
-		
-		ExpedienteComercial expedienteComercial = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
-		Activo activo = oferta.getActivoPrincipal();
-		Reserva reserva = expedienteComercial.getReserva();
-		ComunicacionBoardingResponse response = null;
-		PerimetroActivo perimetro = activoApi.getPerimetroByIdActivo(oferta.getActivoPrincipal().getId());
-		
-		String resultado = null;
-		String codSubCartera = !Checks.esNulo(activo.getSubcartera()) ? activo.getSubcartera().getCodigo() : null;
-		
-		Boolean obtencionReservaFinalizada = false;
-		Boolean solicitaReserva = checkReserva(oferta);
-		Filter filtroTbj = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", expedienteComercial.getTrabajo().getId());
-		ActivoTramite tramite = genericDao.get(ActivoTramite.class, filtroTbj);
-		
-		if(solicitaReserva) {
-			if(tieneTarea(tramite, CODIGO_T017_PBCRESERVA) == 0 
-					&& tieneTarea(tramite, CODIGO_T017_INSTRUCCIONES_RESERVA) == 0 
-					&& tieneTarea(tramite, CODIGO_T017_OBTENCION_CONTRATO_RESERVA) == 0
-					&& tieneTarea(tramite, CODIGO_T017_PBC_VENTA) == 0) {
-				obtencionReservaFinalizada = true;
-			}else {				
-				obtencionReservaFinalizada = tieneTarea(tramite, CODIGO_T017_OBTENCION_CONTRATO_RESERVA) == 2;
-			}
-		}
-		
-		if (oferta != null && expedienteComercial != null && esOfertaValidaCFVByCarteraSubcartera(oferta) && (oferta.getOfertaEspecial() == null || !oferta.getOfertaEspecial()) && (oferta.getOfertaExpress() == null || !oferta.getOfertaExpress())) {
-			
-			if (CODIGO_T013_DEFINICION_OFERTA.equals(codigo) 
-					&& ((checkAtribuciones(oferta) && perimetro.getAplicaFormalizar() == 1))) {
-				
-				response = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS);
-				
-			} else if (CODIGO_T013_RESOLUCION_COMITE.equals(codigo) 
-					|| CODIGO_T013_RATIFICACION_COMITE.equals(codigo)) {
-				
-				response = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS);
-				
-			} else if (CODIGO_T017_RESOLUCION_CES.equals(codigo)
-					|| CODIGO_T017_RATIFIACION_COMITE_CES.equals(codigo)) {
-				response = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS);
-				
-			} else if (CODIGO_T013_RESOLUCION_TANTEO.equals(codigo) 
-					&& ((!Checks.esNulo(reserva) && !DDEstadosReserva.CODIGO_FIRMADA.equals(reserva.getEstadoReserva().getCodigo())) || Checks.esNulo(reserva))) {
-				
-				response = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS);
-				
-			} else if ((CODIGO_T013_RESPUESTA_OFERTANTE.equals(codigo) 
-					|| CODIGO_T017_RESPUESTA_OFERTANTE_CES.equals(codigo))
-					&& !trabajoApi.checkBankia(expedienteComercial.getTrabajo())) {
-				
-				response = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS);
-				
-			} else if ((CODIGO_T013_RESULTADO_PBC.equals(codigo) 
-					|| CODIGO_T017_PBC_VENTA.equals(codigo))
-					&& DDSubcartera.CODIGO_OMEGA.equals(codSubCartera)) {
-				
-				response = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS);			
-			}
-		}
-		
-		
-		if(response != null && !response.getSuccess() && boardingComunicacionApi.comunicacionBoardingActivada()) {
-			resultado = response.getMensaje() == null ? ComunicacionBoardingResponse.KO_ACTUALIZACION_OFERTA_BOARDING : response.getMensaje() ;
-		}
-		
-		return resultado;
+	private boolean esOfertaExpressOrEspecial(Oferta oferta) {
+		return (oferta.getOfertaEspecial() != null && oferta.getOfertaEspecial()) 
+				|| (oferta.getOfertaExpress() != null && oferta.getOfertaExpress());
+	}
+	
+	private boolean esTareaValidaEnvioCFV(Oferta oferta,TareaExterna tareaExterna) {
+		String codTarea = tareaExterna.getTareaProcedimiento().getCodigo();
+		Activo activoPrincipal = oferta.getActivoPrincipal();
+		PerimetroActivo perimetro = activoApi.getPerimetroByIdActivo(activoPrincipal.getId());
+		return (CODIGO_T013_DEFINICION_OFERTA.equals(codTarea) && perimetro.getAplicaFormalizar() == 1)
+				|| CODIGO_T013_RESPUESTA_OFERTANTE.equals(codTarea)  
+				|| CODIGO_T013_RESOLUCION_COMITE.equals(codTarea) 
+				|| CODIGO_T013_RATIFICACION_COMITE.equals(codTarea)
+				|| CODIGO_T017_RESOLUCION_CES.equals(codTarea) 
+				|| CODIGO_T017_RATIFIACION_COMITE_CES.equals(codTarea)
+				|| (CODIGO_T017_RESPUESTA_OFERTANTE_CES.equals(codTarea) && DDCartera.isCarteraCerberus(activoPrincipal.getCartera()));
 	}
 	
 	public void saveTextoOfertaWS(DtoTextosOferta dto, Oferta oferta) throws UserException {
@@ -8431,6 +8395,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				codigoEstado = DDEstadoOferta.CODIGO_CONGELADA;
 			}
 			oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoEstado)));
+			if (DDEstadoOferta.CODIGO_PENDIENTE.equals(oferta.getEstadoOferta().getCodigo()) && oferta.getFechaOfertaPendiente() == null){
+				oferta.setFechaOfertaPendiente(new Date());
+			}
 			ofertaDao.saveOrUpdate(oferta);
 			
 			setEstadoOfertaBC(oferta, null);
@@ -9212,9 +9179,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			return;
 
     	oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PENDIENTE)));
+		if (oferta.getFechaOfertaPendiente() == null){
+			oferta.setFechaOfertaPendiente(new Date());
+		}
 		genericDao.save(Oferta.class, oferta);
-		
 		setEstadoOfertaBC(oferta, oferta.getOfertaCaixa());
+
 	}
 	
 	@Override
@@ -9355,19 +9325,21 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if(eco.getTrabajo() != null && noPdteDevolucion) {
 				Trabajo trabajo = eco.getTrabajo();
 				List<ActivoTramite> tramites = activoTramiteApi.getTramitesActivoTrabajoList(trabajo.getId());
-				ActivoTramite tramite = tramites.get(0);
-				Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_TRAMITE_FINALIZADO);
-				tramite.setEstadoTramite(genericDao.get(DDEstadoProcedimiento.class, filtroEstadoTramite));
-				
-				Set<TareaActivo> tareasTramite = tramite.getTareas();
-				for (TareaActivo tarea : tareasTramite) {
-					if (Checks.esNulo(tarea.getFechaFin())) {
-						tarea.setFechaFin(new Date());
-						tarea.getAuditoria().setBorrado(true);
+				ActivoTramite tramite = !Checks.esNulo(tramites) && !tramites.isEmpty() ? tramites.get(0) : null;
+				if (!Checks.esNulo(tramite)){
+					Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_TRAMITE_FINALIZADO);
+					tramite.setEstadoTramite(genericDao.get(DDEstadoProcedimiento.class, filtroEstadoTramite));
+					
+					Set<TareaActivo> tareasTramite = tramite.getTareas();
+					for (TareaActivo tarea : tareasTramite) {
+						if (Checks.esNulo(tarea.getFechaFin())) {
+							tarea.setFechaFin(new Date());
+							tarea.getAuditoria().setBorrado(true);
+						}
 					}
+					
+					genericDao.save(ActivoTramite.class, tramite);
 				}
-				
-				genericDao.save(ActivoTramite.class, tramite);
 			}
 			
 			genericDao.save(ExpedienteComercial.class, eco);
@@ -9410,6 +9382,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				updateStateDispComercialActivosByOferta(oferta);
 				genericDao.save(Oferta.class, oferta);
 				ofertaEstadoHash.put(idOferta,oferta.getEstadoOferta().getCodigo());
+			}
+			if (DDEstadoOferta.CODIGO_PENDIENTE.equals(oferta.getEstadoOferta().getCodigo()) && oferta.getFechaOfertaPendiente() == null){
+				oferta.setFechaOfertaPendiente(new Date());
 			}
 		}
 		
@@ -9477,7 +9452,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				estadoOferta = DDEstadoOferta.CODIGO_RECHAZADA;
 				deposito.setEstadoDeposito(genericDao.get(DDEstadoDeposito.class, genericDao.createFilter(FilterType.EQUALS, "codigo",DDEstadoDeposito.CODIGO_PDTE_DECISION_DEVOLUCION_INCAUTACION)));
 				genericDao.save(Deposito.class, deposito);
-				//oferta.setMotivoRechazo(genericDao.get(DDMotivoRechazoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoRechazoOferta.COD_CAIXA_OTRA_OFR)));
+				oferta.setMotivoRechazo(genericDao.get(DDMotivoRechazoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoRechazoOferta.COD_CAIXA_OTRA_OFR)));
 			}else{
 				estadoOferta = DDEstadoOferta.CODIGO_CONGELADA;
 			}

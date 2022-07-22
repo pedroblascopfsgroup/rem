@@ -4672,6 +4672,9 @@ public class ActivoAdapter {
 			estadoOferta = (DDEstadoOferta) utilDiccionarioApi
 					.dameValorDiccionarioByCod(DDEstadoOferta.class, codigoEstado);
 			oferta.setEstadoOferta(estadoOferta);
+			if (DDEstadoOferta.CODIGO_PENDIENTE.equals(oferta.getEstadoOferta().getCodigo()) && oferta.getFechaOfertaPendiente() == null){
+				oferta.setFechaOfertaPendiente(new Date());
+			}
 			ofertaApi.setEstadoOfertaBC(oferta, null);
 		}
 		return codigoEstado;
@@ -4972,17 +4975,18 @@ public class ActivoAdapter {
 		notificacion.setTitulo(messageServices.getMessage(AVISO_TITULO_MODIFICADAS_CONDICIONES_JURIDICAS));	
 		if(!Checks.esNulo(expediente.getTrabajo())) {
 		// Buscamos el gestor responsable de Haya
-			List<ActivoTramite> tramites = activoTramiteApi.getTramitesActivoTrabajoList(expediente.getTrabajo().getId());						
+			List<ActivoTramite> tramites = activoTramiteApi.getTramitesActivoTrabajoList(expediente.getTrabajo().getId());	     
 			
-			for(TareaActivo tarea: tramites.get(0).getTareas()) {
+			if (!Checks.esNulo(tramites) && !tramites.isEmpty()) {
+				for(TareaActivo tarea: tramites.get(0).getTareas()) {
 				
-				if(!tarea.getAuditoria().isBorrado() && Checks.esNulo(tarea.getFechaFin())
-						&& genericAdapter.isGestorHaya(tarea.getUsuario())) {
+					if(!tarea.getAuditoria().isBorrado() && Checks.esNulo(tarea.getFechaFin())
+							&& genericAdapter.isGestorHaya(tarea.getUsuario())) {
 	
-					if(Checks.esNulo(destinatario)) {
-						destinatario = tarea.getUsuario();
+						if(Checks.esNulo(destinatario)) {
+							destinatario = tarea.getUsuario();
+						}
 					}
-												
 				}
 			}
 		}

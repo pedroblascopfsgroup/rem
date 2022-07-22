@@ -436,6 +436,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 					    	fieldset.unmask();
 					    }
 					});
+				} else {
+					fieldset.unmask();
 				}
 			}
 		});

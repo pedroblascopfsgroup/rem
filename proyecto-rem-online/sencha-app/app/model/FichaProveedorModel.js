@@ -146,7 +146,8 @@ Ext.define('HreRem.model.FichaProveedorModel', {
             {
             	name: 'isMediador',
             	calculate: function(data) {
-        			return data.subtipoProveedorCodigo == CONST.SUBTIPOS_PROVEEDOR['MEDIADOR'];
+        			return data.subtipoProveedorCodigo == CONST.SUBTIPOS_PROVEEDOR['MEDIADOR']
+							|| data.subtipoProveedorCodigo == CONST.SUBTIPOS_PROVEEDOR['INTERMEDIARIO'];
         		},
         		depends: 'subtipoProveedorCodigo'
             },

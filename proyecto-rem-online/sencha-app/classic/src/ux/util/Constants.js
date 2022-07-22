@@ -134,7 +134,8 @@ Ext.define('HreRem.ux.util.Constants', {
 		NOTARIO: '21',
 		REGISTRO: '24',
 		PROCURADORES: '43',
-		SUMINISTRO: '25'
+		SUMINISTRO: '25',
+		INTERMEDIARIO: '44'
 		
 	},
 

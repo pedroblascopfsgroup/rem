@@ -51,7 +51,7 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 							{
 								xtype: 'fieldset',
 								title: HreRem.i18n('title.identificacion'),
-								height: 375,
+								height: 400,
 								margin: '0 10 10 0',
 								collapsible: false,
 								layout: 'vbox',
@@ -200,7 +200,7 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 								xtype: 'fieldset',
 								title: HreRem.i18n('title.sujetos'),
 								layout: 'vbox',
-								height: 375,
+								height: 400,
 								margin: '0 10 10 0',
 								collapsible: false,
 								items: [
@@ -371,7 +371,7 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 							{
 								xtype: 'fieldset',
 								layout: 'vbox',
-								height: 375,
+								height: 400,
 								margin: '0 5 10 0',
 								title: HreRem.i18n('title.datos'),
 								collapsible: false,
@@ -490,6 +490,17 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 									       	},
 									       	maxValue: null,
 									       	readOnly: true
+									    },
+									    {
+								        	xtype:'datefieldbase',
+								        	formatter: 'date("d/m/Y")',
+											reference: 'fechaDocumentoBBVA',
+									       	fieldLabel: HreRem.i18n('fieldlabel.gasto.fecha.docBBVA'),
+									       	bind: {
+									       		value: '{gasto.fechaDocumentoBBVA}',
+												hidden: '{!esPropietarioBBVA}'
+									       	},
+									       	maxValue: null
 									    }
 									]
 								}

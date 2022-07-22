@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Remus Ovidiu Viorel
---## FECHA_CREACION=20210922
+--## FECHA_CREACION=20220718
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-8153
@@ -190,7 +190,7 @@ BEGIN
 								WHERE DD_TDP_ID = (SELECT DD_TDP_ID FROM '||V_ESQUEMA||'.DD_TDP_TIPO_DIR_PROVEEDOR
                                 											WHERE DD_TDP_CODIGO = ''02'') 
             					GROUP BY PVE_ID)	PRD ON PRD.PVE_ID = DEL.PVE_ID   
-		WHERE DDTPR.DD_TPR_CODIGO IN (''04'', ''18'', ''23'', ''28'', ''29'', ''30'', ''31'', ''32'', ''33'', ''34'', ''35'', ''38'',''05'')';
+		WHERE DDTPR.DD_TPR_CODIGO IN (''04'', ''18'', ''23'', ''28'', ''29'', ''30'', ''31'', ''32'', ''33'', ''34'', ''35'', ''38'',''05'', ''44'')';
    	 	
  		DBMS_OUTPUT.PUT_LINE('[INFO] Vista materializada : '|| V_ESQUEMA ||'.'|| V_TEXT_VISTA ||'... creada');
 

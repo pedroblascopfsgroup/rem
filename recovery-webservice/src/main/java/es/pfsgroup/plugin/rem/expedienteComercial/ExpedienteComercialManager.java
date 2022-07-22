@@ -816,7 +816,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if (DDEstadoOferta.CODIGO_RECHAZADA.equals(dto.getEstadoCodigo())) {
 				
 				depositoApi.modificarEstadoDepositoSiIngresado(oferta);
-				ofertaApi.inicioRechazoDeOfertaSinLlamadaBC(ofertaPrincipal, DDEstadosExpedienteComercial.ANULADO);
+				ofertaApi.inicioRechazoDeOfertaSinLlamadaBC(oferta, DDEstadosExpedienteComercial.ANULADO);
 				ofertaApi.darDebajaAgrSiOfertaEsLote(oferta);
 
 			}
@@ -13898,38 +13898,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	}
 	
 	@Override
-	public DtoScreening dataToDtoScreeningDesBloqueo(Long numOferta, String motivo, String observaciones) {
-		
-		ActivoTramite tramiteVenta = null;
-		ActivoTramite tramiteAlquiler = null;
-		ActivoTramite tramiteAlquilerNoComercial = null;
-		
-		if (numOferta != null) {
-			Filter filtroOferta = genericDao.createFilter(FilterType.EQUALS, "numOferta", numOferta);
-			Oferta oferta =  genericDao.get(Oferta.class, filtroOferta);
-			
-			if (oferta != null) {
-				ExpedienteComercial expedienteComercial =  expedienteComercialDao.getExpedienteComercialByIdOferta(oferta.getId());
-				if (expedienteComercial != null) {
-					tramiteVenta = tramiteDao.getTramiteComercialVigenteByTrabajoT017(expedienteComercial.getTrabajo().getId());
-					tramiteAlquiler = tramiteDao.getTramiteComercialVigenteByTrabajoT015(expedienteComercial.getTrabajo().getId());
-					tramiteAlquilerNoComercial = tramiteDao.getTramiteComercialVigenteByTrabajoT018(expedienteComercial.getTrabajo().getId());
-				}
-			}
-		}
+	public DtoScreening dataToDtoScreeningDesBloqueo(Long numOferta, String motivo, String codigoTarea) {
 		
 		DtoScreening dto = new DtoScreening();
 		dto.setNumOferta(numOferta);
 		dto.setMotivoDesbloqueado(motivo);
-		dto.setObservacionesDesbloqueado(observaciones);
-		
-		if (tramiteVenta != null) {
-			dto.setCodigoTarea(ComercialUserAssigantionService.CODIGO_T017_BLOQUEOSCREENING);
-		} else if (tramiteAlquiler != null) {
-			dto.setCodigoTarea(ComercialUserAssigantionService.TramiteAlquilerT015.CODIGO_T015_BLOQUEOSCREENING);
-		} else if (tramiteAlquilerNoComercial != null) {
-			dto.setCodigoTarea(ComercialUserAssigantionService.TramiteAlquilerNoComercialT018.CODIGO_T018_BLOQUEOSCREENING);
-		}
+		dto.setObservacionesDesbloqueado("");
+		dto.setCodigoTarea(codigoTarea);
 		dto.setIsTareaActiva(true);
 
 		return dto;
@@ -15628,4 +15603,51 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		return true;
 	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public void desbloquearExpediente(Long idOferta) throws Exception {
+		Oferta oferta = ofertaApi.getOfertaById(idOferta);
+		if (!Checks.esNulo(oferta)){
+			ExpedienteComercial expedienteComercial =  expedienteComercialDao.getExpedienteComercialByIdOferta(oferta.getId());
+			String tareaScreening = null, tareaScoring = null;
+			boolean screeningActiva = false, scoringActiva = false;
+			
+			Set<TareaExterna> tareasActivas = activoTramiteApi.getTareasActivasByExpediente(expedienteComercial);
+			if (!Checks.esNulo(tareasActivas) && !tareasActivas.isEmpty()) {
+				String codProcedimiento = ((TareaExterna) tareasActivas.toArray()[0]).getTareaProcedimiento().getTipoProcedimiento().getCodigo();
+				if (ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_VENTA_APPLE.equals(codProcedimiento)){
+					tareaScreening = ComercialUserAssigantionService.CODIGO_T017_BLOQUEOSCREENING;
+					tareaScoring = ComercialUserAssigantionService.CODIGO_T017_BLOQUEOSCORING;
+				} else if (ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_ALQUILER.equals(codProcedimiento)) {
+					tareaScreening = ComercialUserAssigantionService.TramiteAlquilerT015.CODIGO_T015_BLOQUEOSCREENING;
+					tareaScoring = ComercialUserAssigantionService.TramiteAlquilerT015.CODIGO_T015_BLOQUEOSCORING;
+				} else if (ActivoTramiteApi.CODIGO_TRAMITE_ALQUILER_NO_COMERCIAL.equals(codProcedimiento)) {
+					tareaScreening = ComercialUserAssigantionService.TramiteAlquilerNoComercialT018.CODIGO_T018_BLOQUEOSCREENING;
+					tareaScoring = ComercialUserAssigantionService.TramiteAlquilerNoComercialT018.CODIGO_T018_BLOQUEOSCORING;
+				}
+			
+				for (TareaExterna tareaExterna : tareasActivas) {
+					if(!Checks.esNulo(tareaScreening) && tareaScreening.equals(tareaExterna.getTareaProcedimiento().getCodigo())) {
+						screeningActiva = true;
+					}
+					if(!Checks.esNulo(tareaScoring) && tareaScoring.equals(tareaExterna.getTareaProcedimiento().getCodigo())) {
+						scoringActiva = true;
+					}
+				}
+							
+				if (screeningActiva) {				
+					DtoScreening dtoScreening = dataToDtoScreeningDesBloqueo(oferta.getNumOferta(), "Desbloqueo screening", tareaScreening);
+					tareaDesbloqueoScreening(dtoScreening);
+				}
+				if (scoringActiva) {
+					DtoScreening dtoScoring = dataToDtoScreeningDesBloqueo(oferta.getNumOferta(), "Desbloqueo scoring", tareaScoring);
+					tareaDesbloqueoScreening(dtoScoring);
+				}
+				
+				if (screeningActiva || scoringActiva) ofertaApi.replicateOfertaFlush(oferta);
+			}
+		}
+	}
+	
 }

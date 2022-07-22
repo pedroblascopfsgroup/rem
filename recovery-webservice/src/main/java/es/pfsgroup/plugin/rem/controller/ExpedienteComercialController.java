@@ -2726,7 +2726,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		try {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", numOferta);
 			Oferta oferta = genericDao.get(Oferta.class, filtro);
-			expedienteComercialApi.tareaDesbloqueoScreening(expedienteComercialApi.dataToDtoScreeningDesBloqueo( oferta.getNumOferta(),  motivo,  observaciones));
+			//expedienteComercialApi.tareaDesbloqueoScreening(expedienteComercialApi.dataToDtoScreeningDesBloqueo( oferta.getNumOferta(),  motivo,  observaciones));
 			model.put(RESPONSE_SUCCESS_KEY, true);
 
 		} catch (Exception e) {
@@ -3311,6 +3311,22 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	public ModelAndView getDtoFianza(ModelMap model, Long idExpediente) {
 		try {
 			model.put(RESPONSE_DATA_KEY, tramiteAlquilerApi.getDtoFianza(idExpediente));
+
+		} catch (Exception e) {
+			model.put("error", false);
+			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController", e);
+		}
+
+		return createModelAndViewJson(model);
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView desbloquearExpediente(ModelMap model,Long idOferta) {
+		try {
+			expedienteComercialApi.desbloquearExpediente(idOferta);
 			model.put(RESPONSE_SUCCESS_KEY, true);
 
 		} catch (Exception e) {

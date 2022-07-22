@@ -1535,5 +1535,7 @@ public interface ExpedienteComercialApi {
 
 	Boolean saveTabFianza(DtoTabFianza dto, Long id);
 
+	void desbloquearExpediente(Long idOferta) throws Exception;
+
 	void calculoFormalizacionCajamar(Oferta oferta);
 }

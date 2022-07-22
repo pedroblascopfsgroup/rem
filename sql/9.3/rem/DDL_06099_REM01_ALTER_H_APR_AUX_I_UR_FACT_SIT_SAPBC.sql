@@ -1,17 +1,16 @@
 --/*
 --##########################################
---## AUTOR=Juan Angel Sánchez
---## FECHA_CREACION=20190504
+--## AUTOR=PIER GOTTA
+--## FECHA_CREACION=20220710
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-6363
+--## INCIDENCIA_LINK=HREOS-18307
 --## PRODUCTO=NO
 --## Finalidad: Ampliar la tabla de Agrupaciones con un nuevo campo.
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
---##        0.2 Se cambia el tipo de columna de Number a Varchar
 --##########################################
 --*/
 

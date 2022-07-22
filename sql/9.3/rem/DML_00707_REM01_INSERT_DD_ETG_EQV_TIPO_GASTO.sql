@@ -1,10 +1,10 @@
 --/*
 --#########################################
 --## AUTOR=Juan Bautista Alfonso
---## FECHA_CREACION=20220629
+--## FECHA_CREACION=20220721
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=REMVIP-11899
+--## INCIDENCIA_LINK=REMVIP-11974
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Actualizacion registros 
@@ -40,6 +40,7 @@
 --##		0.27 DD_ETG_CODIGO = 1022 porque es lo mismo que el 198  - [REMVIP-11869] - Alejandra García
 --##		0.28 Añadir PEPs Impuesto - IBI rústica - [REMVIP-11962] - Juan Bautista Alfonso
 --##		0.29 Añadir nuevas PEPs Otras entidades en que se integra el activo Otros/Gastos generales - Junta de compensación / EUC Gastos generales  - [REMVIP-11899] - Juan Bautista Alfonso
+--##		0.30 Añadir DD_CBC_CODIGO 01 y 03 para las pep XXXX-22-2-COM VT XXXX-22-2-A-COM VT - Comision gestion ventas - [REMVIP-11974] - Juan Bautista Alfonso
 --#########################################
 --*/
 
@@ -55,7 +56,7 @@ DECLARE
 	ERR_MSG VARCHAR2(2048);-- Mensaje de error
 	V_SQL VARCHAR2(4000 CHAR);
 	PL_OUTPUT VARCHAR2(32000 CHAR);
-	V_USUARIO VARCHAR2(50 CHAR) := 'REMVIP-11899';
+	V_USUARIO VARCHAR2(50 CHAR) := 'REMVIP-11974';
 	V_NUM_REGISTROS NUMBER; -- Cuenta registros 
 	V_NUM NUMBER;
 	V_FLAG_VACIADO NUMBER := 0;
@@ -156,8 +157,8 @@ DECLARE
 		T_TABLA('266','XXXX-22-2-A-HON ALT','22','01','19','13','166','','','','null','','','','2022'),
 		T_TABLA('267','XXXX-22-2-FERIAS','22','01','50','17','167','01','','','null','','','','2022'),
 		T_TABLA('268','XXXX-22-2-A-FERIAS','22','01','51','17','167','03','','','null','','','','2022'),
-		T_TABLA('269','XXXX-22-2-COM VT','22','01','57','13','168','','','','null','','','','2022'),
-		T_TABLA('270','XXXX-22-2-A-COM VT','22','01','58','13','168','','','','null','','','','2022'),
+		T_TABLA('269','XXXX-22-2-COM VT','22','01','57','13','168','01','','','null','','','','2022'),
+		T_TABLA('270','XXXX-22-2-A-COM VT','22','01','58','13','168','03','','','null','','','','2022'),
 		T_TABLA('271','XXXX-22-2-COM VT GS','22','01','59','12','169','01','','','null','','','','2022'),
 		T_TABLA('272','XXXX-22-2-A-CM VT GS','22','01','60','12','169','03','','','null','','','','2022'),
 		T_TABLA('273','XXXX-22-2-CAMPAÑAS','22','01','62','17','170','01','','','null','','','','2022'),

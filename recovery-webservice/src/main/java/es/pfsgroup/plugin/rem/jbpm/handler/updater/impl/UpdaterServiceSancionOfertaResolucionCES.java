@@ -99,6 +99,7 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 		GestorEntidadDto ge = new GestorEntidadDto();	
 		OfertaExclusionBulk ofertaExclusionBulkNew = null;
 		boolean rechazar = false;
+		boolean aprueba = false;
 		if (!Checks.esNulo(ofertaAceptada)) {
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
 
@@ -129,6 +130,7 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO_CES_PTE_PRO_MANZANA);
 						}
 						if (DDResolucionComite.CODIGO_APRUEBA.equals(valor.getValor())) {
+							aprueba = true;
 							ofertaApi.congelarOfertasAndReplicate(activo, ofertaAceptada);
 							
 							if(reserva && ge!=null && gestorExpedienteComercialApi.getGestorByExpedienteComercialYTipo(expediente, "GBOAR") == null) {
@@ -260,7 +262,9 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 				
 				if(rechazar) {
 	                ofertaApi.inicioRechazoDeOfertaSinLlamadaBC(ofertaAceptada, DDEstadosExpedienteComercial.DENEGADA_OFERTA_CES);
-	            }
+	            } else if (aprueba) {
+					ofertaApi.actualizarOfertaBoarding(ofertaAceptada,tareaExternaActual);
+				}
 			}
 		}
 

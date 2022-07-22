@@ -98,7 +98,7 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 		GestorEntidadDto ge = new GestorEntidadDto();
 		boolean rechazar = false;
-		
+		boolean aprueba = false;
 		if (!Checks.esNulo(ofertaAceptada)) {
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
 			Activo activo = ofertaAceptada.getActivoPrincipal();
@@ -124,6 +124,7 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 					if (COMBO_RESOLUCION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 						Filter filtro = null;
 						if (DDResolucionComite.CODIGO_APRUEBA.equals(valor.getValor())) {
+							aprueba = true;
 							List<ActivoOferta> listActivosOferta = expediente.getOferta().getActivosOferta();
 							for (ActivoOferta activoOferta : listActivosOferta) {
 								ComunicacionGencat comunicacionGencat = comunicacionGencatApi.getByIdActivo(activoOferta.getPrimaryKey().getActivo().getId());
@@ -254,6 +255,8 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 				
 				if(rechazar) {
 					ofertaApi.inicioRechazoDeOfertaSinLlamadaBC(ofertaAceptada,DDEstadosExpedienteComercial.DENEGADO);
+				} else if (aprueba) {
+					ofertaApi.actualizarOfertaBoarding(ofertaAceptada,tareaExternaActual);
 				}
 			}
 		}

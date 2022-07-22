@@ -112,6 +112,8 @@ public class PerfilAdministracionManager extends BusinessOperationOverrider<Perf
 		Usuario usuario = genericAdapter.getUsuarioLogado();
 		if(this.usuarioHasPerfil(PERFIL_TASADORA, usuario.getUsername())) {
 			adjuntos = this.filtrarAdjuntos(adjuntos, MATRICULAS_TASADORA);
+		}else if(this.usuarioHasPerfil(PERFIL_TASADORA_BBVA, usuario.getUsername())) {
+			adjuntos = this.filtrarAdjuntos(adjuntos, MATRICULAS_TASADORA_BBVA);
 		}
 		return adjuntos;
 	}

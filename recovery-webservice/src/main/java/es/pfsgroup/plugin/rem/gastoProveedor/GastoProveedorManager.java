@@ -634,6 +634,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			if (contabilidadGasto != null) {
 				dto.setFechaDevengoEspecial(contabilidadGasto.getFechaDevengoEspecial());
 			}
+			
+			if (!Checks.esNulo(gasto.getFechaDocumentoBBVA())) {
+				dto.setFechaDocumentoBBVA(gasto.getFechaDocumentoBBVA());
+			}
 		}
 
 		return dto;

@@ -1450,6 +1450,4 @@ public interface ExpedienteComercialApi {
 
 	void desbloquearExpediente(Long idOferta) throws Exception;
 
-	void calculoFormalizacionCajamar(Oferta oferta);
-
 }

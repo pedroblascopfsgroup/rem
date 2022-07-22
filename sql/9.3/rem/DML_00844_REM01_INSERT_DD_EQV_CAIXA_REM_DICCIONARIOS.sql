@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20220615
+--## FECHA_CREACION=20220723
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=REMVIP-11860
+--## INCIDENCIA_LINK=HREOS-18404
 --## PRODUCTO=NO
 --##
 --## Finalidad: Script que añade en DD_EQV_CAIXA_REM los datos añadidos en T_ARRAY_DATA para todos los diccionarios
@@ -23,6 +23,7 @@
 --##        0.11 Valores Balcón, Tipo vivienda y tipología edificio - [HREOS-17614] - Daniel Algaba
 --##	     0.12 Nuevos motivos no comercializacion - [REMVIP-11574] - Juan Bautista Alfonso
 --##	     0.13 Añadir valores CLASE_USO - [REMVIP-11860] - Juan Bautista Alfonso
+--##	     0.14 Añadir valores - [HREOS-18404] - Santi Monzó
 --##########################################
 --*/
 
@@ -1377,8 +1378,58 @@ DECLARE
         T_TIPO_DATA('TIPOLOGIA_EDIFICIO','076410','Edificio Dotacional Educativo','DD_TEC_TIPO_EDIFICIO_CAIXA','076410','0'),
         T_TIPO_DATA('TIPOLOGIA_EDIFICIO','076411','Edificio Dotacional Lúdico','DD_TEC_TIPO_EDIFICIO_CAIXA','076411','0'),
         T_TIPO_DATA('TIPOLOGIA_EDIFICIO','076412','Edificio de Aparcamientos ','DD_TEC_TIPO_EDIFICIO_CAIXA','076412','0'),
-        T_TIPO_DATA('TIPOLOGIA_EDIFICIO','076413','Otros','DD_TEC_TIPO_EDIFICIO_CAIXA','076413','0')
+        T_TIPO_DATA('TIPOLOGIA_EDIFICIO','076413','Otros','DD_TEC_TIPO_EDIFICIO_CAIXA','076413','0'),
 
+
+        --- Exterior/Interior
+        T_TIPO_DATA('EXTERIOR_INTERIOR','072402','Exterior','DD_EXI_EXTERIOR_INTERIOR','01','0'),
+        T_TIPO_DATA('EXTERIOR_INTERIOR','072401','Interior','DD_EXI_EXTERIOR_INTERIOR','02','0'),
+         --- Activo accesibilidad
+        T_TIPO_DATA('ACCESIBILIDAD','070101','Buena','DD_AAC_ACTIVO_ACCESIBILIDAD','01','0'),
+        T_TIPO_DATA('ACCESIBILIDAD','070103','Baja','DD_AAC_ACTIVO_ACCESIBILIDAD','02','0'),
+        T_TIPO_DATA('ACCESIBILIDAD','070102','Media','DD_AAC_ACTIVO_ACCESIBILIDAD','03','0'),
+        --- Estado conservacion edificio
+        T_TIPO_DATA('CONSERV_EDIF','073901','Rehabilitación integral','DD_ESC_ESTADO_CONSERVACION_EDIFICIO','01','0'),
+        T_TIPO_DATA('CONSERV_EDIF','073902','Rehabilitación parcial','DD_ESC_ESTADO_CONSERVACION_EDIFICIO','02','0'),
+        T_TIPO_DATA('CONSERV_EDIF','073903','De Origen','DD_ESC_ESTADO_CONSERVACION_EDIFICIO','04','0'),
+        T_TIPO_DATA('CONSERV_EDIF','073904','Necesita rehabilitación','DD_ESC_ESTADO_CONSERVACION_EDIFICIO','03','0'),
+        T_TIPO_DATA('CONSERV_EDIF','079801','Rehabilitación integral','DD_ESC_ESTADO_CONSERVACION_EDIFICIO','01','0'),
+        T_TIPO_DATA('CONSERV_EDIF','079802','Rehabilitación parcial','DD_ESC_ESTADO_CONSERVACION_EDIFICIO','02','0'),
+        T_TIPO_DATA('CONSERV_EDIF','079803','De Origen','DD_ESC_ESTADO_CONSERVACION_EDIFICIO','04','0'),
+        T_TIPO_DATA('CONSERV_EDIF','079804','Necesita rehabilitación','DD_ESC_ESTADO_CONSERVACION_EDIFICIO','03','0'),
+        --- Valoracion ubicacion
+        T_TIPO_DATA('UBICACION','076501','Por encima nivel medio','DD_VUB_VALORACION_UBICACION','02','0'),
+        T_TIPO_DATA('UBICACION','076502','nivel medio','DD_VUB_VALORACION_UBICACION','03','0'),
+        T_TIPO_DATA('UBICACION','076503','por debajo nivel medio','DD_VUB_VALORACION_UBICACION','04','0'),
+        T_TIPO_DATA('UBICACION','076601','Por encima nivel medio','DD_VUB_VALORACION_UBICACION','02','0'),
+        T_TIPO_DATA('UBICACION','076602','nivel medio','DD_VUB_VALORACION_UBICACION','03','0'),
+        T_TIPO_DATA('UBICACION','076603','por debajo nivel medio','DD_VUB_VALORACION_UBICACION','04','0'),
+        --- Instalaciones deportivas
+        T_TIPO_DATA('INST_DEPORTIVAS','072801','Sí','DD_SIN_SINO','01','0'),
+        T_TIPO_DATA('INST_DEPORTIVAS','072802','No','DD_SIN_SINO','02','0'),
+        T_TIPO_DATA('INST_DEPORTIVAS','077101','Sí','DD_SIN_SINO','01','0'),
+        T_TIPO_DATA('INST_DEPORTIVAS','077102','No','DD_SIN_SINO','02','0'),
+         --- Armarios empotrados
+        T_TIPO_DATA('ARM_EMPOTRADOS','070301','Sí','DD_SIN_SINO','01','0'),
+        T_TIPO_DATA('ARM_EMPOTRADOS','070302','No','DD_SIN_SINO','02','0'),
+         --- Trastero
+        T_TIPO_DATA('TRASTERO','015101','Sí','DD_SIN_SINO','01','0'),
+        T_TIPO_DATA('TRASTERO','015102','No','DD_SIN_SINO','02','0'),
+         --- Garaje
+        T_TIPO_DATA('GARAJE','015001','Sí','DD_SIN_SINO','01','0'),
+        T_TIPO_DATA('GARAJE','015002','No','DD_SIN_SINO','02','0'),
+         --- Apertura
+        T_TIPO_DATA('APERTURA','072501','Sí','DD_SIN_SINO','01','0'),
+        T_TIPO_DATA('APERTURA','072502','No','DD_SIN_SINO','02','0'),
+         --- Ascensor
+        T_TIPO_DATA('ASCENSOR','000901','Sí','DD_SIN_SINO','01','0'),
+        T_TIPO_DATA('ASCENSOR','000902','No','DD_SIN_SINO','02','0'),
+         --- Patio
+        T_TIPO_DATA('PATIO','004001','Sí','DD_SIN_SINO','01','0'),
+        T_TIPO_DATA('PATIO','004002','No','DD_SIN_SINO','02','0'),
+         --- Lic obra
+        T_TIPO_DATA('LIC_OBRA','079301','Sí','DD_SIN_SINO','01','0'),
+        T_TIPO_DATA('LIC_OBRA','079302','No','DD_SIN_SINO','02','0')
 		); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

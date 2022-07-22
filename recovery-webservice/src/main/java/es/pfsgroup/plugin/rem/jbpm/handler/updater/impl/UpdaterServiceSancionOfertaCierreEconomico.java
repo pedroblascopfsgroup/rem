@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 import java.util.Date;
 import java.util.List;
 
+import es.pfsgroup.plugin.rem.model.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,12 +26,6 @@ import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceContabilidadBbva;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
-import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoOferta;
-import es.pfsgroup.plugin.rem.model.ActivoTramite;
-import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.Oferta;
-import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
@@ -76,9 +71,16 @@ public class UpdaterServiceSancionOfertaCierreEconomico implements UpdaterServic
 	
 	@Autowired
 	private GenericaRestDaoImp genericaRestDaoImp;
+
+	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores){
+		saveValues(tramite,tareaExternaActual,valores,true);
+	}
+
+	public void saveValuesNoMail(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores){
+		saveValues(tramite,tareaExternaActual,valores,false);
+	}
     
-    
-	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
+	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores, boolean sendMail) {
 		
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 		Activo activo = ofertaAceptada.getActivoPrincipal();
@@ -163,8 +165,8 @@ public class UpdaterServiceSancionOfertaCierreEconomico implements UpdaterServic
 					}
 					
 					ofertaApi.rechazoOfertasMotivoVendido(ofertaAceptada);
-					
-					if (expediente.getOferta() != null && DDCartera.isCarteraBBVA(expediente.getOferta().getActivoPrincipal().getCartera())) {
+
+					if (expediente.getOferta() != null && DDCartera.isCarteraBBVA(expediente.getOferta().getActivoPrincipal().getCartera()) && sendMail) {
 						try {
 							notificatorServiceContabilidadBbva.notificatorFinTareaConValores(expediente,false);
 						} catch (GestorDocumentalException e) {

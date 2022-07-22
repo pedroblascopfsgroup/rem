@@ -27,6 +27,16 @@ public interface PerfilApi {
 			"AI-01-NOTS-08" //Registro Propiedad: nota simple inscrita/sin cargas
 			);
 	
+	public static final String PERFIL_TASADORA_BBVA = "TASADORABBVA";
+	public static final List<String> MATRICULAS_TASADORA_BBVA = Arrays.asList(
+			"AI-01-SERE-24", 
+			"AI-01-ESCR-10", 
+			"AI-01-CERA-16",
+			"AI-01-NOTS-08",
+			"AI-02-CNCV-04",
+			"AI-12-DOCJ-81"
+			);
+	
 	
 	
 	/**

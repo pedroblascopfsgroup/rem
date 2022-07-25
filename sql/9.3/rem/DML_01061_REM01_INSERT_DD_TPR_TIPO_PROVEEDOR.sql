@@ -43,7 +43,7 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
 	
-	T_TIPO_DATA('44'	,'Acreditados'			,'Acreditados'		,'03')
+	T_TIPO_DATA('45'	,'Acreditados'			,'Acreditados'		,'03')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 BEGIN

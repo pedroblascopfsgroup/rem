@@ -125,10 +125,9 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 	@Override
 	public boolean isOfertaEnPlazoConcu(boolean bloquear, List<Oferta> listOfertas) {
 		if(listOfertas != null && !listOfertas.isEmpty()) {
-			Filter filtroPendientesDeposito = genericDao.createFilter(FilterType.NOT_EQUALS, "estadoOferta.codigo", DDEstadoOferta.CODIGO_PDTE_DEPOSITO);
-		    listOfertas.remove(genericDao.get(Oferta.class, filtroPendientesDeposito));
+
 			for (Oferta oferta : listOfertas) {
-				if(this.entraEnTiempoDeposito(oferta)) {
+				if(this.entraEnTiempoDeposito(oferta) && DDEstadoOferta.isPendienteDeposito(oferta.getEstadoOferta())) {
 					bloquear =  true;
 					break;
 				}

@@ -108,6 +108,7 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
@@ -311,6 +312,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Autowired
 	private AlaskaComunicacionManager alaskaComunicacionManager;
+	
+	@Autowired
+	private ProveedoresApi proveedorApi;
 
 	@Override
 	public String managerName() {
@@ -1745,6 +1749,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					throw new JsonViewerException(messageServices.getMessage(AVISO_MEDIADOR_BAJA));
 				}
 
+				proveedorApi.isProveedorValidoParaActivo(proveedor, activo);
+				
 				beanUtilNotNull.copyProperty(historicoMediador, "mediadorInforme", proveedor);
 
 				// Asignar el nuevo proveedor de tipo mediador al activo, informacion comercial.

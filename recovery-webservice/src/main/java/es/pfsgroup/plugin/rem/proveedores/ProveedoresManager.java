@@ -9,9 +9,6 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import es.pfsgroup.plugin.rem.model.*;
-import es.pfsgroup.plugin.rem.restclient.caixabc.CaixaBcRestClient;
-import es.pfsgroup.plugin.rem.service.InterlocutorCaixaService;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.logging.Log;
@@ -24,7 +21,6 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
-import es.capgemini.devon.security.SecurityUtils;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.direccion.model.DDProvincia;
@@ -35,6 +31,8 @@ import es.capgemini.pfs.persona.model.DDTipoPersona;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.HQLBuilder;
+import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
@@ -46,21 +44,74 @@ import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.gestor.dao.GestorActivoDao;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
+import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAdjuntoProveedor;
+import es.pfsgroup.plugin.rem.model.ActivoIntegrado;
+import es.pfsgroup.plugin.rem.model.ActivoProveedor;
+import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
+import es.pfsgroup.plugin.rem.model.ActivoProveedorDireccion;
+import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
+import es.pfsgroup.plugin.rem.model.BloqueoApis;
+import es.pfsgroup.plugin.rem.model.BloqueoApisCartera;
+import es.pfsgroup.plugin.rem.model.BloqueoApisEspecialidad;
+import es.pfsgroup.plugin.rem.model.BloqueoApisHistorico;
+import es.pfsgroup.plugin.rem.model.BloqueoApisLineaNegocio;
+import es.pfsgroup.plugin.rem.model.BloqueoApisProvincia;
+import es.pfsgroup.plugin.rem.model.ConductasInapropiadas;
+import es.pfsgroup.plugin.rem.model.ConfigEspecialidad;
+import es.pfsgroup.plugin.rem.model.DelegacionesCodigoPostal;
+import es.pfsgroup.plugin.rem.model.DelegacionesLocalidad;
+import es.pfsgroup.plugin.rem.model.DelegacionesProvincia;
+import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
+import es.pfsgroup.plugin.rem.model.DtoActivoProveedor;
+import es.pfsgroup.plugin.rem.model.DtoAdjunto;
+import es.pfsgroup.plugin.rem.model.DtoBloqueoApis;
+import es.pfsgroup.plugin.rem.model.DtoCodigoPostalCombo;
+import es.pfsgroup.plugin.rem.model.DtoConductasInapropiadas;
+import es.pfsgroup.plugin.rem.model.DtoDatosContacto;
+import es.pfsgroup.plugin.rem.model.DtoDiccionario;
+import es.pfsgroup.plugin.rem.model.DtoDireccionDelegacion;
+import es.pfsgroup.plugin.rem.model.DtoInterlocutorBC;
+import es.pfsgroup.plugin.rem.model.DtoMediador;
+import es.pfsgroup.plugin.rem.model.DtoMediadorEvalua;
+import es.pfsgroup.plugin.rem.model.DtoMediadorEvaluaFilter;
+import es.pfsgroup.plugin.rem.model.DtoMediadorOferta;
+import es.pfsgroup.plugin.rem.model.DtoMediadorStats;
+import es.pfsgroup.plugin.rem.model.DtoPersonaContacto;
+import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
+import es.pfsgroup.plugin.rem.model.EntidadProveedor;
+import es.pfsgroup.plugin.rem.model.ProveedorEspecialidad;
+import es.pfsgroup.plugin.rem.model.ProveedorIdioma;
+import es.pfsgroup.plugin.rem.model.ProveedorTerritorial;
+import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
+import es.pfsgroup.plugin.rem.model.VHistoricoBloqueosApis;
+import es.pfsgroup.plugin.rem.model.dd.DDBloqueDocumentoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDCalificacionProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDCalificacionProveedorRetirar;
 import es.pfsgroup.plugin.rem.model.dd.DDCargoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDCategoriaConductaInapropiada;
+import es.pfsgroup.plugin.rem.model.dd.DDCodigoPostal;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadProveedor;
+import es.pfsgroup.plugin.rem.model.dd.DDEspecialidad;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoProveedor;
+import es.pfsgroup.plugin.rem.model.dd.DDIdioma;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRetencion;
 import es.pfsgroup.plugin.rem.model.dd.DDOperativa;
+import es.pfsgroup.plugin.rem.model.dd.DDOrigenPeticionHomologacion;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoProcesoBlanqueo;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivosCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoBloqueoApi;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDireccionProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
@@ -68,6 +119,7 @@ import es.pfsgroup.plugin.rem.proveedores.dao.ProveedoresDao;
 import es.pfsgroup.plugin.rem.proveedores.mediadores.dao.MediadoresCarteraDao;
 import es.pfsgroup.plugin.rem.proveedores.mediadores.dao.MediadoresEvaluarDao;
 import es.pfsgroup.plugin.rem.proveedores.mediadores.dao.MediadoresOfertasDao;
+import es.pfsgroup.plugin.rem.service.InterlocutorCaixaService;
 import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
 
 @Service("proveedoresManager")
@@ -84,9 +136,15 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 	public static final String ERROR_TIPO_DOCUMENTO_PROVEEDOR = "No existe el tipo de documento indicado";
 	public static final String ERROR_TIPO_UNICO_DOCUMENTO_PROVEEDOR = "Ya existe un documento del mismo tipo";
 	public static final String ERROR_NOMBRE_DOCUMENTO_PROVEEDOR = "Ya existe un documento con el mismo nombre";
+	private static final String ERROR_BLOQUEO_CARTERA = "api.bloqueado.cartera";
+	private static final String ERROR_BLOQUEO_TIPO_COMERCIALIZACION = "api.bloqueado.tipo.comercializacion";
+	private static final String ERROR_BLOQUEO_PROVINCIA = "api.bloqueado.provincia";
+	private static final String ERROR_BLOQUEO_ESPECIALIDAD = "api.bloqueado.especialidad";
+
 
 	public static final Integer comboOK = 1;
 	public static final Integer comboKO = 0;
+	public static final String VALOR_POR_DEFECTO = "VALOR_POR_DEFECTO";
 
 	protected static final Log logger = LogFactory.getLog(ProveedoresManager.class);
 
@@ -272,6 +330,53 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 				if(proveedor.getMediadorRelacionado()!=null) {
 					beanUtilNotNull.copyProperty(dto, "idMediadorRelacionado", proveedor.getMediadorRelacionado().getCodigoProveedorRem());
 				}
+					
+				
+				if(proveedor.getOrigenPeticionHomologacion()!=null) {
+					beanUtilNotNull.copyProperty(dto, "origenPeticionHomologacionCodigo", proveedor.getOrigenPeticionHomologacion().getCodigo());
+				}
+				if(proveedor.getPeticionario()!=null) {
+					beanUtilNotNull.copyProperty(dto, "peticionario", proveedor.getPeticionario());
+				}
+				if(proveedor.getLineaNegocio()!=null) {
+					beanUtilNotNull.copyProperty(dto, "lineaNegocioCodigo", proveedor.getLineaNegocio().getCodigo());
+				}		
+				if(proveedor.getGestionClientesNoResidentes()!=null) {
+					beanUtilNotNull.copyProperty(dto, "gestionClientesNoResidentesCodigo", proveedor.getGestionClientesNoResidentes().getCodigo());
+				}
+				if(proveedor.getNumeroComerciales()!=null) {
+					beanUtilNotNull.copyProperty(dto, "numeroComerciales", proveedor.getNumeroComerciales());
+				}
+				if(proveedor.getFechaUltimoContratoVigente()!=null) {
+					beanUtilNotNull.copyProperty(dto, "fechaUltimoContratoVigente", proveedor.getFechaUltimoContratoVigente());
+				}
+				if(proveedor.getMotivoBaja()!=null) {
+					beanUtilNotNull.copyProperty(dto, "motivoBaja", proveedor.getMotivoBaja());
+				}
+								
+				List<ProveedorEspecialidad> proveedorEspecialidad = genericDao.getList(ProveedorEspecialidad.class, proveedorIdFiltro);
+				if(!Checks.estaVacio(proveedorEspecialidad)) {
+					StringBuffer codigos = new StringBuffer();
+					for(ProveedorEspecialidad pe : proveedorEspecialidad) {
+						if(!Checks.esNulo(pe.getEspecialidad())) {
+							codigos.append(pe.getEspecialidad().getCodigo()).append(",");
+						}
+					}
+					beanUtilNotNull.copyProperty(dto, "especialidadCodigo", codigos.substring(0, (codigos.length()-1)));
+				}
+				
+				List<ProveedorIdioma> proveedorIdioma = genericDao.getList(ProveedorIdioma.class, proveedorIdFiltro);
+				if(!Checks.estaVacio(proveedorIdioma)) {
+					StringBuffer codigos = new StringBuffer();
+					for(ProveedorIdioma pi : proveedorIdioma) {
+						if(!Checks.esNulo(pi.getIdioma())) {
+							codigos.append(pi.getIdioma().getCodigo()).append(",");
+						}
+					}
+					beanUtilNotNull.copyProperty(dto, "idiomaCodigo", codigos.substring(0, (codigos.length()-1)));
+				}
+				
+				
 			} catch (IllegalAccessException e) {
 				logger.error(e.getMessage());
 			} catch (InvocationTargetException e) {
@@ -432,10 +537,8 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 						}
 					}
 				}
-			}
-			if(!Checks.esNulo(dto.getSubcarteraCodigo())) {
-				//beanUtilNotNull.copyProperty(proveedor, "subcarteraCodigo", proveedor.get);// TODO: todavia no existe.
-			}
+			}				
+			
 			if(!Checks.esNulo(dto.getCustodioCodigo())) {
 				beanUtilNotNull.copyProperty(proveedor, "custodio", dto.getCustodioCodigo());
 			}
@@ -524,6 +627,107 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 				
 				if(mediadorRelacionado!=null) {
 					beanUtilNotNull.copyProperty(proveedor, "mediadorRelacionado", mediadorRelacionado);	
+				}
+				
+			}
+			
+			if(!Checks.esNulo(dto.getPeticionario())) {
+				proveedor.setPeticionario(dto.getPeticionario());
+			}
+			
+			if(!Checks.esNulo(dto.getOrigenPeticionHomologacionCodigo())) {
+				DDOrigenPeticionHomologacion origenPeticion = genericDao.get(DDOrigenPeticionHomologacion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getOrigenPeticionHomologacionCodigo()));
+				proveedor.setOrigenPeticionHomologacion(origenPeticion);			
+			}
+			
+			if(!Checks.esNulo(dto.getLineaNegocioCodigo())) {
+				DDTipoComercializacion lineaNegocio = genericDao.get(DDTipoComercializacion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getLineaNegocioCodigo()));
+				proveedor.setLineaNegocio(lineaNegocio);			
+			}
+			
+			if(!Checks.esNulo(dto.getGestionClientesNoResidentesCodigo())) {
+				DDSinSiNo gestClientesNoResidentes = genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getGestionClientesNoResidentesCodigo()));
+				proveedor.setGestionClientesNoResidentes(gestClientesNoResidentes);			
+			}
+			
+			if(!Checks.esNulo(dto.getNumeroComerciales())) {
+				proveedor.setNumeroComerciales(dto.getNumeroComerciales());
+			}
+			
+			if(!Checks.esNulo(dto.getFechaUltimoContratoVigente())) {
+				proveedor.setFechaUltimoContratoVigente(dto.getFechaUltimoContratoVigente());
+			}
+			
+			if(!Checks.esNulo(dto.getMotivoBaja())) {
+				proveedor.setMotivoBaja(dto.getMotivoBaja());
+			}
+			
+			if(!Checks.esNulo(dto.getEspecialidadCodigo())) {
+				List<String> codigosEspecialidad = Arrays.asList(dto.getEspecialidadCodigo().split(","));
+				
+				Filter filtroProveedor = genericDao.createFilter(FilterType.EQUALS, "proveedor.id", proveedor.getId());
+				List<ProveedorEspecialidad> proveedorEspecialidadByProvID = genericDao.getList(ProveedorEspecialidad.class, filtroProveedor);
+				
+				// Borrar los elementos que no vengan en la lista y existan en la DDBB.
+				for(ProveedorEspecialidad pe : proveedorEspecialidadByProvID){
+					if(!codigosEspecialidad.contains(pe.getEspecialidad().getCodigo())){
+						Filter filtroEspecialidad = genericDao.createFilter(FilterType.EQUALS, "especialidad.codigo", pe.getEspecialidad().getCodigo());
+						ProveedorEspecialidad especialidadABorrar = genericDao.get(ProveedorEspecialidad.class, filtroEspecialidad, filtroProveedor);
+						if(!Checks.esNulo(especialidadABorrar)) {
+							genericDao.deleteById(ProveedorEspecialidad.class, especialidadABorrar.getId());
+						}
+					}
+				}
+				
+				// Almacenar los elementos que vengan en la lista y no existan en la DDBB.
+				// Dejar los elementos que vangan en la lista y exista en la DDBB.
+				for(String codigo : codigosEspecialidad) {
+					DDEspecialidad especialidad = (DDEspecialidad) utilDiccionarioApi.dameValorDiccionarioByCod(DDEspecialidad.class, codigo);
+					if(!Checks.esNulo(especialidad)) {
+						Filter filtroEspecialidad = genericDao.createFilter(FilterType.EQUALS, "especialidad.codigo", especialidad.getCodigo());
+						List<ProveedorEspecialidad> proveedorEspecialidad = genericDao.getList(ProveedorEspecialidad.class, filtroProveedor, filtroEspecialidad);
+						if(Checks.estaVacio(proveedorEspecialidad)) {
+							ProveedorEspecialidad pveEspecialidad = new ProveedorEspecialidad();
+							pveEspecialidad.setEspecialidad(especialidad);
+							pveEspecialidad.setProveedor(proveedor);						
+							genericDao.save(ProveedorEspecialidad.class, pveEspecialidad);
+						}
+					}
+				}
+				
+			}
+			
+			if(!Checks.esNulo(dto.getIdiomaCodigo())) {
+				List<String> codigosIdioma = Arrays.asList(dto.getIdiomaCodigo().split(","));
+				
+				Filter filtroProveedor = genericDao.createFilter(FilterType.EQUALS, "proveedor.id", proveedor.getId());
+				List<ProveedorIdioma> proveedorIdiomaByProvID = genericDao.getList(ProveedorIdioma.class, filtroProveedor);
+				
+				// Borrar los elementos que no vengan en la lista y existan en la DDBB.
+				for(ProveedorIdioma pi : proveedorIdiomaByProvID){
+					if(!codigosIdioma.contains(pi.getIdioma().getCodigo())){
+						Filter filtroIdioma = genericDao.createFilter(FilterType.EQUALS, "idioma.codigo", pi.getIdioma().getCodigo());
+						ProveedorIdioma idiomaABorrar = genericDao.get(ProveedorIdioma.class, filtroIdioma, filtroProveedor);
+						if(!Checks.esNulo(idiomaABorrar)) {
+							genericDao.deleteById(ProveedorIdioma.class, idiomaABorrar.getId());
+						}
+					}
+				}
+				
+				// Almacenar los elementos que vengan en la lista y no existan en la DDBB.
+				// Dejar los elementos que vangan en la lista y exista en la DDBB.
+				for(String codigo : codigosIdioma) {
+					DDIdioma idioma = (DDIdioma) utilDiccionarioApi.dameValorDiccionarioByCod(DDIdioma.class, codigo);
+					if(!Checks.esNulo(idioma)) {
+						Filter filtroIdioma = genericDao.createFilter(FilterType.EQUALS, "idioma.codigo", idioma.getCodigo());
+						List<ProveedorIdioma> proveedorIdioma = genericDao.getList(ProveedorIdioma.class, filtroProveedor, filtroIdioma);
+						if(Checks.estaVacio(proveedorIdioma)) {
+							ProveedorIdioma pveIdioma = new ProveedorIdioma();
+							pveIdioma.setIdioma(idioma);
+							pveIdioma.setProveedor(proveedor);						
+							genericDao.save(ProveedorIdioma.class, pveIdioma);
+						}
+					}
 				}
 				
 			}
@@ -825,6 +1029,8 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 					beanUtilNotNull.copyProperty(dto, "codigoPostal", delegacion.getCodigoPostal());
 					beanUtilNotNull.copyProperty(dto, "telefono", delegacion.getTelefono());
 					beanUtilNotNull.copyProperty(dto, "email", delegacion.getEmail());
+					beanUtilNotNull.copyProperty(dto, "piso", delegacion.getPiso());
+					beanUtilNotNull.copyProperty(dto, "otros", delegacion.getOtros());
 					beanUtilNotNull.copyProperty(dto, "totalCount", page.getTotalCount());
 				} catch (IllegalAccessException e) {
 					logger.error(e.getMessage());
@@ -1043,12 +1249,14 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 			List<ActivoAdjuntoProveedor> adjuntos = genericDao.getList(ActivoAdjuntoProveedor.class, adjuntoFilter, adjuntoBorradoFilter, adjuntoLocalFilter);
 
 			for (ActivoAdjuntoProveedor adjunto : adjuntos) {
-				DtoAdjunto dto = new DtoAdjunto();
-				BeanUtils.copyProperties(dto, adjunto);
-				beanUtilNotNull.copyProperty(dto, "idEntidad", adjunto.getProveedor().getId());
-				beanUtilNotNull.copyProperty(dto, "descripcionTipo", adjunto.getTipoDocumentoProveedor().getDescripcion());
-				beanUtilNotNull.copyProperty(dto, "gestor", adjunto.getAuditoria().getUsuarioCrear());									
-				listaAdjuntos.add(dto);
+				if (DDBloqueDocumentoProveedor.COD_DOCUMENTOS.equals(adjunto.getTipoDocumentoProveedor().getBloque().getCodigo())) {
+					DtoAdjunto dto = new DtoAdjunto();
+					BeanUtils.copyProperties(dto, adjunto);
+					beanUtilNotNull.copyProperty(dto, "idEntidad", adjunto.getProveedor().getId());
+					beanUtilNotNull.copyProperty(dto, "descripcionTipo", adjunto.getTipoDocumentoProveedor().getDescripcion());
+					beanUtilNotNull.copyProperty(dto, "gestor", adjunto.getAuditoria().getUsuarioCrear());									
+					listaAdjuntos.add(dto);
+				}
 			}
 		}
 		
@@ -1402,5 +1610,970 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 	public List<ActivoProveedor> getMediadoresActivos() {		
 		
 		return proveedoresDao.getMediadoresActivos();
+	}
+	
+	@Override
+	public List<DtoConductasInapropiadas> getConductasInapropiadasByProveedor(Long id) {
+
+		List<DtoConductasInapropiadas> dtoConductas = new ArrayList<DtoConductasInapropiadas>();
+		ActivoProveedor proveedor = proveedoresDao.getProveedorById(id);
+		List<ConductasInapropiadas> conductasList = genericDao.getList(ConductasInapropiadas.class, 
+				genericDao.createFilter(FilterType.EQUALS, "proveedor", proveedor));
+		
+		if(!Checks.esNulo(conductasList) && !conductasList.isEmpty()) {
+			for (ConductasInapropiadas conducta : conductasList) {
+				dtoConductas.add(objectToDtoConductasInapropiadas(conducta));
+			}
+		}
+		
+		return dtoConductas;
+	}
+	
+	private DtoConductasInapropiadas objectToDtoConductasInapropiadas(ConductasInapropiadas conducta) {
+		DtoConductasInapropiadas dto = new DtoConductasInapropiadas();
+		dto.setId(conducta.getId());
+		dto.setIdProveedor(conducta.getProveedor().getId());
+		
+		
+		dto.setFechaAlta(conducta.getAuditoria().getFechaCrear());
+		
+		Usuario usuario = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "username", conducta.getAuditoria().getUsuarioCrear()));
+		dto.setUsuarioAlta(usuario.getApellidoNombre());
+		
+		dto.setCategoriaConductaCodigo(conducta.getCategoriaConducta().getCodigo());
+		dto.setCategoriaConducta(conducta.getCategoriaConducta().getDescripcion());
+		dto.setTipoConducta(conducta.getCategoriaConducta().getTipoConducta().getDescripcion());
+		dto.setNivelConducta(conducta.getCategoriaConducta().getNivelConducta().getDescripcion());
+	
+		dto.setComentarios(conducta.getComentarios());
+		if (!Checks.esNulo(conducta.getDelegacion()))
+			dto.setDelegacion(conducta.getDelegacion().getId().toString());
+		
+		if (!Checks.esNulo(conducta.getAdjunto())) {
+			dto.setIdAdjunto(!Checks.esNulo(conducta.getAdjunto().getIdDocRestClient()) ? 
+					conducta.getAdjunto().getIdDocRestClient().toString() : conducta.getAdjunto().getId().toString());
+			dto.setAdjunto(!Checks.esNulo(conducta.getAdjunto().getDescripcion()) ? conducta.getAdjunto().getDescripcion() : conducta.getAdjunto().getNombre());
+			dto.setTamanyoAdjunto(!Checks.esNulo(conducta.getAdjunto().getTamanyo()) ? conducta.getAdjunto().getTamanyo().toString() : "0");
+		}
+		
+		return dto;
+	}
+	
+	@Override
+	@Transactional()
+	public boolean saveConductasInapropiadas(DtoConductasInapropiadas dto) {
+		ConductasInapropiadas conducta = new ConductasInapropiadas();
+		ActivoProveedor proveedor = proveedoresDao.getProveedorById(dto.getIdProveedor());
+		
+		if (!Checks.esNulo(dto.getId())) {
+			conducta = genericDao.get(ConductasInapropiadas.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getId()));
+		}
+		
+		conducta.setProveedor(proveedor);
+		conducta.setCategoriaConducta(genericDao.get(DDCategoriaConductaInapropiada.class, 
+				genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCategoriaConductaCodigo())));
+		
+		conducta.setComentarios(dto.getComentarios());
+		
+		if (!Checks.esNulo(dto.getDelegacion())) {
+			conducta.setDelegacion(genericDao.get(ActivoProveedorDireccion.class, 
+					genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dto.getDelegacion()))));
+		} else conducta.setDelegacion(null);
+		
+		genericDao.save(ConductasInapropiadas.class, conducta);
+		
+		return true;
+	}
+
+	@Override
+	public List<DtoDiccionario> getDelegacionesByProveedor(String id) {
+		List<DtoDiccionario> dtoList = new ArrayList<DtoDiccionario>();
+		ActivoProveedor proveedor = proveedoresDao.getProveedorById(Long.parseLong(id));
+		List<ActivoProveedorDireccion> delegacionesList = genericDao.getList(ActivoProveedorDireccion.class, 
+				genericDao.createFilter(FilterType.EQUALS, "proveedor", proveedor));
+		
+		if(!Checks.esNulo(delegacionesList) && !delegacionesList.isEmpty()) {
+			for (ActivoProveedorDireccion delegacion : delegacionesList) {
+				DtoDiccionario dto = new DtoDiccionario();
+				dto.setId(delegacion.getId());
+				dto.setCodigo(delegacion.getId().toString());
+				dtoList.add(dto);
+			}
+		}
+		
+		return dtoList;
+	}
+
+	@Override
+	@Transactional()
+	public boolean deleteConductasInapropiadas(String id) {
+
+		if(!Checks.esNulo(id)) {
+			genericDao.deleteById(ConductasInapropiadas.class, Long.parseLong(id));
+			return true;
+		}
+		return false;
+	}
+
+
+	@Override
+	public DtoBloqueoApis getBloqueoApiByProveedorId(Long id) {
+		BloqueoApis bloqueo = genericDao.get(BloqueoApis.class, genericDao.createFilter(FilterType.EQUALS, "proveedor.id", id));
+		DtoBloqueoApis dto = new DtoBloqueoApis();
+		if(bloqueo != null) {
+			dto =  this.bloqueoApiToDtoBloqueoApi(bloqueo);
+		}
+	
+		return dto;
+	}
+	
+	
+	private DtoBloqueoApis bloqueoApiToDtoBloqueoApi (BloqueoApis bloqueo) {
+		DtoBloqueoApis dto = new DtoBloqueoApis();
+		
+		dto.setIdBloqueo(bloqueo.getId());
+		dto.setMotivo(bloqueo.getMotivoBloqueo());
+		dto.setMotivoAnterior(bloqueo.getMotivoBloqueo());
+		List<BloqueoApisCartera> bloqueoApisCarteraList = bloqueo.getBloqueoApisCartera();
+		if(bloqueoApisCarteraList != null && !bloqueoApisCarteraList.isEmpty()) {
+			dto.setCarteraCodigo(this.devolverCodigoCarterasBloqueadasApi(bloqueoApisCarteraList));
+		}
+		List<BloqueoApisEspecialidad> bloqueoApisEspecialidadList = bloqueo.getBloqueoApisEspecialidad();
+		if(bloqueoApisEspecialidadList != null && !bloqueoApisEspecialidadList.isEmpty()) {
+			dto.setEspecialidadCodigo(this.devolverCodigoEspecialidadBloqueadasApi(bloqueoApisEspecialidadList));
+		}
+		List<BloqueoApisLineaNegocio> bloqueoApisLineaNegocioList = bloqueo.getBloqueoApisLineaNegocio();
+		if(bloqueoApisLineaNegocioList != null && !bloqueoApisLineaNegocioList.isEmpty()) {
+			dto.setLineaNegocioCodigo(this.devolverCodigoLineaNegocioBloqueadasApi(bloqueoApisLineaNegocioList));
+		}
+		List<BloqueoApisProvincia> bloqueoApisProvinciaList = bloqueo.getBloqueoApisProvincia();
+		if(bloqueoApisProvinciaList != null && !bloqueoApisProvinciaList.isEmpty()) {
+			dto.setProvinciaCodigo(this.devolverCodigoProvinciaBloqueadasApi(bloqueoApisProvinciaList));
+		}
+	
+		return dto;
+	}
+	
+	private String devolverCodigoCarterasBloqueadasApi(List<BloqueoApisCartera> bloqueoApisCarteraList) {
+		StringBuffer lista = new StringBuffer();
+		for (BloqueoApisCartera bloqueo : bloqueoApisCarteraList) {
+			if(bloqueo.getCartera() != null) {
+				lista.append(bloqueo.getCartera().getCodigo()).append(",");
+			}
+		}
+		String listString = lista.toString();
+		if(!listString.isEmpty()) {
+			listString = lista.substring(0, (listString.length()-1));
+		}
+		
+		return this.returnStringFromList(lista);
+	}
+	
+	private String devolverCodigoEspecialidadBloqueadasApi(List<BloqueoApisEspecialidad> bloqueoApisEspecialidadList) {
+		StringBuffer lista = new StringBuffer();
+		for (BloqueoApisEspecialidad bloqueo : bloqueoApisEspecialidadList) {
+			if(bloqueo.getEspecialidad() != null) {
+				lista.append(bloqueo.getEspecialidad().getCodigo()).append(",");
+			}
+		}
+		String listString = lista.toString();
+		if(!listString.isEmpty()) {
+			listString = lista.substring(0, (listString.length()-1));
+		}
+		
+		return this.returnStringFromList(lista);
+	}
+	
+	private String devolverCodigoLineaNegocioBloqueadasApi(List<BloqueoApisLineaNegocio> bloqueoApisLineaNegocioList) {
+		StringBuffer lista = new StringBuffer();
+		for (BloqueoApisLineaNegocio bloqueo : bloqueoApisLineaNegocioList) {
+			if(bloqueo.getTipoComercializacion() != null) {
+				lista.append(bloqueo.getTipoComercializacion().getCodigo()).append(",");
+			}
+		}
+		String listString = lista.toString();
+		if(!listString.isEmpty()) {
+			listString = lista.substring(0, (listString.length()-1));
+		}
+		
+		return this.returnStringFromList(lista);
+	}
+	
+	private String devolverCodigoProvinciaBloqueadasApi(List<BloqueoApisProvincia> bloqueoApisProvinciaList) {
+		StringBuffer lista = new StringBuffer();
+		for (BloqueoApisProvincia bloqueo : bloqueoApisProvinciaList) {
+			if(bloqueo.getProvincia() != null) {
+				lista.append(bloqueo.getProvincia().getCodigo()).append(",");
+			}
+		}
+		String listString = lista.toString();
+		if(!listString.isEmpty()) {
+			listString = lista.substring(0, (listString.length()-1));
+		}
+		
+		return this.returnStringFromList(lista);
+	}
+	
+	private String returnStringFromList(StringBuffer lista) {
+		String listString = lista.toString();
+		if(!listString.isEmpty()) {
+			listString = lista.substring(0, (listString.length()-1));
+		}
+		
+		return listString;
+	}
+	
+	@Override
+	public List<VHistoricoBloqueosApis> getHistoricoBloqueos(Long id) {
+		List<VHistoricoBloqueosApis> hBAHList = genericDao.getList(VHistoricoBloqueosApis.class, genericDao.createFilter(FilterType.EQUALS, "idPve", id)); 
+		return hBAHList;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public void saveBloqueoProveedorById (Long id, DtoBloqueoApis dto) {
+		BloqueoApis bloqueo = genericDao.get(BloqueoApis.class, genericDao.createFilter(FilterType.EQUALS, "proveedor.id", id));
+		DtoBloqueoApis bloqueoAntiguo = new DtoBloqueoApis();
+				
+		if(bloqueo != null && bloqueo.getProveedor()!= null) {
+			bloqueoAntiguo = this.bloqueoApiToDtoBloqueoApi(bloqueo);
+			this.modificarRegistrosAnteriores(id, dto, bloqueoAntiguo);
+			Auditoria.delete(bloqueo);
+			genericDao.save(BloqueoApis.class, bloqueo);
+		}
+		
+		this.createRegistroHistoricoBloqueoApis(id, dto, bloqueoAntiguo);
+		
+		bloqueo = new BloqueoApis();
+		ActivoProveedor proveedor = genericDao.get(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "id", id));
+		bloqueo.setProveedor(proveedor);
+		bloqueo.setMotivoBloqueo(dto.getMotivo());
+		genericDao.save(BloqueoApis.class, bloqueo);
+
+		if(!VALOR_POR_DEFECTO.equals(dto.getCarteraCodigo())) {
+			if(dto.getCarteraCodigo() != null && !dto.getCarteraCodigo().isEmpty()) {
+				this.saveBloqueosCartera(bloqueo,Arrays.asList(dto.getCarteraCodigo().split(",")));
+			}else if(bloqueoAntiguo.getCarteraCodigo() != null && !bloqueoAntiguo.getCarteraCodigo().isEmpty()) {
+				this.saveBloqueosCartera(bloqueo,Arrays.asList(bloqueoAntiguo.getCarteraCodigo().split(",")));
+			}
+		}
+		
+		if(!VALOR_POR_DEFECTO.equals(dto.getEspecialidadCodigo())) {
+			if(dto.getEspecialidadCodigo() != null && !dto.getEspecialidadCodigo().isEmpty() && !VALOR_POR_DEFECTO.equals(dto.getCarteraCodigo())) {
+				this.saveBloqueosEspecialidad(bloqueo,Arrays.asList(dto.getEspecialidadCodigo().split(",")));
+			}else if(bloqueoAntiguo.getEspecialidadCodigo() != null && !bloqueoAntiguo.getEspecialidadCodigo().isEmpty()) {
+				this.saveBloqueosEspecialidad(bloqueo,Arrays.asList(bloqueoAntiguo.getEspecialidadCodigo().split(",")));
+			}
+		}
+		
+		if(!VALOR_POR_DEFECTO.equals(dto.getLineaNegocioCodigo())) {
+			if(dto.getLineaNegocioCodigo() != null && !dto.getLineaNegocioCodigo().isEmpty()) {
+				this.saveBloqueosLineaNegocio(bloqueo,Arrays.asList(dto.getLineaNegocioCodigo().split(",")));
+			}else if(bloqueoAntiguo.getLineaNegocioCodigo() != null && !bloqueoAntiguo.getLineaNegocioCodigo().isEmpty()) {
+				this.saveBloqueosLineaNegocio(bloqueo,Arrays.asList(bloqueoAntiguo.getLineaNegocioCodigo().split(",")));
+			}
+		}
+		
+		if(!VALOR_POR_DEFECTO.equals(dto.getProvinciaCodigo())) {
+			if(dto.getProvinciaCodigo() != null && !dto.getProvinciaCodigo().isEmpty()) {
+				this.saveBloqueosProvincia(bloqueo,Arrays.asList(dto.getProvinciaCodigo().split(",")));
+			}else if(bloqueoAntiguo.getProvinciaCodigo() != null && !bloqueoAntiguo.getProvinciaCodigo().isEmpty()) {
+				this.saveBloqueosProvincia(bloqueo,Arrays.asList(bloqueoAntiguo.getProvinciaCodigo().split(",")));
+			}
+		}
+		
+		
+	}
+	
+	private void saveBloqueosCartera(BloqueoApis bloqueo, List<String> listaCodigos) {
+		for (String codigo : listaCodigos) {
+			BloqueoApisCartera bl = new BloqueoApisCartera();
+			bl.setAuditoria(Auditoria.getNewInstance());
+			bl.setBloqueoApis(bloqueo);
+			bl.setCartera(genericDao.get(DDCartera.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigo)));
+			genericDao.save(BloqueoApisCartera.class, bl);
+			
+		}
+	}
+	
+	private void saveBloqueosEspecialidad(BloqueoApis bloqueo, List<String> listaCodigos) {
+		for (String codigo : listaCodigos) {
+			BloqueoApisEspecialidad bl = new BloqueoApisEspecialidad();
+			bl.setAuditoria(Auditoria.getNewInstance());
+			bl.setBloqueoApis(bloqueo);
+			bl.setEspecialidad(genericDao.get(DDEspecialidad.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigo)));
+			genericDao.save(BloqueoApisEspecialidad.class, bl);
+			
+		}
+	}
+
+	private void saveBloqueosLineaNegocio(BloqueoApis bloqueo, List<String> listaCodigos) {
+		for (String codigo : listaCodigos) {
+			BloqueoApisLineaNegocio bl = new BloqueoApisLineaNegocio();
+			bl.setAuditoria(Auditoria.getNewInstance());
+			bl.setBloqueoApis(bloqueo);
+			bl.setTipoComercializacion(genericDao.get(DDTipoComercializacion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigo)));
+			genericDao.save(BloqueoApisLineaNegocio.class, bl);
+		}
+	}
+	
+	private void saveBloqueosProvincia(BloqueoApis bloqueo, List<String> listaCodigos) {
+		for (String codigo : listaCodigos) {
+			BloqueoApisProvincia bl = new BloqueoApisProvincia();
+			bl.setAuditoria(Auditoria.getNewInstance());
+			bl.setBloqueoApis(bloqueo);
+			bl.setProvincia(genericDao.get(DDProvincia.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigo)));
+			genericDao.save(BloqueoApisProvincia.class, bl);
+			
+		}
+	}
+	
+	
+	@Transactional(readOnly = false)
+	private void createRegistroHistoricoBloqueoApis(Long id, DtoBloqueoApis dto, DtoBloqueoApis bloqueoAntiguo) {
+		
+		
+		ActivoProveedor proveedor = genericDao.get(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "id", id));
+	
+		List<DDTipoBloqueoApi> tiposBloqueoList = genericDao.getList(DDTipoBloqueoApi.class);
+		for (DDTipoBloqueoApi ddTipoBloqueoApi : tiposBloqueoList) {
+			List<String> nuevosCodigos = this.devolverCodigos(ddTipoBloqueoApi.getCodigo(), dto, bloqueoAntiguo);
+			DDTipoBloqueoApi tpC = genericDao.get(DDTipoBloqueoApi.class, genericDao.createFilter(FilterType.EQUALS, "codigo", ddTipoBloqueoApi.getCodigo()));
+			for (String codigo : nuevosCodigos) {
+				BloqueoApisHistorico bah = new BloqueoApisHistorico();
+				bah.setTipoBloqueo(tpC);
+				bah = this.saveBloqueo(bah, tpC, codigo);
+				bah.setProveedor(proveedor);
+				bah.setMotivoBloqueo(dto.getMotivo());
+				genericDao.save(BloqueoApisHistorico.class, bah);
+			}
+		}
+		
+		
+	}
+	
+	
+	private BloqueoApisHistorico saveBloqueo(BloqueoApisHistorico bah, DDTipoBloqueoApi tipoBloqueo, String codigo) {
+		
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", codigo);
+		if(DDTipoBloqueoApi.CARTERA.equals(tipoBloqueo.getCodigo())) {
+			bah.setBloqueoApisCartera(genericDao.get(DDCartera.class, filtro));
+		}else if(DDTipoBloqueoApi.LINEA_NEGOCIO.equals(tipoBloqueo.getCodigo())) {
+			bah.setBloqueoApisLineaNegocio(genericDao.get(DDTipoComercializacion.class, filtro));
+		}else if(DDTipoBloqueoApi.ESPECIALIDAD.equals(tipoBloqueo.getCodigo())) {
+			bah.setBloqueoApisEspecialidad(genericDao.get(DDEspecialidad.class, filtro));
+		}else if(DDTipoBloqueoApi.PROVINCIA.equals(tipoBloqueo.getCodigo())) {
+			bah.setBloqueoApisProvincia(genericDao.get(DDProvincia.class, filtro));
+		}
+		
+		
+		return bah;
+	}
+	
+	private List<String> devolverCodigos(String codigoTipo, DtoBloqueoApis dto, DtoBloqueoApis bloqueoAntiguo){
+		List<String> codigosNuevos = new ArrayList<String>();
+		List<String> codigosAntiguos= new ArrayList<String>();
+		List<String> anyadirCodigo = new ArrayList<String>();
+		
+		if(DDTipoBloqueoApi.CARTERA.equals(codigoTipo)) {
+			if(dto.getCarteraCodigo() != null && !dto.getCarteraCodigo().isEmpty()) {
+				codigosNuevos=  Arrays.asList(dto.getCarteraCodigo().split(","));
+			}
+			if(bloqueoAntiguo.getCarteraCodigo() != null && !bloqueoAntiguo.getCarteraCodigo().isEmpty()) {
+				codigosAntiguos = Arrays.asList(bloqueoAntiguo.getCarteraCodigo().split(","));
+			}
+		}
+		if(DDTipoBloqueoApi.LINEA_NEGOCIO.equals(codigoTipo)) {
+			if(dto.getLineaNegocioCodigo() != null && !dto.getLineaNegocioCodigo().isEmpty()) {
+				codigosNuevos=  Arrays.asList(dto.getLineaNegocioCodigo().split(","));
+			}
+			if(bloqueoAntiguo.getLineaNegocioCodigo() != null && !bloqueoAntiguo.getLineaNegocioCodigo().isEmpty()) {
+				codigosAntiguos = Arrays.asList(bloqueoAntiguo.getLineaNegocioCodigo().split(","));
+			}
+		}
+		if(DDTipoBloqueoApi.ESPECIALIDAD.equals(codigoTipo)) {
+			if(dto.getEspecialidadCodigo() != null && !dto.getEspecialidadCodigo().isEmpty()) {
+				codigosNuevos=  Arrays.asList(dto.getEspecialidadCodigo().split(","));
+			}
+			if(bloqueoAntiguo.getEspecialidadCodigo() != null && !bloqueoAntiguo.getEspecialidadCodigo().isEmpty()) {
+				codigosAntiguos = Arrays.asList(bloqueoAntiguo.getEspecialidadCodigo().split(","));
+			}
+		}
+		if(DDTipoBloqueoApi.PROVINCIA.equals(codigoTipo)) {
+			if(dto.getProvinciaCodigo() != null && !dto.getProvinciaCodigo().isEmpty()) {
+				codigosNuevos=  Arrays.asList(dto.getProvinciaCodigo().split(","));
+			}
+			if(bloqueoAntiguo.getProvinciaCodigo() != null && !bloqueoAntiguo.getProvinciaCodigo().isEmpty()) {
+				codigosAntiguos = Arrays.asList(bloqueoAntiguo.getProvinciaCodigo().split(","));
+			}
+		}
+			
+		for (String codigoNuevo : codigosNuevos) {
+			if(!codigosAntiguos.contains(codigoNuevo)) {
+				anyadirCodigo.add(codigoNuevo);
+			}
+		}
+		
+		anyadirCodigo.remove(VALOR_POR_DEFECTO);
+		
+		return anyadirCodigo;
+	}
+	
+	
+	
+	@Transactional(readOnly = false)
+	private void modificarRegistrosAnteriores(Long id, DtoBloqueoApis dto, DtoBloqueoApis bloqueoAntiguo) {
+		
+		Filter filtroProveedor = genericDao.createFilter(FilterType.EQUALS, "proveedor.id", id);
+		Filter filtroMotivoDesbloqueoNull = genericDao.createFilter(FilterType.NULL, "motivoDesbloqueo");
+		String motivo = dto.getMotivo();
+		
+		List<DDTipoBloqueoApi> tiposBloqueoList = genericDao.getList(DDTipoBloqueoApi.class);
+		for (DDTipoBloqueoApi ddTipoBloqueoApi : tiposBloqueoList) {
+			if(this.seHaModificadoRegistro(ddTipoBloqueoApi.getCodigo(), dto)) {
+				List<String> codigosBorrar = this.devolverCodigos(ddTipoBloqueoApi.getCodigo(), bloqueoAntiguo, dto);
+				for (String codigo : codigosBorrar) {
+					this.actualizarRegistros(ddTipoBloqueoApi.getCodigo(), codigo, motivo, filtroProveedor, filtroMotivoDesbloqueoNull);
+				}
+			}
+		}
+	}
+	
+	
+	@Transactional(readOnly = false)
+	private void actualizarRegistros(String codigoBloqueo, String codigo, String motivo, Filter filtroProveedor, Filter filtroMotivoDesbloqueoNull) {
+		Filter filtro = this.devolverFiltro(codigoBloqueo, codigo);
+		if(filtro != null) {
+			BloqueoApisHistorico bah = genericDao.get(BloqueoApisHistorico.class, filtroProveedor, filtroMotivoDesbloqueoNull,filtro);
+			if(bah != null) {
+				bah.setMotivoDesbloqueo(motivo);
+				genericDao.save(BloqueoApisHistorico.class, bah);
+			}
+		}
+	}
+	
+	private boolean seHaModificadoRegistro(String codigoTipo, DtoBloqueoApis dto) {
+		boolean registroModificado = false;
+		
+		if(DDTipoBloqueoApi.CARTERA.equals(codigoTipo)) {
+			if(dto.getCarteraCodigo() != null && !dto.getCarteraCodigo().isEmpty()) {
+				registroModificado = true;
+			}
+		}else if(DDTipoBloqueoApi.LINEA_NEGOCIO.equals(codigoTipo)) {
+			if(dto.getLineaNegocioCodigo() != null && !dto.getLineaNegocioCodigo().isEmpty()) {
+				registroModificado = true;
+			}
+		}else if(DDTipoBloqueoApi.ESPECIALIDAD.equals(codigoTipo)) {
+			if(dto.getEspecialidadCodigo() != null && !dto.getEspecialidadCodigo().isEmpty()) {
+				registroModificado = true;
+			}
+		}else if(DDTipoBloqueoApi.PROVINCIA.equals(codigoTipo)) {
+			if(dto.getProvinciaCodigo() != null && !dto.getProvinciaCodigo().isEmpty()) {
+				registroModificado = true;
+			}
+		}
+		
+		return registroModificado;
+	}
+	private Filter  devolverFiltro(String codigoTipo, String codigo){
+		Filter filter = null;
+		
+		if(DDTipoBloqueoApi.CARTERA.equals(codigoTipo)) {
+			filter = genericDao.createFilter(FilterType.EQUALS, "bloqueoApisCartera.codigo", codigo);
+		}else if(DDTipoBloqueoApi.LINEA_NEGOCIO.equals(codigoTipo)) {
+			filter = genericDao.createFilter(FilterType.EQUALS, "bloqueoApisLineaNegocio.codigo", codigo);
+		}else if(DDTipoBloqueoApi.ESPECIALIDAD.equals(codigoTipo)) {
+			filter = genericDao.createFilter(FilterType.EQUALS, "bloqueoApisEspecialidad.codigo", codigo);
+		}else if(DDTipoBloqueoApi.PROVINCIA.equals(codigoTipo)) {
+			filter = genericDao.createFilter(FilterType.EQUALS, "bloqueoApisProvincia.codigo", codigo);
+		}
+		
+		return filter;
+	}
+	
+	
+	
+	@Override
+	@Transactional(readOnly = false)
+	public String uploadConducta(WebFileItem fileItem) throws Exception {
+				
+		Adjunto adj = null;
+		Long idDocRestClient = null;
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		ActivoAdjuntoProveedor adjuntoProveedor = new ActivoAdjuntoProveedor();
+		ConductasInapropiadas conducta = genericDao.get(ConductasInapropiadas.class, 
+				genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(fileItem.getParameter("idEntidad"))));
+		ActivoProveedor proveedor = proveedoresDao.get(conducta.getProveedor().getId());
+		
+	   	Filter filtroTipoDoc = genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("tipo"));
+	   	DDTipoDocumentoProveedor tipoDocumentoProveedor = genericDao.get(DDTipoDocumentoProveedor.class, filtroTipoDoc, genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
+	   	
+	   	if(!Checks.esNulo(tipoDocumentoProveedor)) {
+		   	if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
+		   		idDocRestClient = gestorDocumentalAdapterApi.uploadDocumentoProveedor(proveedor, fileItem, usuarioLogado.getUsername(), tipoDocumentoProveedor.getMatricula());
+		   	} else {
+		   		adj = uploadAdapter.saveBLOB(fileItem.getFileItem());
+		   	}
+		   	
+		   	if (!Checks.esNulo(idDocRestClient) || !Checks.esNulo(adj)) {
+					adjuntoProveedor.setTipoDocumentoProveedor(tipoDocumentoProveedor);
+					adjuntoProveedor.setProveedor(proveedor);
+					adjuntoProveedor.setContentType(fileItem.getFileItem().getContentType());
+					adjuntoProveedor.setTamanyo(fileItem.getFileItem().getLength());
+					adjuntoProveedor.setNombre(fileItem.getFileItem().getFileName());
+					adjuntoProveedor.setDescripcion(fileItem.getParameter("descripcion"));			
+					adjuntoProveedor.setFechaDocumento(new Date());
+					adjuntoProveedor.setIdDocRestClient(idDocRestClient);
+					adjuntoProveedor.setAdjunto(adj);
+					genericDao.save(ActivoAdjuntoProveedor.class, adjuntoProveedor);
+					
+					conducta.setAdjunto(adjuntoProveedor);
+					genericDao.save(ConductasInapropiadas.class, conducta);
+		   	}
+	   	} else {
+			throw new Exception(ProveedoresManager.ERROR_TIPO_DOCUMENTO_PROVEEDOR);
+		}
+	   	
+	   	return null;
+	}
+	
+	@Override
+	public void isProveedorValidoParaActivo(ActivoProveedor proveedor, Activo activo) throws JsonViewerException {
+		
+		
+		BloqueoApis bloqueo = genericDao.get(BloqueoApis.class, genericDao.createFilter(FilterType.EQUALS, "proveedor.id", proveedor.getId()));
+		
+		if(bloqueo != null) {
+			Filter bloqueoFilter = genericDao.createFilter(FilterType.EQUALS, "bloqueoApis.id", bloqueo.getId());
+			Filter carteraFilter = genericDao.createFilter(FilterType.EQUALS, "cartera.codigo", activo.getCartera().getCodigo());
+			List<BloqueoApisCartera> bloqueoCartera =  genericDao.getList(BloqueoApisCartera.class, bloqueoFilter,carteraFilter);
+			if(!bloqueoCartera.isEmpty()) {
+				throw new JsonViewerException(messageServices.getMessage(ERROR_BLOQUEO_CARTERA));
+			}
+			
+			ActivoPublicacion apu = activo.getActivoPublicacion();
+			if(apu != null && apu.getTipoComercializacion() != null) {
+				Filter destinoComercialFilter = genericDao.createFilter(FilterType.EQUALS, "tipoComercializacion.codigo", apu.getTipoComercializacion().getCodigo());
+				List<BloqueoApisLineaNegocio> bloqueoLineaNegocio =  genericDao.getList(BloqueoApisLineaNegocio.class, bloqueoFilter,destinoComercialFilter);
+				if(!bloqueoLineaNegocio.isEmpty()) {
+					throw new JsonViewerException(messageServices.getMessage(ERROR_BLOQUEO_TIPO_COMERCIALIZACION));
+				}
+			}
+			
+			if(activo.getProvincia() != null) {
+				Filter provinciaFilter = genericDao.createFilter(FilterType.EQUALS, "provincia.codigo", activo.getProvincia());
+				List<BloqueoApisProvincia> bloqueoProvincia =  genericDao.getList(BloqueoApisProvincia.class, bloqueoFilter,provinciaFilter);
+				if(!bloqueoProvincia.isEmpty()) {
+					throw new JsonViewerException(messageServices.getMessage(ERROR_BLOQUEO_PROVINCIA));
+				}
+			}
+			
+			if(activo.getSubtipoActivo() != null && activo.getTipoActivo() != null) {
+				boolean estadoFisico = false;
+				if(DDEstadoActivo.isObraNueva(activo.getEstadoActivo())) {
+					estadoFisico = true;
+				}
+				Filter configTipoActivo = genericDao.createFilter(FilterType.EQUALS, "tipoActivo.codigo", activo.getTipoActivo().getCodigo());
+				Filter configSubtipoActivo = genericDao.createFilter(FilterType.EQUALS, "subtipoActivo.codigo", activo.getSubtipoActivo().getCodigo());	
+				List<ConfigEspecialidad>  configEspecialidadList = genericDao.getList(ConfigEspecialidad.class, configTipoActivo, configSubtipoActivo);
+				
+				if(!configEspecialidadList.isEmpty()) {
+					List<String> listEspecialidad = new ArrayList<String>();
+					for (ConfigEspecialidad configEspecialidad : configEspecialidadList) {
+						listEspecialidad.add(configEspecialidad.getEspecialidad().getCodigo());
+						if(configEspecialidad.getAplicaON() && estadoFisico && !listEspecialidad.contains(DDEspecialidad.CODIGO_OBRA_NUEVA)) {
+							listEspecialidad.add(DDEspecialidad.CODIGO_OBRA_NUEVA);
+						}
+					}
+					Filter configEspecialidadFilter = genericDao.createFilter(FilterType.SIMILARY, "especialidad.codigo", listEspecialidad);
+					List<BloqueoApisEspecialidad> bloqueoApisEspecialidad =  genericDao.getList(BloqueoApisEspecialidad.class, bloqueoFilter,configEspecialidadFilter);
+					if(!bloqueoApisEspecialidad.isEmpty()) {
+						throw new JsonViewerException(messageServices.getMessage(ERROR_BLOQUEO_ESPECIALIDAD));
+					}
+				}
+			}
+		}
+	}
+		
+
+	@Override
+	public Object getDatosContactoById(Long id) {
+		
+		DtoDatosContacto dto = new DtoDatosContacto();
+		
+		Filter idFilter = genericDao.createFilter(FilterType.EQUALS, "id", id);
+		
+		Filter idFilterMultiple = genericDao.createFilter(FilterType.EQUALS, "direccion.id", id);
+		
+		ActivoProveedorDireccion delegacion = genericDao.get(ActivoProveedorDireccion.class, idFilter);
+		
+		try {
+			if(delegacion.getLineaNegocio() != null) {
+				DDTipoComercializacion tipoComercializacion = (DDTipoComercializacion) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoComercializacion.class, delegacion.getLineaNegocio().getCodigo());
+				beanUtilNotNull.copyProperty(dto, "tipoLineaDeNegocioDescripcion", tipoComercializacion.getDescripcion());
+				beanUtilNotNull.copyProperty(dto, "tipoLineaDeNegocioCodigo", tipoComercializacion.getCodigo());
+			}
+			
+			if(delegacion.getGestionClientes() != null) {
+				DDSinSiNo gestionClientes = (DDSinSiNo) utilDiccionarioApi.dameValorDiccionarioByCod(DDSinSiNo.class, delegacion.getGestionClientes().getCodigo());
+				beanUtilNotNull.copyProperty(dto, "gestionClientesDescripcion", gestionClientes.getDescripcion());
+				beanUtilNotNull.copyProperty(dto, "gestionClientesCodigo", gestionClientes.getCodigo());
+			}
+			
+			if(delegacion.getNumeroComerciales() != null) {
+				beanUtilNotNull.copyProperty(dto, "numeroComerciales", delegacion.getNumeroComerciales());
+			}
+			
+			List<ProveedorEspecialidad> proveedorEspecialidad = genericDao.getList(ProveedorEspecialidad.class, idFilterMultiple);
+			if(!Checks.estaVacio(proveedorEspecialidad)) {
+				StringBuffer codigos = new StringBuffer();
+				for(ProveedorEspecialidad pe : proveedorEspecialidad) {
+					if(!Checks.esNulo(pe.getEspecialidad())) {
+						codigos.append(pe.getEspecialidad().getCodigo()).append(",");
+					}
+				}
+				beanUtilNotNull.copyProperty(dto, "especialidadCodigo", codigos.substring(0, (codigos.length()-1)));
+			}
+			
+			List<ProveedorIdioma> proveedorIdioma = genericDao.getList(ProveedorIdioma.class, idFilterMultiple);
+			if(!Checks.estaVacio(proveedorIdioma)) {
+				StringBuffer codigos = new StringBuffer();
+				for(ProveedorIdioma pi : proveedorIdioma) {
+					if(!Checks.esNulo(pi.getIdioma())) {
+						codigos.append(pi.getIdioma().getCodigo()).append(",");
+					}
+				}
+				beanUtilNotNull.copyProperty(dto, "idiomaCodigo", codigos.substring(0, (codigos.length()-1)));
+			}
+			
+			List<DelegacionesLocalidad> delegacionMunicipio = genericDao.getList(DelegacionesLocalidad.class, idFilterMultiple);
+			if(!Checks.estaVacio(delegacionMunicipio)) {
+				StringBuffer codigos = new StringBuffer();
+				for(DelegacionesLocalidad pi : delegacionMunicipio) {
+					if(!Checks.esNulo(pi.getLocalidad())) {
+						codigos.append(pi.getLocalidad().getCodigo()).append(",");
+					}
+				}
+				beanUtilNotNull.copyProperty(dto, "municipioCodigo", codigos.substring(0, (codigos.length()-1)));
+			}
+			
+			List<DelegacionesProvincia> delegacionProvincia = genericDao.getList(DelegacionesProvincia.class, idFilterMultiple);
+			if(!Checks.estaVacio(delegacionProvincia)) {
+				StringBuffer codigos = new StringBuffer();
+				for(DelegacionesProvincia dp : delegacionProvincia) {
+					if(!Checks.esNulo(dp.getProvincia())) {
+						codigos.append(dp.getProvincia().getCodigo()).append(",");
+					}
+				}
+				beanUtilNotNull.copyProperty(dto, "provinciaCodigo", codigos.substring(0, (codigos.length()-1)));
+			}
+			
+			List<DelegacionesCodigoPostal> delegacionCodigoPostal = genericDao.getList(DelegacionesCodigoPostal.class, idFilterMultiple);
+			if(!Checks.estaVacio(delegacionCodigoPostal)) {
+				StringBuffer codigos = new StringBuffer();
+				for(DelegacionesCodigoPostal cp : delegacionCodigoPostal) {
+					if(!Checks.esNulo(cp.getCodigoPostal())) {
+						codigos.append(cp.getCodigoPostal().getCodigo()).append(",");
+					}
+				}
+				beanUtilNotNull.copyProperty(dto, "codigoPostalCodigo", codigos.substring(0, (codigos.length()-1)));
+			}
+			
+		}catch (IllegalAccessException e) {
+			logger.error(e.getMessage());
+		} catch (InvocationTargetException e) {
+			logger.error(e.getMessage());
+		}
+
+		return dto;
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public boolean saveDatosContactoById(DtoDatosContacto dto) {
+		
+		Filter idFilter = genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(dto.getId()));
+				
+		ActivoProveedorDireccion delegacion = genericDao.get(ActivoProveedorDireccion.class, idFilter);
+
+		if(dto.getTipoLineaDeNegocioCodigo() != null) {
+			DDTipoComercializacion tipoComercializacion = (DDTipoComercializacion) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoComercializacion.class, dto.getTipoLineaDeNegocioCodigo());
+			delegacion.setLineaNegocio(tipoComercializacion);
+		}
+		
+		if(dto.getGestionClientesCodigo() != null) {
+			DDSinSiNo gestionClientes = (DDSinSiNo) utilDiccionarioApi.dameValorDiccionarioByCod(DDSinSiNo.class, dto.getGestionClientesCodigo());
+			delegacion.setGestionClientes(gestionClientes);
+		}
+		
+		if(dto.getNumeroComerciales() != null) {
+			delegacion.setNumeroComerciales(dto.getNumeroComerciales());
+		}
+		
+		if(!Checks.esNulo(dto.getEspecialidadCodigo())) {
+			if(dto.getEspecialidadCodigo().equals("VALOR_POR_DEFECTO")) {					
+				Filter filtroDelegacion = genericDao.createFilter(FilterType.EQUALS, "direccion.id", delegacion.getId());
+				genericDao.delete(ProveedorEspecialidad.class, filtroDelegacion);
+			} else {
+				List<String> codigosEspecialidad = Arrays.asList(dto.getEspecialidadCodigo().split(","));
+				
+				Filter filtroDelegacion = genericDao.createFilter(FilterType.EQUALS, "direccion.id", delegacion.getId());
+				List<ProveedorEspecialidad> proveedorEspecialidadByProvID = genericDao.getList(ProveedorEspecialidad.class, filtroDelegacion);
+				
+				// Borrar los elementos que no vengan en la lista y existan en la DDBB.
+				for(ProveedorEspecialidad pe : proveedorEspecialidadByProvID){
+					if(!codigosEspecialidad.contains(pe.getEspecialidad().getCodigo())){
+						Filter filtroEspecialidad = genericDao.createFilter(FilterType.EQUALS, "especialidad.codigo", pe.getEspecialidad().getCodigo());
+						ProveedorEspecialidad especialidadABorrar = genericDao.get(ProveedorEspecialidad.class, filtroEspecialidad, filtroDelegacion);
+						if(!Checks.esNulo(especialidadABorrar)) {
+							genericDao.deleteById(ProveedorEspecialidad.class, especialidadABorrar.getId());
+						}
+					}
+				}
+				
+				// Almacenar los elementos que vengan en la lista y no existan en la DDBB.
+				// Dejar los elementos que vangan en la lista y exista en la DDBB.
+				for(String codigo : codigosEspecialidad) {
+					DDEspecialidad especialidad = (DDEspecialidad) utilDiccionarioApi.dameValorDiccionarioByCod(DDEspecialidad.class, codigo);
+					if(!Checks.esNulo(especialidad)) {
+						Filter filtroEspecialidad = genericDao.createFilter(FilterType.EQUALS, "especialidad.codigo", especialidad.getCodigo());
+						List<ProveedorEspecialidad> proveedorEspecialidad = genericDao.getList(ProveedorEspecialidad.class, filtroDelegacion, filtroEspecialidad);
+						if(Checks.estaVacio(proveedorEspecialidad)) {
+							ProveedorEspecialidad pveEspecialidad = new ProveedorEspecialidad();
+							pveEspecialidad.setEspecialidad(especialidad);
+							pveEspecialidad.setDireccion(delegacion);
+							pveEspecialidad.setProveedor(delegacion.getProveedor());
+							genericDao.save(ProveedorEspecialidad.class, pveEspecialidad);
+						}
+					}
+				}
+			}
+			
+		}
+		
+		if(!Checks.esNulo(dto.getIdiomaCodigo())) {
+			if(dto.getIdiomaCodigo().equals("VALOR_POR_DEFECTO")) {					
+				Filter filtroDelegacion = genericDao.createFilter(FilterType.EQUALS, "direccion.id", delegacion.getId());
+				genericDao.delete(ProveedorIdioma.class, filtroDelegacion);
+			} else {
+				List<String> codigosIdioma = Arrays.asList(dto.getIdiomaCodigo().split(","));
+				
+				Filter filtroDelegacion = genericDao.createFilter(FilterType.EQUALS, "direccion.id", delegacion.getId());
+				List<ProveedorIdioma> proveedorIdiomaByProvID = genericDao.getList(ProveedorIdioma.class, filtroDelegacion);
+				
+				// Borrar los elementos que no vengan en la lista y existan en la DDBB.
+				for(ProveedorIdioma pi : proveedorIdiomaByProvID){
+					if(!codigosIdioma.contains(pi.getIdioma().getCodigo())){
+						Filter filtroIdioma = genericDao.createFilter(FilterType.EQUALS, "idioma.codigo", pi.getIdioma().getCodigo());
+						ProveedorIdioma idiomaABorrar = genericDao.get(ProveedorIdioma.class, filtroIdioma, filtroDelegacion);
+						if(!Checks.esNulo(idiomaABorrar)) {
+							genericDao.deleteById(ProveedorIdioma.class, idiomaABorrar.getId());
+						}
+					}
+				}
+				
+				// Almacenar los elementos que vengan en la lista y no existan en la DDBB.
+				// Dejar los elementos que vangan en la lista y exista en la DDBB.
+				for(String codigo : codigosIdioma) {
+					DDIdioma idioma = (DDIdioma) utilDiccionarioApi.dameValorDiccionarioByCod(DDIdioma.class, codigo);
+					if(!Checks.esNulo(idioma)) {
+						Filter filtroIdioma = genericDao.createFilter(FilterType.EQUALS, "idioma.codigo", idioma.getCodigo());
+						List<ProveedorIdioma> proveedorIdioma = genericDao.getList(ProveedorIdioma.class, filtroDelegacion, filtroIdioma);
+						if(Checks.estaVacio(proveedorIdioma)) {
+							ProveedorIdioma pveIdioma = new ProveedorIdioma();
+							pveIdioma.setIdioma(idioma);
+							pveIdioma.setDireccion(delegacion);
+							pveIdioma.setProveedor(delegacion.getProveedor());
+							genericDao.save(ProveedorIdioma.class, pveIdioma);
+						}
+					}
+				}
+			}
+			
+		}
+		
+		if(!Checks.esNulo(dto.getProvinciaCodigo())) {
+			if(dto.getProvinciaCodigo().equals("VALOR_POR_DEFECTO")) {					
+				Filter filtroDelegacion = genericDao.createFilter(FilterType.EQUALS, "direccion.id", delegacion.getId());
+				genericDao.delete(DelegacionesProvincia.class, filtroDelegacion);
+			} else {
+				List<String> codigosProvincia = Arrays.asList(dto.getProvinciaCodigo().split(","));
+				
+				Filter filtroDelegacion = genericDao.createFilter(FilterType.EQUALS, "direccion.id", delegacion.getId());
+				List<DelegacionesProvincia> delegacionProvinciaByProvID = genericDao.getList(DelegacionesProvincia.class, filtroDelegacion);
+				
+				// Borrar los elementos que no vengan en la lista y existan en la DDBB.
+				for(DelegacionesProvincia dp : delegacionProvinciaByProvID){
+					if(!codigosProvincia.contains(dp.getProvincia().getCodigo())){
+						Filter filtroProvincia = genericDao.createFilter(FilterType.EQUALS, "provincia.codigo", dp.getProvincia().getCodigo());
+						DelegacionesProvincia provinciaABorrar = genericDao.get(DelegacionesProvincia.class, filtroProvincia, filtroDelegacion);
+						if(!Checks.esNulo(provinciaABorrar)) {
+							genericDao.deleteById(DelegacionesProvincia.class, provinciaABorrar.getId());
+						}
+					}
+				}
+				
+				// Almacenar los elementos que vengan en la lista y no existan en la DDBB.
+				// Dejar los elementos que vangan en la lista y exista en la DDBB.
+				for(String codigo : codigosProvincia) {
+					DDProvincia provincia = (DDProvincia) utilDiccionarioApi.dameValorDiccionarioByCod(DDProvincia.class, codigo);
+					if(!Checks.esNulo(provincia)) {
+						Filter filtroProvincia = genericDao.createFilter(FilterType.EQUALS, "provincia.codigo", provincia.getCodigo());
+						List<DelegacionesProvincia> delegacionProvincia = genericDao.getList(DelegacionesProvincia.class, filtroDelegacion, filtroProvincia);
+						if(Checks.estaVacio(delegacionProvincia)) {
+							DelegacionesProvincia dlgProvincia = new DelegacionesProvincia();
+							dlgProvincia.setProvincia(provincia);
+							dlgProvincia.setDireccion(delegacion);
+							genericDao.save(DelegacionesProvincia.class, dlgProvincia);
+						}
+					}
+				}
+			}
+			
+		}
+		
+		if(!Checks.esNulo(dto.getMunicipioCodigo())) {
+			if(dto.getMunicipioCodigo().equals("VALOR_POR_DEFECTO")) {					
+				Filter filtroDelegacion = genericDao.createFilter(FilterType.EQUALS, "direccion.id", delegacion.getId());
+				genericDao.delete(DelegacionesLocalidad.class, filtroDelegacion);
+			} else {
+				List<String> codigosMuncicipio = Arrays.asList(dto.getMunicipioCodigo().split(","));
+				
+				Filter filtroDelegacion = genericDao.createFilter(FilterType.EQUALS, "direccion.id", delegacion.getId());
+				List<DelegacionesLocalidad> delegacionMunicipioByProvID = genericDao.getList(DelegacionesLocalidad.class, filtroDelegacion);
+				
+				// Borrar los elementos que no vengan en la lista y existan en la DDBB.
+				for(DelegacionesLocalidad dl : delegacionMunicipioByProvID){
+					if(!codigosMuncicipio.contains(dl.getLocalidad().getCodigo())){
+						Filter filtroLocalidad = genericDao.createFilter(FilterType.EQUALS, "localidad.codigo", dl.getLocalidad().getCodigo());
+						DelegacionesLocalidad localidadABorrar = genericDao.get(DelegacionesLocalidad.class, filtroLocalidad, filtroDelegacion);
+						if(!Checks.esNulo(localidadABorrar)) {
+							genericDao.deleteById(DelegacionesLocalidad.class, localidadABorrar.getId());
+						}
+					}
+				}
+				
+				// Almacenar los elementos que vengan en la lista y no existan en la DDBB.
+				// Dejar los elementos que vangan en la lista y exista en la DDBB.
+				for(String codigo : codigosMuncicipio) {
+					Filter filtroMunicipio = genericDao.createFilter(FilterType.EQUALS, "codigo", codigo);
+					Localidad municipio = genericDao.get(Localidad.class, filtroMunicipio);
+					if(!Checks.esNulo(municipio)) {
+						Filter filtroLocalidad = genericDao.createFilter(FilterType.EQUALS, "localidad.codigo", municipio.getCodigo());
+						List<DelegacionesLocalidad> delegacionLocalidad = genericDao.getList(DelegacionesLocalidad.class, filtroDelegacion, filtroLocalidad);
+						if(Checks.estaVacio(delegacionLocalidad)) {
+							DelegacionesLocalidad dlgLocalidad = new DelegacionesLocalidad();
+							dlgLocalidad.setLocalidad(municipio);
+							dlgLocalidad.setDireccion(delegacion);
+							genericDao.save(DelegacionesLocalidad.class, dlgLocalidad);
+						}
+					}
+				}
+			}
+			
+		}
+		
+		if(!Checks.esNulo(dto.getCodigoPostalCodigo())) {
+			if(dto.getCodigoPostalCodigo().equals("VALOR_POR_DEFECTO")) {					
+				Filter filtroDelegacion = genericDao.createFilter(FilterType.EQUALS, "direccion.id", delegacion.getId());
+				genericDao.delete(DelegacionesCodigoPostal.class, filtroDelegacion);
+			} else {
+				List<String> codigosCodigoPostal = Arrays.asList(dto.getCodigoPostalCodigo().split(","));
+				
+				Filter filtroDelegacion = genericDao.createFilter(FilterType.EQUALS, "direccion.id", delegacion.getId());
+				List<DelegacionesCodigoPostal> delegacionCodigoPostalByProvID = genericDao.getList(DelegacionesCodigoPostal.class, filtroDelegacion);
+				
+				// Borrar los elementos que no vengan en la lista y existan en la DDBB.
+				for(DelegacionesCodigoPostal dcp : delegacionCodigoPostalByProvID){
+					if(!codigosCodigoPostal.contains(dcp.getCodigoPostal().getCodigo())){
+						Filter filtroCodigoPostal = genericDao.createFilter(FilterType.EQUALS, "codigoPostal.codigo", dcp.getCodigoPostal().getCodigo());
+						DelegacionesCodigoPostal codigoPostalABorrar = genericDao.get(DelegacionesCodigoPostal.class, filtroCodigoPostal, filtroDelegacion);
+						if(!Checks.esNulo(codigoPostalABorrar)) {
+							genericDao.deleteById(DelegacionesCodigoPostal.class, codigoPostalABorrar.getId());
+						}
+					}
+				}
+				
+				// Almacenar los elementos que vengan en la lista y no existan en la DDBB.
+				// Dejar los elementos que vangan en la lista y exista en la DDBB.
+				for(String codigo : codigosCodigoPostal) {
+					Filter filtroCP = genericDao.createFilter(FilterType.EQUALS, "codigo", codigo);
+					DDCodigoPostal codigoPostal = genericDao.get(DDCodigoPostal.class, filtroCP);
+					if(!Checks.esNulo(codigoPostal)) {
+						Filter filtroCodigoPostal = genericDao.createFilter(FilterType.EQUALS, "codigoPostal.codigo", codigoPostal.getCodigo());
+						List<DelegacionesCodigoPostal> delegacionCodigoPostal = genericDao.getList(DelegacionesCodigoPostal.class, filtroDelegacion, filtroCodigoPostal);
+						if(Checks.estaVacio(delegacionCodigoPostal)) {
+							DelegacionesCodigoPostal dlgCodigoPostal = new DelegacionesCodigoPostal();
+							dlgCodigoPostal.setCodigoPostal(codigoPostal);
+							dlgCodigoPostal.setDireccion(delegacion);
+							genericDao.save(DelegacionesCodigoPostal.class, dlgCodigoPostal);
+						}
+					}
+				}
+			}
+			
+		}
+
+		genericDao.save(ActivoProveedorDireccion.class, delegacion);
+
+		return true;
+	}
+	
+	@Override
+	public List<Localidad> getComboMunicipioMultiple(String codigoProvincia) {
+		
+		List<Localidad> municipiosADevolver = new ArrayList<Localidad>();
+		
+		List<Localidad> municipiosBusqueda = new ArrayList<Localidad>();
+		
+		if(!"VALOR_POR_DEFECTO".equals(codigoProvincia) && codigoProvincia != null) {
+		
+			String[] codigoProvinciaSplit = codigoProvincia.split(",");
+			
+			ArrayList<String> list = new ArrayList<String>(Arrays.asList(codigoProvinciaSplit));
+		
+			for(String provincia : list) {
+				
+				municipiosBusqueda = proveedoresDao.getMunicipiosList(provincia);
+				
+				municipiosADevolver.addAll(municipiosBusqueda);
+			}
+		}
+		
+		return municipiosADevolver;
+	}
+	
+	@Override
+	public List<DtoCodigoPostalCombo> getComboCodigoPostalMultiple(String codigoMunicipio) {
+				
+		List<DDCodigoPostal> codigosPostalesBusqueda = new ArrayList<DDCodigoPostal>();
+		
+		List<DtoCodigoPostalCombo> codigosPostalesADevolver = new ArrayList<DtoCodigoPostalCombo>();
+		
+		if(!"VALOR_POR_DEFECTO".equals(codigoMunicipio) && codigoMunicipio != null) {
+		
+			String[] codigoMunicipioSplit = codigoMunicipio.split(",");
+			
+			ArrayList<String> list = new ArrayList<String>(Arrays.asList(codigoMunicipioSplit));
+		
+			for(String municipio : list) {
+				
+				codigosPostalesBusqueda = proveedoresDao.getCodigosPostalesList(municipio);
+				
+				for(DDCodigoPostal codigosPostalesFinal : codigosPostalesBusqueda) {
+					
+					DtoCodigoPostalCombo codigosPostalesIndividuales = new DtoCodigoPostalCombo();
+					
+					codigosPostalesIndividuales.setId(codigosPostalesFinal.getId());
+					codigosPostalesIndividuales.setCodigo(codigosPostalesFinal.getCodigo());
+					codigosPostalesIndividuales.setDescripcion(codigosPostalesFinal.getCodigo());
+
+					codigosPostalesADevolver.add(codigosPostalesIndividuales);
+				}
+				
+			}
+		}
+		
+		return codigosPostalesADevolver;
 	}
 }

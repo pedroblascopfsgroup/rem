@@ -66,7 +66,14 @@ Ext.define('HreRem.model.FichaProveedorModel', {
     			dateFormat: 'c'
 		    },
 		    {
-		    	name: 'territorialCodigo'
+		    	name: 'territorialCodigo',
+		    	convert: function(value) {
+		    		if(Ext.isEmpty(value)){
+		    			return 'VALOR_POR_DEFECTO';
+		    		} else {
+		    			return value;
+		    		}
+		    	}
 		    },
 		    {
 		    	name: 'carteraCodigo',
@@ -211,10 +218,24 @@ Ext.define('HreRem.model.FichaProveedorModel', {
             	name:'motivoBaja'
             },
             {
-            	name:'especialidadCodigo'
+            	name:'especialidadCodigo',
+		    	convert: function(value) {
+		    		if(Ext.isEmpty(value)){
+		    			return 'VALOR_POR_DEFECTO';
+		    		} else {
+		    			return value;
+		    		}
+		    	}
             },
             {
-            	name:'idiomaCodigo'
+            	name:'idiomaCodigo',
+		    	convert: function(value) {
+		    		if(Ext.isEmpty(value)){
+		    			return 'VALOR_POR_DEFECTO';
+		    		} else {
+		    			return value;
+		    		}
+		    	}
             }
             
     ],

@@ -463,36 +463,43 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 			}
 			
 			if(!Checks.esNulo(dto.getTerritorialCodigo())) {
-				List<String> codigosTerritorios = Arrays.asList(dto.getTerritorialCodigo().split(","));
+				if(dto.getTerritorialCodigo().equals("VALOR_POR_DEFECTO")) {					
+					Filter filtroProveedor = genericDao.createFilter(FilterType.EQUALS, "proveedor.id", proveedor.getId());
+					genericDao.delete(ProveedorTerritorial.class, filtroProveedor);
+				} else {
 				
-				Filter filtroProveedor = genericDao.createFilter(FilterType.EQUALS, "proveedor.id", proveedor.getId());
-				List<ProveedorTerritorial> proveedorTerritorialByProvID = genericDao.getList(ProveedorTerritorial.class, filtroProveedor);
-				
-				// Borrar los elementos que no vengan en la lista y existan en la DDBB.
-				for(ProveedorTerritorial pt : proveedorTerritorialByProvID){
-					if(!codigosTerritorios.contains(pt.getProvincia().getCodigo())){
-						Filter filtroProvincia = genericDao.createFilter(FilterType.EQUALS, "provincia.id", pt.getProvincia().getId());
-						ProveedorTerritorial entidadABorrar = genericDao.get(ProveedorTerritorial.class, filtroProvincia, filtroProveedor);
-						if(!Checks.esNulo(entidadABorrar)) {
-							genericDao.deleteById(ProveedorTerritorial.class, entidadABorrar.getId());
+					List<String> codigosTerritorios = Arrays.asList(dto.getTerritorialCodigo().split(","));
+					
+					Filter filtroProveedor = genericDao.createFilter(FilterType.EQUALS, "proveedor.id", proveedor.getId());
+					List<ProveedorTerritorial> proveedorTerritorialByProvID = genericDao.getList(ProveedorTerritorial.class, filtroProveedor);
+					
+					// Borrar los elementos que no vengan en la lista y existan en la DDBB.
+					for(ProveedorTerritorial pt : proveedorTerritorialByProvID){
+						if(!codigosTerritorios.contains(pt.getProvincia().getCodigo())){
+							Filter filtroProvincia = genericDao.createFilter(FilterType.EQUALS, "provincia.id", pt.getProvincia().getId());
+							ProveedorTerritorial entidadABorrar = genericDao.get(ProveedorTerritorial.class, filtroProvincia, filtroProveedor);
+							if(!Checks.esNulo(entidadABorrar)) {
+								genericDao.deleteById(ProveedorTerritorial.class, entidadABorrar.getId());
+							}
 						}
 					}
-				}
-				
-				// Almacenar los elementos que vengan en la lista y no existan en la DDBB.
-				// Dejar los elementos que vangan en la lista y exista en la DDBB.
-				for(String codigo : codigosTerritorios) {
-					DDProvincia provincia = (DDProvincia) utilDiccionarioApi.dameValorDiccionarioByCod(DDProvincia.class, codigo);
-					if(!Checks.esNulo(provincia)) {
-						Filter filtroCartera = genericDao.createFilter(FilterType.EQUALS, "provincia.id", provincia.getId());
-						List<ProveedorTerritorial> proveedoreTerritorial = genericDao.getList(ProveedorTerritorial.class, filtroProveedor, filtroCartera);
-						if(Checks.estaVacio(proveedoreTerritorial)) {
-							ProveedorTerritorial proveedorTerritorial = new ProveedorTerritorial();
-							proveedorTerritorial.setProvincia(provincia);
-							proveedorTerritorial.setProveedor(proveedor);
-							genericDao.save(ProveedorTerritorial.class, proveedorTerritorial);
+					
+					// Almacenar los elementos que vengan en la lista y no existan en la DDBB.
+					// Dejar los elementos que vangan en la lista y exista en la DDBB.
+					for(String codigo : codigosTerritorios) {
+						DDProvincia provincia = (DDProvincia) utilDiccionarioApi.dameValorDiccionarioByCod(DDProvincia.class, codigo);
+						if(!Checks.esNulo(provincia)) {
+							Filter filtroCartera = genericDao.createFilter(FilterType.EQUALS, "provincia.id", provincia.getId());
+							List<ProveedorTerritorial> proveedoreTerritorial = genericDao.getList(ProveedorTerritorial.class, filtroProveedor, filtroCartera);
+							if(Checks.estaVacio(proveedoreTerritorial)) {
+								ProveedorTerritorial proveedorTerritorial = new ProveedorTerritorial();
+								proveedorTerritorial.setProvincia(provincia);
+								proveedorTerritorial.setProveedor(proveedor);
+								genericDao.save(ProveedorTerritorial.class, proveedorTerritorial);
+							}
 						}
 					}
+				
 				}
 				
 			}
@@ -663,69 +670,80 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 			}
 			
 			if(!Checks.esNulo(dto.getEspecialidadCodigo())) {
-				List<String> codigosEspecialidad = Arrays.asList(dto.getEspecialidadCodigo().split(","));
-				
-				Filter filtroProveedor = genericDao.createFilter(FilterType.EQUALS, "proveedor.id", proveedor.getId());
-				List<ProveedorEspecialidad> proveedorEspecialidadByProvID = genericDao.getList(ProveedorEspecialidad.class, filtroProveedor);
-				
-				// Borrar los elementos que no vengan en la lista y existan en la DDBB.
-				for(ProveedorEspecialidad pe : proveedorEspecialidadByProvID){
-					if(!codigosEspecialidad.contains(pe.getEspecialidad().getCodigo())){
-						Filter filtroEspecialidad = genericDao.createFilter(FilterType.EQUALS, "especialidad.codigo", pe.getEspecialidad().getCodigo());
-						ProveedorEspecialidad especialidadABorrar = genericDao.get(ProveedorEspecialidad.class, filtroEspecialidad, filtroProveedor);
-						if(!Checks.esNulo(especialidadABorrar)) {
-							genericDao.deleteById(ProveedorEspecialidad.class, especialidadABorrar.getId());
+				if(dto.getEspecialidadCodigo().equals("VALOR_POR_DEFECTO")) {					
+					Filter filtroProveedor = genericDao.createFilter(FilterType.EQUALS, "proveedor.id", proveedor.getId());
+					genericDao.delete(ProveedorEspecialidad.class, filtroProveedor);
+				} else {
+					List<String> codigosEspecialidad = Arrays.asList(dto.getEspecialidadCodigo().split(","));
+					
+					Filter filtroProveedor = genericDao.createFilter(FilterType.EQUALS, "proveedor.id", proveedor.getId());
+					List<ProveedorEspecialidad> proveedorEspecialidadByProvID = genericDao.getList(ProveedorEspecialidad.class, filtroProveedor);
+					
+					// Borrar los elementos que no vengan en la lista y existan en la DDBB.
+					for(ProveedorEspecialidad pe : proveedorEspecialidadByProvID){
+						if(!codigosEspecialidad.contains(pe.getEspecialidad().getCodigo())){
+							Filter filtroEspecialidad = genericDao.createFilter(FilterType.EQUALS, "especialidad.codigo", pe.getEspecialidad().getCodigo());
+							ProveedorEspecialidad especialidadABorrar = genericDao.get(ProveedorEspecialidad.class, filtroEspecialidad, filtroProveedor);
+							if(!Checks.esNulo(especialidadABorrar)) {
+								genericDao.deleteById(ProveedorEspecialidad.class, especialidadABorrar.getId());
+							}
 						}
 					}
-				}
-				
-				// Almacenar los elementos que vengan en la lista y no existan en la DDBB.
-				// Dejar los elementos que vangan en la lista y exista en la DDBB.
-				for(String codigo : codigosEspecialidad) {
-					DDEspecialidad especialidad = (DDEspecialidad) utilDiccionarioApi.dameValorDiccionarioByCod(DDEspecialidad.class, codigo);
-					if(!Checks.esNulo(especialidad)) {
-						Filter filtroEspecialidad = genericDao.createFilter(FilterType.EQUALS, "especialidad.codigo", especialidad.getCodigo());
-						List<ProveedorEspecialidad> proveedorEspecialidad = genericDao.getList(ProveedorEspecialidad.class, filtroProveedor, filtroEspecialidad);
-						if(Checks.estaVacio(proveedorEspecialidad)) {
-							ProveedorEspecialidad pveEspecialidad = new ProveedorEspecialidad();
-							pveEspecialidad.setEspecialidad(especialidad);
-							pveEspecialidad.setProveedor(proveedor);						
-							genericDao.save(ProveedorEspecialidad.class, pveEspecialidad);
+					
+					// Almacenar los elementos que vengan en la lista y no existan en la DDBB.
+					// Dejar los elementos que vangan en la lista y exista en la DDBB.
+					for(String codigo : codigosEspecialidad) {
+						DDEspecialidad especialidad = (DDEspecialidad) utilDiccionarioApi.dameValorDiccionarioByCod(DDEspecialidad.class, codigo);
+						if(!Checks.esNulo(especialidad)) {
+							Filter filtroEspecialidad = genericDao.createFilter(FilterType.EQUALS, "especialidad.codigo", especialidad.getCodigo());
+							List<ProveedorEspecialidad> proveedorEspecialidad = genericDao.getList(ProveedorEspecialidad.class, filtroProveedor, filtroEspecialidad);
+							if(Checks.estaVacio(proveedorEspecialidad)) {
+								ProveedorEspecialidad pveEspecialidad = new ProveedorEspecialidad();
+								pveEspecialidad.setEspecialidad(especialidad);
+								pveEspecialidad.setProveedor(proveedor);						
+								genericDao.save(ProveedorEspecialidad.class, pveEspecialidad);
+							}
 						}
 					}
+				
 				}
 				
 			}
 			
 			if(!Checks.esNulo(dto.getIdiomaCodigo())) {
-				List<String> codigosIdioma = Arrays.asList(dto.getIdiomaCodigo().split(","));
-				
-				Filter filtroProveedor = genericDao.createFilter(FilterType.EQUALS, "proveedor.id", proveedor.getId());
-				List<ProveedorIdioma> proveedorIdiomaByProvID = genericDao.getList(ProveedorIdioma.class, filtroProveedor);
-				
-				// Borrar los elementos que no vengan en la lista y existan en la DDBB.
-				for(ProveedorIdioma pi : proveedorIdiomaByProvID){
-					if(!codigosIdioma.contains(pi.getIdioma().getCodigo())){
-						Filter filtroIdioma = genericDao.createFilter(FilterType.EQUALS, "idioma.codigo", pi.getIdioma().getCodigo());
-						ProveedorIdioma idiomaABorrar = genericDao.get(ProveedorIdioma.class, filtroIdioma, filtroProveedor);
-						if(!Checks.esNulo(idiomaABorrar)) {
-							genericDao.deleteById(ProveedorIdioma.class, idiomaABorrar.getId());
+				if(dto.getIdiomaCodigo().equals("VALOR_POR_DEFECTO")) {					
+					Filter filtroProveedor = genericDao.createFilter(FilterType.EQUALS, "proveedor.id", proveedor.getId());
+					genericDao.delete(ProveedorIdioma.class, filtroProveedor);
+				} else {
+					List<String> codigosIdioma = Arrays.asList(dto.getIdiomaCodigo().split(","));
+					
+					Filter filtroProveedor = genericDao.createFilter(FilterType.EQUALS, "proveedor.id", proveedor.getId());
+					List<ProveedorIdioma> proveedorIdiomaByProvID = genericDao.getList(ProveedorIdioma.class, filtroProveedor);
+					
+					// Borrar los elementos que no vengan en la lista y existan en la DDBB.
+					for(ProveedorIdioma pi : proveedorIdiomaByProvID){
+						if(!codigosIdioma.contains(pi.getIdioma().getCodigo())){
+							Filter filtroIdioma = genericDao.createFilter(FilterType.EQUALS, "idioma.codigo", pi.getIdioma().getCodigo());
+							ProveedorIdioma idiomaABorrar = genericDao.get(ProveedorIdioma.class, filtroIdioma, filtroProveedor);
+							if(!Checks.esNulo(idiomaABorrar)) {
+								genericDao.deleteById(ProveedorIdioma.class, idiomaABorrar.getId());
+							}
 						}
 					}
-				}
-				
-				// Almacenar los elementos que vengan en la lista y no existan en la DDBB.
-				// Dejar los elementos que vangan en la lista y exista en la DDBB.
-				for(String codigo : codigosIdioma) {
-					DDIdioma idioma = (DDIdioma) utilDiccionarioApi.dameValorDiccionarioByCod(DDIdioma.class, codigo);
-					if(!Checks.esNulo(idioma)) {
-						Filter filtroIdioma = genericDao.createFilter(FilterType.EQUALS, "idioma.codigo", idioma.getCodigo());
-						List<ProveedorIdioma> proveedorIdioma = genericDao.getList(ProveedorIdioma.class, filtroProveedor, filtroIdioma);
-						if(Checks.estaVacio(proveedorIdioma)) {
-							ProveedorIdioma pveIdioma = new ProveedorIdioma();
-							pveIdioma.setIdioma(idioma);
-							pveIdioma.setProveedor(proveedor);						
-							genericDao.save(ProveedorIdioma.class, pveIdioma);
+					
+					// Almacenar los elementos que vengan en la lista y no existan en la DDBB.
+					// Dejar los elementos que vengan en la lista y exista en la DDBB.
+					for(String codigo : codigosIdioma) {
+						DDIdioma idioma = (DDIdioma) utilDiccionarioApi.dameValorDiccionarioByCod(DDIdioma.class, codigo);
+						if(!Checks.esNulo(idioma)) {
+							Filter filtroIdioma = genericDao.createFilter(FilterType.EQUALS, "idioma.codigo", idioma.getCodigo());
+							List<ProveedorIdioma> proveedorIdioma = genericDao.getList(ProveedorIdioma.class, filtroProveedor, filtroIdioma);
+							if(Checks.estaVacio(proveedorIdioma)) {
+								ProveedorIdioma pveIdioma = new ProveedorIdioma();
+								pveIdioma.setIdioma(idioma);
+								pveIdioma.setProveedor(proveedor);						
+								genericDao.save(ProveedorIdioma.class, pveIdioma);
+							}
 						}
 					}
 				}
@@ -1067,6 +1085,7 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 			}
 			beanUtilNotNull.copyProperty(direccionDelegacion, "nombreVia", dtoDireccionDelegacion.getNombreVia());
 			beanUtilNotNull.copyProperty(direccionDelegacion, "numeroVia", dtoDireccionDelegacion.getNumeroVia());
+			beanUtilNotNull.copyProperty(direccionDelegacion, "piso", direccionDelegacion.getPiso());
 			beanUtilNotNull.copyProperty(direccionDelegacion, "puerta", dtoDireccionDelegacion.getPuerta());
 			if(!Checks.esNulo(dtoDireccionDelegacion.getProvincia())) {
 				DDProvincia provincia = (DDProvincia) utilDiccionarioApi.dameValorDiccionarioByCod(DDProvincia.class, dtoDireccionDelegacion.getProvincia());
@@ -1080,6 +1099,8 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 			beanUtilNotNull.copyProperty(direccionDelegacion, "codigoPostal", dtoDireccionDelegacion.getCodigoPostal());
 			beanUtilNotNull.copyProperty(direccionDelegacion, "telefono", dtoDireccionDelegacion.getTelefono());
 			beanUtilNotNull.copyProperty(direccionDelegacion, "email", dtoDireccionDelegacion.getEmail());
+			beanUtilNotNull.copyProperty(direccionDelegacion, "otros", direccionDelegacion.getOtros());
+
 			
 			genericDao.save(ActivoProveedorDireccion.class, direccionDelegacion);
 		} catch (IllegalAccessException e) {
@@ -1116,6 +1137,7 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 			}
 			beanUtilNotNull.copyProperty(direccionDelegacion, "nombreVia", dtoDireccionDelegacion.getNombreVia());
 			beanUtilNotNull.copyProperty(direccionDelegacion, "numeroVia", dtoDireccionDelegacion.getNumeroVia());
+			beanUtilNotNull.copyProperty(direccionDelegacion, "piso", dtoDireccionDelegacion.getPiso());
 			beanUtilNotNull.copyProperty(direccionDelegacion, "puerta", dtoDireccionDelegacion.getPuerta());
 			if(!Checks.esNulo(dtoDireccionDelegacion.getProvincia())) {
 				DDProvincia provincia = (DDProvincia) utilDiccionarioApi.dameValorDiccionarioByCod(DDProvincia.class, dtoDireccionDelegacion.getProvincia());
@@ -1129,6 +1151,7 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 			beanUtilNotNull.copyProperty(direccionDelegacion, "codigoPostal", dtoDireccionDelegacion.getCodigoPostal());
 			beanUtilNotNull.copyProperty(direccionDelegacion, "telefono", dtoDireccionDelegacion.getTelefono());
 			beanUtilNotNull.copyProperty(direccionDelegacion, "email", dtoDireccionDelegacion.getEmail());
+			beanUtilNotNull.copyProperty(direccionDelegacion, "otros", dtoDireccionDelegacion.getOtros());
 			
 			genericDao.save(ActivoProveedorDireccion.class, direccionDelegacion);
 		} catch (IllegalAccessException e) {

@@ -88,11 +88,11 @@ public class UpdaterServiceSancionOfertaAlquilerAprobacionClienteClausulas imple
 		}
 		
 		if (aprueba) {
-			/*estadoExp =  DDEstadosExpedienteComercial.PTE_ENVIO;
-			estadoBc =  DDEstadoExpedienteBc.CODIGO_IMPORTE_FINAL_APROBADO;*/
+			/*estadoExp =  DDEstadosExpedienteComercial.PTE_ENVIO;*/
+			estadoBc =  DDEstadoExpedienteBc.CODIGO_BORRADOR_ACEPTADO;
 		} else if(!aprueba && !apruebaBcReneg) {
 			estadoExp =  DDEstadosExpedienteComercial.DENEGADO;
-			estadoBc =  DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO;
+			estadoBc =  DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA;
 			Oferta oferta = expedienteComercial.getOferta();
 			expedienteComercial.setFechaAnulacion(new Date());
 			expedienteComercial.setMotivoAnulacion(genericDao.get(DDMotivoAnulacionExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoAnulacionExpediente.COD_CAIXA_RECHAZADO_PBC)));
@@ -103,13 +103,12 @@ public class UpdaterServiceSancionOfertaAlquilerAprobacionClienteClausulas imple
 			}
 			
 			expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoExp)));
-			expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoBc)));
 			estadoBcModificado = true;
 			genericDao.save(ExpedienteComercial.class, expedienteComercial);
 		} else if(!aprueba && apruebaBcReneg) {
-			/*estadoExp =  DDEstadosExpedienteComercial.DENEGADO;
-			estadoBc =  DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO;
-			Oferta oferta = expedienteComercial.getOferta();
+//			estadoExp =  DDEstadosExpedienteComercial.DENEGADO;
+			estadoBc =  DDEstadoExpedienteBc.CODIGO_PTE_SANCION_PATRIMONIO;
+			/*Oferta oferta = expedienteComercial.getOferta();
 			expedienteComercial.setFechaAnulacion(new Date());
 			expedienteComercial.setMotivoAnulacion(genericDao.get(DDMotivoAnulacionExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoAnulacionExpediente.COD_CAIXA_RECHAZADO_PBC)));
 			expedienteComercial.setDetalleAnulacionCntAlquiler(observaciones);
@@ -117,7 +116,8 @@ public class UpdaterServiceSancionOfertaAlquilerAprobacionClienteClausulas imple
 			if(oferta != null) {
 				ofertaApi.finalizarOferta(oferta);
 			}*/
-		} 
+		}
+		expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoBc)));
 		
 		/*expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoExp)));
 		expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoBc)));

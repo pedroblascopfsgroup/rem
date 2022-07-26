@@ -61,7 +61,7 @@ public class UpdaterServiceDatosPBCAlquiler implements UpdaterService {
 				String estadoBcCodigo = null;
 				if(acepta) {
 					estadoCodigo = DDEstadosExpedienteComercial.PTE_PBC;
-					estadoBcCodigo = DDEstadoExpedienteBc.CODIGO_PTE_CALCULO_RIESGO;
+					estadoBcCodigo = DDEstadoExpedienteBc.CODIGO_IMPORTE_FINAL_APROBADO;
 				}else {
 					estadoCodigo = DDEstadosExpedienteComercial.ANULADO;
 					estadoBcCodigo = DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA;

@@ -83,6 +83,8 @@ public class DDEstadoExpedienteBc implements Auditable, Dictionary {
 	public static final String CODIGO_PTE_VALIDACION_CAMBIOS_CLAUSURADO = "052";
 	public static final String CODIGO_CLAUSULADO_NO_COMERCIABLE = "053";
 	public static final String CODIGO_ENTREGA_GARANTIAS_FIANZAS_AVAL = "054";
+	public static final String CODIGO_BORRADOR_ACEPTADO = "055";
+
 	
 	private static final long serialVersionUID = 1L;
 

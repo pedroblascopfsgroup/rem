@@ -362,7 +362,7 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 						return false;
 					}
 				}
-				if(agrupacion.get('cambioEstadoPublicacion')){
+				if(agrupacion.get('cambioEstadoPublicacion') && !enConcurrencia){
 					if($AU.userHasFunction(['CAMBIAR_ESTADO_OFERTA_BANKIA']) || activo.get('estadoVentaCodigo') == '03'){
 						me.fireEvent("warnToast", HreRem.i18n("msg.cambio.estado.publicacion"));
 					}else{

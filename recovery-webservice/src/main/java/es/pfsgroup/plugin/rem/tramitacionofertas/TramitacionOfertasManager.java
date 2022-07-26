@@ -160,6 +160,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 	private static final String AGRUPACION_BAJA = "agrupacion.baja";
 	private static final String MAESTRO_ORIGEN_WCOM = "WCOM";
 	private static final Integer ES_FORMALIZABLE = new Integer(1);
+	private static final String ERROR_OFERTA_PERIODO_CONCURRENCIA_PENDIENTES_DEPOSITO = "msg.error.oferta.periodo.concurrencia.pendientes.deposito";
 
 	@Resource
 	private MessageService messageServices;
@@ -313,16 +314,19 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		}
 
 		Oferta oferta = genericDao.get(Oferta.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdOferta()));
+		DtoSaveAndReplicateResult dtoSaveAndReplicateResult = new DtoSaveAndReplicateResult();
 		boolean saveOferta = true;
 		
 		if(DDEstadoOferta.CODIGO_PDTE_DEPOSITO.equals(dto.getEstadoOferta())) {
 			saveOferta = !concurrenciaApi.caducaOfertaConcurrencia(oferta.getActivoPrincipal().getId(), oferta.getId());
 		} else if(DDEstadoOferta.CODIGO_ACEPTADA.equals(dto.getEstadoOferta()) && oferta.getIsEnConcurrencia() != null && oferta.getIsEnConcurrencia()) {
 			saveOferta = !concurrenciaApi.isOfertaEnPlazoConcu(false,  ofertaApi.getListaOfertasByActivo(oferta.getActivoPrincipal()));
+			if(!saveOferta)
+				dtoSaveAndReplicateResult.setMessage(messageServices.getMessage(ERROR_OFERTA_PERIODO_CONCURRENCIA_PENDIENTES_DEPOSITO));
 		}
-		
-		DtoSaveAndReplicateResult dtoSaveAndReplicateResult = new DtoSaveAndReplicateResult();
+
 		dtoSaveAndReplicateResult.setSuccess(saveOferta);
+		dtoSaveAndReplicateResult.setNumOferta(oferta.getNumOferta());
 		
 		if(saveOferta) {
 			oferta = saveOferta(dto, activo, esAgrupacion, agrupacion, asincrono);
@@ -330,8 +334,6 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		} else {
 			dtoSaveAndReplicateResult.setReplicateToBc(false);
 		}
-		
-		dtoSaveAndReplicateResult.setNumOferta(oferta.getNumOferta());
 
 		return dtoSaveAndReplicateResult;
 	}

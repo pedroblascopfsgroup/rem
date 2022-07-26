@@ -106,6 +106,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Conduct
                     flex : 1.5,
                     dataIndex : 'adjunto',
                     xtype: 'actioncolumn',
+                    hidden: true,
                     items: [							
 							{
                  				xtype: 'button',

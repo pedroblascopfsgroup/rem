@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Ivan Rubio
---## FECHA_CREACION=20220627
+--## AUTOR=Alejandro Valverde
+--## FECHA_CREACION=20220727
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-17697
+--## INCIDENCIA_LINK=HREOS-18445
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -13,6 +13,7 @@
 --##        0.1 Versión inicial Lara Pablo 20210928 HREOS-15400
 --##        0.2 Agregar estado depósito
 --##        0.3 REMVIP-11950 Cambio al mostrar datos ofertante
+--##        0.4 Alejandro Valverde (HREOS-18445) - Añadir campo FECHA_ENT_CRM_SF
 --##########################################
 --*/
 
@@ -79,7 +80,8 @@ BEGIN
 				DECODE(GEN.ACT_ID,NULL,0,1)  AS GENCAT,
 			C4C.DD_ECC_CODIGO AS EST_CODIGO_C4C,
 			EDP.DD_EDP_CODIGO AS ESTADODEPOSITOCODIGO,
-			EDP.DD_EDP_DESCRIPCION AS ESTADODEPOSITO
+			EDP.DD_EDP_DESCRIPCION AS ESTADODEPOSITO,
+			OFR.FECHA_ENT_CRM_SF
 		FROM '|| V_ESQUEMA ||'.OFR_OFERTAS OFR
         	INNER JOIN '|| V_ESQUEMA ||'.ACT_OFR AOF 					ON OFR.OFR_ID = AOF.OFR_ID
 		INNER JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT 					ON ACT.ACT_ID = AOF.ACT_ID and act.borrado = 0

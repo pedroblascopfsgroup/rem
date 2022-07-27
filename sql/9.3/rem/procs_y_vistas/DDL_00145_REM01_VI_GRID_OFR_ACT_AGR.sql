@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Ivan Rubio
---## FECHA_CREACION=20220627
+--## AUTOR=Alejandro Valverde
+--## FECHA_CREACION=20220727
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-17697
+--## INCIDENCIA_LINK=HREOS-18445
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -15,6 +15,7 @@
 --##        HREOS-14789 - 0.3 Se añaden nuevos estado (08) cartera Caixa Lara Pablo 20210828
 --##        HREOS-17697 - 0.4 Se añade nuevo estado depósito
 --##        REMVIP-11950 - 0.5 Cambio al mostrar datos ofertante
+--##        HREOS-18445 - 0.6 Alejandro Valverde - Añadir campo FECHA_ENT_CRM_SF
 --##########################################
 --*/
 
@@ -81,7 +82,8 @@ BEGIN
 				DECODE(GEN.ACT_ID,NULL,0,1)  AS GENCAT,
 			C4C.DD_ECC_CODIGO AS EST_CODIGO_C4C,
 			EDP.DD_EDP_CODIGO AS ESTADODEPOSITOCODIGO,
-			EDP.DD_EDP_DESCRIPCION AS ESTADODEPOSITO
+			EDP.DD_EDP_DESCRIPCION AS ESTADODEPOSITO,
+			OFR.FECHA_ENT_CRM_SF
 		FROM '|| V_ESQUEMA ||'.OFR_OFERTAS OFR
         	INNER JOIN '|| V_ESQUEMA ||'.ACT_OFR AOF 					ON OFR.OFR_ID = AOF.OFR_ID
 		INNER JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT 					ON ACT.ACT_ID = AOF.ACT_ID and act.borrado = 0

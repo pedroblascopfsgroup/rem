@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Alejandro Valverde
---## FECHA_CREACION=20220719
+--## FECHA_CREACION=20220727
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-18405
+--## INCIDENCIA_LINK=HREOS-18445
 --## PRODUCTO=NO
 --## Finalidad: VI_GRID_OFR_CONCURRENCIA
 --##           
@@ -13,6 +13,7 @@
 --##         0.1 Versión inicial (HREOS-17991)
 --##         0.2 Juan Jose Sanjuan - añadir importe Oferta 
 --##         0.3 Alejandro Valverde (HREOS-18405) - Añadir datos Expediente Comercial
+--##         0.4 Alejandro Valverde (HREOS-18445) - Añadir campos EST_CODIGO_C4C y FECHA_ENT_CRM_SF
 --##########################################
 --*/
 
@@ -71,6 +72,8 @@ BEGIN
 		,ECO.ECO_NUM_EXPEDIENTE
 		,ECO.ECO_ID
 		,EEC.DD_EEC_DESCRIPCION
+		,C4C.DD_ECC_CODIGO AS EST_CODIGO_C4C
+		,OFR.FECHA_ENT_CRM_SF
 		FROM '|| V_ESQUEMA ||'.ofr_ofertas ofr
 		INNER JOIN '|| V_ESQUEMA ||'.DD_TOF_TIPOS_OFERTA TOF ON TOF.DD_TOF_ID = OFR.DD_TOF_ID
 		INNER JOIN '|| V_ESQUEMA ||'.DD_EOF_ESTADOS_OFERTA EOF ON EOF.DD_EOF_ID = OFR.DD_EOF_ID
@@ -83,6 +86,8 @@ BEGIN
 		LEFT JOIN '|| V_ESQUEMA ||'.DD_EDP_EST_DEPOSITO EDP ON EDP.DD_EDP_ID = DEP.DD_EDP_ID
 		LEFT JOIN ' || V_ESQUEMA || '.ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.OFR_ID = OFR.OFR_ID
 		LEFT JOIN ' || V_ESQUEMA || '.DD_EEC_EST_EXP_COMERCIAL EEC ON EEC.DD_EEC_ID = ECO.DD_EEC_ID
+		LEFT JOIN '|| V_ESQUEMA ||'.OFR_OFERTAS_CAIXA CBX ON OFR.OFR_ID = CBX.OFR_ID 
+		LEFT JOIN '|| V_ESQUEMA ||'.DD_ECC_ESTADO_COMUNICACION_C4C C4C ON CBX.DD_ECC_ID = C4C.DD_ECC_ID
 		WHERE ofr.ofr_concurrencia  = 1  and ofr.borrado = 0';
 
   EXECUTE IMMEDIATE	V_MSQL;

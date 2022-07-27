@@ -90,6 +90,9 @@ public class VGridOfertasActivosAgrupacionIncAnuladas implements Serializable {
     
     @Column(name="ESTADODEPOSITO")
     private String estadoDeposito;
+    
+	@Column(name = "FECHA_ENT_CRM_SF")
+    private Date fechaEntradaCRMSF;
 
 	public Long getId() {
 		return id;
@@ -289,6 +292,14 @@ public class VGridOfertasActivosAgrupacionIncAnuladas implements Serializable {
 
 	public void setEstadoDeposito(String estadoDeposito) {
 		this.estadoDeposito = estadoDeposito;
-	}	
+	}
+
+	public Date getFechaEntradaCRMSF() {
+		return fechaEntradaCRMSF;
+	}
+
+	public void setFechaEntradaCRMSF(Date fechaEntradaCRMSF) {
+		this.fechaEntradaCRMSF = fechaEntradaCRMSF;
+	}
 
 }

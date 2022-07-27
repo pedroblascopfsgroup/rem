@@ -111,6 +111,9 @@ public class VGridOfertasActivosAgrupacionConcurrencia implements Serializable {
     
     @Column(name="ORDEN_GANADOR")
     private Integer ordenGanador;
+    
+	@Column(name = "FECHA_ENT_CRM_SF")
+    private Date fechaEntradaCRMSF;	
 
 	public Long getId() {
 		return id;
@@ -366,6 +369,14 @@ public class VGridOfertasActivosAgrupacionConcurrencia implements Serializable {
 
 	public void setIdConcurrencia(Long idConcurrencia) {
 		this.idConcurrencia = idConcurrencia;
-	}	
+	}
+
+	public Date getFechaEntradaCRMSF() {
+		return fechaEntradaCRMSF;
+	}
+
+	public void setFechaEntradaCRMSF(Date fechaEntradaCRMSF) {
+		this.fechaEntradaCRMSF = fechaEntradaCRMSF;
+	}
 	
 }

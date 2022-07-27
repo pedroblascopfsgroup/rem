@@ -32,7 +32,7 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
        T_TIPO_DATA('NOMBRE_FICHERO', 'VARCHAR2(55 CHAR)', 'Nombre del fichero.'),
-       T_TIPO_DATA('SECUENCIAL_FICHERO', 'VARCHAR2(4 CHAR)', 'Secuencial del fichero.'),
+       T_TIPO_DATA('SECUENCIAL_FICHERO', 'VARCHAR2(5 CHAR)', 'Secuencial del fichero.'),
        T_TIPO_DATA('FECHA_FICHERO', 'VARCHAR2(8 CHAR)', 'Fecha del fichero.')
 
     ); 

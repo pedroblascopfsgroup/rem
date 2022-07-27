@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20220726
+--## FECHA_CREACION=20220727
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-18391
@@ -88,6 +88,8 @@ SALIDA := SALIDA || '[INFO] PARA LOS ACTIVOS QUE NO TENGAN REGISTROS EN LA TABLA
                            AND CON.BORRADO = 0
                      LEFT JOIN '||V_ESQUEMA||'.ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.ACT_ID = ACT.ACT_ID
                            AND AGA.BORRADO = 0
+                     JOIN '||V_ESQUEMA||'.ACT_VAL_VALORACIONES VAL ON VAL.ACT_ID = ACT.ACT_ID
+                        AND VAL.BORRADO = 0
                      WHERE (CON.CON_ID IS NULL
                      OR 
                      TRUNC(CON.CON_FECHA_FIN) <  TRUNC(SYSDATE) )
@@ -110,6 +112,8 @@ SALIDA := SALIDA || '[INFO] PARA LOS ACTIVOS QUE NO TENGAN REGISTROS EN LA TABLA
                            AND CON.BORRADO = 0
                      LEFT JOIN '||V_ESQUEMA||'.ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.ACT_ID = ACT.ACT_ID
                            AND AGA.BORRADO = 0
+                     JOIN '||V_ESQUEMA||'.ACT_VAL_VALORACIONES VAL ON VAL.ACT_ID = ACT.ACT_ID
+                        AND VAL.BORRADO = 0
                      WHERE TRUNC(CON.CON_FECHA_INI) >  TRUNC(SYSDATE)
                      AND TRUNC(CON.FECHACREAR) <> TRUNC(SYSDATE)
                      AND AUX.FLAG_EN_REM = '|| FLAG_EN_REM ||'
@@ -226,6 +230,8 @@ SALIDA := SALIDA ||'[INFO] PARA LOS ACTIVOS QUE TENGAN REGISTROS EN LA TABLA CON
                            AND CON.BORRADO = 0
                      LEFT JOIN '||V_ESQUEMA||'.ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.ACT_ID = ACT.ACT_ID
                            AND AGA.BORRADO = 0
+                     JOIN '||V_ESQUEMA||'.ACT_VAL_VALORACIONES VAL ON VAL.ACT_ID = ACT.ACT_ID
+                        AND VAL.BORRADO = 0
                      WHERE TRUNC(CON.CON_FECHA_INI) >  TRUNC(SYSDATE)
                      AND TRUNC(CON.FECHACREAR) <> TRUNC(SYSDATE)
                      AND TRUNC(TO_DATE(AUX.FEC_INICIO_CONCURENCIA, ''yyyymmdd'')) <> TRUNC(CON.CON_FECHA_INI)
@@ -297,6 +303,8 @@ SALIDA := SALIDA ||'[INFO] 1.4 SE MODIFICA LA FECHA FIN EN LA TABLA CPC_CMB_PERI
                            AND AGA.BORRADO = 0
                      JOIN '||V_ESQUEMA||'.CPC_CMB_PERIODO_CONCURRENCIA CPC ON CPC.CON_ID = CON.CON_ID
                            AND CPC.BORRADO = 0
+                     JOIN '||V_ESQUEMA||'.ACT_VAL_VALORACIONES VAL ON VAL.ACT_ID = ACT.ACT_ID
+                        AND VAL.BORRADO = 0
                      WHERE TRUNC(CON.CON_FECHA_INI) >  TRUNC(SYSDATE)
                      AND TRUNC(CON.FECHACREAR) <> TRUNC(SYSDATE)
                      AND TRUNC(TO_DATE(AUX.FEC_INICIO_CONCURENCIA, ''yyyymmdd'')) = TRUNC(CON.CON_FECHA_INI)

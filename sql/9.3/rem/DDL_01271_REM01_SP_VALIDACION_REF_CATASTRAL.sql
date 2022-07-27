@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Santi Monzó
---## FECHA_CREACION=20220727
+--## FECHA_CREACION=20220728
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-16737
@@ -195,6 +195,7 @@ dcCalculado := '';
         var_commit := var_commit+1;
 
         IF (var_commit=10000) THEN
+            var_commit :=0;
             COMMIT;
         END IF;
 

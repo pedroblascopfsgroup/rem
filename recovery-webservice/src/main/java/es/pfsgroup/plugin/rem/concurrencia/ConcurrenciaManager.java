@@ -295,44 +295,44 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 	@Override
 	@Transactional
 	public void caducaOfertasRelacionadasConcurrencia(Long idActivo, Long idOferta, String codigoEnvioCorreo){
-		Activo act = genericDao.get(Activo.class, genericDao.createFilter(FilterType.EQUALS, "id", idActivo));
-		if(act != null){
-			List<ActivoOferta> ofertas = act.getOfertas();
-			HashMap<Long, List<Long>> noEntraDeposito = new HashMap<Long, List<Long>>();
-			List<Long> idOfertasRechazadas = new ArrayList<Long>();
-			List<Long> idOfertaList = new ArrayList<Long>();
-
-			if(ofertas != null && !ofertas.isEmpty()) {
-				for(ActivoOferta actOfr: ofertas){
-					if(actOfr != null && actOfr.getOferta() != null && !idOferta.toString().equals(actOfr.getOferta().toString())
-							&& !actOfr.getPrimaryKey().getOferta().esOfertaAnulada()){
-						Oferta ofr = actOfr.getPrimaryKey().getOferta();
-						if(!ofr.esOfertaAnulada() && !this.entraEnTiempoDeposito(ofr) || ConcurrenciaApi.COD_OFERTAS_PERDEDORAS.equals(codigoEnvioCorreo)){
-							noEntraDeposito.put(actOfr.getOferta(), rellenaMapOfertaCorreos(ofr));
-							ofertaApi.rechazoOfertaNew(ofr, null);
-							ofertaApi.inicioRechazoDeOfertaSinLlamadaBC(ofr, null);
-							idOfertaList.add(ofr.getId());
+		try {
+			Activo act = genericDao.get(Activo.class, genericDao.createFilter(FilterType.EQUALS, "id", idActivo));
+			if(act != null){
+				List<ActivoOferta> ofertas = act.getOfertas();
+				HashMap<Long, List<Long>> noEntraDeposito = new HashMap<Long, List<Long>>();
+				List<Long> idOfertasRechazadas = new ArrayList<Long>();
+				List<Long> idOfertaList = new ArrayList<Long>();
+	
+				if(ofertas != null && !ofertas.isEmpty()) {
+					for(ActivoOferta actOfr: ofertas){
+						if(actOfr != null && actOfr.getOferta() != null && !idOferta.toString().equals(actOfr.getOferta().toString())
+								&& !actOfr.getPrimaryKey().getOferta().esOfertaAnulada()){
+							Oferta ofr = actOfr.getPrimaryKey().getOferta();
+							if(!ofr.esOfertaAnulada() && !this.entraEnTiempoDeposito(ofr) || ConcurrenciaApi.COD_OFERTAS_PERDEDORAS.equals(codigoEnvioCorreo)){
+								noEntraDeposito.put(actOfr.getOferta(), rellenaMapOfertaCorreos(ofr));
+								ofertaApi.rechazoOfertaNew(ofr, null);
+								ofertaApi.inicioRechazoDeOfertaSinLlamadaBC(ofr, null);
+								idOfertaList.add(ofr.getId());
+							}
+							genericDao.save(Oferta.class, ofr);
 						}
-						genericDao.save(Oferta.class, ofr);
 					}
 				}
-			}
-			
-			for(Long id:idOfertasRechazadas){
-                ofertaApi.llamarCambioEstadoReplicarNoSession(id, DDEstadoOferta.CODIGO_RECHAZADA);
-            }
-
-			if(!idOfertaList.isEmpty()) {
-				try {				
-					comunicacionSFMC(idOfertaList, codigoEnvioCorreo, ConcurrenciaApi.TIPO_ENVIO_UNICO, new ModelMap());		
-				} catch (IOException ioex) {
-					logger.error(ioex.getMessage());
-					ioex.printStackTrace();
-				} catch (Exception exc) {
-					logger.error(exc.getMessage());
-					exc.printStackTrace();
+				
+				for(Long id:idOfertasRechazadas){
+	                ofertaApi.llamarCambioEstadoReplicarNoSession(id, DDEstadoOferta.CODIGO_RECHAZADA);
+	            }
+	
+				if(!idOfertaList.isEmpty()) {
+					comunicacionSFMC(idOfertaList, codigoEnvioCorreo, ConcurrenciaApi.TIPO_ENVIO_UNICO, new ModelMap());
 				}
 			}
+		}catch (IOException ioex) {
+			logger.error(ioex.getMessage());
+			ioex.printStackTrace();
+		}catch (Exception exc) {
+			logger.error(exc.getMessage());
+			exc.printStackTrace();
 		}
 
 	}

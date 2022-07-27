@@ -78,7 +78,7 @@ SALIDA := SALIDA || '[INFO] PARA LOS ACTIVOS QUE NO TENGAN REGISTROS EN LA TABLA
                               WHEN AGA.ACT_ID IS NOT NULL THEN AGA.AGR_ID
                               ELSE NULL
                            END AGR_ID
-                           ,nvl(TO_NUMBER(AUX.IMP_PRECIO_VENTA)/100, val.val_importe) IMP_PRECIO_VENTA ------NUEVO!!!!!! a todos los deIMP_PRECIO_VENTA
+                           ,NVL(TO_NUMBER(AUX.IMP_PRECIO_VENTA)/100, VAL.VAL_IMPORTE) IMP_PRECIO_VENTA
                            ,TO_DATE(AUX.FEC_INICIO_CONCURENCIA, ''yyyymmdd'') FEC_INICIO_CONCURENCIA
                            ,TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''yyyymmdd'') FEC_FIN_CONCURENCIA
                      FROM '||V_ESQUEMA||'.AUX_APR_BCR_STOCK AUX
@@ -100,7 +100,7 @@ SALIDA := SALIDA || '[INFO] PARA LOS ACTIVOS QUE NO TENGAN REGISTROS EN LA TABLA
                               WHEN AGA.ACT_ID IS NOT NULL THEN AGA.AGR_ID
                               ELSE NULL
                            END AGR_ID
-                           ,TO_NUMBER(AUX.IMP_PRECIO_VENTA)/100 IMP_PRECIO_VENTA
+                           ,NVL(TO_NUMBER(AUX.IMP_PRECIO_VENTA)/100, VAL.VAL_IMPORTE) IMP_PRECIO_VENTA
                            ,TO_DATE(AUX.FEC_INICIO_CONCURENCIA, ''yyyymmdd'') FEC_INICIO_CONCURENCIA
                            ,TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''yyyymmdd'') FEC_FIN_CONCURENCIA
                      FROM '||V_ESQUEMA||'.AUX_APR_BCR_STOCK AUX
@@ -216,7 +216,7 @@ SALIDA := SALIDA ||'[INFO] PARA LOS ACTIVOS QUE TENGAN REGISTROS EN LA TABLA CON
                               WHEN AGA.ACT_ID IS NOT NULL THEN AGA.AGR_ID
                               ELSE NULL
                            END AGR_ID
-                           ,TO_NUMBER(AUX.IMP_PRECIO_VENTA)/100 IMP_PRECIO_VENTA
+                           ,NVL(TO_NUMBER(AUX.IMP_PRECIO_VENTA)/100, VAL.VAL_IMPORTE) IMP_PRECIO_VENTA
                            ,TO_DATE(AUX.FEC_INICIO_CONCURENCIA, ''yyyymmdd'') FEC_INICIO_CONCURENCIA
                            ,TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''yyyymmdd'') FEC_FIN_CONCURENCIA
                      FROM '||V_ESQUEMA||'.AUX_APR_BCR_STOCK AUX
@@ -285,7 +285,7 @@ SALIDA := SALIDA ||'[INFO] 1.4 SE MODIFICA LA FECHA FIN EN LA TABLA CPC_CMB_PERI
                               WHEN AGA.ACT_ID IS NOT NULL THEN AGA.AGR_ID
                               ELSE NULL
                            END AGR_ID
-                           ,TO_NUMBER(AUX.IMP_PRECIO_VENTA)/100 IMP_PRECIO_VENTA
+                           ,NVL(TO_NUMBER(AUX.IMP_PRECIO_VENTA)/100, VAL.VAL_IMPORTE) IMP_PRECIO_VENTA
                            ,TO_DATE(AUX.FEC_INICIO_CONCURENCIA, ''yyyymmdd'') FEC_INICIO_CONCURENCIA
                            ,TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''yyyymmdd'') FEC_FIN_CONCURENCIA
                      FROM '||V_ESQUEMA||'.AUX_APR_BCR_STOCK AUX

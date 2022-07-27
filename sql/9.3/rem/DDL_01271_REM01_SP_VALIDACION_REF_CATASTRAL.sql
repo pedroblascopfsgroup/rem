@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Santi Monzó
---## FECHA_CREACION=20220203
+--## FECHA_CREACION=20220727
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-16737
@@ -37,6 +37,7 @@ CREATE OR REPLACE PROCEDURE SP_VALIDACION_REF_CATASTRAL AS
     valorCaracter number := NULL;
     sumaDigitos number := 0;
     var_LONGREF number;
+    var_commit number :=0;
     CURSOR c_product
   IS
      SELECT AUX.CAT_ID,AUX.CAT_ID2,AUX.CAT_CATASTRO,AUX.CAD1,AUX.CAD2,AUX.CAD3,AUX.LONGREF
@@ -191,6 +192,11 @@ dcCalculado := '';
            
         end if;
 
+        var_commit := var_commit+1;
+
+        IF (var_commit=10000) THEN
+            COMMIT;
+        END IF;
 
 END LOOP;
 

@@ -9443,11 +9443,11 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	    	String codigoCartera = rawDao.getExecuteSQL("SELECT cra.dd_Cra_codigo FROM act_activo act\n" + 
 	    			"join dd_cra_cartera cra on cra.dd_Cra_id = act.dd_Cra_id and cra.borrado = 0\n" + 
 	    			"where act.act_num_activo = :numActivo ");
-	    	
-	    	if(Checks.esNulo(codigoCartera)) {
+	    	params.clear();
+	    	if(!Checks.esNulo(codigoCartera)) {
 	    		params.put("codProveedor", codProveedor);
 	    		params.put("codigoCartera", codigoCartera);
-	    		
+	    		rawDao.addParams(params);
 	    		resultado = rawDao.getExecuteSQL("SELECT count(*) FROM act_pve_proveedor pve\n" +
 	    				"join bap_bloqueo_apis bap on pve.pve_id = bap.pve_id and bap.borrado = 0\n" + 
 	    				"join bac_bloqueo_apis_cartera bac on bac.bap_id = bap.bap_id and bac.borrado = 0\n" + 

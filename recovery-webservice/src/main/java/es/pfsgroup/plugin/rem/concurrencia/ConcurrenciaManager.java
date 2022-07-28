@@ -300,7 +300,6 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 			if(act != null){
 				List<ActivoOferta> ofertas = act.getOfertas();
 				HashMap<Long, List<Long>> noEntraDeposito = new HashMap<Long, List<Long>>();
-				//List<Long> idOfertasRechazadas = new ArrayList<Long>();
 				List<Long> idOfertaList = new ArrayList<Long>();
 	
 				if(ofertas != null && !ofertas.isEmpty()) {
@@ -311,7 +310,6 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 							if(!ofr.esOfertaAnulada() && !this.entraEnTiempoDeposito(ofr) || ConcurrenciaApi.COD_OFERTAS_PERDEDORAS.equals(codigoEnvioCorreo)){
 								noEntraDeposito.put(actOfr.getOferta(), rellenaMapOfertaCorreos(ofr));
 								ofertaApi.rechazoOfertaNew(ofr, null);
-								//ofertaApi.inicioRechazoDeOfertaSinLlamadaBC(ofr, null);
 								idOfertaList.add(ofr.getId());
 							}
 							genericDao.save(Oferta.class, ofr);

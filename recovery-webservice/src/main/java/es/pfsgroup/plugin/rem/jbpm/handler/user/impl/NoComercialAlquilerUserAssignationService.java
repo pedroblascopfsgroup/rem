@@ -28,6 +28,22 @@ public class NoComercialAlquilerUserAssignationService implements UserAssigantio
 	private static final 	String	CODIGO_T018_TRASLADAROFERTACLIENTE = "T018_TrasladarOfertaCliente";
 	private static final 	String	CODIGO_TO18_CIERRE = "T018_CierreContrato";
 	private static final 	String 	CODIGO_T018_BLOQUEOSCORING = "T018_BloqueoScoring";
+	private static final 	String 	CODIGO_T018_APROBACION_ALQUILER_SOCIAL = "T018_AprobacionAlquilerSocial";
+	private static final 	String 	CODIGO_T018_RESPUESTA_CONTRAOFERTA_BC = "T018_RespuestaContraofertaBC";
+	private static final 	String 	CODIGO_T018_ENTREGA_FIANZAS = "T018_EntregaFianzas";
+	private static final 	String 	CODIGO_T018_APROBACION_OFERTA = "T018_AprobacionOferta";
+	private static final 	String 	CODIGO_T018_COMUNICAR_SUBROGACION = "T018_ComunicarSubrogacion";
+	private static final 	String 	CODIGO_T018_ALTA_CONTRATO_ALQUILER = "T018_AltaContratoAlquiler";
+	private static final 	String 	CODIGO_T018_APROBACION_CONTRATO = "T018_AprobacionContrato";
+	private static final 	String 	CODIGO_T018_AGENDAR_FIRMA_ADENDA = "T018_AgendarFirmaAdenda";
+	private static final 	String 	CODIGO_T018_FIRMA_ADENDA = "T018_FirmaAdenda";
+	private static final 	String 	CODIGO_T018_ALTA_CONTRATO_ALQUILER_ADENDA = "T018_AltaContratoAlquilerAdenda";
+	private static final 	String 	CODIGO_T018_PROPONER_RECESION_CLIENTE = "T018_ProponerRescisionCliente";
+	private static final 	String 	CODIGO_T018_FIRMA_RECESION_CONTRATO = "T018_FirmaRescisionContrato";
+	private static final 	String 	CODIGO_T018_RESPUESTA_REAGENDACION_BC = "T018_RespuestaReagendacionBC";
+	private static final 	String 	CODIGO_T018_FIRMA_CONTRATO = "T018_FirmaContrato";
+	private static final 	String 	CODIGO_T018_AGENDAR_FIRMA = "T018_AgendarFirma";
+	private static final 	String 	CODIGO_T018_RESPUESTA_OFERTA_BC = "T018_RespuestaOfertaBC";
 
 	@Autowired
 	private GestorActivoApi gestorActivoApi;
@@ -41,7 +57,8 @@ public class NoComercialAlquilerUserAssignationService implements UserAssigantio
 	public String[] getCodigoTarea() {
 		return new String[]{CODIGO_T018_AGENDARYFIRMAR, CODIGO_T018_DEFINICIONOFERTA, CODIGO_T018_PBCALQUILER, CODIGO_T018_PBCALQUILER,
 			CODIGO_T018_SCORING, CODIGO_T018_SOLICITARGARANTIASADICIONALES, CODIGO_T018_TRASLADAROFERTACLIENTE, CODIGO_T018_PTECLROD,
-			CODIGO_T018_ANALISISTECNICO,CODIGO_TO18_CIERRE,CODIGO_T018_BLOQUEOSCORING};
+			CODIGO_T018_ANALISISTECNICO,CODIGO_TO18_CIERRE,CODIGO_T018_BLOQUEOSCORING, CODIGO_T018_ALTA_CONTRATO_ALQUILER,
+			CODIGO_T018_ALTA_CONTRATO_ALQUILER_ADENDA, CODIGO_T018_RESPUESTA_REAGENDACION_BC, CODIGO_T018_RESPUESTA_OFERTA_BC};
 	}
 
 	@Override

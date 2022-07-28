@@ -40,11 +40,9 @@ public interface TramiteAlquilerNoComercialApi {
 	
 	boolean rechazaMenosDosVeces(TareaExterna tareaExterna);
 	
-	boolean conAdenda(TareaExterna tareaExterna);
+	boolean conAdenda(TareaExterna tareaExterna, String tipoAdenda);
 	
-	boolean esCarteraConcertada(TareaExterna tareaExterna);
-	
-	boolean fianzaExonerada(TareaExterna tareaExterna);
+	boolean esCarteraConcentrada(TareaExterna tareaExterna);
 	
 }
 

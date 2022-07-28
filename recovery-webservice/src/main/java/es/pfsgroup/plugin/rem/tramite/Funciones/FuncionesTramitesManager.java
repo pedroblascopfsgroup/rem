@@ -7,9 +7,16 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.rem.activo.ActivoManager;
 import es.pfsgroup.plugin.rem.api.*;
+import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
+import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
+import es.pfsgroup.plugin.rem.model.CuentasVirtualesAlquiler;
+import es.pfsgroup.plugin.rem.model.DtoCondicionantesExpediente;
+import es.pfsgroup.plugin.rem.model.DtoTabFianza;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.Fianzas;
 import es.pfsgroup.plugin.rem.model.HistoricoTareaPbc;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.VGridDescuentoColectivos;
@@ -18,6 +25,9 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoOfertaAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTareaPbc;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.commons.validator.routines.checkdigit.IBANCheckDigit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +39,7 @@ import java.util.Set;
 @Service("funcionesTramitesManager")
 public class FuncionesTramitesManager implements FuncionesTramitesApi {
 	
+	protected static final Log logger = LogFactory.getLog(ActivoManager.class);
 	
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
@@ -50,6 +61,9 @@ public class FuncionesTramitesManager implements FuncionesTramitesApi {
 	
 	@Autowired
 	private OfertaApi ofertaApi;
+	
+	@Autowired
+	private ExpedienteComercialDao expedienteComercialDao;
 	
 	@Override
 	public boolean tieneRellenosCamposAnulacion(TareaExterna tareaExterna){
@@ -182,6 +196,90 @@ public class FuncionesTramitesManager implements FuncionesTramitesApi {
 				ComercialUserAssigantionService.TramiteAlquilerNoComercialT018.CODIGO_T018_BLOQUEOSCORING,
 				ComercialUserAssigantionService.CODIGO_T017_BLOQUEOSCORING};
 		return Arrays.asList(tareasBloqueoScoring);
+	}
+	
+	@Override
+	public boolean checkIBANValido(TareaExterna tareaExterna, String numIban) {
+		boolean resultado = false;
+		IBANCheckDigit iban = new IBANCheckDigit();
+		
+		try {
+			if (numIban != null) {
+				resultado = iban.isValid(numIban);
+			}
+		} catch (Exception e) {
+			logger.error("error en TramiteAlquilerManager", e);
+		}
+			
+		return resultado;
+	}
+	
+	@Override
+	public boolean checkCuentasVirtualesAlquilerLibres(TareaExterna tareaExterna) {
+		boolean resultado = false;
+		ExpedienteComercial eco = expedienteComercialApi.tareaExternaToExpedienteComercial(tareaExterna);
+		if (eco != null && eco.getOferta() != null) {
+			Oferta ofr = eco.getOferta();
+			if (ofr != null) {
+				Filter filterCva =  genericDao.createFilter(FilterType.EQUALS, "subcartera", ofr.getActivoPrincipal().getSubcartera());
+				List <CuentasVirtualesAlquiler> cva = genericDao.getList(CuentasVirtualesAlquiler.class, filterCva);
+				if (cva != null && cva.size() >= 1 && !cva.isEmpty()) {
+					for (CuentasVirtualesAlquiler cuentasVirtualesAlquiler : cva) {
+						if (Checks.isFechaNula(cuentasVirtualesAlquiler.getFechaInicio())) {
+							resultado = true;
+							break;
+						}
+					}
+				}
+			}
+		}
+			
+		return resultado;
+	}
+	
+	@Override
+	public boolean checkFechaAgendacionRelleno(Long idExpediente){
+		boolean resultado = false;
+		ExpedienteComercial eco = expedienteComercialDao.get(idExpediente);
+		if (eco != null && eco.getOferta() != null) {
+			Filter filterEco =  genericDao.createFilter(FilterType.EQUALS, "oferta.id", eco.getOferta().getId());
+			Fianzas fia = genericDao.get(Fianzas.class, filterEco);
+			if(fia != null && !Checks.isFechaNula(fia.getFechaAgendacionIngreso())) {
+				resultado = true;
+			}
+		}
+		
+		return resultado;
+	}
+	
+	@Override
+	public DtoCondicionantesExpediente getFianzaExonerada(Long idExpediente) {
+		DtoCondicionantesExpediente dto = new DtoCondicionantesExpediente();
+		ExpedienteComercial eco = expedienteComercialApi.findOne(idExpediente);
+		CondicionanteExpediente coe = eco.getCondicionante();
+		if (coe != null) {
+			dto.setFianzaExonerada(coe.getFianzaExonerada());
+		}		
+		
+		return dto;
+	}
+	
+	@Override
+	public DtoTabFianza getDtoFianza(Long idExpediente) {
+		DtoTabFianza dto = new DtoTabFianza();
+		ExpedienteComercial eco = expedienteComercialApi.findOne(idExpediente);
+		Oferta ofr = eco.getOferta();
+		if (ofr != null) {
+			Filter filterEco =  genericDao.createFilter(FilterType.EQUALS, "oferta.id", ofr.getId());
+			Fianzas fia = genericDao.get(Fianzas.class, filterEco);
+			if (fia != null) {
+				dto.setAgendacionIngreso(fia.getFechaAgendacionIngreso());
+				dto.setImporteFianza(fia.getImporte());
+				dto.setIbanDevolucion(fia.getIbanDevolucion());
+			}	
+		}
+		
+		return dto;
 	}
 
 	@Override

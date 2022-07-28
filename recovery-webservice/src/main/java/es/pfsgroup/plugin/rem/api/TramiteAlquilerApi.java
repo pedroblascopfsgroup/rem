@@ -43,18 +43,8 @@ public interface TramiteAlquilerApi {
 	boolean expedienteTieneRiesgo(Long idExpediente);
 
 	boolean siUsuarioTieneFuncionAvanzarPBC();
-
-	boolean checkIBANValido(TareaExterna tareaExterna, String numIban);
-
-	boolean checkFechaAgendacionRelleno(Long idExpediente);
-
-	DtoCondicionantesExpediente getFianzaExonerada(Long idExpediente);
-
-	DtoTabFianza getDtoFianza(Long idExpediente);
-
+	
 	boolean getRespuestaHistReagendacionMayor(TareaExterna tareaExterna);
-
-	boolean checkCuentasVirtualesAlquilerLibres(TareaExterna tareaExterna);
 	
 }
 

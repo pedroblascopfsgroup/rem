@@ -3277,7 +3277,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView tieneFechaAgendacionRelleno(Long idExpediente, ModelMap model) {
 		try{
-			model.put(RESPONSE_DATA_KEY, tramiteAlquilerApi.checkFechaAgendacionRelleno(idExpediente));
+			model.put(RESPONSE_DATA_KEY, funcionesTramitesApi.checkFechaAgendacionRelleno(idExpediente));
 		} catch (JsonViewerException e) {
 			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
 			model.put(RESPONSE_SUCCESS_KEY, false);
@@ -3295,7 +3295,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getFianzaExonerada(ModelMap model, Long idExpediente) {
 		try {
-			model.put(RESPONSE_DATA_KEY, tramiteAlquilerApi.getFianzaExonerada(idExpediente));
+			model.put(RESPONSE_DATA_KEY, funcionesTramitesApi.getFianzaExonerada(idExpediente));
 			model.put(RESPONSE_SUCCESS_KEY, true);
 
 		} catch (Exception e) {
@@ -3311,7 +3311,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getDtoFianza(ModelMap model, Long idExpediente) {
 		try {
-			model.put(RESPONSE_DATA_KEY, tramiteAlquilerApi.getDtoFianza(idExpediente));
+			model.put(RESPONSE_DATA_KEY, funcionesTramitesApi.getDtoFianza(idExpediente));
 
 		} catch (Exception e) {
 			model.put("error", false);
@@ -3329,7 +3329,6 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		try {
 			expedienteComercialApi.desbloquearExpediente(idOferta);
 			model.put(RESPONSE_SUCCESS_KEY, true);
-
 		} catch (Exception e) {
 			model.put("error", false);
 			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());

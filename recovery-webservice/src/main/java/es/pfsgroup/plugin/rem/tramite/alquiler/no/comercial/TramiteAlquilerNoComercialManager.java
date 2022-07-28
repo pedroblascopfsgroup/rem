@@ -8,20 +8,27 @@ import org.springframework.stereotype.Service;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.TramiteAlquilerNoComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
+import es.pfsgroup.plugin.rem.model.ActivoCaixa;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
+import es.pfsgroup.plugin.rem.model.CuentasVirtualesAlquiler;
 import es.pfsgroup.plugin.rem.model.DtoTiposAlquilerNoComercial;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.Fianzas;
+import es.pfsgroup.plugin.rem.model.HistoricoReagendacion;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoOfertaAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAdenda;
 
 @Service("tramiteAlquilerNoComercialManager")
 public class TramiteAlquilerNoComercialManager implements TramiteAlquilerNoComercialApi {
@@ -242,26 +249,50 @@ public class TramiteAlquilerNoComercialManager implements TramiteAlquilerNoComer
 
 	@Override
 	public boolean rechazaMenosDosVeces(TareaExterna tareaExterna) {
-		// TODO Auto-generated method stub
-		return true;
+		boolean resultado = false;
+		ExpedienteComercial eco = expedienteComercialApi.tareaExternaToExpedienteComercial(tareaExterna);
+		if (eco != null && eco.getOferta() != null) {
+			Filter filterEco =  genericDao.createFilter(FilterType.EQUALS, "oferta.id", eco.getOferta().getId());
+			Fianzas fia = genericDao.get(Fianzas.class, filterEco);
+			if(fia != null) {
+				Filter filterFia =  genericDao.createFilter(FilterType.EQUALS, "fianza.id", fia.getId());
+				List <HistoricoReagendacion> histReag = genericDao.getList(HistoricoReagendacion.class, filterFia);
+				if (histReag != null && !histReag.isEmpty()) {
+					if (histReag.size() < 3) {
+						resultado = true;
+					}
+				}
+			}
+		}
+		return resultado;
 	}
 
 	@Override
-	public boolean conAdenda(TareaExterna tareaExterna) {
-		// TODO Auto-generated method stub
-		return true;
+	public boolean conAdenda(TareaExterna tareaExterna, String tipoAdenda) {
+		boolean resultado = false;
+		if(DDTipoAdenda.CODIGO_NO_APLICA_ADENDA.equals(tipoAdenda)) {
+			resultado = true;
+		}
+		return resultado;
 	}
 
 	@Override
-	public boolean esCarteraConcertada(TareaExterna tareaExterna) {
-		// TODO Auto-generated method stub
-		return true;
-	}
-
-	@Override
-	public boolean fianzaExonerada(TareaExterna tareaExterna) {
-		// TODO Auto-generated method stub
-		return true;
+	public boolean esCarteraConcentrada(TareaExterna tareaExterna) {
+		boolean resultado = false;
+		ExpedienteComercial eco = expedienteComercialApi.tareaExternaToExpedienteComercial(tareaExterna);
+		if (eco != null && eco.getOferta() != null) {
+			Oferta ofr = eco.getOferta();
+			if (ofr != null) {
+				Filter filterActivo =  genericDao.createFilter(FilterType.EQUALS, "activo.id", ofr.getActivoPrincipal().getId());
+				ActivoCaixa activoCaixa = genericDao.get(ActivoCaixa.class, filterActivo);
+				if (activoCaixa != null 
+						&& (activoCaixa.getCarteraConcentrada().equals(true) || activoCaixa.getCarteraConcentrada() == true)) {
+					resultado = true;
+				}
+			}
+		}
+			
+		return resultado;
 	}
 	
 }

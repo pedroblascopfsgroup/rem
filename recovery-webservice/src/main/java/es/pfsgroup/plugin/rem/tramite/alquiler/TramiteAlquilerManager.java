@@ -358,7 +358,7 @@ public class TramiteAlquilerManager implements TramiteAlquilerApi {
 		return resultado;
 	}
 	
-	@Override
+	/*@Override
 	public boolean checkIBANValido(TareaExterna tareaExterna, String numIban) {
 		boolean resultado = false;
 		IBANCheckDigit iban = new IBANCheckDigit();
@@ -393,50 +393,5 @@ public class TramiteAlquilerManager implements TramiteAlquilerApi {
 		}
 			
 		return resultado;
-	}
-	
-	@Override
-	public boolean checkFechaAgendacionRelleno(Long idExpediente){
-		boolean resultado = false;
-		ExpedienteComercial eco = expedienteComercialDao.get(idExpediente);
-		if (eco != null && eco.getOferta() != null) {
-			Filter filterEco =  genericDao.createFilter(FilterType.EQUALS, "oferta.id", eco.getOferta().getId());
-			Fianzas fia = genericDao.get(Fianzas.class, filterEco);
-			if(fia != null && !Checks.isFechaNula(fia.getFechaAgendacionIngreso())) {
-				resultado = true;
-			}
-		}
-		
-		return resultado;
-	}
-	
-	@Override
-	public DtoCondicionantesExpediente getFianzaExonerada(Long idExpediente) {
-		DtoCondicionantesExpediente dto = new DtoCondicionantesExpediente();
-		ExpedienteComercial eco = expedienteComercialApi.findOne(idExpediente);
-		CondicionanteExpediente coe = eco.getCondicionante();
-		if (coe != null) {
-			dto.setFianzaExonerada(coe.getFianzaExonerada());
-		}		
-		
-		return dto;
-	}
-	
-	@Override
-	public DtoTabFianza getDtoFianza(Long idExpediente) {
-		DtoTabFianza dto = new DtoTabFianza();
-		ExpedienteComercial eco = expedienteComercialApi.findOne(idExpediente);
-		Oferta ofr = eco.getOferta();
-		if (ofr != null) {
-			Filter filterEco =  genericDao.createFilter(FilterType.EQUALS, "oferta.id", ofr.getId());
-			Fianzas fia = genericDao.get(Fianzas.class, filterEco);
-			if (fia != null) {
-				dto.setAgendacionIngreso(fia.getFechaAgendacionIngreso());
-				dto.setImporteFianza(fia.getImporte());
-				dto.setIbanDevolucion(fia.getIbanDevolucion());
-			}	
-		}
-		
-		return dto;
-	}
+	}*/
 }

@@ -404,7 +404,6 @@
 			</action>
 		</event>
 		<transition to="T018_EntregaFianzasDecision" name="avanzaBPM"></transition>
-		<transition to="Fin" name="Fin"></transition>
 	</state> 
 	<decision name ="T018_EntregaFianzasDecision" expression="#{T018_EntregaFianzasDecision}">
 		<transition to="T018_FirmaContrato" name="acepta"></transition>
@@ -433,13 +432,12 @@
 			</action>
 		</event>
 		<transition to="T018_AprobacionOfertaDecision" name="avanzaBPM"></transition>
-		<transition to="Fin" name="Fin"></transition>
 	</state> 
 	<decision name ="T018_AprobacionOfertaDecision" expression="#{T018_AprobacionOfertaDecision}">
 		<transition to="T018_ComunicarSubrogacion" name="aceptaSubrogacionDacion"></transition>
 		<transition to="T018_AgendarFirma" name="aceptaRenovacion"></transition>
 		<transition to="T018_RespuestaContraofertaBC" name="rechazaRenovacion"></transition>
-		<transition to="Fin" name="rechazaSubrogacionDacion"></transition>
+		<transition to="T018_ComunicarSubrogacion" name="rechazaSubrogacionDacion"></transition>
 	</decision>
 	
 	<state name="T018_ComunicarSubrogacion">
@@ -517,12 +515,10 @@
 			</action>
 		</event>
 		<transition to="T018_AprobacionContratoDecision" name="avanzaBPM"></transition>
-		<transition to="Fin" name="Fin"></transition>
 	</state> 
 	<decision name ="T018_AprobacionContratoDecision" expression="#{T018_AprobacionContratoDecision}">
-		<transition to="T018_AltaContratoAlquiler" name="aceptaSinAdenda"></transition>
+		<transition to="T018_AltaContratoAlquilerAdenda" name="aceptaSinAdenda"></transition>
 		<transition to="T018_AgendarFirmaAdenda" name="aceptaConAdenda"></transition>
-		<transition to="Fin" name="rechaza"></transition>
 	</decision>
 	
 	<state name="T018_AgendarFirmaAdenda">
@@ -545,11 +541,9 @@
 			</action>
 		</event>
 		<transition to="T018_AgendarFirmaAdendaDecision" name="avanzaBPM"></transition>
-		<transition to="Fin" name="Fin"></transition>
 	</state> 
 	<decision name ="T018_AgendarFirmaAdendaDecision" expression="#{T018_AgendarFirmaAdendaDecision}">
 		<transition to="T018_FirmaAdenda" name="acepta"></transition>
-		<transition to="Fin" name="rechaza"></transition>
 	</decision>
 	
 	<state name="T018_RespuestaReagendacionBC">
@@ -572,11 +566,10 @@
 			</action>
 		</event>
 		<transition to="T018_RespuestaReagendacionBCDecision" name="avanzaBPM"></transition>
-		<transition to="Fin" name="Fin"></transition>
 	</state> 
 	<decision name ="T018_RespuestaReagendacionBCDecision" expression="#{T018_RespuestaReagendacionBCDecision}">
-		<transition to="T018_AgendarFirma" name="aceptar"></transition>
-		<transition to="T018_ProponerRescisionCliente" name="rechazar"></transition>
+		<transition to="T018_AgendarFirma" name="acepta"></transition>
+		<transition to="T018_ProponerRescisionCliente" name="rechaza"></transition>
 	</decision>
 	
 	<state name="T018_FirmaAdenda">
@@ -762,7 +755,6 @@
 			</action>
 		</event>
 		<transition to="T018_AgendarFirmaDecision" name="avanzaBPM"></transition>
-		<transition to="Fin" name="Fin"></transition>
 	</state> 
 	
 	<decision name ="T018_AgendarFirmaDecision" expression="#{T018_AgendarFirmaDecision}">

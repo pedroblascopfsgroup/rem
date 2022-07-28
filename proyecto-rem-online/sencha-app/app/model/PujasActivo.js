@@ -18,10 +18,10 @@ Ext.define('HreRem.model.PujasActivo', {
     		name : 'ofertante'
     	},
     	{
-    		name : 'descripcionEstadoOferta'
+    		name : 'estadoOferta'
     	},  
     	{
-    		name : 'descripcionEstadoDeposito'
+    		name : 'estadoDeposito'
     	}, 
     	{
     		name : 'fechaCreacion',

@@ -27,13 +27,13 @@ Ext.define('HreRem.view.activos.detalle.PujasComercialActivoList', {
 		            flex: 1
 		        },
 		        {
-		            dataIndex: 'descripcionEstadoOferta',
+		            dataIndex: 'estadoOferta',
 		            text: HreRem.i18n('header.oferta.estadoOferta'),
 		            reference: 'estadoOfertaRef',
 		            flex: 1
 		        },
 		        {
-		            dataIndex: 'descripcionEstadoDeposito',
+		            dataIndex: 'estadoDeposito',
 		            text: HreRem.i18n('header.pujas.estado.deposito'),
 		            reference: 'estadoDepositoRef',
 		            flex: 1

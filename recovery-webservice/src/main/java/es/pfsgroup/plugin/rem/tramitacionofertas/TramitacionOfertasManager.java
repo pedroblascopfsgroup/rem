@@ -320,7 +320,11 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		if(DDEstadoOferta.CODIGO_PDTE_DEPOSITO.equals(dto.getEstadoOferta())) {
 			saveOferta = !concurrenciaApi.caducaOfertaConcurrencia(oferta.getActivoPrincipal().getId(), oferta.getId());
 		} else if(DDEstadoOferta.CODIGO_ACEPTADA.equals(dto.getEstadoOferta()) && oferta.getIsEnConcurrencia() != null && oferta.getIsEnConcurrencia()) {
-			saveOferta = !concurrenciaApi.isOfertaEnPlazoConcu(false,  ofertaApi.getListaOfertasByActivo(oferta.getActivoPrincipal()));
+			List<Oferta> listaOfertas = ofertaApi.getListaOfertasByActivo(oferta.getActivoPrincipal());
+			for (Oferta of : listaOfertas) {
+				
+			}
+			saveOferta = !concurrenciaApi.isOfertaEnPlazoConcu(false,  listaOfertas);
 			if(!saveOferta)
 				dtoSaveAndReplicateResult.setMessage(messageServices.getMessage(ERROR_OFERTA_PERIODO_CONCURRENCIA_PENDIENTES_DEPOSITO));
 		}

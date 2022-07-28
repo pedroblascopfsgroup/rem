@@ -83,28 +83,37 @@ BEGIN
 
 			DBMS_OUTPUT.PUT_LINE('[INFO] INSERTAMOS NUEVO SUBTIPO GASTO');
 
-			V_MSQL := 'SELECT DD_TGA_ID FROM '||V_ESQUEMA||'.DD_TGA_TIPOS_GASTO WHERE DD_TGA_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(3))||''' AND BORRADO = 0';
-			EXECUTE IMMEDIATE V_MSQL INTO V_TGA_ID;
+            V_MSQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.DD_TGA_TIPOS_GASTO WHERE DD_TGA_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(3))||''' AND BORRADO = 0';
+			EXECUTE IMMEDIATE V_MSQL INTO V_COUNT;
 
-			V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.DD_STG_SUBTIPOS_GASTO (
-							 DD_STG_ID
-							,DD_TGA_ID
-							,DD_STG_CODIGO
-							,DD_STG_DESCRIPCION
-							,DD_STG_DESCRIPCION_LARGA
-							,USUARIOCREAR
-							,FECHACREAR
-						) VALUES ( 
-							'||V_ESQUEMA||'.S_DD_STG_SUBTIPOS_GASTO.NEXTVAL
-							, '||V_TGA_ID||'
-							, '''||TRIM(V_TMP_TIPO_DATA(1))||'''
-							, '''||TRIM(V_TMP_TIPO_DATA(2))||'''
-							, '''||TRIM(V_TMP_TIPO_DATA(2))||'''
-							, '''||V_USUARIO||'''
-							,SYSDATE)';
-			EXECUTE IMMEDIATE V_MSQL;
+            IF V_COUNT = 1 THEN
 
-			DBMS_OUTPUT.PUT_LINE('[INFO] INSERTADOS EL REGISTRO '||TRIM(V_TMP_TIPO_DATA(1))||' EN DD_STG_SUBTIPOS_GASTO');
+                V_MSQL := 'SELECT DD_TGA_ID FROM '||V_ESQUEMA||'.DD_TGA_TIPOS_GASTO WHERE DD_TGA_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(3))||''' AND BORRADO = 0';
+                EXECUTE IMMEDIATE V_MSQL INTO V_TGA_ID;
+
+                V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.DD_STG_SUBTIPOS_GASTO (
+                                DD_STG_ID
+                                ,DD_TGA_ID
+                                ,DD_STG_CODIGO
+                                ,DD_STG_DESCRIPCION
+                                ,DD_STG_DESCRIPCION_LARGA
+                                ,USUARIOCREAR
+                                ,FECHACREAR
+                            ) VALUES ( 
+                                '||V_ESQUEMA||'.S_DD_STG_SUBTIPOS_GASTO.NEXTVAL
+                                , '||V_TGA_ID||'
+                                , '''||TRIM(V_TMP_TIPO_DATA(1))||'''
+                                , '''||TRIM(V_TMP_TIPO_DATA(2))||'''
+                                , '''||TRIM(V_TMP_TIPO_DATA(2))||'''
+                                , '''||V_USUARIO||'''
+                                ,SYSDATE)';
+                EXECUTE IMMEDIATE V_MSQL;
+
+                DBMS_OUTPUT.PUT_LINE('[INFO] INSERTADOS EL REGISTRO '||TRIM(V_TMP_TIPO_DATA(1))||' EN DD_STG_SUBTIPOS_GASTO');
+
+            ELSE
+                DBMS_OUTPUT.PUT_LINE('[WARN] NO EXISTE EL TIPO GASTO '||TRIM(V_TMP_TIPO_DATA(3))||' EN DD_TGA_TIPOS_GASTO NO SE INSERTA '||TRIM(V_TMP_TIPO_DATA(1))||'');
+            END IF;
 
 		ELSE
 

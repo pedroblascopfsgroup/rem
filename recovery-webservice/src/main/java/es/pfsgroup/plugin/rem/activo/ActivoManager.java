@@ -8781,8 +8781,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			if(!Checks.esNulo(dtoActivoSuministros.getMotivoAlta())) {
 				peticion.setMotivoAlta(genericDao.get(DDMotivoAltaSuministro.class, genericDao.createFilter(FilterType.EQUALS, "id", dtoActivoSuministros.getMotivoAlta())));
 			}
-			if(!Checks.esNulo(dtoActivoSuministros.getFechaBaja())) {
-				peticion.setFechaBaja(dtoActivoSuministros.getFechaBaja());
+			if(!Checks.isFechaNula(dtoActivoSuministros.getFechaBaja())){
+				peticion.setFechaBaja(dtoActivoSuministros.getFechaBaja());			
 			}
 			if(!Checks.esNulo(dtoActivoSuministros.getMotivoBaja())) {
 				peticion.setMotivoBaja(genericDao.get(DDMotivoBajaSuministro.class, genericDao.createFilter(FilterType.EQUALS, "id", dtoActivoSuministros.getMotivoBaja())));
@@ -8860,9 +8860,13 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					}
 					if(!Checks.esNulo(dtoActivoSuministros.getMotivoAlta())) {
 						peticion.setMotivoAlta(genericDao.get(DDMotivoAltaSuministro.class, genericDao.createFilter(FilterType.EQUALS, "id", dtoActivoSuministros.getMotivoAlta())));
-					}
+					}				
 					if(!Checks.esNulo(dtoActivoSuministros.getFechaBaja())) {
-						peticion.setFechaBaja(dtoActivoSuministros.getFechaBaja());
+					    if(Checks.isFechaNula(dtoActivoSuministros.getFechaBaja())) {
+					        peticion.setFechaBaja(null);
+					    } else {
+					        peticion.setFechaBaja(dtoActivoSuministros.getFechaBaja());
+					    }
 					}
 					if(!Checks.esNulo(dtoActivoSuministros.getMotivoBaja())) {
 						peticion.setMotivoBaja(genericDao.get(DDMotivoBajaSuministro.class, genericDao.createFilter(FilterType.EQUALS, "id", dtoActivoSuministros.getMotivoBaja())));

@@ -1,8 +1,11 @@
 package es.pfsgroup.plugin.rem.api;
 
+import java.util.List;
+
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.HistoricoTareaPbc;
+import es.pfsgroup.plugin.rem.model.VGridHistoricoReagendaciones;
 
 public interface FuncionesTramitesApi {
 
@@ -19,5 +22,7 @@ public interface FuncionesTramitesApi {
 	boolean tieneMasUnaTareaBloqueo(ExpedienteComercial eco, String codigoTarea);
 
 	boolean tieneCampoClasificacionRelleno(TareaExterna tareaExterna);
+	
+	List<VGridHistoricoReagendaciones> getHistoricoReagendaciones(Long idExpediente);
 }
 

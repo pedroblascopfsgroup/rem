@@ -1918,6 +1918,16 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 				extraParams: {diccionario: 'estadoDeposito'}
 			},
 			autoLoad: true
+		},
+		storeHistoricoReagendaciones: {
+			pageSize: $AC.getDefaultPageSize(),
+	    	model: 'HreRem.model.HistoricoReagendacionesGridModel',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'expedientecomercial/getHistoricoReagendaciones',
+		        extraParams: {idExpediente: '{expediente.id}'}
+	    	},
+			autoLoad: true
 		}
-    }
+	}	
 });

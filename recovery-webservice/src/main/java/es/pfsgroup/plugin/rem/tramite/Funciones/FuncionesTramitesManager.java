@@ -12,6 +12,8 @@ import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionSer
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.HistoricoTareaPbc;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.VGridDescuentoColectivos;
+import es.pfsgroup.plugin.rem.model.VGridHistoricoReagendaciones;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoOfertaAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTareaPbc;
@@ -181,5 +183,16 @@ public class FuncionesTramitesManager implements FuncionesTramitesApi {
 				ComercialUserAssigantionService.CODIGO_T017_BLOQUEOSCORING};
 		return Arrays.asList(tareasBloqueoScoring);
 	}
+
+	@Override
+	public List<VGridHistoricoReagendaciones> getHistoricoReagendaciones(Long idExpediente) {
+		List<VGridHistoricoReagendaciones> historicoReagendaciones = new ArrayList<VGridHistoricoReagendaciones>();
+		if (idExpediente != null) {
+			historicoReagendaciones = genericDao.getList(VGridHistoricoReagendaciones.class, genericDao.createFilter(FilterType.EQUALS, "idExpedienteComercial", idExpediente));
+		}		
+		return historicoReagendaciones;
+	}
+	
+	
 
 }

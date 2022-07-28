@@ -9,7 +9,7 @@ Ext.define('HreRem.view.expedientes.FianzaExpediente', {
 	refreshAfterSave: true,
 	recordName: "fianza",
 	recordClass: "HreRem.model.Fianza",
-    requires: ['HreRem.model.Fianza','HreRem.view.activos.detalle.ActivoDetalleModel'],
+    requires: ['HreRem.model.Fianza','HreRem.view.activos.detalle.ActivoDetalleModel', 'HreRem.view.expedientes.HistoricoReagendacionesGrid'],
     
     listeners: {
 		boxready:'cargarTabData'
@@ -79,7 +79,19 @@ Ext.define('HreRem.view.expedientes.FianzaExpediente', {
 					 	'focusleave': 'checkIbanDevolucion'
 					}						
         	    }
-			]}
+			]},
+			{
+				xtype:'fieldsettable',
+				cls: 'fieldset-historico-asignaciones',
+				title: HreRem.i18n('title.historico.Reagendaciones'),
+				reference: 'historicoResignacionesRef',
+				items :	[
+					{
+						xtype: 'historicoReagendacionesGrid',
+						reference : 'historicoReagendacionesGridRef'
+					}
+				]
+			}
 		]
 
 		me.addPlugin({

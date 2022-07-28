@@ -127,7 +127,7 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 		if(listOfertas != null && !listOfertas.isEmpty()) {
 
 			for (Oferta oferta : listOfertas) {
-				if(this.entraEnTiempoDeposito(oferta) && DDEstadoOferta.isPendienteDeposito(oferta.getEstadoOferta())) {
+				if((this.entraEnTiempoDeposito(oferta) && DDEstadoOferta.isPendienteDeposito(oferta.getEstadoOferta())) || this.isOfertaEnEstadoBloqueadoParaTramitarConcurrencia(oferta.getEstadoOferta())) {
 					bloquear =  true;
 					break;
 				}
@@ -582,5 +582,14 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
             logger.error("Error al trazar la llamada al WS", e);
         }
     }
+	
+	private boolean isOfertaEnEstadoBloqueadoParaTramitarConcurrencia(DDEstadoOferta eof) {
+		boolean is = false;
+		if(DDEstadoOferta.isPteDoc(eof) || DDEstadoOferta.isPendienteConsentimiento(eof) || DDEstadoOferta.isPteTit(eof)){
+			is = true;
+		}
+		
+		return is;
+	}
 
 }

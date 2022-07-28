@@ -1513,4 +1513,37 @@ public interface ParticularValidatorApi {
 
 	Boolean isPerimetroMacc(String numActivo);
 
+    Boolean existeMotivoRechazoGasto(String codigo);
+
+    Boolean tieneDocumentoGasto(String numGasto);
+
+    Boolean tieneFacturaGasto(String numGasto);
+
+    Boolean tieneLineaDetalleGasto(String numGasto);
+
+	Boolean tieneTipoGasto(String numGasto);
+
+	Boolean tieneEmisorGasto(String numGasto);
+
+	Boolean tienePropietarioGasto(String numGasto);
+
+	Boolean tieneFechaEmisionGasto(String numGasto);
+
+	Boolean tieneTipoOperacionGasto(String numGasto);
+
+	Boolean tienePeriodicidadGasto(String numGasto);
+
+	Boolean tieneConceptoGasto(String numGasto);
+
+	Boolean tieneImporteGasto(String numGasto);
+
+	Boolean tieneGastoAbonadoGasto(String numGasto);
+
+	Boolean yaRechazadoPropietarioGasto(String numGasto);
+
+	Boolean carteraTangoGasto(String numGasto);
+
+	Boolean esAgrupadoGasto(String numGasto);
+
+	Boolean estaEstadoNoPermitidoGasto(String numGasto, String codigo);
 }

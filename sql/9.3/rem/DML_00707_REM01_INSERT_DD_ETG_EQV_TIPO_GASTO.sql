@@ -1,10 +1,10 @@
 --/*
 --#########################################
 --## AUTOR=Juan Bautista Alfonso
---## FECHA_CREACION=20220729
+--## FECHA_CREACION=20220728
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=REMVIP-12026
+--## INCIDENCIA_LINK=REMVIP-12100
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Actualizacion registros 
@@ -42,7 +42,8 @@
 --##		0.29 Añadir nuevas PEPs Otras entidades en que se integra el activo Otros/Gastos generales - Junta de compensación / EUC Gastos generales  - [REMVIP-11899] - Juan Bautista Alfonso
 --##		0.30 Añadir DD_CBC_CODIGO 01 y 03 para las pep XXXX-22-2-COM VT XXXX-22-2-A-COM VT - Comision gestion ventas - [REMVIP-11974] - Juan Bautista Alfonso
 --##		0.31 Añadir PEPs Comunidad de propietarios Regularizaciones - [REMVIP-11840] Juan Bautista Alfonso (22/07/22)
---##		0.32 Añadir PEP	para Alquiler PAO rotacional - [REMVIP-12026] - Juan Bautista Alfonso (29/07/22)																																						
+--##		0.32 Añadir PEP	para Alquiler PAO rotacional - [REMVIP-12026] - Juan Bautista Alfonso (29/07/22)		
+--##		0.33 Añadir PEP para subtipo Duplicado Cedula habitabilidad - [REMVIP-12100] - Juan Bautista Alfonso (29/07/22)																																				
 --#########################################
 --*/
 
@@ -58,7 +59,7 @@ DECLARE
 	ERR_MSG VARCHAR2(2048);-- Mensaje de error
 	V_SQL VARCHAR2(4000 CHAR);
 	PL_OUTPUT VARCHAR2(32000 CHAR);
-	V_USUARIO VARCHAR2(50 CHAR) := 'REMVIP-12026';
+	V_USUARIO VARCHAR2(50 CHAR) := 'REMVIP-12100';
 	V_NUM_REGISTROS NUMBER; -- Cuenta registros 
 	V_NUM NUMBER;
 	V_FLAG_VACIADO NUMBER := 0;
@@ -518,7 +519,10 @@ DECLARE
 		T_TABLA('1114','XXXX-22-2-A-COM','22','00','3','05','131','03','','','null','','','','2022'),
 
 		--Añadir PEP para Alquiler PAO rotacional - REMVIP-12026 (29/07/22)
-		T_TABLA('1117','XXXX-22-1-A_PUE','22','03','79','16','150','02','','','null','','','','2022')
+		T_TABLA('1117','XXXX-22-1-A_PUE','22','03','79','16','150','02','','','null','','','','2022'),
+
+		--Añadir PEP para Duplicado Cedula Habitabilidad - REMVIP-12100 (29/07/22)
+		T_TABLA('1118','XXXX-22-2-INF MNTO','22','00','52','14','194','01','','','null','','','','2022')
 
     ); 
     V_TMP_TABLA T_TABLA;

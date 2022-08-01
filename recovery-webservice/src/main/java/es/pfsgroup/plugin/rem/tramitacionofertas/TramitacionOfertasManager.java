@@ -98,6 +98,7 @@ import es.pfsgroup.plugin.rem.model.GastosExpediente;
 import es.pfsgroup.plugin.rem.model.GestorActivo;
 import es.pfsgroup.plugin.rem.model.InfoAdicionalPersona;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.OfertaCaixa;
 import es.pfsgroup.plugin.rem.model.OfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.Reserva;
@@ -115,6 +116,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoContrasteListas;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInterlocutor;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOfertaBC;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
@@ -735,6 +737,17 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 				.dameValorDiccionarioByCod(DDEstadosExpedienteComercial.class,
 						estadoEcoCod);
 		nuevoExpediente.setEstado(estadoExpediente);
+		
+		if (DDEstadosExpedienteComercial.EN_TRAMITACION.equals(estadoExpediente.getCodigo()) && 
+				DDCartera.CODIGO_CAIXA.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) && oferta.getOfertaCaixa() != null && concurrenciaApi.isOfertaEnConcurrencia(oferta)) {
+
+			DDEstadoOfertaBC estadoOfertaBC = genericDao.get(DDEstadoOfertaBC.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOfertaBC.CODIGO_TRAMITE_CONCURRENCIA_EN_TRAMITACION));
+			if(estadoOfertaBC != null) {
+				OfertaCaixa ofertaCaixa = oferta.getOfertaCaixa();
+				ofertaCaixa.setEstadoOfertaBc(estadoOfertaBC);
+				genericDao.save(OfertaCaixa.class, ofertaCaixa);
+			}
+		}
 		
 		if(!Checks.esNulo(oferta.getOrigen()) && DDSistemaOrigen.CODIGO_WEBCOM.equals(oferta.getOrigen().getCodigo())) {
 			subestadoCod = DDSubestadosExpedienteComercial.NO_ENVIADO;

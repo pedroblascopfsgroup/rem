@@ -3016,6 +3016,15 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					}
 				} else {
 					estadoExpCom = expedienteComercialApi.getDDEstadosExpedienteComercialByCodigo(DDEstadosExpedienteComercial.EN_TRAMITACION);
+					if (DDCartera.CODIGO_CAIXA.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) && oferta.getOfertaCaixa() != null && concurrenciaApi.isOfertaEnConcurrencia(oferta)) {
+
+						DDEstadoOfertaBC estadoOfertaBC = genericDao.get(DDEstadoOfertaBC.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOfertaBC.CODIGO_TRAMITE_CONCURRENCIA_EN_TRAMITACION));
+						if(estadoOfertaBC != null) {
+							OfertaCaixa ofertaCaixa = oferta.getOfertaCaixa();
+							ofertaCaixa.setEstadoOfertaBc(estadoOfertaBC);
+							genericDao.save(OfertaCaixa.class, ofertaCaixa);
+						}
+					}
 				}
 
 				if (estadoExpCom != null)
@@ -9502,7 +9511,18 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		else if (DDEstadoOferta.CODIGO_RECHAZADA.equals(estadoOferta.getCodigo())) {
 			filtroEstadoOfertaBC = genericDao.createFilter(FilterType.EQUALS, "codigo", estadoOfertaByCondiciones(oferta));
 		}
-		
+
+		if(concurrenciaApi.isOfertaEnConcurrencia(oferta)) {
+			if(DDEstadoOferta.CODIGO_PENDIENTE_TITULARES.equals(estadoOferta.getCodigo()))
+				filtroEstadoOfertaBC = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOfertaBC.CODIGO_TRAMITE_CONCURRENCIA_PDTE_TITULARES_ADICIONALES);
+			else if(DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION.equals(estadoOferta.getCodigo()))
+				filtroEstadoOfertaBC = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOfertaBC.CODIGO_TRAMITE_CONCURRENCIA_CON_DOCUMENTACION);
+			else if(DDEstadoOferta.CODIGO_PDTE_DEPOSITO.equals(estadoOferta.getCodigo()))
+				filtroEstadoOfertaBC = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOfertaBC.CODIGO_TRAMITE_CONCURRENCIA_PDTE_PAGO_DEPOSITO);
+			else if(DDEstadoOferta.CODIGO_PENDIENTE.equals(estadoOferta.getCodigo()))
+				filtroEstadoOfertaBC = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOfertaBC.CODIGO_TRAMITE_CONCURRENCIA_PDTE_APROBACION);
+		}
+				
 		if(filtroEstadoOfertaBC != null) {
 			DDEstadoOfertaBC estadoOfertaBC = genericDao.get(DDEstadoOfertaBC.class, filtroEstadoOfertaBC);
 			if(estadoOfertaBC != null) {
@@ -9519,7 +9539,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		if(!Checks.esNulo(expediente) && DDEstadosReserva.tieneReservaFirmada(expediente.getReserva())) {
 			return DDEstadoOfertaBC.CODIGO_SOLICITAR_DEVOLUCION_RESERVA_ARRAS;
 		} else if (depositoApi.isDepositoIngresado(oferta.getDeposito())) {
-			return DDEstadoOfertaBC.CODIGO_DEVOLUCION_DEPOSITO;
+			return DDEstadoOfertaBC.CODIGO_SOLICITAR_DEVOLUCION_RESERVA_DEPOSITO;
 		} else {
 			return DDEstadoOfertaBC.CODIGO_CANCELADA;
 		}

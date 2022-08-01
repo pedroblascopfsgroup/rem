@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=Adrián Moliina
---## FECHA_CREACION=20220721
+--## AUTOR=Javier Esbri
+--## FECHA_CREACION=20220801
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-18266
+--## INCIDENCIA_LINK=HREOS-18499
 --## PRODUCTO=NO
 --## Finalidad:  Script que añade en DD_OAC_OFERTA_ACCIONES los datos añadidos en T_ARRAY_DATA.
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 Añadir nuevos estados - HREOS-18499 [Javier Esbri]
 --##########################################
 --*/
 
@@ -31,7 +32,7 @@ DECLARE
     V_ID NUMBER(16); -- Vble. auxiliar para almacenar temporalmente el numero de la sequencia.
     DD_EEC_ID NUMBER(16); -- Vble. para almacenar el id del estado del expediente
     V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'DD_OAC_OFERTA_ACCIONES'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
-    V_USUARIO VARCHAR2(200 CHAR) := 'HREOS-18266';
+    V_USUARIO VARCHAR2(200 CHAR) := 'HREOS-18499';
 
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
@@ -39,7 +40,10 @@ DECLARE
   		T_TIPO_DATA('052', 'Fianza abonada','Fianza abonada'),
   	  	T_TIPO_DATA('053', 'Fianza no abonada','Fianza no abonada'),
   	  	T_TIPO_DATA('054', 'Clausulado no negociable','Clausulado no negociable'),
-  	  	T_TIPO_DATA('055', 'Borrador enviado','Borrador enviado')
+  	  	T_TIPO_DATA('055', 'Borrador enviado','Borrador enviado'),
+        -- ↓↓↓ HREOS_18499 ↓↓↓
+        T_TIPO_DATA('048', 'Rescindir contrato','Rescindir contrato'),
+        T_TIPO_DATA('049', 'Aprobado contraoferta','Aprobado contraoferta')
   ); 
 
     V_TMP_TIPO_DATA T_TIPO_DATA;

@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=Adrián Molina
---## FECHA_CREACION=20220720
+--## AUTOR=Javier Esbri
+--## FECHA_CREACION=20220801
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-18266
+--## INCIDENCIA_LINK=HREOS-18499
 --## PRODUCTO=NO
 --##
 --## Finalidad: Script que añade en DD_EEB_ESTADO_EXPEDIENTE_BC los datos añadidos en T_ARRAY_DATA
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 Añadir nuevos estados al expediente BC - HREOS-18499 [Javier Esbri]
 --##########################################
 --*/
 
@@ -32,7 +33,7 @@ DECLARE
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
     V_ENTIDAD_ID NUMBER(16);
     V_ID NUMBER(16);
-    V_ITEM VARCHAR2(25 CHAR):= 'HREOS-18266';
+    V_ITEM VARCHAR2(25 CHAR):= 'HREOS-18499';
 
     V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'DD_EEB_ESTADO_EXPEDIENTE_BC'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
     
@@ -45,7 +46,13 @@ DECLARE
        T_TIPO_DATA('052', 			'Pte validación cambios clausurado en clausulado', 		'780'),
        T_TIPO_DATA('053', 			'Clausulado no negociable', 							'790'),
        T_TIPO_DATA('054', 			'Entrega de fianzas/garantías/Aval', 					'740'),
-       T_TIPO_DATA('055', 			'Borrador aceptado', 									'730')
+       T_TIPO_DATA('055', 			'Borrador aceptado', 									'730'),
+	   -- ↓↓↓ HREOS_18499 ↓↓↓
+	   T_TIPO_DATA('056', 			'Comunicar subrogación del contrato ', 										'770'),
+	   T_TIPO_DATA('057', 			'Adenda necesaria', 														''),
+	   T_TIPO_DATA('058', 			'Gestión de adecuaciones y certificaciones ofrecidas por el cliente', 		'750'),
+	   T_TIPO_DATA('059', 			'Recisión Contrato', 														'600'),
+	   T_TIPO_DATA('060', 			'Recisión agendada', 														'760')
 		); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

@@ -232,6 +232,28 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 							valueField: 'codigo'
 						},
 						{
+							xtype : 'datefieldbase',
+							formatter : 'date("d/m/Y")',
+							fieldLabel : HreRem.i18n('fieldlabel.fecha.inicio.subrogacion'),
+							readOnly : true,
+							bind : {
+								value : '{datosbasicosoferta.fechaInicioSubrogacion}',
+								hidden: '{!esAlquilerNoComercial}' 
+							}
+						},
+						{
+		                	xtype: 'comboboxfieldbase',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.auto.firme'),
+		                	name: 'comboautofirme',
+		                	reference: 'comboautofirmeRef',
+		                	bind: {	
+			                	readOnly : true,
+		                		store: '{comboSiNoBoolean}',
+								value: '{datosbasicosoferta.autoFirme}'
+		                	}
+		                
+		                },
+						{
 							bind : {hidden : '{!esTipoAlquiler}'}
 						}
 					]},

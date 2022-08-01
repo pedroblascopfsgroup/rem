@@ -346,7 +346,16 @@ Ext.define('HreRem.model.DatosBasicosOferta', {
     		},
     		{
     			name: 'descripcionTipoAdenda'
-    		}
+    		},
+            {
+            	name:'fechaInicioSubrogacion',
+            	type:'date',
+        		dateFormat: 'c'
+            },
+            {
+            	name:'autoFirme',
+    			type: 'boolean'   	
+            }
             
     		
     ],

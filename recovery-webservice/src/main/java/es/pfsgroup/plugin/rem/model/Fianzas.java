@@ -63,6 +63,9 @@ public class Fianzas implements Serializable, Auditable {
 	@Column(name = "FIA_IBAN_DEVOLUCION")
 	private String ibanDevolucion;
 	
+	@Column(name = "ENTREGA_FIANZA_AAPP")
+    private Boolean entregaFianzaAapp;
+	
 	@Version
 	private Long version;
 
@@ -141,6 +144,12 @@ public class Fianzas implements Serializable, Auditable {
 		this.auditoria = auditoria;
 	}
 
+	public Boolean getEntregaFianzaAapp() {
+		return entregaFianzaAapp;
+	}
 
+	public void setEntregaFianzaAapp(Boolean entregaFianzaAapp) {
+		this.entregaFianzaAapp = entregaFianzaAapp;
+	}
 	
 }

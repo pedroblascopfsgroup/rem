@@ -195,6 +195,10 @@ public class DtoDatosBasicosOferta extends WebDto {
 	
 	private String descripcionTipoAdenda;
 	
+	private Date fechaInicioSubrogacion;
+	
+	private Boolean autoFirme;
+	
 	public Boolean getEstadoAprobadoLbk() {
 		return estadoAprobadoLbk;
 	}
@@ -957,6 +961,22 @@ public class DtoDatosBasicosOferta extends WebDto {
 
 	public void setDescripcionTipoAdenda(String descripcionTipoAdenda) {
 		this.descripcionTipoAdenda = descripcionTipoAdenda;
+	}
+
+	public Date getFechaInicioSubrogacion() {
+		return fechaInicioSubrogacion;
+	}
+
+	public void setFechaInicioSubrogacion(Date fechaInicioSubrogacion) {
+		this.fechaInicioSubrogacion = fechaInicioSubrogacion;
+	}
+
+	public Boolean getAutoFirme() {
+		return autoFirme;
+	}
+
+	public void setAutoFirme(Boolean autoFirme) {
+		this.autoFirme = autoFirme;
 	}
 	
 }

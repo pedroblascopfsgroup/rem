@@ -18,6 +18,7 @@ public class DtoTabFianza extends WebDto {
 	private Date fechaIngreso;
 	private String cuentaVirtual;
 	private String ibanDevolucion;
+	private Boolean entregaFianzaAapp;
 	
 	public Long getId() {
 		return id;
@@ -62,7 +63,11 @@ public class DtoTabFianza extends WebDto {
 	public void setIdFianza(Long idFianza) {
 		this.idFianza = idFianza;
 	}
-
-
+	public Boolean getEntregaFianzaAapp() {
+		return entregaFianzaAapp;
+	}
+	public void setEntregaFianzaAapp(Boolean entregaFianzaAapp) {
+		this.entregaFianzaAapp = entregaFianzaAapp;
+	}
 	
 }

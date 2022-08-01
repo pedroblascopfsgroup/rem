@@ -27,7 +27,11 @@ Ext.define('HreRem.model.Fianza', {
     		},
     		{
     			name:'idFianza'
-    		}
+    		},
+    		{
+    			name: 'entregaFianzaAapp',
+    			type: 'boolean'
+			}
     ],
 
 	proxy: {

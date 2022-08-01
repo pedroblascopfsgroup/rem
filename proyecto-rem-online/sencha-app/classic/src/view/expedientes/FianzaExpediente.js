@@ -78,7 +78,19 @@ Ext.define('HreRem.view.expedientes.FianzaExpediente', {
 					listeners: {
 					 	'focusleave': 'checkIbanDevolucion'
 					}						
-        	    }
+        	    },
+        	    {
+                	xtype: 'comboboxfieldbase',
+                	fieldLabel:  HreRem.i18n('fieldlabel.entrega.fianza.aapp'),
+                	name: 'comboentregafianzaaapp',
+                	reference: 'comboentregafianzaaappRef',
+                	bind: {	
+	                	readOnly : true,
+                		store: '{comboSiNoBoolean}',
+						value: '{fianza.entregaFianzaAapp}'
+                	}
+                
+                }
 			]},
 			{
 				xtype:'fieldsettable',

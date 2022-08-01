@@ -2465,7 +2465,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				dto.setCodigoTipoAdenda(null);
 			}
 			
+		if (oferta.getFechaInicioSubrogacion() != null) {
+			dto.setFechaInicioSubrogacion(oferta.getFechaInicioSubrogacion());
+		}
 		
+		if (oferta.getAutoFirme() != null) {
+			dto.setAutoFirme(oferta.getAutoFirme());
+		}
 	
 		
 		return dto;
@@ -15572,6 +15578,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			dto.setFechaIngreso(fianza.getFechaIngreso());
 			dto.setCuentaVirtual(fianza.getCuentaVirtualAlquiler() != null ? fianza.getCuentaVirtualAlquiler().getCuentaVirtual() : "");
 			dto.setIbanDevolucion(fianza.getIbanDevolucion());
+			dto.setEntregaFianzaAapp(fianza.getEntregaFianzaAapp());
 		}
 		
 		return dto;

@@ -527,6 +527,12 @@ public class Oferta implements Serializable, Auditable {
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_SOA_ID")
     private DDSubtipoOfertaAlquiler subtipoOfertaAlquiler;
+	
+	@Column(name="FECHA_INICIO_SUBROGACION")
+	private Date fechaInicioSubrogacion;
+	
+	@Column(name = "AUTO_FIRME")
+    private Boolean autoFirme;
 
 	public Date getFechaAlta() {
 		return fechaAlta;
@@ -1659,6 +1665,22 @@ public class Oferta implements Serializable, Auditable {
 
 	public void setSubtipoOfertaAlquiler(DDSubtipoOfertaAlquiler subtipoOfertaAlquiler) {
 		this.subtipoOfertaAlquiler = subtipoOfertaAlquiler;
+	}
+
+	public Date getFechaInicioSubrogacion() {
+		return fechaInicioSubrogacion;
+	}
+
+	public void setFechaInicioSubrogacion(Date fechaInicioSubrogacion) {
+		this.fechaInicioSubrogacion = fechaInicioSubrogacion;
+	}
+
+	public Boolean getAutoFirme() {
+		return autoFirme;
+	}
+
+	public void setAutoFirme(Boolean autoFirme) {
+		this.autoFirme = autoFirme;
 	}
 	
 }

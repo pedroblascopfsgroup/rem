@@ -153,6 +153,8 @@ public class DtoCondiciones extends WebDto {
 	
 	private Integer mesesDuracion;
 	
+	private Boolean fianzaExoneradaEditable;
+	
 	public Integer getMesesFianza() {
 		return mesesFianza;
 	}
@@ -1107,5 +1109,14 @@ public class DtoCondiciones extends WebDto {
 
 	public void setMesesDuracion(Integer mesesDuracion) {
 		this.mesesDuracion = mesesDuracion;
+	}
+
+	public Boolean getFianzaExoneradaEditable() {
+		return fianzaExoneradaEditable;
+	}
+
+	public void setFianzaExoneradaEditable(Boolean fianzaExoneradaEditable) {
+		this.fianzaExoneradaEditable = fianzaExoneradaEditable;
 	}	
+	
 }

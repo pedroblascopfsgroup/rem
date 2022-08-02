@@ -3796,6 +3796,16 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				}
 			}
 		}
+		if (DDCartera.isCarteraBk(oferta.getActivoPrincipal().getCartera())) {
+			ActivoTramite tramite = tramiteDao.getTramiteComercialVigenteByTrabajoT015(expediente.getTrabajo().getId());
+			if (tramite != null) {
+				if (tareaActivoApi.checkTareaTramiteOfertaFianzaExonerada(tramite.getId())) {
+					dto.setFianzaExoneradaEditable(false);
+				} else {
+					dto.setFianzaExoneradaEditable(true);
+				}
+			}
+		}
 		return dto;
 	}
 

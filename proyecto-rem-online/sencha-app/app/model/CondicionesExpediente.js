@@ -440,7 +440,11 @@ Ext.define('HreRem.model.CondicionesExpediente', {
 	    },
 	    {
 	    	name: 'mesesDuracion'
-	    }
+	    },
+		{
+			name:'fianzaExoneradaEditable',
+			type: 'boolean'
+		}
 	    
     ],
     

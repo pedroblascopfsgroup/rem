@@ -659,7 +659,8 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 										fieldLabel : HreRem.i18n('fieldlabel.fianza.exonerada'),
 										bind : {
 											value : '{condiciones.fianzaExonerada}',
-											hidden: '{!esBankiaAlquilerOAlquilerNoComercial}'
+											hidden: '{!esBankiaAlquilerOAlquilerNoComercial}',
+											readOnly : '{!condiciones.fianzaExoneradaEditable}'
 										}
 									},
 									{

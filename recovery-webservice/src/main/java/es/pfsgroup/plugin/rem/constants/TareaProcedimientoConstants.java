@@ -40,6 +40,12 @@ public class TareaProcedimientoConstants {
     	public static final String CODIGO_DATOSPBC = "T015_DatosPBC";
     	public static final String CODIGO_CALCULO_RIESGO = "T015_CalculoRiesgo";
     	public static final String CODIGO_PBC_ALQUILER = "T015_PBC";
+    	public static final String CODIGO_APROB_OFERTA_ALQ_COMERCIAL = "T015_AprobacionOfertaAlquilerComercial";
+    	public static final String CODIGO_APROB_CLIENTE_CLAUSULAS = "T015_AprobacionClienteClausulas";
+    	public static final String CODIGO_NEGOCIACION_CLAUSULAS_ALQ = "T015_NegociacionClausulasAlquiler";
+    	public static final String CODIGO_ENTREGA_FIANZAS = "T015_EntregaFianzas";
+    	public static final String CODIGO_RESPUESTA_BC_REAGENDACION = "T015_RespuestaBcReagendacion";
+    	public static final String CODIGO_CIERRE_CONTRATO = "T015_CierreContrato";
     }
     
     public class TramiteAlquilerNoCmT018{

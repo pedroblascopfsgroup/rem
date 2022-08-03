@@ -1,7 +1,9 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -9,6 +11,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.ui.ModelMap;
 
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
@@ -229,6 +232,23 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 						// Actualizamos la participación de los activos en la oferta;
 						expedienteComercialApi.updateParticipacionActivosOferta(ofertaAceptada);
 						expedienteComercialApi.actualizarImporteReservaPorExpediente(expediente);
+						
+					}
+					
+					if(esOfertaAceptada && ofertaAceptada.getIsEnConcurrencia() != null && ofertaAceptada.getIsEnConcurrencia()) {
+						concurrenciaApi.caducaOfertasRelacionadasConcurrencia(activo.getId(), ofertaAceptada.getId(), ConcurrenciaApi.COD_OFERTAS_PERDEDORAS);
+						
+						List<Long> idOfertaList = new ArrayList<Long>();
+						idOfertaList.add(ofertaAceptada.getId());
+						try {
+							concurrenciaApi.comunicacionSFMC(idOfertaList, ConcurrenciaApi.COD_OFERTA_GANADORA, ConcurrenciaApi.TIPO_ENVIO_UNICO, new ModelMap());		
+						} catch (IOException ioex) {
+							logger.error(ioex.getMessage());
+							ioex.printStackTrace();
+						} catch (Exception exc) {
+							logger.error(exc.getMessage());
+							exc.printStackTrace();
+						}
 						
 					}
 					

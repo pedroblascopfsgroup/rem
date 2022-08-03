@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20220303
+--## AUTOR=Pier Gotta
+--## FECHA_CREACION=20220729
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-15634
+--## INCIDENCIA_LINK=HREOS-18464
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -28,6 +28,7 @@
 --##	    0.16 Se quitan cruces de columnas que ya no se usan.
 --##        0.17 Se añade un LEFT JOIN al cruce con la DD_SAC - Daniel Algaba - 20211018 - HREOS-15634
 --##        0.18 Se modifica la condicion de fecha fin y fecha inicio en las valoraciones CAIXA - Juan José Sanjuan - 20220303 - REMVIP-11270
+--##	    0.19 Se modifica la fecha fin y fecha inicio de las valoraciones -  Pier Gotta - HREOS-18464
 --##########################################
 --*/
 
@@ -75,7 +76,8 @@ BEGIN
 	WITH VAL_VALORACIONES (ACT_ID, VAL_IMPORTE_APROBADO_VENTA, VAL_IMPORTE_APROBADO_RENTA, VAL_IMPORTE_MINIMO_AUTORIZADO, VAL_IMPORTE_DESCUENTO_PUBLICO)
 		AS
 		(
-		    SELECT *
+		    SELECT 
+		    *
 		    FROM
 		    (
 		        SELECT ACT.ACT_ID, TPC.DD_TPC_CODIGO, VAL.VAL_IMPORTE
@@ -83,8 +85,10 @@ BEGIN
 		        INNER JOIN ' || V_ESQUEMA || '.ACT_ACTIVO 			ACT ON ACT.ACT_ID = VAL.ACT_ID AND ACT.BORRADO = 0
 		        INNER JOIN ' || V_ESQUEMA || '.DD_TPC_TIPO_PRECIO 	TPC ON TPC.DD_TPC_ID = VAL.DD_TPC_ID
 		        WHERE TPC.DD_TPC_CODIGO IN (''02'', ''03'', ''04'', ''13'')
-		        AND SYSDATE BETWEEN NVL(VAL.VAL_FECHA_INICIO,TO_DATE(''19000101'',''YYYYMMDD'')) 
-				AND NVL(VAL.VAL_FECHA_FIN,TO_DATE(''20991231'',''YYYYMMDD''))
+		        AND (SYSDATE BETWEEN NVL(VAL.VAL_FECHA_INICIO,TO_DATE(''19000101'',''YYYYMMDD''))
+				AND NVL(VAL.VAL_FECHA_FIN,TO_DATE(''20991231'',''YYYYMMDD'')) OR SYSDATE BETWEEN TO_DATE(''19000101'',''YYYYMMDD'')
+				AND TO_DATE(''20991231'',''YYYYMMDD''))
+
 		        AND VAL.BORRADO = 0
 		    ) X
 		    PIVOT
@@ -95,7 +99,8 @@ BEGIN
 		),
 		HAB_HABITACIONES (ACT_ID, DORMITORIOS, BANYOS)
 		AS(
-		    SELECT *
+		    SELECT 
+		    *
 		    FROM
 		    (
 		        SELECT DISTINCT ICO.ACT_ID, SUM(DIS.DIS_CANTIDAD) OVER (PARTITION BY ICO.ACT_ID,TPH.DD_TPH_DESCRIPCION) AS SUMA, TPH.DD_TPH_CODIGO

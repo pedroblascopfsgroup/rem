@@ -235,27 +235,28 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 						
 					}
 					
-					if(esOfertaAceptada && ofertaAceptada.getIsEnConcurrencia() != null && ofertaAceptada.getIsEnConcurrencia()) {
-						concurrenciaApi.caducaOfertasRelacionadasConcurrencia(activo.getId(), ofertaAceptada.getId(), ConcurrenciaApi.COD_OFERTAS_PERDEDORAS);
-						
-						List<Long> idOfertaList = new ArrayList<Long>();
-						idOfertaList.add(ofertaAceptada.getId());
-						try {
-							concurrenciaApi.comunicacionSFMC(idOfertaList, ConcurrenciaApi.COD_OFERTA_GANADORA, ConcurrenciaApi.TIPO_ENVIO_UNICO, new ModelMap());		
-						} catch (IOException ioex) {
-							logger.error(ioex.getMessage());
-							ioex.printStackTrace();
-						} catch (Exception exc) {
-							logger.error(exc.getMessage());
-							exc.printStackTrace();
-						}
-						
-					}
-					
 					if(OBSERVACIONES.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
 						dtoHistoricoBC.setObservacionesBC(valor.getValor());
 					}
 				}
+				
+				if(esOfertaAceptada && ofertaAceptada.getIsEnConcurrencia() != null && ofertaAceptada.getIsEnConcurrencia()) {
+					concurrenciaApi.caducaOfertasRelacionadasConcurrencia(activo.getId(), ofertaAceptada.getId(), ConcurrenciaApi.COD_OFERTAS_PERDEDORAS);
+					
+					List<Long> idOfertaList = new ArrayList<Long>();
+					idOfertaList.add(ofertaAceptada.getId());
+					try {
+						concurrenciaApi.comunicacionSFMC(idOfertaList, ConcurrenciaApi.COD_OFERTA_GANADORA, ConcurrenciaApi.TIPO_ENVIO_UNICO, new ModelMap());		
+					} catch (IOException ioex) {
+						logger.error(ioex.getMessage());
+						ioex.printStackTrace();
+					} catch (Exception exc) {
+						logger.error(exc.getMessage());
+						exc.printStackTrace();
+					}
+					
+				}
+				
 				if(ofertaExclusionBulkNew != null) {
 					genericDao.save(OfertaExclusionBulk.class, ofertaExclusionBulkNew);
 				}

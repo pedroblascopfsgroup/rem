@@ -40,7 +40,7 @@ public class DDTipoOperacionGasto implements Auditable, Dictionary {
 	public static final String ABONO_FACURA_RECTIFICADA = "03";
 	public static final String COBRO_RENTA_ALQUILER = "04";
 	public static final String COBRO_PRECIO_VENTA = "05";
-	
+	public static final String OPERACION_DOMICILIACION = "06";
 
 	@Id
 	@Column(name = "DD_TOG_ID")

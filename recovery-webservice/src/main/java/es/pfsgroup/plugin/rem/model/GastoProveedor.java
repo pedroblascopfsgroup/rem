@@ -213,6 +213,12 @@ public class GastoProveedor implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PRO_ID_TITULAR_CARTA")
 	private ActivoPropietario titularCartaPago;
+    
+    @Column(name="GPV_FECHA_DOC_BBVA")
+	private Date fechaDocumentoBBVA;
+    
+    @Column(name="GPV_FECHA_DOMICILIADO")
+	private Date fechaDomiciliado;
 	
 	@Version   
 	private Long version;
@@ -607,6 +613,21 @@ public class GastoProveedor implements Serializable, Auditable {
 
 	public void setTitularCartaPago(ActivoPropietario titularCartaPago) {
 		this.titularCartaPago = titularCartaPago;
+	}
+	public Date getFechaDocumentoBBVA() {
+		return fechaDocumentoBBVA;
+	}
+
+	public void setFechaDocumentoBBVA(Date fechaDocumentoBBVA) {
+		this.fechaDocumentoBBVA = fechaDocumentoBBVA;
+	}
+
+	public Date getFechaDomiciliado() {
+		return fechaDomiciliado;
+	}
+
+	public void setFechaDomiciliado(Date fechaDomiciliado) {
+		this.fechaDomiciliado = fechaDomiciliado;
 	}
 	
 }

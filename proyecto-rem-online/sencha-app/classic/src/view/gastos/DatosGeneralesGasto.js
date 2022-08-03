@@ -413,9 +413,22 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 											xtype: 'comboboxfieldbase',
 							               	fieldLabel:  HreRem.i18n('fieldlabel.gasto.tipo.operacion')+' *',
 									      	bind: {
-								           		store: '{comboTipoOperacion}',
+								           		store: '{comboTipoOperacionGastoSuministro}',
 								           		value: '{gasto.tipoOperacionCodigo}'
 								         	}
+									    },
+									 	{
+								        	xtype:'datefieldbase',
+								        	formatter: 'date("d/m/Y")',
+									       	fieldLabel: HreRem.i18n('fieldlabel.gasto.fechaDomiciliado'),
+									       	bind: { 
+									       		value: '{gasto.fechaDomiciliado}',
+									       		hidden: '{!gasto.isFechaDomiciliado}',
+									       		readOnly: true
+									       	},
+									       	maxValue: null,
+									       	allowBlank: true
+									       	
 									    },
 										{
 											xtype: 'numberfieldbase',

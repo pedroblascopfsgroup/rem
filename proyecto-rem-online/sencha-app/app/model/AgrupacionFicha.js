@@ -358,6 +358,7 @@ Ext.define('HreRem.model.AgrupacionFicha', {
 	            }
     ],
     
+	proxy: {
 		type: 'uxproxy',
 		timeout: 180000,
 		api: {
@@ -367,5 +368,5 @@ Ext.define('HreRem.model.AgrupacionFicha', {
             destroy: 'agrupacion/getAgrupacionById'
         },
 		extraParams: {pestana: '1'}
-   
+	}
 });

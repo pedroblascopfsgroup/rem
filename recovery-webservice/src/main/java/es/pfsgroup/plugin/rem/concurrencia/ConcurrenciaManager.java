@@ -115,7 +115,7 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 			}else {
 				List<Oferta> listOfertas = genericDao.getList(Oferta.class,
 						genericDao.createFilter(FilterType.EQUALS,"agrupacion.id",agr.getId())
-						,genericDao.createFilter(FilterType.EQUALS,"concurrencia",true));
+						,genericDao.createFilter(FilterType.EQUALS,"isEnConcurrencia",true));
 				bloquear = isOfertaEnPlazoConcu(bloquear, listOfertas);
 			}
 		}

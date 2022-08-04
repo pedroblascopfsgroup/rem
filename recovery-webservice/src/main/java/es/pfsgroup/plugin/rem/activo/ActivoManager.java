@@ -8781,8 +8781,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			if(!Checks.esNulo(dtoActivoSuministros.getMotivoAlta())) {
 				peticion.setMotivoAlta(genericDao.get(DDMotivoAltaSuministro.class, genericDao.createFilter(FilterType.EQUALS, "id", dtoActivoSuministros.getMotivoAlta())));
 			}
-			if(!Checks.esNulo(dtoActivoSuministros.getFechaBaja())) {
-				peticion.setFechaBaja(dtoActivoSuministros.getFechaBaja());
+			if(!Checks.isFechaNula(dtoActivoSuministros.getFechaBaja())){
+				peticion.setFechaBaja(dtoActivoSuministros.getFechaBaja());			
 			}
 			if(!Checks.esNulo(dtoActivoSuministros.getMotivoBaja())) {
 				peticion.setMotivoBaja(genericDao.get(DDMotivoBajaSuministro.class, genericDao.createFilter(FilterType.EQUALS, "id", dtoActivoSuministros.getMotivoBaja())));
@@ -8860,9 +8860,13 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					}
 					if(!Checks.esNulo(dtoActivoSuministros.getMotivoAlta())) {
 						peticion.setMotivoAlta(genericDao.get(DDMotivoAltaSuministro.class, genericDao.createFilter(FilterType.EQUALS, "id", dtoActivoSuministros.getMotivoAlta())));
-					}
+					}				
 					if(!Checks.esNulo(dtoActivoSuministros.getFechaBaja())) {
-						peticion.setFechaBaja(dtoActivoSuministros.getFechaBaja());
+					    if(Checks.isFechaNula(dtoActivoSuministros.getFechaBaja())) {
+					        peticion.setFechaBaja(null);
+					    } else {
+					        peticion.setFechaBaja(dtoActivoSuministros.getFechaBaja());
+					    }
 					}
 					if(!Checks.esNulo(dtoActivoSuministros.getMotivoBaja())) {
 						peticion.setMotivoBaja(genericDao.get(DDMotivoBajaSuministro.class, genericDao.createFilter(FilterType.EQUALS, "id", dtoActivoSuministros.getMotivoBaja())));
@@ -9665,7 +9669,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			esActivoAlquiler = !Checks.esNulo(activoFinal.getActivoPublicacion()) 
 					&& !Checks.esNulo(activoFinal.getActivoPublicacion().getTipoComercializacion())
 					&& DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(activoFinal.getActivoPublicacion().getTipoComercializacion().getCodigo());
-			es1to1 = !Checks.esNulo(activoFinal.getSubcartera().getCodigo()) 
+			es1to1 = !Checks.esNulo(activoFinal.getSubcartera())  && !Checks.esNulo(activoFinal.getSubcartera().getCodigo()) 
 					&& DDSubcartera.CODIGO_THIRD_PARTIES_1_TO_1.equals(activoFinal.getSubcartera().getCodigo());
 		}		
 		

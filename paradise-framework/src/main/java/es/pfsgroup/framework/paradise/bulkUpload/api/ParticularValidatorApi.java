@@ -1515,6 +1515,14 @@ public interface ParticularValidatorApi {
 
 	Boolean existeRelacionCodLocCodSubGes(String codEstadoLoc, String codSubestadoGestion);
 	
+	Boolean apiBloqueadoProvincia(String numActivo, String codProveedor);
+
+	Boolean apiBloqueadoCartera(String numActivo, String codProveedor);
+
+	Boolean apiBloqueadoLineaDeNegocio(String numActivo, String codProveedor);
+
+	Boolean apiBloqueadoEspecialidad(String numActivo, String codProveedor);
+	
 	Boolean isActivoMaccMarina(String numActivo);
 
 	Boolean isFasePublicacionVySubfaseExcluidoPublicacionEstrategiaCliente(String numActivo);

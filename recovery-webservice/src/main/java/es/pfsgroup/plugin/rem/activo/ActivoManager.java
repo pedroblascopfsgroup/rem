@@ -109,6 +109,7 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
@@ -398,6 +399,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Autowired
 	private AlaskaComunicacionManager alaskaComunicacionManager;
+	
+	@Autowired
+	private ProveedoresApi proveedorApi;
 
 	@Override
 	public String managerName() {
@@ -1832,6 +1836,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					throw new JsonViewerException(messageServices.getMessage(AVISO_MEDIADOR_BAJA));
 				}
 
+				proveedorApi.isProveedorValidoParaActivo(proveedor, activo);
+				
 				beanUtilNotNull.copyProperty(historicoMediador, "mediadorInforme", proveedor);
 
 				// Asignar el nuevo proveedor de tipo mediador al activo, informacion comercial.
@@ -8847,8 +8853,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			if(!Checks.esNulo(dtoActivoSuministros.getMotivoAlta())) {
 				peticion.setMotivoAlta(genericDao.get(DDMotivoAltaSuministro.class, genericDao.createFilter(FilterType.EQUALS, "id", dtoActivoSuministros.getMotivoAlta())));
 			}
-			if(!Checks.esNulo(dtoActivoSuministros.getFechaBaja())) {
-				peticion.setFechaBaja(dtoActivoSuministros.getFechaBaja());
+			if(!Checks.isFechaNula(dtoActivoSuministros.getFechaBaja())){
+				peticion.setFechaBaja(dtoActivoSuministros.getFechaBaja());			
 			}
 			if(!Checks.esNulo(dtoActivoSuministros.getMotivoBaja())) {
 				peticion.setMotivoBaja(genericDao.get(DDMotivoBajaSuministro.class, genericDao.createFilter(FilterType.EQUALS, "id", dtoActivoSuministros.getMotivoBaja())));
@@ -8926,9 +8932,13 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					}
 					if(!Checks.esNulo(dtoActivoSuministros.getMotivoAlta())) {
 						peticion.setMotivoAlta(genericDao.get(DDMotivoAltaSuministro.class, genericDao.createFilter(FilterType.EQUALS, "id", dtoActivoSuministros.getMotivoAlta())));
-					}
+					}				
 					if(!Checks.esNulo(dtoActivoSuministros.getFechaBaja())) {
-						peticion.setFechaBaja(dtoActivoSuministros.getFechaBaja());
+					    if(Checks.isFechaNula(dtoActivoSuministros.getFechaBaja())) {
+					        peticion.setFechaBaja(null);
+					    } else {
+					        peticion.setFechaBaja(dtoActivoSuministros.getFechaBaja());
+					    }
 					}
 					if(!Checks.esNulo(dtoActivoSuministros.getMotivoBaja())) {
 						peticion.setMotivoBaja(genericDao.get(DDMotivoBajaSuministro.class, genericDao.createFilter(FilterType.EQUALS, "id", dtoActivoSuministros.getMotivoBaja())));
@@ -9731,7 +9741,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			esActivoAlquiler = !Checks.esNulo(activoFinal.getActivoPublicacion()) 
 					&& !Checks.esNulo(activoFinal.getActivoPublicacion().getTipoComercializacion())
 					&& DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(activoFinal.getActivoPublicacion().getTipoComercializacion().getCodigo());
-			es1to1 = !Checks.esNulo(activoFinal.getSubcartera().getCodigo()) 
+			es1to1 = !Checks.esNulo(activoFinal.getSubcartera())  && !Checks.esNulo(activoFinal.getSubcartera().getCodigo()) 
 					&& DDSubcartera.CODIGO_THIRD_PARTIES_1_TO_1.equals(activoFinal.getSubcartera().getCodigo());
 		}		
 		

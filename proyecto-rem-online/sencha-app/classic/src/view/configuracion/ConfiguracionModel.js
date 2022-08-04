@@ -229,6 +229,22 @@ Ext.define('HreRem.view.configuracion.ConfiguracionModel', {
 				extraParams: {diccionario: 'recomendacionRCDC'}
 			},
 			autoLoad: true
-		}
+		},
+		comboLineaDeNegocio: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposComercializacionActivo'}
+			}
+		},						
+		comboEspecialidad: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'especialidad'}
+			}
+		}	
     }
 });

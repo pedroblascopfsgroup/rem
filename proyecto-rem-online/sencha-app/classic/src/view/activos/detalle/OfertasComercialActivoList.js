@@ -632,7 +632,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 			    codigoTipoOfertaAnterior = me.getStore().getData().items[i].data.codigoTipoOferta;
 			}
 		}
-		var codigoEstadoNuevo = record.data.codigoEstadoOferta;
+		var codigoEstadoNuevo = record.data.estadoOferta;
 
 		if(enConcurrencia && CONST.ESTADOS_OFERTA['ACEPTADA'] == codigoEstadoNuevo){
         	me.fireEvent("errorToast", HreRem.i18n("msg.error.periodo.concurrencia"));

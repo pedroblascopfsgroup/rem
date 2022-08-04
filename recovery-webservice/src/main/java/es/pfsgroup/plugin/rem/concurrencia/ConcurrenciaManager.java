@@ -305,16 +305,19 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 	
 				if(ofertas != null && !ofertas.isEmpty()) {
 					for(ActivoOferta actOfr: ofertas){
-						if(actOfr != null && actOfr.getOferta() != null && !idOferta.toString().equals(actOfr.getOferta().toString())
-								&& !actOfr.getPrimaryKey().getOferta().esOfertaAnulada()){
+						if(actOfr != null && actOfr.getOferta() != null && !idOferta.toString().equals(actOfr.getOferta().toString())) {
 							Oferta ofr = actOfr.getPrimaryKey().getOferta();
-							if(!ofr.esOfertaAnulada() && !this.entraEnTiempoDeposito(ofr) || ConcurrenciaApi.COD_OFERTAS_PERDEDORAS.equals(codigoEnvioCorreo)){
+							if(!ofr.esOfertaAnulada() && !this.entraEnTiempoDeposito(ofr)) {
 								noEntraDeposito.put(actOfr.getOferta(), rellenaMapOfertaCorreos(ofr));
 								ofertaApi.rechazoOfertaNew(ofr, null);
+							}
+							
+							genericDao.save(Oferta.class, ofr);
+							
+							if(ConcurrenciaApi.COD_OFERTAS_PERDEDORAS.equals(codigoEnvioCorreo)) {
 								idOfertaList.add(ofr.getId());
 							}
-							genericDao.save(Oferta.class, ofr);
-						}
+						}						
 					}
 				}
 				

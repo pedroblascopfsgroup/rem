@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Lara Pablo
---## FECHA_CREACION=20220623
+--## FECHA_CREACION=20220804
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-17749
@@ -53,7 +53,7 @@ BEGIN
 				and tap.tap_codigo in ('T017_PBCReserva')
 				AND coe.coe_importe_reserva < 20000.00
 				and act.dd_cra_id in (SELECT dd_cra_id FROM #ESQUEMA#.DD_CRA_CARTERA WHERE dd_cra_codigo = '07')
-				and act.dd_scr_id in (SELECT dd_scr_id FROM #ESQUEMA#.DD_SCR_SUBCARTERA WHERE dd_scr_codigo IN ('138','150','70'))
+				and act.dd_scr_id in (SELECT dd_scr_id FROM #ESQUEMA#.DD_SCR_SUBCARTERA WHERE dd_scr_codigo IN ('138','151','152','70'))
 		   )
 	 LOOP
 	    ECO_NUM_EXPEDIENTE := r_product.eco_num_expediente;

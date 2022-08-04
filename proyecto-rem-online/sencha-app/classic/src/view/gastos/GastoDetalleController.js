@@ -1612,13 +1612,12 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 	},
 	onClickAutorizar: function(btn) {
     	var me = this;
-    	
-     	var isProveedorIncompletoBoolean = true;
-    	var me = this;
-    	var url2 = $AC.getRemoteUrl('gastosproveedor/isProveedorIncompleto');
+
+		me.getView().mask(HreRem.i18n("msg.mask.loading"));
     	var idGasto = idGasto = me.getViewModel().get("gasto.id");
+    	var url = $AC.getRemoteUrl('gastosproveedor/getAvisosSuplidos');	
     	Ext.Ajax.request({
-			url: url2,
+			url: url,
 			params: {idGasto: idGasto},
 			success: function(response, opts) {
 				var data = {};
@@ -1626,86 +1625,67 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 					data = Ext.decode(response.responseText);
 					}
 				catch (e){ };
-				
-				if(data.success === "false"){
-			    		me.getView().mask(HreRem.i18n("msg.mask.loading"));
-			        	var idGasto = idGasto = me.getViewModel().get("gasto.id");
-			        	var url = $AC.getRemoteUrl('gastosproveedor/getAvisosSuplidos');	
-				    	Ext.Ajax.request({
-							url: url,
-							params: {idGasto: idGasto},
-							success: function(response, opts) {
-								var data = {};
-								try {
-									data = Ext.decode(response.responseText);
-									}
-								catch (e){ };
-								if(!Ext.isEmpty(data.msg)){
-									me.fireEvent("errorToast", data.msg);
-								} else {
-									msg = HreRem.i18n('msg.desea.autorizar.gasto');
-								}
-								me.getView().unmask();	
-								Ext.Msg.show({
-								   	title: HreRem.i18n('title.mensaje.confirmacion'),
-								   	msg: msg,
-								   	buttons: Ext.MessageBox.YESNO,
-								   	fn: function(buttonId) {
-								   		if (buttonId == 'yes') {
-									url =  $AC.getRemoteUrl('gastosproveedor/autorizarGasto');		
-					
-									me.getView().mask(HreRem.i18n("msg.mask.loading"));
-					
-									Ext.Ajax.request({
-								    			
-									     url: url,
-									     params: {idGasto: idGasto},
-									
-									     success: function(response, opts) {
-									        me.getView().unmask();
-									     	var data = {};
-								            try {
-								               	data = Ext.decode(response.responseText);
-								            }
-								            catch (e){ };
-								            
-								            if(data.success === "false") {
-									            if (!Ext.isEmpty(data.msg)) {
-									               	me.fireEvent("errorToast", data.msg);
-									            } else {
-									             	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-									            }
-								            } else {
-										         me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-										         me.refrescarGasto(true);						         
-								            }
-									     },
-									     failure: function(response) {
-									     	me.getView().unmask();
-								     		var data = {};
-							                try {
-							                	data = Ext.decode(response.responseText);
-							                }
-							                catch (e){ };
-							                if (!Ext.isEmpty(data.msg)) {
-							                	me.fireEvent("errorToast", data.msg);
-							                } else {
-							                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-							                }
-									     }
-								    		    
-								    });
-						        }
-								   	}});
-										
-							}
-						});
+				if(!Ext.isEmpty(data.msg)){
+					me.fireEvent("errorToast", data.msg);
 				} else {
-					me.fireEvent("errorToast", HreRem.i18n("msg.proveedor.incompleto"));
-		    		me.getView().unmask();
+					msg = HreRem.i18n('msg.desea.autorizar.gasto');
 				}
+				me.getView().unmask();	
+				Ext.Msg.show({
+				   	title: HreRem.i18n('title.mensaje.confirmacion'),
+				   	msg: msg,
+				   	buttons: Ext.MessageBox.YESNO,
+				   	fn: function(buttonId) {
+				   	if (buttonId == 'yes') {
+						url =  $AC.getRemoteUrl('gastosproveedor/autorizarGasto');		
+		
+						me.getView().mask(HreRem.i18n("msg.mask.loading"));
+		
+						Ext.Ajax.request({
+					    			
+						     url: url,
+						     params: {idGasto: idGasto},
+						
+						     success: function(response, opts) {
+						        me.getView().unmask();
+						     	var data = {};
+					            try {
+					               	data = Ext.decode(response.responseText);
+					            }
+					            catch (e){ };
+					            
+					            if(data.success === "false") {
+						            if (!Ext.isEmpty(data.msg)) {
+						               	me.fireEvent("errorToast", data.msg);
+						            } else {
+						             	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+						            }
+					            } else {
+							         me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+							         me.refrescarGasto(true);						         
+					            }
+						     },
+						     failure: function(response) {
+						     	me.getView().unmask();
+					     		var data = {};
+				                try {
+				                	data = Ext.decode(response.responseText);
+				                }
+				                catch (e){ };
+				                if (!Ext.isEmpty(data.msg)) {
+				                	me.fireEvent("errorToast", data.msg);
+				                } else {
+				                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				                }
+						     }
+				    		    
+						   });
+				        }
+				   	}
+				});
+						
 			}
-    	});
+		});
     	
     },
     onClickRechazar: function(btn) {

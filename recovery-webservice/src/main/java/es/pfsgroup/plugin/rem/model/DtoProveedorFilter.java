@@ -31,16 +31,20 @@ public class DtoProveedorFilter extends WebDto {
 	private String ambitoProveedor;
 	private String provinciaCodigo;
 	private String municipioCodigo;
-	private Integer codigoPostal;
+	private String codigoPostal;
 	private String contactoNIFProveedor;
 	private String contactoNombreProveedor;
 	private Integer homologadoCodigo;
 	private String calificacionCodigo;
 	private Integer topCodigo;
 	private String propietario;
-	private String subCartera;
 	private String nombrePersContacto;
 	private int totalCount;
+	private String nombre;
+	private String especialidadCodigo;
+	private String lineaNegocioCodigo;
+	
+	
 	
 	
 	public String getId() {
@@ -157,10 +161,10 @@ public class DtoProveedorFilter extends WebDto {
 	public void setMunicipioCodigo(String municipioCodigo) {
 		this.municipioCodigo = municipioCodigo;
 	}
-	public Integer getCodigoPostal() {
+	public String getCodigoPostal() {
 		return codigoPostal;
 	}
-	public void setCodigoPostal(Integer codigoPostal) {
+	public void setCodigoPostal(String codigoPostal) {
 		this.codigoPostal = codigoPostal;
 	}
 	public String getContactoNIFProveedor() {
@@ -199,12 +203,6 @@ public class DtoProveedorFilter extends WebDto {
 	public void setPropietario(String propietario) {
 		this.propietario = propietario;
 	}
-	public String getSubCartera() {
-		return subCartera;
-	}
-	public void setSubCartera(String subCartera) {
-		this.subCartera = subCartera;
-	}
 	public String getNombrePersContacto() {
 		return nombrePersContacto;
 	}
@@ -232,4 +230,23 @@ public class DtoProveedorFilter extends WebDto {
 	public void setNombreProveedor(String nombreProveedor) {
 		this.nombreProveedor = nombreProveedor;
 	}
+	public String getNombre() {
+		return nombre;
+	}
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
+	public String getEspecialidadCodigo() {
+		return especialidadCodigo;
+	}
+	public void setEspecialidadCodigo(String especialidadCodigo) {
+		this.especialidadCodigo = especialidadCodigo;
+	}
+	public String getLineaNegocioCodigo() {
+		return lineaNegocioCodigo;
+	}
+	public void setLineaNegocioCodigo(String lineaNegocioCodigo) {
+		this.lineaNegocioCodigo = lineaNegocioCodigo;
+	}
+	
 }

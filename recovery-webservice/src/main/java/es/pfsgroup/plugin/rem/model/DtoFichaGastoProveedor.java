@@ -95,6 +95,7 @@ public class DtoFichaGastoProveedor extends WebDto {
 	private String nombreTitularCartaPago;
 	private String buscadorNifTitularCartaPago;
 	private Date fechaDevengoEspecial;
+	private Date fechaDocumentoBBVA;
 	
 	public Long getIdGasto() {
 		return idGasto;
@@ -542,6 +543,12 @@ public class DtoFichaGastoProveedor extends WebDto {
 	}
 	public void setFechaDevengoEspecial(Date fechaDevengoEspecial) {
 		this.fechaDevengoEspecial = fechaDevengoEspecial;
+	}
+	public Date getFechaDocumentoBBVA() {
+		return fechaDocumentoBBVA;
+	}
+	public void setFechaDocumentoBBVA(Date fechaDocumentoBBVA) {
+		this.fechaDocumentoBBVA = fechaDocumentoBBVA;
 	}
 	
 }

@@ -147,6 +147,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	private static final String RESPONSE_ERROR_KEY = "error";
 	private static final String RESPONSE_ERROR_MESSAGE_KEY = "errorMessage";
 	private static final String RESPONSE_MESSAGE_KEY = "msg";
+	private static final String RESPONSE_MESSAGE_ERROR_KEY = "msgError";
 	private static final String RESPONSE_TOTALCOUNT_KEY = "totalCount";
 	private static final String RESPONSE_ERROR_CONNECT = "No se puede conectar al servidor remoto en entornos previos";
 
@@ -1435,7 +1436,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 			model.put(RESPONSE_SUCCESS_KEY, success);
 
 		} catch (JsonViewerException e) {
-			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
+			model.put(RESPONSE_MESSAGE_ERROR_KEY, e.getMessage());
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			logger.warn("Error controlado en ExpedienteComercialController", e);
 
@@ -2725,7 +2726,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		try {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", numOferta);
 			Oferta oferta = genericDao.get(Oferta.class, filtro);
-			expedienteComercialApi.tareaDesbloqueoScreening(expedienteComercialApi.dataToDtoScreeningDesBloqueo( oferta.getNumOferta(),  motivo,  observaciones));
+			//expedienteComercialApi.tareaDesbloqueoScreening(expedienteComercialApi.dataToDtoScreeningDesBloqueo( oferta.getNumOferta(),  motivo,  observaciones));
 			model.put(RESPONSE_SUCCESS_KEY, true);
 
 		} catch (Exception e) {
@@ -3250,6 +3251,23 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			logger.error("Error en ExpedienteComercialController (validarIban)", e);
 		}
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView desbloquearExpediente(ModelMap model,Long idOferta) {
+		try {
+			expedienteComercialApi.desbloquearExpediente(idOferta);
+			model.put(RESPONSE_SUCCESS_KEY, true);
+
+		} catch (Exception e) {
+			model.put("error", false);
+			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController", e);
+		}
+
 		return createModelAndViewJson(model);
 	}
 }

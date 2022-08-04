@@ -4040,7 +4040,7 @@
 		var comboIsVulnerable = me.down('[name=isVulnerable]');
 		var numContratoAnterior = me.down('[name=numContratoAnterior]');
 		var fechaContratoAnt = me.down('[name=fechaContratoAnt]');
-		 
+
 		me.deshabilitarCampo(numContratoAnterior);
 		me.deshabilitarCampo(fechaContratoAnt);
 		

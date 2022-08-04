@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Alejandro Valverde
---## FECHA_CREACION=20220728
+--## FECHA_CREACION=20220804
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-18445
+--## INCIDENCIA_LINK=HREOS-18495
 --## PRODUCTO=NO
 --## Finalidad: VI_GRID_OFR_CONCURRENCIA
 --##           
@@ -14,6 +14,7 @@
 --##         0.2 Juan Jose Sanjuan - añadir importe Oferta 
 --##         0.3 Alejandro Valverde (HREOS-18405) - Añadir datos Expediente Comercial
 --##         0.4 Alejandro Valverde (HREOS-18445) - Añadir campos EST_CODIGO_C4C y FECHA_ENT_CRM_SF
+--##         0.4 Alejandro Valverde (HREOS-18495) - Añadir campo OFR_ID
 --##########################################
 --*/
 

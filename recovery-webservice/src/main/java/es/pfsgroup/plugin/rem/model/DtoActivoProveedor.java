@@ -37,7 +37,6 @@ public class DtoActivoProveedor extends WebDto {
 	// Ambito.
 	private String territorialCodigo;
 	private String carteraCodigo;
-	private String subcarteraCodigo;
 	
 	// Mediador.
 	private String custodioCodigo;
@@ -74,6 +73,16 @@ public class DtoActivoProveedor extends WebDto {
 	private String codigoApiProveedor;
 	
 	private Long idMediadorRelacionado;
+	
+	private String origenPeticionHomologacionCodigo;
+	private String peticionario;
+	private String lineaNegocioCodigo;
+	private String gestionClientesNoResidentesCodigo;
+	private Long numeroComerciales;
+	private Date fechaUltimoContratoVigente;
+	private String motivoBaja;
+	private String especialidadCodigo;
+	private String idiomaCodigo;
 	
 	
 	
@@ -190,12 +199,6 @@ public class DtoActivoProveedor extends WebDto {
 	}
 	public void setCarteraCodigo(String carteraCodigo) {
 		this.carteraCodigo = carteraCodigo;
-	}
-	public String getSubcarteraCodigo() {
-		return subcarteraCodigo;
-	}
-	public void setSubcarteraCodigo(String subcarteraCodigo) {
-		this.subcarteraCodigo = subcarteraCodigo;
 	}
 	public String getCustodioCodigo() {
 		return custodioCodigo;
@@ -352,6 +355,60 @@ public class DtoActivoProveedor extends WebDto {
 	}
 	public void setIdMediadorRelacionado(Long idMediadorRelacionado) {
 		this.idMediadorRelacionado = idMediadorRelacionado;
+	}
+	public String getOrigenPeticionHomologacionCodigo() {
+		return origenPeticionHomologacionCodigo;
+	}
+	public void setOrigenPeticionHomologacionCodigo(String origenPeticionHomologacionCodigo) {
+		this.origenPeticionHomologacionCodigo = origenPeticionHomologacionCodigo;
+	}
+	public String getPeticionario() {
+		return peticionario;
+	}
+	public void setPeticionario(String peticionario) {
+		this.peticionario = peticionario;
+	}
+	public String getLineaNegocioCodigo() {
+		return lineaNegocioCodigo;
+	}
+	public void setLineaNegocioCodigo(String lineaNegocioCodigo) {
+		this.lineaNegocioCodigo = lineaNegocioCodigo;
+	}
+	public String getGestionClientesNoResidentesCodigo() {
+		return gestionClientesNoResidentesCodigo;
+	}
+	public void setGestionClientesNoResidentesCodigo(String gestionClientesNoResidentesCodigo) {
+		this.gestionClientesNoResidentesCodigo = gestionClientesNoResidentesCodigo;
+	}
+	public Long getNumeroComerciales() {
+		return numeroComerciales;
+	}
+	public void setNumeroComerciales(Long numeroComerciales) {
+		this.numeroComerciales = numeroComerciales;
+	}
+	public Date getFechaUltimoContratoVigente() {
+		return fechaUltimoContratoVigente;
+	}
+	public void setFechaUltimoContratoVigente(Date fechaUltimoContratoVigente) {
+		this.fechaUltimoContratoVigente = fechaUltimoContratoVigente;
+	}
+	public String getMotivoBaja() {
+		return motivoBaja;
+	}
+	public void setMotivoBaja(String motivoBaja) {
+		this.motivoBaja = motivoBaja;
+	}
+	public String getEspecialidadCodigo() {
+		return especialidadCodigo;
+	}
+	public void setEspecialidadCodigo(String especialidadCodigo) {
+		this.especialidadCodigo = especialidadCodigo;
+	}
+	public String getIdiomaCodigo() {
+		return idiomaCodigo;
+	}
+	public void setIdiomaCodigo(String idiomaCodigo) {
+		this.idiomaCodigo = idiomaCodigo;
 	}
 	
 	

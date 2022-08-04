@@ -49,17 +49,36 @@ public class ProveedorDto implements WebcomRESTDto {
 	private StringDataType telefonoContactoVisitas;
 	private LongDataType numeroDelegaciones;
 	private StringDataType nombreComercial;
-	
 	private LongDataType idProveedorRemAsociado;
 
 	@WebcomRequired
 	@NestedDto(groupBy="idProveedorRem", type=CodigoCarterasDto.class)
 	private List<CodigoCarterasDto> arrCodCarteraAmbito;
 	
-	
+	private StringDataType codOrigenPeticion;
+	private StringDataType nombrePeticionario;
+	private StringDataType codLineaNegocio;
+	private StringDataType arrCodEspecialidad;
+	private StringDataType arrCodIdioma;
+	private StringDataType codGestionCnr;
+	private LongDataType numComerciales;
+	private DateDataType fechaUltContrato;
+	private StringDataType motivoBaja;
 
 	@NestedDto(groupBy = "idProveedorRem", type = DelegacionDto.class)
 	private List<DelegacionDto> delegaciones;
+	
+	@NestedDto(groupBy = "idProveedorRem", type = ConductasInapropiadasDto.class)
+	private List<ConductasInapropiadasDto> conductasInapropiadas;
+
+	private DateDataType fechaAlta;
+	private StringDataType codEstado;
+	private DateDataType fechaBaja;
+	private StringDataType codTipoPersona;
+	private StringDataType urlWeb;
+	private StringDataType nombreContacto;
+	private StringDataType apellido1Contacto;
+	private StringDataType apellido2Contacto;
 
 	public DateDataType getFechaAccion() {
 		return fechaAccion;
@@ -316,6 +335,148 @@ public class ProveedorDto implements WebcomRESTDto {
 	public void setIdProveedorRemAsociado(LongDataType idProveedorRemAsociado) {
 		this.idProveedorRemAsociado = idProveedorRemAsociado;
 	}
-	
-	
+
+	public StringDataType getCodOrigenPeticion() {
+		return codOrigenPeticion;
+	}
+
+	public void setCodOrigenPeticion(StringDataType codOrigenPeticion) {
+		this.codOrigenPeticion = codOrigenPeticion;
+	}
+
+	public StringDataType getNombrePeticionario() {
+		return nombrePeticionario;
+	}
+
+	public void setNombrePeticionario(StringDataType nombrePeticionario) {
+		this.nombrePeticionario = nombrePeticionario;
+	}
+
+	public StringDataType getCodLineaNegocio() {
+		return codLineaNegocio;
+	}
+
+	public void setCodLineaNegocio(StringDataType codLineaNegocio) {
+		this.codLineaNegocio = codLineaNegocio;
+	}
+
+	public StringDataType getArrCodEspecialidad() {
+		return arrCodEspecialidad;
+	}
+
+	public void setArrCodEspecialidad(StringDataType arrCodEspecialidad) {
+		this.arrCodEspecialidad = arrCodEspecialidad;
+	}
+
+	public StringDataType getArrCodIdioma() {
+		return arrCodIdioma;
+	}
+
+	public void setArrCodIdioma(StringDataType arrCodIdioma) {
+		this.arrCodIdioma = arrCodIdioma;
+	}
+
+	public StringDataType getCodGestionCnr() {
+		return codGestionCnr;
+	}
+
+	public void setCodGestionCnr(StringDataType codGestionCnr) {
+		this.codGestionCnr = codGestionCnr;
+	}
+
+	public LongDataType getNumComerciales() {
+		return numComerciales;
+	}
+
+	public void setNumComerciales(LongDataType numComerciales) {
+		this.numComerciales = numComerciales;
+	}
+
+	public DateDataType getFechaUltContrato() {
+		return fechaUltContrato;
+	}
+
+	public void setFechaUltContrato(DateDataType fechaUltContrato) {
+		this.fechaUltContrato = fechaUltContrato;
+	}
+
+	public StringDataType getMotivoBaja() {
+		return motivoBaja;
+	}
+
+	public void setMotivoBaja(StringDataType motivoBaja) {
+		this.motivoBaja = motivoBaja;
+	}
+
+	public List<ConductasInapropiadasDto> getConductasInapropiadas() {
+		return conductasInapropiadas;
+	}
+
+	public void setConductasInapropiadas(List<ConductasInapropiadasDto> conductasInapropiadas) {
+		this.conductasInapropiadas = conductasInapropiadas;
+	}
+
+	public DateDataType getFechaAlta() {
+		return fechaAlta;
+	}
+
+	public void setFechaAlta(DateDataType fechaAlta) {
+		this.fechaAlta = fechaAlta;
+	}
+
+	public StringDataType getCodEstado() {
+		return codEstado;
+	}
+
+	public void setCodEstado(StringDataType codEstado) {
+		this.codEstado = codEstado;
+	}
+
+	public DateDataType getFechaBaja() {
+		return fechaBaja;
+	}
+
+	public void setFechaBaja(DateDataType fechaBaja) {
+		this.fechaBaja = fechaBaja;
+	}
+
+	public StringDataType getCodTipoPersona() {
+		return codTipoPersona;
+	}
+
+	public void setCodTipoPersona(StringDataType codTipoPersona) {
+		this.codTipoPersona = codTipoPersona;
+	}
+
+	public StringDataType getUrlWeb() {
+		return urlWeb;
+	}
+
+	public void setUrlWeb(StringDataType urlWeb) {
+		this.urlWeb = urlWeb;
+	}
+
+	public StringDataType getNombreContacto() {
+		return nombreContacto;
+	}
+
+	public void setNombreContacto(StringDataType nombreContacto) {
+		this.nombreContacto = nombreContacto;
+	}
+
+	public StringDataType getApellido1Contacto() {
+		return apellido1Contacto;
+	}
+
+	public void setApellido1Contacto(StringDataType apellido1Contacto) {
+		this.apellido1Contacto = apellido1Contacto;
+	}
+
+	public StringDataType getApellido2Contacto() {
+		return apellido2Contacto;
+	}
+
+	public void setApellido2Contacto(StringDataType apellido2Contacto) {
+		this.apellido2Contacto = apellido2Contacto;
+	}
 }

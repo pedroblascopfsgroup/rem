@@ -34,8 +34,11 @@ import es.pfsgroup.plugin.rem.model.dd.DDCalificacionProveedorRetirar;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRetencion;
 import es.pfsgroup.plugin.rem.model.dd.DDOperativa;
+import es.pfsgroup.plugin.rem.model.dd.DDOrigenPeticionHomologacion;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoProcesoBlanqueo;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivosCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoZonaGeografica;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposColaborador;
@@ -245,14 +248,41 @@ public class ActivoProveedor implements Serializable, Auditable {
 	@NotFound(action = NotFoundAction.IGNORE)
 	private InfoAdicionalPersona infoAdicionalPersona;
 
-
+	
+	@ManyToOne
+	@JoinColumn(name = "DD_OPH_ID")
+	private DDOrigenPeticionHomologacion origenPeticionHomologacion;
+	
+	@Column(name = "PVE_PETICIONARIO")
+    private String peticionario;
+	
+	@ManyToOne
+	@JoinColumn(name = "PVE_LINEA_NEGOCIO")
+	private DDTipoComercializacion lineaNegocio;
+	
+	@ManyToOne
+	@JoinColumn(name = "PVE_GEST_CLIENT_NO_RESIDENTES")
+	private DDSinSiNo gestionClientesNoResidentes;
+	
+	@Column(name = "PVE_NUMERO_COMERCIALES")
+	private Long numeroComerciales;
+	
+	@Column(name = "PVE_FECHA_ULT_CNT_VIGNETE")
+	private Date fechaUltimoContratoVigente;
+	
+	@Column(name = "PVE_MOTIVO_BAJA")
+    private String motivoBaja;
+	
+	@OneToMany(mappedBy = "proveedor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "PVE_ID")
+    private List<ProveedorTerritorial> territorios;	
+	
 	@Version   
 	private Long version;
 	
 	@Embedded
 	private Auditoria auditoria;
 
-	
 	
 
 	public Long getId() {
@@ -721,4 +751,78 @@ public class ActivoProveedor implements Serializable, Auditable {
 	public void setInfoAdicionalPersona(InfoAdicionalPersona infoAdicionalPersona) {
 		this.infoAdicionalPersona = infoAdicionalPersona;
 	}
+
+	public String getTelefonoContactoVisitas() {
+		return telefonoContactoVisitas;
+	}
+
+	public void setTelefonoContactoVisitas(String telefonoContactoVisitas) {
+		this.telefonoContactoVisitas = telefonoContactoVisitas;
+	}
+
+	public DDOrigenPeticionHomologacion getOrigenPeticionHomologacion() {
+		return origenPeticionHomologacion;
+	}
+
+	public void setOrigenPeticionHomologacion(DDOrigenPeticionHomologacion origenPeticionHomologacion) {
+		this.origenPeticionHomologacion = origenPeticionHomologacion;
+	}
+
+	public String getPeticionario() {
+		return peticionario;
+	}
+
+	public void setPeticionario(String peticionario) {
+		this.peticionario = peticionario;
+	}
+
+	public DDTipoComercializacion getLineaNegocio() {
+		return lineaNegocio;
+	}
+
+	public void setLineaNegocio(DDTipoComercializacion lineaNegocio) {
+		this.lineaNegocio = lineaNegocio;
+	}
+
+	public DDSinSiNo getGestionClientesNoResidentes() {
+		return gestionClientesNoResidentes;
+	}
+
+	public void setGestionClientesNoResidentes(DDSinSiNo gestionClientesNoResidentes) {
+		this.gestionClientesNoResidentes = gestionClientesNoResidentes;
+	}
+
+	public Long getNumeroComerciales() {
+		return numeroComerciales;
+	}
+
+	public void setNumeroComerciales(Long numeroComerciales) {
+		this.numeroComerciales = numeroComerciales;
+	}
+
+	public Date getFechaUltimoContratoVigente() {
+		return fechaUltimoContratoVigente;
+	}
+
+	public void setFechaUltimoContratoVigente(Date fechaUltimoContratoVigente) {
+		this.fechaUltimoContratoVigente = fechaUltimoContratoVigente;
+	}
+
+	public String getMotivoBaja() {
+		return motivoBaja;
+	}
+
+	public void setMotivoBaja(String motivoBaja) {
+		this.motivoBaja = motivoBaja;
+	}
+
+	public List<ProveedorTerritorial> getTerritorios() {
+		return territorios;
+	}
+
+	public void setTerritorios(List<ProveedorTerritorial> territorios) {
+		this.territorios = territorios;
+	}
+	
+	
 }

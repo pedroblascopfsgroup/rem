@@ -419,6 +419,4 @@ public interface GenericApi {
 	public List<DDTipoDocumentoProveedor> getDocumentosProveedor(String codBloque);
 	
 	public List<DDEstadoOferta> getDiccionarioEstadosOfertasAgrupacion(Long idAgrupacion);
-	
-	public List<DDTipoApunte> getTipoApunteByUsuarioLog();
 }

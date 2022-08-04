@@ -940,7 +940,21 @@ public class GenericController extends ParadiseJsonController{
 
 		restApi.sendResponse(response, model, request);
 	}
-
+	
+	@RequestMapping(method= RequestMethod.GET)
+	public ModelAndView getComboCategoriaConducta(String idTipoConducta) {
+		return createModelAndViewJson(new ModelMap("data", genericApi.getComboCategoriaConducta(idTipoConducta)));	
+	}
+	
+	@RequestMapping(method= RequestMethod.GET)
+	public ModelAndView getComboNivelConducta(String idCategoriaConducta) {
+		return createModelAndViewJson(new ModelMap("data", genericApi.getComboNivelConducta(idCategoriaConducta)));	
+	}
+	
+	@RequestMapping(method= RequestMethod.GET)
+	public ModelAndView getDocumentosProveedor(String codBloque) {
+		return createModelAndViewJson(new ModelMap("data", genericApi.getDocumentosProveedor(codBloque)));	
+	}
 	@RequestMapping(method = RequestMethod.POST, value = "/generic/avanzaTarea")
 	public void avanzaTarea(ModelMap model, RestRequestWrapper request, HttpServletResponse response) {
 

@@ -31,7 +31,8 @@ public interface GenericABMDao {
 		NULL,
 		NOTNULL,
 		SIMILARY,
-		NOT_EQUALS	
+		NOT_EQUALS,
+		NOT_SIMILARY
 	}
 
 	/**

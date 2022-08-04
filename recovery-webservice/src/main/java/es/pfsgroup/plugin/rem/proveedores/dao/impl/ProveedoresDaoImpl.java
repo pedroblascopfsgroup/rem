@@ -15,6 +15,7 @@ import org.springframework.stereotype.Repository;
 import edu.emory.mathcs.backport.java.util.Arrays;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.dao.AbstractEntityDao;
+import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.DateFormat;
@@ -30,6 +31,7 @@ import es.pfsgroup.plugin.rem.model.DtoMediador;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VProveedores;
+import es.pfsgroup.plugin.rem.model.dd.DDCodigoPostal;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
@@ -46,22 +48,62 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<DtoProveedorFilter> getProveedoresList(DtoProveedorFilter dto, Usuario usuarioLogado, Boolean esProveedor, Boolean esGestoria, Boolean esExterno) {
-		List<UsuarioCartera> usuarioCartera = genericDao.getList(UsuarioCartera.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
-		List<String> subcarteras = new ArrayList<String>();
+		List<UsuarioCartera> usuarioCartera = genericDao.getList(UsuarioCartera.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));	
+		String select = "select distinct pve.id, pve.codigoProveedorRem, pve.tipoProveedorDescripcion, pve.subtipoProveedorDescripcion, pve.nifProveedor, pve.nombreProveedor, pve.nombreComercialProveedor, pve.estadoProveedorDescripcion, pve.observaciones";
+		String from = " from VBusquedaProveedor pve";		
+		String where = "";
+		Boolean haswhere = false;
+		Boolean hasJoinDireccion = false;
 		
-		HQLBuilder hb = new HQLBuilder(
-				"select distinct pve.id, pve.codigoProveedorRem, pve.tipoProveedorDescripcion, pve.subtipoProveedorDescripcion, pve.nifProveedor, pve.nombreProveedor, pve.nombreComercialProveedor, pve.estadoProveedorDescripcion, pve.observaciones from VBusquedaProveedor pve");
+		if(!Checks.esNulo(dto.getLineaNegocioCodigo())) {
+			from += ",DDTipoComercializacion tco, ActivoProveedorDireccion apd";
+			where += " where (tco.id = pve.idLineaNegocio or tco.id = apd.lineaNegocio) and apd.proveedor.id = pve.id";
+			haswhere = true;
+			hasJoinDireccion = true;
+		}
+		if(!Checks.esNulo(dto.getEspecialidadCodigo())) {
+			from += ",ProveedorEspecialidad pveEsp, DDEspecialidad esp";
+			if(!hasJoinDireccion)from += ",ActivoProveedorDireccion apd";
+			where += (haswhere ? " and " : " where ");
+			where += "(pveEsp.proveedor.id = pve.id or pveEsp.direccion.id = apd.id) and pveEsp.especialidad.id = esp.id ";
+			if(!hasJoinDireccion)where += "and apd.proveedor.id = pve.id";
+			haswhere = true;
+			hasJoinDireccion = true;
+		}
+		if(!Checks.esNulo(dto.getProvinciaCodigo())) {
+			if(!hasJoinDireccion)from += ",ActivoProveedorDireccion apd";
+			from += " left join apd.provinciasDelegacion dpr, DDProvincia ddprv, ActivoProveedor pve2 left join pve2.territorios pte";
+			where += (haswhere ? " and " : " where ");
+			where += " (dpr.provincia.id = ddprv.id or pte.provincia.id = ddprv.id) and pve2.id = pve.id ";
+			if(!hasJoinDireccion)where += "and apd.proveedor.id = pve.id";
+			haswhere = true;
+			hasJoinDireccion = true;
+		}
+		if(!Checks.esNulo(dto.getMunicipioCodigo())) {
+			if(!hasJoinDireccion)from += ",ActivoProveedorDireccion apd";
+			from += ",DelegacionesLocalidad dlo, Localidad ddloc";
+			where += (haswhere ? " and " : " where ");
+			where += "dlo.direccion.id = apd.id and dlo.localidad.id = ddloc.id ";
+			if(!hasJoinDireccion)where += "and apd.proveedor.id = pve.id";
+			haswhere = true;
+			hasJoinDireccion = true;
+		}
+		if(!Checks.esNulo(dto.getCodigoPostal())) {
+			if(!hasJoinDireccion)from += ",ActivoProveedorDireccion apd";
+			from += ",DelegacionesCodigoPostal dcp, DDCodigoPostal ddcp";
+			where += (haswhere ? " and " : " where ");
+			where += "dcp.direccion.id = apd.id and dcp.codigoPostal.id = ddcp.id ";
+			if(!hasJoinDireccion)where += "and apd.proveedor.id = pve.id";
+			haswhere = true;
+			hasJoinDireccion = true;
+		}
+			
+		HQLBuilder hb = new HQLBuilder(select + from + where);
+		if (haswhere) hb.setHasWhere(true);
 
 		if (usuarioCartera != null && !usuarioCartera.isEmpty()) {
 			dto.setCartera(usuarioCartera.get(0).getCartera().getCodigo());
-			
-			if (dto.getSubCartera() == null) {
-				for (UsuarioCartera usu : usuarioCartera) {
-					if (usu.getSubCartera() != null) {
-						subcarteras.add(usu.getSubCartera().getCodigo());
-					}
-				}
-			}
+					
 		}
 		
 		if (!Checks.esNulo(dto.getCodigo())) {
@@ -85,17 +127,7 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "pve.subtipoProveedorCodigo", dto.getSubtipoProveedorCodigo());
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "pve.nifProveedor", dto.getNifProveedor(), true);
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "pve.tipoPersonaProveedorCodigo", dto.getTipoPersonaCodigo());
-		HQLBuilder.addFiltroLikeSiNotNull(hb, "pve.propietarioActivoVinculado", dto.getPropietario(), true);
-		// TODO: falta por definir en la vista
-		/*if (subcarteras != null && !subcarteras.isEmpty()) {
-			HQLBuilder.addFiltroWhereInSiNotNull(hb, "vgrid.subcarteraCodigo", subcarteras);
-		} else {
-			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.subcarteraCodigo", dto.getSubCartera());
-		}*/
-
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "pve.provinciaProveedor", dto.getProvinciaCodigo());
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "pve.municipioProveedor", dto.getMunicipioCodigo());
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "pve.codigoPostalProveedor", dto.getCodigoPostal());
+		HQLBuilder.addFiltroLikeSiNotNull(hb, "pve.propietarioActivoVinculado", dto.getPropietario(), true);	
 
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "pve.nifPersonaContacto", dto.getNifPersonaContacto());
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "pve.nombrePersonaContacto", dto.getNombrePersonaContacto(), true);
@@ -120,6 +152,24 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 			hb.getParameters().put("cartera", dto.getCartera());
 		} else {
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "pve.cartera", dto.getCartera());
+		}
+		
+		HQLBuilder.addFiltroLikeSiNotNull(hb, "pve.nombreProveedor", dto.getNombre(), true);
+		
+		if(!Checks.esNulo(dto.getLineaNegocioCodigo())) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tco.codigo", dto.getLineaNegocioCodigo());		
+		}
+		if(!Checks.esNulo(dto.getEspecialidadCodigo())) {
+			this.addFiltroWhereInSiNotNullConStrings(hb, "esp.codigo", Arrays.asList(dto.getEspecialidadCodigo().split(",")));
+		}
+		if(!Checks.esNulo(dto.getProvinciaCodigo())) {
+			HQLBuilder.addFiltroOrClause(hb,"pve.provinciaProveedor", "ddprv.codigo", dto.getProvinciaCodigo());	
+		}
+		if(!Checks.esNulo(dto.getMunicipioCodigo())) {
+			HQLBuilder.addFiltroOrClause(hb, "pve.municipioProveedor", "ddloc.codigo", dto.getMunicipioCodigo());
+		}
+		if(!Checks.esNulo(dto.getCodigoPostal())) {
+			HQLBuilder.addFiltroOrClause(hb, "pve.codigoPostalProveedor", "ddcp.codigo", dto.getCodigoPostal());
 		}
 
 		// Tiene que tratarse de la siguiente manera debido a la personalizacion
@@ -152,8 +202,25 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 			}
 		}
 
-		return dtoProveedorFilter;
+		return dtoProveedorFilter;	
 	}
+	
+	private void addFiltroWhereInSiNotNullConStrings(HQLBuilder hb, String nombreCampo, List<String> valores) {
+        if (!Checks.estaVacio(valores)) {
+            final StringBuilder b = new StringBuilder();
+            boolean first = true;
+            for (String s : valores) {
+                if (!first) {
+                    b.append(", ");
+                } else {
+                    first = false;
+                }
+                b.append("'" + s + "'");
+            }
+            hb.appendWhere(nombreCampo.concat(" in (").concat(b.toString()).concat(")"));
+        }
+        
+    }
 
 	@Override
 	public List<ActivoProveedor> getProveedoresByNifList(String nif) {
@@ -415,7 +482,7 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 	public List<ActivoProveedor> getMediadoresActivos() {
 		HQLBuilder hb = new HQLBuilder(
 				"select proveedor.id, proveedor.codigoProveedorRem, proveedor.nombre from ActivoProveedor proveedor");
-		hb.appendWhere("(proveedor.tipoProveedor.codigo =" + DDTipoProveedor.COD_MEDIADOR +" and proveedor.homologado = 1) "
+		hb.appendWhere("(proveedor.tipoProveedor.codigo in(" + DDTipoProveedor.COD_MEDIADOR + " , "+ DDTipoProveedor.COD_ACREDITADOS + ") and proveedor.homologado = 1) "
 				+ "or (proveedor.tipoProveedor.codigo =" + DDTipoProveedor.COD_FUERZA_VENTA_DIRECTA + " and proveedor.estadoProveedor.codigo = " + DDEstadoProveedor.ESTADO_BIGENTE + ") "
 				+ "and proveedor.fechaBaja != null");
 		
@@ -447,5 +514,43 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 		hb.orderBy("v.nombreComercial", HQLBuilder.ORDER_ASC);
 
 		return (List<VProveedores>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).setParameter("codCartera", codCartera).list();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Localidad> getMunicipiosList(String codigoProvincia) {
+		
+		HQLBuilder hb = new HQLBuilder("select loc from Localidad loc, DDProvincia prv ");
+
+		hb.appendWhere("loc.provincia.id = prv.id");
+		hb.appendWhere("prv.codigo = :codigoProvincia");
+
+		List<Localidad> localidadList = (List<Localidad>) this.getSessionFactory().getCurrentSession()
+				.createQuery(hb.toString()).setParameter("codigoProvincia", codigoProvincia).list();
+		
+		if (localidadList != null && !localidadList.isEmpty()) {
+			return localidadList;
+		}else {
+			return null;
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<DDCodigoPostal> getCodigosPostalesList(String codigoMunicipio) {
+		
+		HQLBuilder hb = new HQLBuilder("select cdp from DDCodigoPostal cdp, Localidad loc ");
+
+		hb.appendWhere("cdp.localidad.id = loc.id");
+		hb.appendWhere("loc.codigo = :codigoMunicipio");
+
+		List<DDCodigoPostal> codigoPostalList = (List<DDCodigoPostal>) this.getSessionFactory().getCurrentSession()
+				.createQuery(hb.toString()).setParameter("codigoMunicipio", codigoMunicipio).list();
+		
+		if (codigoPostalList != null && !codigoPostalList.isEmpty()) {
+			return codigoPostalList;
+		}else {
+			return null;
+		}
 	}
 }

@@ -614,6 +614,7 @@ public class GastoProveedor implements Serializable, Auditable {
 	public void setTitularCartaPago(ActivoPropietario titularCartaPago) {
 		this.titularCartaPago = titularCartaPago;
 	}
+
 	public Date getFechaDocumentoBBVA() {
 		return fechaDocumentoBBVA;
 	}

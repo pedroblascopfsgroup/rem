@@ -564,4 +564,11 @@ public class DtoFichaGastoProveedor extends WebDto {
 	public void setIsFechaDomiciliado(Boolean isFechaDomiciliado) {
 		this.isFechaDomiciliado = isFechaDomiciliado;
 	}
+	public Date getFechaDocumentoBBVA() {
+		return fechaDocumentoBBVA;
+	}
+	public void setFechaDocumentoBBVA(Date fechaDocumentoBBVA) {
+		this.fechaDocumentoBBVA = fechaDocumentoBBVA;
+	}
+	
 }

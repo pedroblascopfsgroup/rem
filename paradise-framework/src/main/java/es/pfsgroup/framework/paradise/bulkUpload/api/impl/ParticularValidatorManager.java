@@ -9447,6 +9447,8 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "		 DD_TAU_CODIGO = :codActuacion "
 				+ "		 	AND BORRADO = 0");
 		return "0".equals(resultado);
+	}
+	
 	public Boolean apiBloqueadoProvincia(String numActivo, String codProveedor) {
 		String resultado = "0";
 

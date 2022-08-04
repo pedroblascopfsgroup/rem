@@ -71,10 +71,7 @@ Ext.define('HreRem.model.Proveedor', {
             },
             {
             	name: 'propietario'
-            },
-            {
-            	name: 'subcartera'
-            },
+            },           
             {
             	name: 'provinciaCodigo'
             },
@@ -95,6 +92,12 @@ Ext.define('HreRem.model.Proveedor', {
             },
             {
             	name: 'topCodigo'
+            },
+            {
+            	name: 'especialidadCodigo'
+            },
+            {
+            	name: 'lineaNegocioCodigo'
             }
     ],
     

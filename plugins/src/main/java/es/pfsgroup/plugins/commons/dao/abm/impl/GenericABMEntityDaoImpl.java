@@ -253,6 +253,9 @@ public class GenericABMEntityDaoImpl implements GenericABMDao {
 				case NOT_EQUALS:
 					HQLBuilder.addFiltroDifferentSiNotNull(b, f.getPropertyName(), f.getPropertyValue());
 					break;
+				case NOT_SIMILARY:
+					HQLBuilder.addFiltroDifferentSiNotNull(b, f.getPropertyName(), f.getPropertyValue());
+					break;
 				}
 			}
 			if (!similary.isEmpty()) {

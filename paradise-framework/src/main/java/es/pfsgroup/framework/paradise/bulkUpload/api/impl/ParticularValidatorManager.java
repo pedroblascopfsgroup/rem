@@ -9447,6 +9447,66 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "		 DD_TAU_CODIGO = :codActuacion "
 				+ "		 	AND BORRADO = 0");
 		return "0".equals(resultado);
+	public Boolean apiBloqueadoProvincia(String numActivo, String codProveedor) {
+		String resultado = "0";
+
+		if(!Checks.esNulo(numActivo) && !Checks.esNulo(codProveedor)){
+			Map<String, Object> params = new HashMap<String, Object>();
+			params.put("numActivo", numActivo);
+			rawDao.addParams(params);
+			
+	    	String codigoProvincia = rawDao.getExecuteSQL("SELECT PRV.DD_PRV_CODIGO FROM ACT_ACTIVO ACT "
+					+ " JOIN BIE_BIEN BIE ON ACT.BIE_ID = BIE.BIE_ID "
+					+ " JOIN BIE_LOCALIZACION   BIE_LOC ON BIE.BIE_ID = BIE_LOC.BIE_ID "
+					+ " JOIN REMMASTER.DD_PRV_PROVINCIA PRV  ON PRV.DD_PRV_ID = BIE_LOC.DD_PRV_ID "
+					+ " WHERE ACT.ACT_NUM_ACTIVO = :numActivo "
+					+ " AND ACT.BORRADO=0  AND BIE.BORRADO=0  AND BIE_LOC.BORRADO=0 AND ROWNUM = 1 ");
+	    	
+	    	if(!Checks.esNulo(codigoProvincia)) {
+	    		params = new HashMap<String, Object>();
+	    		params.put("codProveedor", codProveedor);
+	    		params.put("codigoProvincia", codigoProvincia);
+	    		rawDao.addParams(params);
+	    		
+	    		resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM act_pve_proveedor pve\n" + 
+	    				"join bap_bloqueo_apis bap on pve.pve_id = bap.pve_id and bap.borrado = 0\n" + 
+	    				"join bar_bloqueo_apis_provincia bar on bap.bap_id = bar.bap_id and bar.borrado = 0\n" + 
+	    				"JOIN REMMASTER.dd_prv_provincia prv on bar.dd_prv_id = prv.dd_prv_id\n" + 
+	    				"where pve.PVE_COD_REM = :codProveedor and prv.dd_prv_codigo = :codigoProvincia  ");
+	    	
+	    	
+	    	}
+		}
+		
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean apiBloqueadoCartera(String numActivo, String codProveedor) {
+		String resultado = "0";
+
+		if(!Checks.esNulo(numActivo) && !Checks.esNulo(codProveedor)){
+			Map<String, Object> params = new HashMap<String, Object>();
+			params.put("numActivo", numActivo);
+			rawDao.addParams(params);
+			
+	    	String codigoCartera = rawDao.getExecuteSQL("SELECT cra.dd_Cra_codigo FROM act_activo act\n" + 
+	    			"join dd_cra_cartera cra on cra.dd_Cra_id = act.dd_Cra_id and cra.borrado = 0\n" + 
+	    			"where act.act_num_activo = :numActivo ");
+	    	params.clear();
+	    	if(!Checks.esNulo(codigoCartera)) {
+	    		params.put("codProveedor", codProveedor);
+	    		params.put("codigoCartera", codigoCartera);
+	    		rawDao.addParams(params);
+	    		resultado = rawDao.getExecuteSQL("SELECT count(*) FROM act_pve_proveedor pve\n" +
+	    				"join bap_bloqueo_apis bap on pve.pve_id = bap.pve_id and bap.borrado = 0\n" + 
+	    				"join bac_bloqueo_apis_cartera bac on bac.bap_id = bap.bap_id and bac.borrado = 0\n" + 
+	    				"join dd_cra_cartera cra on cra.dd_Cra_id = bac.dd_Cra_id and cra.borrado = 0\n" + 
+	    				"where pve.PVE_COD_REM = :codProveedor and cra.dd_cra_codigo = :codigoCartera  ");
+	    	}
+		}
+		
+		return !"0".equals(resultado);
 	}
 	public Boolean isActivoMaccMarina(String numActivo) {
 		Map<String, Object> params = new HashMap<String, Object>();
@@ -9471,6 +9531,68 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	@Override
+	public Boolean apiBloqueadoLineaDeNegocio(String numActivo, String codProveedor) {
+		String resultado = "0";
+
+		if(!Checks.esNulo(numActivo) && !Checks.esNulo(codProveedor)){
+			Map<String, Object> params = new HashMap<String, Object>();
+			params.put("numActivo", numActivo);
+			rawDao.addParams(params);
+			
+	    	String codigoComercializacion = rawDao.getExecuteSQL("SELECT tco.dd_Tco_codigo FROM act_activo act\n" + 
+	    			"join act_apu_activo_publicacion apu on act.act_id = apu.act_id and apu.borrado = 0\n" + 
+	    			"join dd_tco_tipo_comercializacion tco on tco.dd_Tco_id = apu.dd_tco_id\n" + 
+	    			"where act.act_num_activo = :numActivo");
+	    	
+	    	if(!Checks.esNulo(codigoComercializacion)) {
+	    		params = new HashMap<String, Object>();
+	    		params.put("codProveedor", codProveedor);
+	    		params.put("codigoComercializacion", codigoComercializacion);
+	    		rawDao.addParams(params);
+	    		
+	    		resultado = rawDao.getExecuteSQL("SELECT count(*) FROM act_pve_proveedor pve\n" + 
+	    				"join bap_bloqueo_apis bap on pve.pve_id = bap.pve_id and bap.borrado = 0\n" + 
+	    				"join bal_bloqueo_apis_lneg bal on bal.bap_id = bap.bap_id and bal.borrado = 0\n" + 
+	    				"join dd_tco_tipo_comercializacion tco on bal.dd_tco_id = tco.dd_tco_id and tco.borrado = 0\n" + 
+	    				"where pve.PVE_COD_REM = :codProveedor and tco.dd_tco_codigo = :codigoComercializacion  ");
+	    	}
+		}
+		
+		return !"0".equals(resultado);
+	}
+	
+	
+	@Override
+	public Boolean apiBloqueadoEspecialidad(String numActivo, String codProveedor) {
+		String resultado = "0";
+
+		if(!Checks.esNulo(numActivo) && !Checks.esNulo(codProveedor)){
+			Map<String, Object> params = new HashMap<String, Object>();
+			params.put("numActivo", numActivo);
+			params.put("codProveedor", codProveedor);
+			rawDao.addParams(params);
+			
+    		resultado = rawDao.getExecuteSQL("with  isON as (" + 
+    				"    SELECT (SELECT dd_esp_id FROM dd_esp_especialidad where dd_esp_codigo = '02') AS PRUEBA ,esp.dd_tpa_id as activoTPA, esp.dd_Sac_id as activoSAC" + 
+    				"    FROM ACT_ACTIVO ACT" + 
+    				"    join dd_eac_estado_activo eac on act.dd_eac_id = eac.dd_Eac_id" + 
+    				"    JOIN esp_sac_config esp on act.dd_tpa_id = esp.dd_Tpa_id and esp.dd_sac_id = act.dd_sac_id" +
+    				"    where eac.dd_Eac_codigo like '03' and act.act_num_activo = :numActivo" + 
+    				") " + 
+    				"SELECT count(*)" + 
+    				"    FROM act_pve_proveedor pve" + 
+    				"    join bap_bloqueo_apis bap on pve.pve_id = bap.pve_id and bap.borrado = 0" + 
+    				"    join bae_bloqueo_apis_esp bae on bae.bap_id = bap.bap_id and bae.borrado =  0  " + 
+    				"    left join isON isON on bae.dd_esp_id = isON.PRUEBA" + 
+    				"    left join esp_sac_config esa on esa.dd_esp_id = bae.dd_esp_id and bae.borrado = 0" + 
+    				"    join act_activo act on (act.dd_tpa_id = esa.dd_Tpa_id and esa.dd_sac_id = act.dd_sac_id) or (act.dd_tpa_id = isON.activoTPA and isON.activoSAC = act.dd_sac_id)" + 
+    				"    where act.act_num_activo = :numActivo and pve.pve_cod_rem = :codProveedor");
+	    
+		}
+		
+		return !"0".equals(resultado);
+	}
+	
 	public Boolean isFasePublicacionVySubfaseExcluidoPublicacionEstrategiaCliente(String numActivo) {
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("numActivo", numActivo);

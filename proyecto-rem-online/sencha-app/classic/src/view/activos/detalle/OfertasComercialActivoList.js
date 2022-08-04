@@ -634,6 +634,12 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		}
 		var codigoEstadoNuevo = record.data.codigoEstadoOferta;
 
+		if(enConcurrencia && CONST.ESTADOS_OFERTA['ACEPTADA'] == codigoEstadoNuevo){
+        	me.fireEvent("errorToast", HreRem.i18n("msg.error.periodo.concurrencia"));
+			me.up('activosdetalle').lookupController().refrescarActivo(true);
+			return false;
+        }
+		
 		if(enConcurrencia && CONST.TIPOS_OFERTA["VENTA"] === codigoTipoOfertaAnterior && CONST.ESTADOS_OFERTA['PDTE_DOCUMENTACION'] == codigoEstadoAnterior && CONST.ESTADOS_OFERTA['RECHAZADA'] != codigoEstadoNuevo){
         	me.fireEvent("errorToast", HreRem.i18n("msg.error.periodo.concurrencia.cambio.anulado"));
 			me.up('activosdetalle').lookupController().refrescarActivo(true);

@@ -1701,11 +1701,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			oferta.setIsEnConcurrencia(ofertaDto.getCreadaConcurrencia());
 			oferta.getActivoPrincipal();
 			
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", oferta.getActivoPrincipal().getId());
-			Order orderFechaFincConcurrencia = new Order(OrderType.DESC, "fechaFin");
-			List<Concurrencia> concurrenciaList = genericDao.getListOrdered(Concurrencia.class, orderFechaFincConcurrencia, filtro);
-			if(concurrenciaList != null && !concurrenciaList.isEmpty())
-				oferta.setConcurrencia(concurrenciaList.get(0));
+			Concurrencia concurrencia = concurrenciaApi.getUltimaConcurrenciaByActivo(oferta.getActivoPrincipal());
+			if(concurrencia != null)
+				oferta.setConcurrencia(concurrencia);
 			
 			Long idOferta = this.saveOferta(oferta);
 

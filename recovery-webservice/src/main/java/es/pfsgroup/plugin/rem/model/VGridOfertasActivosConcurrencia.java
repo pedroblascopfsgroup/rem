@@ -19,6 +19,9 @@ public class VGridOfertasActivosConcurrencia implements Serializable {
 	@Column(name= "ID")
 	private Long id;
 	
+	@Column(name = "OFR_ID")
+	private Long idOferta;
+	
 	@Column(name = "NUM_ACTIVO_AGRUPACION")  
 	private Long numActivoAgrupacion;
 	
@@ -85,6 +88,14 @@ public class VGridOfertasActivosConcurrencia implements Serializable {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public Long getIdOferta() {
+		return idOferta;
+	}
+
+	public void setIdOferta(Long idOferta) {
+		this.idOferta = idOferta;
 	}
 
 	public Long getNumOferta() {

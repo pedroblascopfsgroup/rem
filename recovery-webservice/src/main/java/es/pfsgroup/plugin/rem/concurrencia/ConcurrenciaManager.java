@@ -138,7 +138,8 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 
 	@Override
 	public Concurrencia getUltimaConcurrenciaByActivo(Activo activo) {
-		List<Concurrencia> concurrenciaList = genericDao.getList(Concurrencia.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
+		Order orderFechaFincConcurrencia = new Order(OrderType.DESC, "fechaFin");
+		List<Concurrencia> concurrenciaList = genericDao.getListOrdered(Concurrencia.class, orderFechaFincConcurrencia, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
 		Concurrencia concurrencia = null;
 		if(concurrenciaList != null && !concurrenciaList.isEmpty()) {
 			concurrencia = concurrenciaList.get(0);

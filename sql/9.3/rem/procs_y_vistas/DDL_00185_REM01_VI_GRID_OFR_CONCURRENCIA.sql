@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Alejandro Valverde
+--## AUTOR=Javier Esbri
 --## FECHA_CREACION=20220804
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-18495
+--## INCIDENCIA_LINK=HREOS-18511
 --## PRODUCTO=NO
 --## Finalidad: VI_GRID_OFR_CONCURRENCIA
 --##           
@@ -14,7 +14,8 @@
 --##         0.2 Juan Jose Sanjuan - añadir importe Oferta 
 --##         0.3 Alejandro Valverde (HREOS-18405) - Añadir datos Expediente Comercial
 --##         0.4 Alejandro Valverde (HREOS-18445) - Añadir campos EST_CODIGO_C4C y FECHA_ENT_CRM_SF
---##         0.4 Alejandro Valverde (HREOS-18495) - Añadir campo OFR_ID
+--##         0.5 Alejandro Valverde (HREOS-18495) - Añadir campo OFR_ID
+--##         0.6 Javier Esbri (HREOS-18511) - Añadir campo OFR_CONCURRENCIA
 --##########################################
 --*/
 
@@ -76,6 +77,7 @@ BEGIN
 		,EEC.DD_EEC_DESCRIPCION
 		,C4C.DD_ECC_CODIGO AS EST_CODIGO_C4C
 		,OFR.FECHA_ENT_CRM_SF
+    ,OFR.OFR_CONCURRENCIA AS OFERTA_CONCURRENCIA
 		FROM '|| V_ESQUEMA ||'.ofr_ofertas ofr
 		INNER JOIN '|| V_ESQUEMA ||'.DD_TOF_TIPOS_OFERTA TOF ON TOF.DD_TOF_ID = OFR.DD_TOF_ID
 		INNER JOIN '|| V_ESQUEMA ||'.DD_EOF_ESTADOS_OFERTA EOF ON EOF.DD_EOF_ID = OFR.DD_EOF_ID

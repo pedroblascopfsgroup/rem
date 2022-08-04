@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Alejandro Valverde
---## FECHA_CREACION=20220727
+--## AUTOR=Javier Esbri
+--## FECHA_CREACION=20220804
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-18445
+--## INCIDENCIA_LINK=HREOS-18511
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -14,6 +14,7 @@
 --##        0.2 Agregar estado depósito
 --##        0.3 REMVIP-11950 Cambio al mostrar datos ofertante
 --##        0.4 Alejandro Valverde (HREOS-18445) - Añadir campo FECHA_ENT_CRM_SF
+--##        0.5 Javier Esbri (HREOS-18511) - Añadir campo OFR_CONCURRENCIA
 --##########################################
 --*/
 
@@ -81,7 +82,8 @@ BEGIN
 			C4C.DD_ECC_CODIGO AS EST_CODIGO_C4C,
 			EDP.DD_EDP_CODIGO AS ESTADODEPOSITOCODIGO,
 			EDP.DD_EDP_DESCRIPCION AS ESTADODEPOSITO,
-			OFR.FECHA_ENT_CRM_SF
+			OFR.FECHA_ENT_CRM_SF,
+      OFR.OFR_CONCURRENCIA AS OFERTA_CONCURRENCIA
 		FROM '|| V_ESQUEMA ||'.OFR_OFERTAS OFR
         	INNER JOIN '|| V_ESQUEMA ||'.ACT_OFR AOF 					ON OFR.OFR_ID = AOF.OFR_ID
 		INNER JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT 					ON ACT.ACT_ID = AOF.ACT_ID and act.borrado = 0

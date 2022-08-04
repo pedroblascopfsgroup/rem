@@ -170,6 +170,21 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 				 * { dataIndex: 'numExpediente', text:
 				 * HreRem.i18n('header.oferta.expediente'), flex: 1 },
 				 */
+		        {   
+		    		text: HreRem.i18n('header.oferta.ofertaCreadaConcurrencia'),
+			    	dataIndex: 'ofertaCreadaConcurrencia',
+			    	align	 : 'center',
+			    	renderer : function(value) {
+			    		if(value == true){
+			    			return "Si";
+			    		}else if(value == false){
+			    			return "No";
+			    		}else {
+			    			return "";
+			    		}
+			    	},
+			    	flex: 1
+		        },
 		        {
 	    			xtype: 'actioncolumn',
 	    			text: HreRem.i18n('header.oferta.expediente'),
@@ -732,7 +747,6 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 	},
     saveSuccessFn: function (oferta, operation, c) {
    		var me = this;	
-
         try {
     		var response = Ext.JSON.decode(operation.getResponse().responseText);
 			if(!Ext.isEmpty(response) && !Ext.isEmpty(response.advertencia)) {

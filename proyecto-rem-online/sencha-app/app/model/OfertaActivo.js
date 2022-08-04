@@ -111,7 +111,11 @@ Ext.define('HreRem.model.OfertaActivo', {
     	},
 		{
     		name: 'codigoEstadoC4C'
-		}
+		},
+		{
+    		name: 'ofertaCreadaConcurrencia',
+			type: 'boolean'
+    	}
 
     ],
     

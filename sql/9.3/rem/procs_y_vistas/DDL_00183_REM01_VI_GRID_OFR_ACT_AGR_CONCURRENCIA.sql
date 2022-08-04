@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Alejandro Valverde
---## FECHA_CREACION=20220727
+--## AUTOR=Javier Esbri
+--## FECHA_CREACION=20220804
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-18445
+--## INCIDENCIA_LINK=HREOS-18511
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -15,6 +15,7 @@
 --##        HREOS-18320: Cambior de donde se aprovisionan los campos de FECHA_INGRESO_DEPOSITO y FECHA_INGRESO_DOCUMENTACION.
 --##        HREOS-18322: Quitar relaciones con la tabla OFC_OFERTAS_CONCURRENCIA.
 --##        HREOS-18445: Alejandro Valverde - Añadir campo FECHA_ENT_CRM_SF
+--##        HREOS-18511: Javier Esbri - Añadir campo OFR_CONCURRENCIA
 --##########################################
 --*/
 
@@ -127,7 +128,8 @@ BEGIN
 				CON.CON_FECHA_FIN AS FECHA_FIN_CONCURRENCIA,
 				ROUND(CON.CON_FECHA_FIN-CON.CON_FECHA_INI, 0) AS PERIODO_CONCURRENCIA,
 			ORDENACION.ORDENFINAL	AS ORDEN_GANADOR,
-			OFR.FECHA_ENT_CRM_SF
+			OFR.FECHA_ENT_CRM_SF,
+			OFR.OFR_CONCURRENCIA AS OFERTA_CONCURRENCIA
 
 		FROM ' || V_ESQUEMA || '.OFR_OFERTAS OFR
 		JOIN ORDENACIONCONCURRENCIA ORDENACION								ON ORDENACION.IDOFERTA = OFR.OFR_ID 

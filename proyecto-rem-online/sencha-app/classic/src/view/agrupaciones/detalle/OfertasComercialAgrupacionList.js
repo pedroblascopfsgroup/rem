@@ -107,6 +107,21 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 			        },
 		            flex: 1
 		        },
+		        {   
+		    		text: HreRem.i18n('header.oferta.ofertaCreadaConcurrencia'),
+			    	dataIndex: 'ofertaCreadaConcurrencia',
+			    	align	 : 'center',
+			    	renderer : function(value) {
+			    		if(value == true){
+			    			return "Si";
+			    		}else if(value == false){
+			    			return "No";
+			    		}else {
+			    			return "";
+			    		}
+			    	},
+			    	flex: 1
+		        },
 		        {
 	    			xtype: 'actioncolumn',
 	    			text: HreRem.i18n('header.oferta.expediente'),

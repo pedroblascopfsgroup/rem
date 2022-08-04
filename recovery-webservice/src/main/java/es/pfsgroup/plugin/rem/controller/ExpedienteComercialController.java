@@ -81,6 +81,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	private static final String RESPONSE_ERROR_KEY = "error";
 	private static final String RESPONSE_ERROR_MESSAGE_KEY = "errorMessage";
 	private static final String RESPONSE_MESSAGE_KEY = "msg";
+	private static final String RESPONSE_MESSAGE_ERROR_KEY = "msgError";
 	private static final String RESPONSE_TOTALCOUNT_KEY = "totalCount";
 	private static final String RESPONSE_ERROR_CONNECT = "No se puede conectar al servidor remoto en entornos previos";
 
@@ -1369,7 +1370,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 			model.put(RESPONSE_SUCCESS_KEY, success);
 
 		} catch (JsonViewerException e) {
-			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
+			model.put(RESPONSE_MESSAGE_ERROR_KEY, e.getMessage());
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			logger.warn("Error controlado en ExpedienteComercialController", e);
 

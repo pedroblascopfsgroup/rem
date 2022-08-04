@@ -46,8 +46,11 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.ConfiguracionPr
 											items :	[
 												{ 
 													fieldLabel:  HreRem.i18n('fieldlabel.proveedores.codigo'),
-													name: 'codigo',
-													colspan: 2
+													name: 'codigo'
+												},
+												{ 
+													fieldLabel:  HreRem.i18n('fieldlabel.proveedores.nombre'),
+													name: 'nombre'
 												},
 												{ 
 													xtype: 'combo',
@@ -133,18 +136,29 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.ConfiguracionPr
 													fieldLabel: HreRem.i18n('fieldlabel.proveedores.propietario'),
 													name: 'propietario'
 												},
-												// Fila 4
-												{ 
+												{
 													xtype: 'combo',
-													fieldLabel: HreRem.i18n('fieldlabel.proveedores.subcartera'),
-													disabled: true,
-													name: 'subcartera',
+													fieldLabel: HreRem.i18n('fieldlabel.proveedor.especialidad'),
+													name: 'especialidadCodigo',
 													bind: {
-														store: '{comboSubcartera}'			            		
+														store: '{comboEspecialidad}'		            		
+													},
+									            	displayField: 'descripcion',
+													valueField: 'codigo',
+													multiSelect: true
+												},
+												{
+													xtype: 'combo',
+													fieldLabel: HreRem.i18n('fieldlabel.proveedor.linea.negocio'),
+													name: 'lineaNegocioCodigo',
+													bind: {
+														store: '{comboLineaDeNegocio}'		            		
 													},
 									            	displayField: 'descripcion',
 													valueField: 'codigo'
 												}
+												
+												
 											]
 							                
 							            },

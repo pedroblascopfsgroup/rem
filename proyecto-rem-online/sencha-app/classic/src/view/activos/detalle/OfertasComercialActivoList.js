@@ -827,7 +827,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		} 
 		
 		if (activo.get('vistaDeConcurrencia') == true){ 
-			me.setTopBar(true);
+			me.setTopBar(false);
 		}
 		
    },

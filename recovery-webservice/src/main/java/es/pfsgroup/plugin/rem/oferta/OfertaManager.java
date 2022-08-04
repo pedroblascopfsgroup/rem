@@ -9718,6 +9718,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}
 			}
 			
+			this.darDebajaAgrSiOfertaEsLote(oferta);
 			genericDao.save(ExpedienteComercial.class, eco);
 		}
 		

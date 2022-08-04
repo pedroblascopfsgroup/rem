@@ -211,6 +211,8 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 		viewPortWidth = Ext.Element.getViewportWidth(),
 		viewPortHeight = Ext.Element.getViewportHeight();
 		var codigoCartera = me.lookupController().getViewModel().getData().agrupacionficha.getData().codigoCartera;
+		var codigoTipoAlquiler = me.lookupController().getViewModel().getData().agrupacionficha.getData().tipoAlquilerCodigo;
+		var tipoComercializacion = me.lookupController().getViewModel().data.agrupacionficha.data.tipoComercializacionCodigo;
 
 		for(var i=0;i<=items.length;i++){
 			if(items[i].getXType()=='fichaagrupacion'){
@@ -241,7 +243,12 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 			
 		if (numActivos == null || numActivos == '' || numActivos == '0') {
 			me.fireEvent("errorToast", HreRem.i18n("msg.comercialAnyadirOferta.agrupacion.sin.activos.error"));	
-		}else {
+		}else if (tipoComercializacion == CONST.TIPOS_COMERCIALIZACION['ALQUILER_VENTA'] || tipoComercializacion == CONST.TIPOS_COMERCIALIZACION['SOLO_ALQUILER']) {
+			if (codigoTipoAlquiler == null || codigoTipoAlquiler == '' || codigoTipoAlquiler == '05') {
+				me.fireEvent("errorToast", HreRem.i18n("msg.comercialAnyadirTipoAlquiler.error"));
+			}
+		}
+		else {
 			var parent= me.up('ofertascomercialagrupacion');
 			oferta = Ext.create('HreRem.model.OfertaComercial', {idAgrupacion: idAgrupacion, numAgrupacionRem: numAgrupacionRem});
 			Ext.create('HreRem.view.common.WizardBase',

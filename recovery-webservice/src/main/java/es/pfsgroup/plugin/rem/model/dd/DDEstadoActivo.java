@@ -122,5 +122,14 @@ public class DDEstadoActivo implements Auditable, Dictionary {
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
 	}
+	
+	public static boolean isObraNueva (DDEstadoActivo estadoFisico) {
+        boolean is = false;
+        if(estadoFisico != null && ESTADO_ACTIVO_TERMINADO.equals(estadoFisico.getCodigo())) {
+            is = true;
+        }
+        
+        return is;
+    }
 
 }

@@ -23,7 +23,7 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 @Entity
 @Table(name = "DD_SIN_SINO", schema = "${master.schema}")
 @Cache(usage=CacheConcurrencyStrategy.READ_ONLY)
-public class DDSinSiNo implements Auditable, Dictionary {
+public class DDSinSiNo implements Auditable, Dictionary{
 
     private static final long serialVersionUID = 1L;
     public static final String CODIGO_SI = "01";

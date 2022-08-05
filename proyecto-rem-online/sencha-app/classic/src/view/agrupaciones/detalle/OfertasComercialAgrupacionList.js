@@ -263,6 +263,7 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 
 		var me= this;
 		var estado = context.record.get("codigoEstadoOferta");
+		var	estadoAnterior = context.record.modified.codigoEstadoOferta;
 		var gencat = context.record.get("gencat");
 		var msg = HreRem.i18n('msg.desea.aceptar.oferta');
 		var agrupacion = me.lookupController().getViewModel().get('agrupacionficha');
@@ -383,8 +384,22 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 				}
 				
             	me.onCambioARechazoOfertaList(me, context.record);
-			} else if(CONST.ESTADOS_OFERTA['PENDIENTE'] == estado && $AU.userIsRol(CONST.PERFILES['HAYASUPER']) && agrupacion.get('codigoCartera')==CONST.CARTERA['BANKIA'] ){
-				me.saveFn(editor, me, context);
+			} else if(CONST.ESTADOS_OFERTA['PENDIENTE'] == estado && $AU.userIsRol(CONST.PERFILES['HAYASUPER']) 
+						&& CONST.ESTADOS_OFERTA['PDTE_DEPOSITO'] == estadoAnterior && CONST.TIPOS_OFERTA["VENTA"] == codigoTipoOferta){
+				var idOferta = context.record.get('idOferta');
+				me.mask(HreRem.i18n("msg.mask.espere"));
+                Ext.Ajax.request({
+                    url: $AC.getRemoteUrl('ofertas/actualizaEstadoOferta'),
+                	params: {idOferta: idOferta, codigoEstado: estado},
+                	success: function(response, opts){
+						me.unmask();
+                	    me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+                	},
+                    callback: function(record, operation) {
+						me.unmask();
+                        me.getStore().load();
+                    }
+                });
             } else {
             	me.saveFn(editor, me, context);
 			}

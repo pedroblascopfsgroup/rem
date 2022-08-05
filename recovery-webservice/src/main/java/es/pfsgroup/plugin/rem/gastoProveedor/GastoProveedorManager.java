@@ -644,7 +644,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				dto.setFechaDomiciliado(gasto.getFechaDomiciliado());
 			}
 			if (
-					DDCartera.CODIGO_CARTERA_BANKIA.equals(gasto.getCartera().getCodigo()) && DDTipoGasto.CODIGO_SUMINISTRO.equals(gasto.getTipoGasto().getCodigo()) && 
+					DDCartera.CODIGO_CARTERA_BANKIA.equals(gasto.getCartera().getCodigo()) && 
 					(DDTipoGasto.CODIGO_SUMINISTRO.equals(gasto.getTipoGasto().getCodigo()) ||
 						DDTipoGasto.CODIGO_TASA.equals(gasto.getTipoGasto().getCodigo()) ||
 						DDSubtipoGasto.IBI_URBANA.equals(gasto.getTipoGasto().getCodigo()) ||

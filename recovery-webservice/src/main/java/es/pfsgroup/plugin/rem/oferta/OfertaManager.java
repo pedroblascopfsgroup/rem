@@ -2436,7 +2436,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						.expedienteComercialPorOferta(oferta.getId());
 				if (!Checks.esNulo(expedienteComercial)) {
 					// Actualizamos la participación de los activos en la oferta;
-					expedienteComercialApi.updateParticipacionActivosOferta(oferta);
+					if (ofertaDto.getCreadaConcurrencia()) {
+						expedienteComercialApi.updateParticipacionActivosOferta(oferta);
+					}
 					expedienteComercialApi.actualizarImporteReservaPorExpediente(expedienteComercial);
 					
 					expedienteComercialApi.actualizarHonorariosPorExpediente(expedienteComercial.getId());
@@ -2784,7 +2786,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 			if (expedienteComercial != null) {
 				if (((JSONObject) jsonFields).containsKey("importeContraoferta")) {
-					expedienteComercialApi.updateParticipacionActivosOferta(oferta);
+					if (ofertaDto.getCreadaConcurrencia()) {
+						expedienteComercialApi.updateParticipacionActivosOferta(oferta);
+					}
 					expedienteComercialApi.actualizarImporteReservaPorExpediente(expedienteComercial);
 					expedienteComercialApi.actualizarHonorariosPorExpediente(expedienteComercial.getId());
 				}

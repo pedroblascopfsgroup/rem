@@ -66,7 +66,14 @@ Ext.define('HreRem.model.FichaProveedorModel', {
     			dateFormat: 'c'
 		    },
 		    {
-		    	name: 'territorialCodigo'
+		    	name: 'territorialCodigo',
+		    	convert: function(value) {
+		    		if(Ext.isEmpty(value)){
+		    			return 'VALOR_POR_DEFECTO';
+		    		} else {
+		    			return value;
+		    		}
+		    	}
 		    },
 		    {
 		    	name: 'carteraCodigo',
@@ -77,10 +84,7 @@ Ext.define('HreRem.model.FichaProveedorModel', {
 		    			return value;
 		    		}
 		    	}
-		    },
-		    {
-		    	name: 'subcarteraCodigo'
-		    },
+		    },	    
 		    {
 		    	name: 'custodioCodigo'
 		    },
@@ -149,7 +153,8 @@ Ext.define('HreRem.model.FichaProveedorModel', {
             {
             	name: 'isMediador',
             	calculate: function(data) {
-        			return data.subtipoProveedorCodigo == CONST.SUBTIPOS_PROVEEDOR['MEDIADOR'];
+        			return data.subtipoProveedorCodigo == CONST.SUBTIPOS_PROVEEDOR['MEDIADOR']
+							|| data.subtipoProveedorCodigo == CONST.SUBTIPOS_PROVEEDOR['INTERMEDIARIO'];
         		},
         		depends: 'subtipoProveedorCodigo'
             },
@@ -187,16 +192,59 @@ Ext.define('HreRem.model.FichaProveedorModel', {
             },
             {
             	name:'idMediadorRelacionado'
+            },
+            
+            {
+            	name:'origenPeticionHomologacionCodigo'
+            },
+            {
+            	name:'peticionario'
+            },
+            {
+            	name:'lineaNegocioCodigo'
+            },
+            {
+            	name:'gestionClientesNoResidentesCodigo'
+            },
+            {
+            	name:'numeroComerciales'
+            },
+            {
+            	name: 'fechaUltimoContratoVigente',
+    			type:'date',
+    			dateFormat: 'c'
+            },
+            {
+            	name:'motivoBaja'
+            },
+            {
+            	name:'especialidadCodigo',
+		    	convert: function(value) {
+		    		if(Ext.isEmpty(value)){
+		    			return 'VALOR_POR_DEFECTO';
+		    		} else {
+		    			return value;
+		    		}
+		    	}
+            },
+            {
+            	name:'idiomaCodigo',
+		    	convert: function(value) {
+		    		if(Ext.isEmpty(value)){
+		    			return 'VALOR_POR_DEFECTO';
+		    		} else {
+		    			return value;
+		    		}
+		    	}
             }
+            
     ],
 
 	proxy: {
 		type: 'uxproxy',
 		api: {
             read: 'proveedores/getProveedorById',
-            create: 'proveedores/createProveedor',
-            update: 'proveedores/saveProveedorById',
-            destroy: 'proveedores/deleteProveedorById'
+            update: 'proveedores/saveProveedorById'
         }
     }    
 });

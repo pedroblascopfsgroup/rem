@@ -1512,6 +1512,14 @@ public interface ParticularValidatorApi {
 	Boolean isAgrupacionContieneONDnd(Long numAgrupacion);
 
 	Boolean isActivoAgrupacionONDnd(Long numAgrupacion, Long numActivo);
+
+	Boolean apiBloqueadoProvincia(String numActivo, String codProveedor);
+
+	Boolean apiBloqueadoCartera(String numActivo, String codProveedor);
+
+	Boolean apiBloqueadoLineaDeNegocio(String numActivo, String codProveedor);
+
+	Boolean apiBloqueadoEspecialidad(String numActivo, String codProveedor);
 	
 	Boolean isActivoMaccMarina(String numActivo);
 

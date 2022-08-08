@@ -42,9 +42,23 @@ public class MSVCambioApiValidator extends MSVExcelValidatorAbstract{
 	private static final int ACT_NUM_ACTIVO = 0;
 	private static final int PVE_COD_REM = 1;
 	
-	public static final String ACTIVO_NO_EXISTE = "El activo no existe.";
-	public static final String PROVEEDOR_NO_EXISTE = "El proveedor no existe.";
-	public static final String PROVEEDOR_DADO_DE_BAJA = "El proveedor ha sido dado de baja.";
+	public static final String ACTIVO_NO_EXISTE = "msg.error.masivo.gestores.api.cambios.activo.no.existe";
+	public static final String PROVEEDOR_NO_EXISTE = "msg.error.masivo.gestores.api.cambios.proveedor.no.existe";
+	public static final String PROVEEDOR_DADO_DE_BAJA = "msg.error.masivo.gestores.api.cambios.proveedor.dado.de.baja";
+	
+	public static final String ACTIVO_NO_ESTA_RELLENO = "msg.error.masivo.gestores.api.cambios.activo.vacio";
+	public static final String PRIMARIO_NO_EXISTE = "msg.error.masivo.gestores.api.primario.no.existe";
+	
+	public static final String PROVEEDOR_BLOQUEDO_PROVINCIA = "api.bloqueado.provincia";
+	public static final String PROVEEDOR_BLOQUEDO_CARTERA = "api.bloqueado.cartera";
+	public static final String PROVEEDOR_BLOQUEDO_LN = "api.bloqueado.tipo.comercializacion";
+	public static final String PROVEEDOR_BLOQUEDO_ESPECIALIDAD = "api.bloqueado.especialidad";
+	
+	public static final String VALIDAR_FILA_EXCEPTION = "msg.error.masivo.gestores.exception";
+	
+	private Map<String, List<Integer>> mapaErrores = new HashMap<String, List<Integer>>();
+	
+	private final int FILA_DATOS = 1;
 	
 	@Autowired
 	private MSVExcelParser excelParser;
@@ -96,21 +110,18 @@ public class MSVCambioApiValidator extends MSVExcelValidatorAbstract{
 		
 		if (!dtoValidacionContenido.getFicheroTieneErrores()) {
 			// if (!isActiveExists(exc)){
-			Map<String, List<Integer>> mapaErrores = new HashMap<String, List<Integer>>();
-			mapaErrores.put(ACTIVO_NO_EXISTE, isActiveNotExistsRows(exc));
-			mapaErrores.put(PROVEEDOR_NO_EXISTE, isProveedorNotExistsRows(exc));
-			mapaErrores.put(PROVEEDOR_DADO_DE_BAJA, isProveedorUnsuscribeRows(exc));
 			
-
-			if (!mapaErrores.get(ACTIVO_NO_EXISTE).isEmpty() || !mapaErrores.get(PROVEEDOR_NO_EXISTE).isEmpty()
-					|| !mapaErrores.get(PROVEEDOR_DADO_DE_BAJA).isEmpty()
-				) {
-				dtoValidacionContenido.setFicheroTieneErrores(true);
-				exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
-				String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);
-				FileItem fileItemErrores = new FileItem(new File(nomFicheroErrores));
-				dtoValidacionContenido.setExcelErroresFormato(fileItemErrores);
+			if (!dtoValidacionContenido.getFicheroTieneErrores()) {
+				generarMapaErrores();
+				if (!validarFichero(exc)) {
+					dtoValidacionContenido.setFicheroTieneErrores(true);
+					exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
+					String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);
+					FileItem fileItemErrores = new FileItem(new File(nomFicheroErrores));
+					dtoValidacionContenido.setExcelErroresFormato(fileItemErrores);
+				}
 			}
+			
 		}
 		exc.cerrar();
 		
@@ -164,76 +175,86 @@ public class MSVCambioApiValidator extends MSVExcelValidatorAbstract{
 		}
 		return null;
 	}
-		
-	private List<Integer> isActiveNotExistsRows(MSVHojaExcel exc){
-		List<Integer> listaFilas = new ArrayList<Integer>();
-		
-		try{
-			for(int i=1; i<this.numFilasHoja;i++){
-				try {
-					if(!Checks.esNulo(exc.dameCelda(i, ACT_NUM_ACTIVO)) && !particularValidator.existeActivo(exc.dameCelda(i, ACT_NUM_ACTIVO)))
-						listaFilas.add(i);
-				} catch (ParseException e) {
-					listaFilas.add(i);
-				}
-			}
-			} catch (IllegalArgumentException e) {
-				listaFilas.add(0);
-				e.printStackTrace();
-			} catch (IOException e) {
-				listaFilas.add(0);
-				e.printStackTrace();
-			}
-		return listaFilas;
-	}
-	
-	private List<Integer> isProveedorNotExistsRows(MSVHojaExcel exc){
-		List<Integer> listaFilas = new ArrayList<Integer>();
-		
-		try{
-			for(int i=1; i<this.numFilasHoja;i++){
-				try {
-					if(!Checks.esNulo(exc.dameCelda(i, PVE_COD_REM)) && !particularValidator.existeProveedorByCodRem(exc.dameCelda(i, PVE_COD_REM)))
-						listaFilas.add(i);
-				} catch (ParseException e) {
-					listaFilas.add(i);
-				}
-			}
-			} catch (IllegalArgumentException e) {
-				listaFilas.add(0);
-				e.printStackTrace();
-			} catch (IOException e) {
-				listaFilas.add(0);
-				e.printStackTrace();
-			}
-		return listaFilas;
-	}
-	
-	private List<Integer> isProveedorUnsuscribeRows(MSVHojaExcel exc){
-		List<Integer> listaFilas = new ArrayList<Integer>();
-		
-		try{
-			for(int i=1; i<this.numFilasHoja;i++){
-				try {
-					if(!Checks.esNulo(exc.dameCelda(i, PVE_COD_REM)) && particularValidator.isProveedorUnsuscribed(exc.dameCelda(i, PVE_COD_REM)))
-						listaFilas.add(i);
-				} catch (ParseException e) {
-					listaFilas.add(i);
-				}
-			}
-			} catch (IllegalArgumentException e) {
-				listaFilas.add(0);
-				e.printStackTrace();
-			} catch (IOException e) {
-				listaFilas.add(0);
-				e.printStackTrace();
-			}
-		return listaFilas;
-	}
 
 	@Override
 	public Integer getNumFilasHoja() {
 		return this.numFilasHoja;
 	}
+	
+	
+	
+	private boolean validarFichero(MSVHojaExcel exc) {
+		final String CODIGO_MEDIADOR = "MED";
+		final String PONER_NULL_A_APIS = "0";
+		boolean esCorrecto = true;
+
+		for (int fila = FILA_DATOS; fila < this.numFilasHoja; fila++) {
+			try {
+				String numActivo = exc.dameCelda(fila, ACT_NUM_ACTIVO);
+				String codigoProveedorApi = exc.dameCelda(fila, PVE_COD_REM);
+
+				if (Checks.esNulo(numActivo)) {
+					mapaErrores.get(messageServices.getMessage(ACTIVO_NO_ESTA_RELLENO)).add(fila);
+					esCorrecto = false;
+				}
+				
+				if (!Checks.esNulo(numActivo) && !particularValidator.existeActivo(numActivo)) {
+					mapaErrores.get(messageServices.getMessage(ACTIVO_NO_EXISTE)).add(fila);
+					esCorrecto = false;
+				}
+
+				if (Checks.esNulo(codigoProveedorApi) && !PONER_NULL_A_APIS.equals(codigoProveedorApi)
+						&& !particularValidator.mediadorExisteVigente(codigoProveedorApi)) {
+					mapaErrores.get(messageServices.getMessage(PROVEEDOR_NO_EXISTE)).add(fila);
+					esCorrecto = false;
+				}
+				if (!Checks.esNulo(codigoProveedorApi) && !particularValidator.mediadorExisteVigente(codigoProveedorApi)) {
+					mapaErrores.get(messageServices.getMessage(PROVEEDOR_DADO_DE_BAJA)).add(fila);
+					esCorrecto = false;
+				}
+				if(!Checks.esNulo(codigoProveedorApi) && !Checks.esNulo(numActivo)) {
+					if(particularValidator.apiBloqueadoProvincia(numActivo, codigoProveedorApi)) {
+						mapaErrores.get(messageServices.getMessage(PROVEEDOR_BLOQUEDO_PROVINCIA)).add(fila);
+						esCorrecto = false;
+					}
+					if(particularValidator.apiBloqueadoCartera(numActivo, codigoProveedorApi)) {
+						mapaErrores.get(messageServices.getMessage(PROVEEDOR_BLOQUEDO_CARTERA)).add(fila);
+						esCorrecto = false;
+					}
+					if(particularValidator.apiBloqueadoLineaDeNegocio(numActivo, codigoProveedorApi)) {
+						mapaErrores.get(messageServices.getMessage(PROVEEDOR_BLOQUEDO_LN)).add(fila);
+						esCorrecto = false;
+					}
+					if(particularValidator.apiBloqueadoEspecialidad(numActivo, codigoProveedorApi)) {
+						mapaErrores.get(messageServices.getMessage(PROVEEDOR_BLOQUEDO_ESPECIALIDAD)).add(fila);
+						esCorrecto = false;
+					}
+				}
+				
+
+			} catch (Exception e) {
+				mapaErrores.get(messageServices.getMessage(VALIDAR_FILA_EXCEPTION)).add(fila);
+				esCorrecto = false;
+				logger.error(e.getMessage());
+			}
+		}
+
+		return esCorrecto;
+	}
+	
+	private void generarMapaErrores() {
+		mapaErrores = new HashMap<String, List<Integer>>();
+		mapaErrores.put(messageServices.getMessage(ACTIVO_NO_EXISTE), new ArrayList<Integer>());
+		mapaErrores.put(messageServices.getMessage(PROVEEDOR_NO_EXISTE), new ArrayList<Integer>());
+		mapaErrores.put(messageServices.getMessage(PROVEEDOR_DADO_DE_BAJA), new ArrayList<Integer>());
+		mapaErrores.put(messageServices.getMessage(ACTIVO_NO_ESTA_RELLENO), new ArrayList<Integer>());
+		mapaErrores.put(messageServices.getMessage(PRIMARIO_NO_EXISTE), new ArrayList<Integer>());
+		mapaErrores.put(messageServices.getMessage(VALIDAR_FILA_EXCEPTION), new ArrayList<Integer>());
+		mapaErrores.put(messageServices.getMessage(PROVEEDOR_BLOQUEDO_PROVINCIA), new ArrayList<Integer>());
+		mapaErrores.put(messageServices.getMessage(PROVEEDOR_BLOQUEDO_CARTERA), new ArrayList<Integer>());
+		mapaErrores.put(messageServices.getMessage(PROVEEDOR_BLOQUEDO_LN), new ArrayList<Integer>());
+		mapaErrores.put(messageServices.getMessage(PROVEEDOR_BLOQUEDO_ESPECIALIDAD), new ArrayList<Integer>());
+	}
+
 	
 }

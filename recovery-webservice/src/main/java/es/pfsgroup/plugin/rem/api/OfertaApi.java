@@ -810,10 +810,6 @@ public interface OfertaApi {
     
 	public void replicateOfertaFlush(Oferta oferta);
 
-	public String actualizarOfertaBoarding(TareaExterna tareaExterna);
-	
-	public String actualizarOfertaBoarding(Oferta oferta, String codigo,TareaExterna tareaExterna);
-
 	boolean esOfertaValidaCFVByCarteraSubcartera(Oferta oferta);
 
 	 String getIdPersonaHayaByDocumento(Long idExpediente, String cartera,String documento);
@@ -872,4 +868,6 @@ public interface OfertaApi {
 	void congelarOfertasAndReplicate(Activo activo, Oferta oferta);
 
 	void rechazoOfertasMotivoVendido(Oferta oferta);
+
+	void actualizarOfertaBoarding(Oferta oferta, TareaExterna tareaExterna);
 }

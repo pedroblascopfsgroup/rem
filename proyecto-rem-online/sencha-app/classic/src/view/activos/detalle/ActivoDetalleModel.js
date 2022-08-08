@@ -3086,7 +3086,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			proxy: {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getComboMotivoRechazoOferta',
-				extraParams: {tipoRechazoOfertaCodigo: '{ofertaRecord.tipoRechazoCodigo}', idOferta: '{ofertaRecord.id}'}
+				extraParams: {tipoRechazoOfertaCodigo: '{ofertaRecord.tipoRechazoCodigo}', idOferta: '{ofertaRecord.idOferta}'}
 			}
 	    },
 	    

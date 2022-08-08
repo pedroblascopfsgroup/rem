@@ -149,7 +149,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 			       
 			        		if(!Ext.isEmpty(comboEditor)) {
 				        		store = comboEditor.getStore(),							        		
-				        		record = store.findRecord("codigo", value);
+				        		record = store.findRecord("descripcion", value);				        		
 				        		if(!Ext.isEmpty(record)) {								        			
 				        			return record.get("descripcion");								        		
 				        		} else {
@@ -289,7 +289,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
             var numAgrupacion = context.record.get("numAgrupacionRem"); 
             
             var allowEdit = estado != '01' && estado != '02' && estado != '05' && estado != '06' && estado != '08' && estado != '09' && Ext.isEmpty(numAgrupacion);
-            if ($AU.userIsRol(CONST.PERFILES['HAYASUPER']) && estado == '08') {
+            if (($AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTOR_COMERCIAL_BO_INM']) || $AU.userIsRol(CONST.PERFILES['SUPERVISOR_COMERCIAL_BO_INM'])) && estado == '08') {
             	allowEdit = true;
             }
 			

@@ -119,6 +119,7 @@ Ext.define('HreRem.ux.util.Constants', {
 		OFICINA_LIBERBANK:'38',
 		OFICINA_BANKIA: '28',
 		OFICINA_CAJAMAR: '29',
+		ACREDITADOS: '44',
 		//proveedores no homologables
 		COMUNIDAD_DE_PROPIETARIOS: '07',
 		COMPLEJO_INMOBILIARIO: '08',
@@ -133,7 +134,8 @@ Ext.define('HreRem.ux.util.Constants', {
 		NOTARIO: '21',
 		REGISTRO: '24',
 		PROCURADORES: '43',
-		SUMINISTRO: '25'
+		SUMINISTRO: '25',
+		INTERMEDIARIO: '44'
 		
 	},
 

@@ -29,6 +29,17 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 				items :
 					[
 		                {
+							xtype : 'button',
+							reference : 'btnDesbloqueoExpediente',
+							text : HreRem.i18n('title.btn.expediente.desbloqueo'),
+							handler : 'onClickDesbloqueoExpediente',
+							bind: {
+								hidden: !$AU.userIsRol("HAYASUPER")
+						    },
+							colspan: 3,
+							margin : '10 10 10 10'
+						},
+		                {
 		                	xtype: 'displayfieldbase',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.num.expediente'),
 		                	bind:		'{expediente.numExpediente}'

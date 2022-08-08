@@ -87,7 +87,7 @@ public class UpdaterServiceCierreContratoNoComercial implements UpdaterService {
 		}
 
 		try {
-			if(DDTipoOferta.isTipoAlquilerNoComercial(oferta.getTipoOferta()) && MAESTRO_ORIGEN_REM.equals(oferta.getOrigen())){
+			if(DDTipoOferta.isTipoAlquilerNoComercial(oferta.getTipoOferta()) && MAESTRO_ORIGEN_REM.equals(oferta.getOrigen().getCodigo())){
 				Usuario usu=proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 				Thread maestroPersona = new Thread( new MaestroDePersonas(expedienteComercial.getId(),usu.getUsername(),oferta.getActivoPrincipal().getCartera().getDescripcion()));
 				maestroPersona.start();

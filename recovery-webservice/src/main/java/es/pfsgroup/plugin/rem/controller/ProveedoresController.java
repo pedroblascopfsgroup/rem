@@ -11,7 +11,6 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.NumberUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -36,16 +35,15 @@ import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
-import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.IsNumber;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.ProveedorExcelReport;
@@ -57,6 +55,9 @@ import es.pfsgroup.plugin.rem.model.AuditoriaExportaciones;
 import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
 import es.pfsgroup.plugin.rem.model.DtoActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
+import es.pfsgroup.plugin.rem.model.DtoBloqueoApis;
+import es.pfsgroup.plugin.rem.model.DtoConductasInapropiadas;
+import es.pfsgroup.plugin.rem.model.DtoDatosContacto;
 import es.pfsgroup.plugin.rem.model.DtoDireccionDelegacion;
 import es.pfsgroup.plugin.rem.model.DtoMediador;
 import es.pfsgroup.plugin.rem.model.DtoMediadorEvalua;
@@ -75,7 +76,7 @@ public class ProveedoresController extends ParadiseJsonController {
 	protected static final Log logger = LogFactory.getLog(ProveedoresController.class);
 
 	private static final String RESPONSE_SUCCESS_KEY = "success";
-
+	private static final String RESPONSE_ERROR_MESSAGE_KEY= "msgError";
 	private static final String RESPONSE_DATA_KEY = "data";
 
 	@Autowired
@@ -759,5 +760,188 @@ public class ProveedoresController extends ParadiseJsonController {
 		}
 		return createModelAndViewJson(model);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getConductasInapropiadasByProveedor(Long id, ModelMap model, HttpServletRequest request) {
+		try {
+			model.put(RESPONSE_DATA_KEY, proveedoresApi.getConductasInapropiadasByProveedor(id));
+			model.put(RESPONSE_SUCCESS_KEY, true);
+		} catch (Exception e) {
+			logger.error("Error en ProveedoresController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_MESSAGE_KEY, e.getMessage());
+		}
 
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveConductasInapropiadas(DtoConductasInapropiadas dto, ModelMap model, HttpServletRequest request) {
+		try{
+			boolean success = proveedoresApi.saveConductasInapropiadas(dto);
+			model.put(RESPONSE_SUCCESS_KEY, success);
+
+		} catch (Exception e) {
+			logger.error("Error en ProveedoresController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_MESSAGE_KEY, e.getMessage());
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@RequestMapping(method= RequestMethod.GET)
+	public ModelAndView getComboDelegacionesByProveedor(String id) {
+		return createModelAndViewJson(new ModelMap(RESPONSE_DATA_KEY, proveedoresApi.getDelegacionesByProveedor(id)));	
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView deleteConductasInapropiadas(String id, ModelMap model) {
+		try {
+			boolean success = proveedoresApi.deleteConductasInapropiadas(id);
+			model.put("success", success);
+
+		} catch (Exception e) {
+			logger.error("Error en ProveedoresController", e);
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getHistoricoBloqueos(Long id, ModelMap model) {
+		try {
+			
+			model.put("data", proveedoresApi.getHistoricoBloqueos(id));
+			model.put("success", true);
+		} catch (Exception e) {
+			
+			logger.error("Error en ProveedoresController", e);
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+	}
+
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getBloqueoByProveedorId(Long id, ModelMap model) {
+		try {
+			
+			model.put("data", proveedoresApi.getBloqueoApiByProveedorId(id));
+			model.put("success", true);
+		} catch (Exception e) {
+			
+			logger.error("Error en ProveedoresController", e);
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveBloqueoProveedorById(Long id, DtoBloqueoApis dto, ModelMap model, HttpServletRequest request) {
+		try{
+			proveedoresApi.saveBloqueoProveedorById(id, dto);
+			model.put("success", true);
+			trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_PROVEEDOR, "datos", ACCION_CODIGO.CODIGO_MODIFICAR);
+
+		} catch (JsonViewerException jvex) {
+			model.put("success", false);
+			model.put("msg", jvex.getMessage());
+			logger.warn("Excepción controlada en ProveedoresController", jvex);
+			trustMe.registrarError(request, id, ENTIDAD_CODIGO.CODIGO_PROVEEDOR, "datos", ACCION_CODIGO.CODIGO_MODIFICAR, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
+
+		} catch (Exception e) {
+			logger.error("Error en ProveedoresController", e);
+			model.put("success", false);
+			trustMe.registrarError(request, id, ENTIDAD_CODIGO.CODIGO_PROVEEDOR, "datos", ACCION_CODIGO.CODIGO_MODIFICAR, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
+		}
+		return createModelAndViewJson(model);
+	}
+
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView uploadConducta(HttpServletRequest request, HttpServletResponse response) {
+		ModelMap model = new ModelMap();
+		WebFileItem fileItem = new WebFileItem();
+
+		try {
+			fileItem = uploadAdapter.getWebFileItem(request);
+
+			String errores = proveedoresApi.uploadConducta(fileItem);
+
+			model.put("errores", errores);
+			model.put("success", errores == null);
+			
+		} catch (GestorDocumentalException ex) {
+			logger.error("Error en ProveedoresController sobre el Gestor Documental", ex);
+			model.put("success", false);
+			if (ex.getMessage().contains("An item with the name '"+fileItem.getFileItem().getFileName()+"' already exists") || ex.getMessage().contains("Ya existe un elemento con el nombre")) {
+				model.put("errorMessage", ProveedoresManager.ERROR_NOMBRE_DOCUMENTO_PROVEEDOR+": "+fileItem.getFileItem().getFileName());
+			} else if (ex.getMessage().contains("Control duplicado, ya existe un documento igual")) {
+			   	DDTipoDocumentoProveedor tipoDocumentoProveedor = genericDao.get(DDTipoDocumentoProveedor.class, 
+			   			genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("tipo")), 
+			   			genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
+				model.put("errorMessage", ProveedoresManager.ERROR_TIPO_UNICO_DOCUMENTO_PROVEEDOR+": "+tipoDocumentoProveedor.getDescripcion());
+			} else {
+				model.put("errorMessage", "Ha habido un problema con la subida del archivo al gestor documental.");
+			}
+		} catch (Exception e) {
+			logger.error("Error en ProveedoresController", e);
+			if (ProveedoresManager.ERROR_TIPO_DOCUMENTO_PROVEEDOR.equals(e.getMessage())) {
+				model.put("errorMessage", ProveedoresManager.ERROR_TIPO_DOCUMENTO_PROVEEDOR);
+			}
+			model.put("success", false);
+			model.put("errores", e.getCause());
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getDatosContactoById(Long id, ModelMap model, HttpServletRequest request) {
+		model.put("data", proveedoresApi.getDatosContactoById(id));
+		model.put("success", true);
+		trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_PROVEEDOR, "datos", ACCION_CODIGO.CODIGO_VER);
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveDatosContactoById(DtoDatosContacto dto, ModelMap model, HttpServletRequest request) {
+		try{
+			boolean success = proveedoresApi.saveDatosContactoById(dto);
+			model.put("success", success);
+
+		} catch (JsonViewerException jvex) {
+			model.put("success", false);
+			model.put("msg", jvex.getMessage());
+			logger.warn("Excepción controlada en ProveedoresController", jvex);
+
+		} catch (Exception e) {
+			logger.error("Error en ProveedoresController", e);
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getComboMunicipioMultiple(String codigoProvincia){
+		return createModelAndViewJson(new ModelMap("data", proveedoresApi.getComboMunicipioMultiple(codigoProvincia)));
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getComboCodigoPostalMultiple(String codigoMunicipio){
+		return createModelAndViewJson(new ModelMap("data", proveedoresApi.getComboCodigoPostalMultiple(codigoMunicipio)));
+	}
 }

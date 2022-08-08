@@ -25,6 +25,9 @@ Ext.define('HreRem.model.DireccionesDelegacionesModel', {
     			name:'numeroVia'
     		},
     		{
+    			name:'piso'
+    		},
+    		{
     			name:'puerta'
     		},
     		{
@@ -41,6 +44,9 @@ Ext.define('HreRem.model.DireccionesDelegacionesModel', {
     		},
     		{
     			name:'email'
+    		},
+    		{
+    			name:'otros'
     		}
     ],
 

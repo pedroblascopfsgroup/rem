@@ -2217,8 +2217,34 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	    
 	    return map;
 	}
+	
+	@Override
+	public List<DDCategoriaConductaInapropiada> getComboCategoriaConducta(String idTipoConducta) {
+		if(!Checks.esNulo(idTipoConducta)) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "tipoConducta.codigo", idTipoConducta);
+			return genericDao.getList(DDCategoriaConductaInapropiada.class, filtro);
+		}
+		return null;
+	}
 
 	@Override
+	public DDNivelConductaInapropiada getComboNivelConducta(String idCategoriaConducta) {
+		if(!Checks.esNulo(idCategoriaConducta)) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", idCategoriaConducta);
+			return genericDao.get(DDCategoriaConductaInapropiada.class, filtro).getNivelConducta();
+		}
+		return null;
+	}
+	
+	@Override
+	public List<DDTipoDocumentoProveedor> getDocumentosProveedor(String codBloque) {
+		if(!Checks.esNulo(codBloque)) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "bloque.codigo", codBloque);
+			Order orden = new Order(OrderType.ASC,"descripcion");
+			return genericDao.getListOrdered(DDTipoDocumentoProveedor.class,orden, filtro);
+		}
+		return null;
+	}
 	public List<DDEstadoOferta> getDiccionarioEstadosOfertasAgrupacion(Long idAgrupacion) {
 
 		List<DDEstadoOferta> estadosOferta = genericDao.getList(DDEstadoOferta.class);

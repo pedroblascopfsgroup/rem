@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.restclient.webcom;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
@@ -16,6 +17,8 @@ import es.pfsgroup.plugin.rem.api.services.webcom.dto.ActivoObrasNuevasDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.CabeceraObrasNuevasDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.CampanyaObrasNuevasDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.ComisionesDto;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.ConductasInapropiadasDto;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.DelegacionDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.EstadoOfertaDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.EstadoTrabajoDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.InformeMediadorDto;
@@ -143,6 +146,25 @@ public class ServiciosWebcomManager extends ServiciosWebcomBaseManager implement
 	public JSONObject webcomRestProveedores(List<ProveedorDto> proveedores, RestLlamada registro) throws ErrorServicioWebcom {
 		logger.trace("Invocando servicio Webcom: Envio datos Proveedores");
 		JSONObject result = null;
+	
+		for (ProveedorDto proveedorDto: proveedores) {
+			List<ConductasInapropiadasDto> conductaInapropiadasDtoList = proveedorDto.getConductasInapropiadas();
+			List<DelegacionDto> delegacionDtoList = proveedorDto.getDelegaciones();
+	
+			for (ConductasInapropiadasDto conductaInapropiadasDto : conductaInapropiadasDtoList) {
+				if(conductaInapropiadasDto.getIdConductaInapropiada().getValue() == null) {
+					proveedorDto.setConductasInapropiadas(null);
+					break;
+				}
+			}
+			
+			for (DelegacionDto delegacionDto : delegacionDtoList) {
+				if(delegacionDto.getIdDelegacion().getValue() == null) {
+					proveedorDto.setDelegaciones(null);
+					break;
+				}
+			}
+		}
 
 		ParamsList paramsList = createParamsList(proveedores);
 

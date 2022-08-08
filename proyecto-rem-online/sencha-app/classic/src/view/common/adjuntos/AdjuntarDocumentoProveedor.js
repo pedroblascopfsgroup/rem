@@ -25,10 +25,12 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoProveedor', {
      * @type 
      */
     parent: null,
-	
+	bloque: null,
     initComponent: function() {
     	
     	var me = this;
+		var url = me.bloque == '02' ? $AC.getRemoteUrl(me.entidad + "/uploadConducta") : $AC.getRemoteUrl(me.entidad + "/upload");
+		var isConductas = me.bloque == '02';
 
     	me.setTitle(HreRem.i18n("title.adjuntar.documento"));
     	
@@ -37,9 +39,14 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoProveedor', {
     	me.buttons = [ { formBind: true, itemId: 'btnGuardar', text: 'Adjuntar', handler: 'onClickBotonAdjuntarDocumento', scope: this},{ itemId: 'btnCancelar', text: 'Cancelar', handler: 'closeWindow', scope: this}];
 
     	me.items = [
+					{
+						xtype: 'label',
+						html: '<span style="font-weight: bold;margin: 0px 0px 0px 40px;">' + HreRem.i18n('msg.info.archivo.comprimido') + '</span>',
+			        	hidden : !isConductas					
+					},
     				{
 	    				xtype: 'formBase', 
-	    				url: $AC.getRemoteUrl(me.entidad + "/upload"),
+	    				url: url,
 	    				reference: 'adjuntarDocumentoFormRef',
 	    				collapsed: false,
 	   			 		scrollable	: 'y',
@@ -84,7 +91,14 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoProveedor', {
 						        	publishes: 'value',
 						        	width: '100%',
 						        	bind: {
-						        		store: '{comboTipoDocumento}'
+						        		store: {
+											model: 'HreRem.model.ComboBase',
+											proxy: {
+												type: 'uxproxy',
+												remoteUrl: 'generic/getDocumentosProveedor',
+												extraParams: {codBloque: me.bloque}
+											}
+										}
 						        	},
 					            	displayField	: 'descripcion',	    							
 								    valueField		: 'codigo',

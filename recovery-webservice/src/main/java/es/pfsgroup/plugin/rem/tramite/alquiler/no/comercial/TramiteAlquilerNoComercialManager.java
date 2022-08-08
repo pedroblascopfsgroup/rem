@@ -107,7 +107,7 @@ public class TramiteAlquilerNoComercialManager implements TramiteAlquilerNoComer
 	@Override
 	public boolean existeExpedienteComercialByNumExpediente(TareaExterna tareaExterna, String expedienteAnterior)  {
 		boolean existeExpediente = false;
-		if(expedienteAnterior.isEmpty()) {
+		if(expedienteAnterior == null || expedienteAnterior.isEmpty()) {
 			existeExpediente = true;
 		}else{ 
 			ExpedienteComercial expediente = expedienteComercialApi.findOneByNumExpediente(Long.parseLong(expedienteAnterior));
@@ -121,7 +121,7 @@ public class TramiteAlquilerNoComercialManager implements TramiteAlquilerNoComer
 	@Override
 	public boolean isExpedienteDelMismoActivo(TareaExterna tareaExterna, String expedienteAnterior) {
 		boolean isMismoActivo = false;
-		if(expedienteAnterior.isEmpty()) {
+		if(expedienteAnterior == null || expedienteAnterior.isEmpty()) {
 			isMismoActivo = true;
 		}else{
 			ExpedienteComercial expedienteInsertado = expedienteComercialApi.findOneByNumExpediente(Long.parseLong(expedienteAnterior));
@@ -142,7 +142,7 @@ public class TramiteAlquilerNoComercialManager implements TramiteAlquilerNoComer
 	@Override
 	public boolean isExpedienteFirmado(TareaExterna tareaExterna, String expedienteAnterior) {
 		boolean isFirmado = false;
-		if(expedienteAnterior.isEmpty()) {
+		if(expedienteAnterior == null || expedienteAnterior.isEmpty()) {
 			isFirmado = true;
 		}else{
 			ExpedienteComercial expediente = expedienteComercialApi.findOneByNumExpediente(Long.parseLong(expedienteAnterior));

@@ -145,7 +145,7 @@ SALIDA := SALIDA || '[INFO] PARA LOS ACTIVOS QUE NO TENGAN REGISTROS EN LA TABLA
                   ,CONCU.AGR_ID
                   ,CONCU.CON_IMPORTE_MIN_OFR
                   ,CONCU.CON_FECHA_INI
-                  ,CONCU.CON_FECHA_FIN
+                  ,CONCU.CON_FECHA_FIN + INTERVAL ''18:00:00'' HOUR TO SECOND
                   ,0 
                   ,''apr_alta_assets_from_caixabank''
                   ,SYSDATE
@@ -194,7 +194,7 @@ SALIDA := SALIDA ||'[INFO] 1.2 SE CREA UN NUEVO REGISTRO EN LA TABLA CPC_CMB_PER
                   '||V_ESQUEMA||'.S_CPC_CMB_PERIODO_CONCURRENCIA.NEXTVAL
                   ,T2.CON_ID
                   ,T2.DD_ACO_ID
-                  ,T2.CPC_FECHA_FIN
+                  ,T2.CPC_FECHA_FIN + INTERVAL ''18:00:00'' HOUR TO SECOND
                   ,0
                   ,''apr_alta_assets_from_caixabank''
                   ,SYSDATE
@@ -267,7 +267,7 @@ SALIDA := SALIDA ||'[INFO] PARA LOS ACTIVOS QUE TENGAN REGISTROS EN LA TABLA CON
                ) T2 ON (T1.CON_ID = T2.CON_ID)
                WHEN MATCHED THEN UPDATE SET
                   T1.CON_FECHA_INI = T2.CON_FECHA_INI
-                  , T1.CON_FECHA_FIN = T2.CON_FECHA_FIN
+                  , T1.CON_FECHA_FIN = T2.CON_FECHA_FIN + INTERVAL ''18:00:00'' HOUR TO SECOND
                   , T1.CON_IMPORTE_MIN_OFR = T2.CON_IMPORTE_MIN_OFR
                   , T1.USUARIOMODIFICAR = ''apr_alta_assets_from_caixabank''
                   , T1.FECHAMODIFICAR = SYSDATE';
@@ -338,7 +338,7 @@ SALIDA := SALIDA ||'[INFO] 1.4 SE MODIFICA LA FECHA FIN EN LA TABLA CPC_CMB_PERI
 
                ) T2 ON (T1.CPC_ID = T2.CPC_ID)
                WHEN MATCHED THEN UPDATE SET
-                  T1.CPC_FECHA_FIN = T2.CPC_FECHA_FIN
+                  T1.CPC_FECHA_FIN = T2.CPC_FECHA_FIN + INTERVAL ''18:00:00'' HOUR TO SECOND
                   , T1.USUARIOMODIFICAR = ''apr_alta_assets_from_caixabank''
                   , T1.FECHAMODIFICAR = SYSDATE';
    EXECUTE IMMEDIATE V_MSQL;
@@ -423,7 +423,7 @@ SALIDA := SALIDA ||'[INFO] 2.1 SE CREA UN NUEVO REGISTRO EN LA TABLA CPC_CMB_PER
                   '||V_ESQUEMA||'.S_CPC_CMB_PERIODO_CONCURRENCIA.NEXTVAL
                   ,T2.CON_ID
                   ,T2.DD_ACO_ID
-                  ,T2.CPC_FECHA_FIN
+                  ,T2.CPC_FECHA_FIN + INTERVAL ''18:00:00'' HOUR TO SECOND
                   ,0
                   ,''apr_alta_assets_from_caixabank''
                   ,SYSDATE
@@ -500,7 +500,7 @@ SALIDA := SALIDA ||'[INFO] 2.3 SE MODIFICA REGISTRO EXISTENTE EN LA TABLA CON_CO
                   AND AUX.FEC_INICIO_CONCURENCIA IS NOT NULL AND AUX.FEC_FIN_CONCURENCIA IS NOT NULL
                ) T2 ON (T1.CON_ID = T2.CON_ID)
                WHEN MATCHED THEN UPDATE SET
-                  T1.CON_FECHA_FIN = T2.FEC_FIN_CONCURENCIA
+                  T1.CON_FECHA_FIN = T2.FEC_FIN_CONCURENCIA + INTERVAL ''18:00:00'' HOUR TO SECOND
                   , T1.USUARIOMODIFICAR = ''apr_alta_assets_from_caixabank''
                   , T1.FECHAMODIFICAR = SYSDATE';
    EXECUTE IMMEDIATE V_MSQL;
@@ -549,7 +549,7 @@ SALIDA := SALIDA ||'[INFO] 3.1 SE CREA UN NUEVO REGISTRO EN LA TABLA CPC_CMB_PER
                   '||V_ESQUEMA||'.S_CPC_CMB_PERIODO_CONCURRENCIA.NEXTVAL
                   ,T2.CON_ID
                   ,T2.DD_ACO_ID
-                  ,T2.CPC_FECHA_FIN
+                  ,T2.CPC_FECHA_FIN + INTERVAL ''18:00:00'' HOUR TO SECOND
                   ,0
                   ,''apr_alta_assets_from_caixabank''
                   ,SYSDATE
@@ -629,7 +629,7 @@ SALIDA := SALIDA ||'[INFO] 3.3 SE MODIFICA REGISTRO EXISTENTE EN LA TABLA CON_CO
                   AND AUX.FEC_INICIO_CONCURENCIA IS NOT NULL AND AUX.FEC_FIN_CONCURENCIA IS NOT NULL
                ) T2 ON(T1.CON_ID = T2.CON_ID)
                WHEN MATCHED THEN UPDATE SET
-                  T1.CON_FECHA_FIN = T2.FEC_FIN_CONCURENCIA
+                  T1.CON_FECHA_FIN = T2.FEC_FIN_CONCURENCIA + INTERVAL ''18:00:00'' HOUR TO SECOND
                   , T1.USUARIOMODIFICAR = ''apr_alta_assets_from_caixabank''
                   , T1.FECHAMODIFICAR = SYSDATE';
    EXECUTE IMMEDIATE V_MSQL;

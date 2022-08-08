@@ -12,7 +12,7 @@ Ext.define('HreRem.controller.ActivosController', {
     'HreRem.model.FichaProveedorModel', 'HreRem.model.PerfilDetalleModel','HreRem.model.FichaPerfilModel', 'HreRem.model.GastoProveedor', 'HreRem.model.GastoAviso',
     'HreRem.view.expedientes.ExpedienteDetalleMain', 'HreRem.model.FichaProveedorModel', 'HreRem.view.configuracion.administracion.proveedores.detalle.ProveedoresDetalleMain', 
     'HreRem.view.gastos.GastoDetalleMain', 'HreRem.model.GastoProveedor', 'HreRem.model.GastoAviso', 'HreRem.view.administracion.juntas.JuntasDetalleMain',
-    'HreRem.view.administracion.juntas.GestionJuntas','HreRem.model.ActivoSaneamiento', 'HreRem.model.GastoAsociadoAdquisicionModel'],
+    'HreRem.view.administracion.juntas.GestionJuntas','HreRem.model.ActivoSaneamiento', 'HreRem.model.GastoAsociadoAdquisicionModel', 'HreRem.model.DatosContactoModel'],
 
 
     requires: ['HreRem.view.configuracion.administracion.perfiles.detalle.DetallePerfil', 'HreRem.view.expedientes.ExpedienteDetalleMain', 'HreRem.view.gastos.GastoDetalleMain', 

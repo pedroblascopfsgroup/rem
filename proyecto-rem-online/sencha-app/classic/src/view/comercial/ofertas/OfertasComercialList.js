@@ -125,7 +125,8 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialList', {
 		            dataIndex: 'importeOferta',
 		            text: HreRem.i18n('header.oferta.importeOferta'),
 		            flex: 1,
-		             align: 'right'
+		            align: 'right',
+    				renderer: Ext.util.Format.numberRenderer('0.00')
 		        },
 		        /*{
 		            dataIndex: 'gestorFormalizacion',

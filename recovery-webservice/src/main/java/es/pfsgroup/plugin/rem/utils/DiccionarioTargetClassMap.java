@@ -391,6 +391,12 @@ public class DiccionarioTargetClassMap{
 		mapa.put("suborigenContrato", DDSuborigenContrato.class);
 		mapa.put("bajaContableBBVA", DDBajaContableBBVA.class);
 		mapa.put("comunidadAutonoma", DDComunidadAutonoma.class);
+		mapa.put("tipoConducta", DDTipoConductaInapropiada.class);
+		mapa.put("nivelConducta", DDNivelConductaInapropiada.class);
+		mapa.put("categoriaConducta", DDCategoriaConductaInapropiada.class);
+		mapa.put("origenPeticionHomologacion", DDOrigenPeticionHomologacion.class);	
+		mapa.put("idioma", DDIdioma.class);
+		mapa.put("especialidad", DDEspecialidad.class);
 		mapa.put("segmentacionCartera", DDCarteraBc.class);
 		mapa.put("motivoExoneracionCee", DDMotivoExoneracionCee.class);
 		mapa.put("incidenciaCee", DDIncidenciaCee.class);

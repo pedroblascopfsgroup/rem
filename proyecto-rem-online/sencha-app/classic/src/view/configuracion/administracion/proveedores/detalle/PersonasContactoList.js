@@ -210,7 +210,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Persona
 
 			if (me.isValidRecord(context.record)) {
 				var idDireccionDelegacionSelected = '';
-				var selection = me.up('fichaproveedor').down('direccionesdelegacioneslist').getSelectionModel().getSelection();
+				var selection = me.up('datoscontacto').down('direccionesdelegacioneslist').getSelectionModel().getSelection();
 				if(!Ext.isEmpty(selection)) {
 					idDireccionDelegacionSelected = selection[0].id;
 				}

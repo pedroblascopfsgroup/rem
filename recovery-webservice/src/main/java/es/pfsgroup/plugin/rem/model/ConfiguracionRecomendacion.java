@@ -45,8 +45,8 @@ public class ConfiguracionRecomendacion implements Serializable, Auditable {
 
 	@Id
     @Column(name = "COR_ID")
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "TestigosObligatoriosGenerator")
-    @SequenceGenerator(name = "TestigosObligatoriosGenerator", sequenceName = "S_TOB_TESTIGOS_OBLIGATORIOS")
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "ConfiguracionRecomendacionGenerator")
+    @SequenceGenerator(name = "ConfiguracionRecomendacionGenerator", sequenceName = "S_COR_CONFIG_RECOMENDACION_RCDC")
     private Long id;
     
     @ManyToOne

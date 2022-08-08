@@ -20,7 +20,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
     abrirFormularioAdjuntarDocumentos: function(grid) {
 		var me = this,
 		idProveedor = me.getViewModel().get("proveedor.id");
-    	Ext.create("HreRem.view.common.adjuntos.AdjuntarDocumentoProveedor", {entidad: 'proveedores', idEntidad: idProveedor, parent: grid}).show();
+    	Ext.create("HreRem.view.common.adjuntos.AdjuntarDocumentoProveedor", {entidad: 'proveedores', idEntidad: idProveedor, parent: grid, bloque: '01'}).show();
 		
 	},
     
@@ -33,7 +33,6 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
 		model.setId(id);
 		model.load({
 		    success: function(record) {
-		    	
 		    	form.setBindRecord(record);		    	
 		    	form.up("tabpanel").unmask();
 		    },
@@ -64,7 +63,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
 		var me = this,
 		record = form.getBindRecord();
 		success = success || function() {me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));};  
-		
+	
 		if(form.isFormValid()) {
 
 			form.mask(HreRem.i18n("msg.mask.espere"));
@@ -319,7 +318,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
     /**
      * Este método es llamado cuando se selecciona un elemento del grid DireccionesDelegaciones.
      */
-    onDireccionesDelegacionesGridClick: function(grid) {
+    onDireccionesDelegacionesGridClick: function(grid, record) {
     	var me = this;
     	var gridPersonasContactos = grid.up('proveedoresdetallemain').lookupReference('personascontactolistref');
     	var personasContactosStore = gridPersonasContactos.getStore();
@@ -332,11 +331,32 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
 	    			id: me.getViewModel().getData().proveedor.getData().id
 				};
 	    		
-	    		personasContactosStore.load();
+		    		personasContactosStore.load();
+		    	
+		    		model = Ext.create('HreRem.model.DatosContactoModel');
+		    		model.setId(selection.getData().id);
+		    		model.load({
+		    					success : function(record) {
+		    						me.getViewModel().set("datosContacto", record);
+		    						}
+		    					
+		    				});
+		    		
+		    		if(selection.getData().tipoDireccion == '02' || selection.getData().tipoDireccion == '01') {
+		    			me.getView().lookupReference('cbLineaNegocio').setHidden(false);
+						me.getView().lookupReference('cbGestionClientes').setHidden(false);
+		    			me.getView().lookupReference('numeroComercialesRef').setHidden(false);
+		    			me.getView().lookupReference('numeroComercialesRef').setHidden(false);
+		    			me.getView().lookupReference('provinciaCombo').setHidden(false);
+		    			me.getView().lookupReference('municipioCombo').setHidden(false);
+		    			me.getView().lookupReference('codigoPostalCombo').setHidden(false);
+		    			me.getView().lookupReference('especialidadRef').setHidden(false);
+		    			me.getView().lookupReference('idiomasRef').setHidden(false);
+					} 
     		}
     	}
+    	
     },
-    
     /**
      * Función que borra un documento del grid de documentos.
      */
@@ -377,5 +397,270 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
     		combo.up('proveedoresdetallemain').lookupReference('dateConstitucionProveedor').reset();
     		combo.up('proveedoresdetallemain').lookupReference('cbLocalizada').reset();
     	}
+    },
+
+	onChangeTipoConducta: function(combo) {
+    	var me = this,
+    	comboCategoria = me.lookupReference(combo.chainedReference),
+    	comboNivel = me.lookupReference(comboCategoria.chainedReference);      	
+    	me.getViewModel().notify();
+    	if(!Ext.isEmpty(comboCategoria.getValue())) {
+			comboCategoria.clearValue();
+			comboNivel.clearValue();
+    	}
+		
+    	var chainedStore = comboCategoria.getStore();
+    	
+    	if(!Ext.isEmpty(chainedStore)) {
+    		chainedStore.getProxy().extraParams = {
+    			'idTipoConducta' : combo.getValue()
+    		}
+    		
+	    	chainedStore.load({
+				callback: function(records, operation, success) {
+	   				if(!Ext.isEmpty(records) && records.length > 0) {
+	   					comboCategoria.setDisabled(false);
+						comboCategoria.allowBlank = false;
+	   				} else {
+	   					comboCategoria.setDisabled(true);
+						comboCategoria.allowBlank = true;
+	   				}
+				}
+			});
+    	}
+    	
+		if (me.lookupReference(comboCategoria.chainedReference) != null) {
+			var chainedDos = me.lookupReference(comboCategoria.chainedReference);
+			if(!chainedDos.isDisabled()) {
+				chainedDos.clearValue();
+				chainedDos.getStore().removeAll();
+				chainedDos.setDisabled(true);
+			}
+		}
+    },
+
+	onChangeCategoriaConducta: function(combo) {
+    	var me = this,
+    	comboNivel = me.lookupReference(combo.chainedReference);    	
+    	me.getViewModel().notify();
+    	if(!Ext.isEmpty(comboNivel.getValue())) {
+			comboNivel.clearValue();
+    	}
+		
+    	var chainedStore = comboNivel.getStore();
+    	
+    	if(!Ext.isEmpty(chainedStore)) {
+    		chainedStore.getProxy().extraParams = {
+    			'idCategoriaConducta' : combo.getValue()
+    		}
+    		
+	    	chainedStore.load({
+				callback: function(records, operation, success) {
+	   				if(!Ext.isEmpty(records) && records.length > 0) {
+	   					comboNivel.setValue(records[0]);
+	   					comboNivel.setDisabled(false);
+	   				} else {
+	   					comboNivel.setDisabled(true);
+	   				}
+				}
+			});
+    	}
+    	
+		if (me.lookupReference(comboNivel.chainedReference) != null) {
+			var chainedDos = me.lookupReference(comboNivel.chainedReference);
+			if(!chainedDos.isDisabled()) {
+				chainedDos.clearValue();
+				chainedDos.getStore().removeAll();
+				chainedDos.setDisabled(true);
+			}
+		}
+    },
+    
+    abrirFormularioAdjuntarConductas: function(table, rowIndex, colIndex,button, grid) {
+		var me = this,
+		idConducta = grid.record.id;
+    	Ext.create("HreRem.view.common.adjuntos.AdjuntarDocumentoProveedor", {entidad: 'proveedores', idEntidad: idConducta, parent: table, bloque: '02'}).show();
+		
+	},
+	
+	downloadDocumentoConductas: function(table, rowIndex, colIndex,button, grid) {
+		var me = this;
+    	var url= $AC.getRemoteUrl('activo/getLimiteArchivo');
+		var data;
+		var record = grid.record.data;
+		Ext.Ajax.request({
+		     url: url,
+		     success: function(response, opts) {
+		    	 data = Ext.decode(response.responseText);
+		    	 if(data.sucess == "true"){
+		    		 var limite = data.limite;
+		    		 if(!Ext.isDefined(record.tamanyoAdjunto) || record.tamanyoAdjunto == null || limite == 0  || record.tamanyoAdjunto/1024/1024 <= limite){
+		    			 config = {};
+
+						config.url=$AC.getWebPath()+"proveedores/bajarAdjuntoProveedor."+$AC.getUrlPattern();
+						config.params = {};
+						config.params.id=record.idAdjunto;
+						config.params.nombreDocumento=record.adjunto.replace(/,/g, "");
+						me.fireEvent("downloadFile", config);
+						
+		    		 }else{
+		    			 table.fireEvent("errorToast", "No se puede descargar ficheros mayores de "+limite+"Mb.");
+		    		 }
+		    	 }					        		         
+		     },
+		     failure: function(response) {
+		    	 table.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+		     }
+		 });					                
+	},
+	
+	borrarDocumentoAdjuntoConductas: function(table, rowIndex, colIndex,button, grid) {
+		var me = this;
+		var record = grid.record.data;
+		params = {};
+		params.idEntidad = me.getViewModel().get("proveedor.id");
+		params.id = record.idAdjunto;
+		
+		Ext.Ajax.request({
+		     url: $AC.getRemoteUrl('proveedores/deleteAdjunto'),
+			params: params,
+		     success: function(response, opts) {
+		    	 data = Ext.decode(response.responseText);
+		    	 if(data.success == "true"){
+		    		 me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+           		 	table.store.load();
+		    	 }					        		         
+		     },
+		     failure: function(response) {
+		    	 table.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+           		 	table.store.load();
+		     }
+		 });
+	},
+    
+	cargarTabDataDelegacion: function (form) {
+		var me = this;
+		var model = form.getModelInstance();
+		var grid = form.down('[reference=gridDelegacionesRef]');
+		if(Ext.isEmpty(grid.selection)){
+			return;
+		}
+		var id = grid.selection.get('id');
+		
+		form.up("tabpanel").mask(HreRem.i18n('msg.mask.loading'));	
+		model.setId(id);
+		model.load({
+		    success: function(record) {
+		    	
+		    	form.setBindRecord(record);		    	
+		    	form.up("tabpanel").unmask();
+		    },
+		    failure: function(operation) {		    	
+		    	form.up("tabpanel").unmask();
+		    	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
+		    }
+		});
+	},
+	
+	onChangeProvincia: function(combo, value, oldValue, eOpts){
+    	var me = this;
+    	var comboMunicipio = me.lookupReference('municipioCombo');
+    	var storeMunicipio = comboMunicipio.getStore();
+    	storeMunicipio.getProxy().extraParams = {
+    		codigoProvincia: value
+    	};
+		storeMunicipio.comboMunicipio = comboMunicipio;
+		storeMunicipio.me = me;
+    	storeMunicipio.load({ 			
+			callback: function(records, operation, success) {
+				this.me.refrescarItemMunicipio(this.comboMunicipio, records);
+			}
+		});
+    },
+
+	refrescarItemMunicipio: function(comboMunicipio, records) {
+        var fromField = comboMunicipio.fromField,
+            toField  = comboMunicipio.toField,
+            fromStore = fromField.store,
+            toStore = toField.store;
+		var dataSelected = [];
+		for(var i = 0; i < comboMunicipio.value.length; i++){
+			records.filter(function(x){
+				if (x.data.codigo === comboMunicipio.value[i]){
+					dataSelected.push(comboMunicipio.value[i]);
+					records.splice(records.indexOf(x), 1);
+				}
+			});
+		}
+		comboMunicipio.setValue(null);
+		
+        fromStore.suspendEvents();
+        toStore.suspendEvents();
+        fromStore.removeAll();
+		fromStore.add(records);
+		toStore.removeAll();
+		toStore.add(dataSelected);
+        fromStore.resumeEvents();
+        toStore.resumeEvents();
+
+        fromField.boundList.refresh();
+        toField.boundList.refresh();
+
+		comboMunicipio.setValue(dataSelected.toString());
+
+		this.onChangeMunicipio(comboMunicipio, dataSelected);
+    },
+    
+    onChangeMunicipio: function(combo, value, oldValue, eOpts){
+    	var me = this;
+    	var comboCodigoPostal = me.lookupReference('codigoPostalCombo');
+    	var storeCodigoPostal = comboCodigoPostal.getStore();
+		if (!Ext.isEmpty(value) && value != null && value != "" && value[0] != null){
+	    	storeCodigoPostal.getProxy().extraParams = {
+	    		codigoMunicipio: value
+	    	};
+			storeCodigoPostal.comboCodigoPostal = comboCodigoPostal;
+			storeCodigoPostal.me = me;
+	    	storeCodigoPostal.load({ 			
+				callback: function(records, operation, success) {
+					this.me.refrescarItemCodigoPostal(this.comboCodigoPostal, records);
+				}
+			});
+		} else {
+			this.refrescarItemCodigoPostal(comboCodigoPostal, [], []);
+		}
+    },
+
+	refrescarItemCodigoPostal: function(comboCodigoPostal, records) {
+        var fromField = comboCodigoPostal.fromField,
+            toField  = comboCodigoPostal.toField,
+            fromStore = fromField.store,
+            toStore = toField.store;
+		var dataSelected = [];
+		for(var i = 0; i < comboCodigoPostal.value.length; i++){
+			if (!Ext.isEmpty(records)){
+				records.filter(function(x){
+					if (x.data.codigo === comboCodigoPostal.value[i]){
+						dataSelected.push(comboCodigoPostal.value[i]);
+						records.splice(records.indexOf(x), 1);
+					}
+				});
+			}
+		}
+		if (!Ext.isEmpty(dataSelected))comboCodigoPostal.setValue(null);
+	
+        fromStore.suspendEvents();
+        toStore.suspendEvents();
+        fromStore.removeAll();
+		fromStore.add(records);
+		toStore.removeAll();
+		toStore.add(dataSelected);
+        fromStore.resumeEvents();
+        toStore.resumeEvents();
+
+        fromField.boundList.refresh();
+        toField.boundList.refresh();
+
+		if (!Ext.isEmpty(dataSelected))comboCodigoPostal.setValue(dataSelected.toString());
     }
 });

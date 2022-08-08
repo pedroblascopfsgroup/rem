@@ -1523,6 +1523,11 @@ public interface ExpedienteComercialApi {
 		
 	boolean esTitulizada(TareaExterna tareaExterna);
 
+    @Transactional(readOnly = false)
+    Boolean saltaPBCReserva(TareaExterna tareaExterna);
+
+	void calculoFormalizacionCajamar(Oferta oferta);
+
 	public String getEstadoExpedienteBcFromNumExpediente(Long numExpediente);
 
 	public String getEstadoExpedienteBcFromNumOferta(Long numOferta);
@@ -1536,6 +1541,4 @@ public interface ExpedienteComercialApi {
 	Boolean saveTabFianza(DtoTabFianza dto, Long id);
 
 	void desbloquearExpediente(Long idOferta) throws Exception;
-
-	void calculoFormalizacionCajamar(Oferta oferta);
 }

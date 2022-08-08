@@ -1,10 +1,10 @@
  --/*
 --##########################################
 --## AUTOR=Kevin Fernández
---## FECHA_CREACION=20160912
+--## FECHA_CREACION=20220505
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=0
+--## INCIDENCIA_LINK=HREOS-17601
 --## PRODUCTO=NO
 --## Finalidad: DDL creación de la vista busqueda de proveedores.
 --##           
@@ -12,6 +12,7 @@
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##		HREOS-2179: Carterizar por tipo proveedor
+--##		HREOS-17601: Añadir LINEA_NEGOCIO
 --##########################################
 --*/
 
@@ -71,14 +72,15 @@ BEGIN
 			PVE.PVE_AMBITO AS AMBITO_PROVEEDOR,
 			PRV.DD_PRV_CODIGO AS PROVINCIA_PROVEEDOR,
 			LOC.DD_LOC_CODIGO AS MUNICIPIO_PROVEEDOR,
-			PVE.PVE_CP AS CODIGO_POSTAL_PROVEEDOR,
+			CAST(PVE.PVE_CP AS VARCHAR2(8 CHAR)) AS CODIGO_POSTAL_PROVEEDOR,
 			PVC.USU_ID AS USU_ID,
 			PVC.PVC_DOCIDENTIF AS NIF_PERSONA_CONTACTO,
 			PVC.PVC_NOMBRE AS NOMBRE_PERSONA_CONTACTO,
 			PVE.PVE_HOMOLOGADO AS HOMOLOGADO_PROVEEDOR,
 			CPR.DD_CPR_CODIGO AS CALIFICACION_PROVEEDOR,
 			PVE.PVE_TOP AS TOP_PROVEEDOR,
-			PRO.PRO_NOMBRE AS PROPIETARIO_ACTIVO_VINCULADO
+			PRO.PRO_NOMBRE AS PROPIETARIO_ACTIVO_VINCULADO,
+			PVE.PVE_LINEA_NEGOCIO AS LINEA_NEGOCIO
 			
 		FROM ' || V_ESQUEMA || '.ACT_PVE_PROVEEDOR PVE
 		LEFT JOIN ' || V_ESQUEMA || '.DD_TPR_TIPO_PROVEEDOR TPR ON PVE.DD_TPR_ID = TPR.DD_TPR_ID
@@ -99,6 +101,19 @@ BEGIN
 		';
 
   DBMS_OUTPUT.PUT_LINE('Vista creada OK');
+  
+EXCEPTION
+	     WHEN OTHERS THEN
+	          err_num := SQLCODE;
+	          err_msg := SQLERRM;
+	
+	          DBMS_OUTPUT.PUT_LINE('KO no modificada');
+	          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(err_num));
+	          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+	          DBMS_OUTPUT.put_line(err_msg);
+	
+	          ROLLBACK;
+	          RAISE;   
   
 END;
 /

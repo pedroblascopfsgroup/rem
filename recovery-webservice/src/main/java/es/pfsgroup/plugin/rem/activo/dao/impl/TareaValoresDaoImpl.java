@@ -12,7 +12,7 @@ public class TareaValoresDaoImpl extends AbstractEntityDao<TareaExternaValor, Lo
 
 	@Override
 	public String getValorCampoTarea(String codTarea, Long numExpediente, String nombreCampo) {
-		String sql = "          SELECT TEV.TEV_VALOR " +
+		String sql = "          SELECT DISTINCT TEV.TEV_VALOR " +
 				"				FROM REM01.ACT_TRA_TRAMITE TRA  " +
 				"				INNER JOIN REM01.ACT_TBJ_TRABAJO TBJ ON TRA.TBJ_ID = TBJ.TBJ_ID " +
 				"				INNER JOIN REM01.ECO_EXPEDIENTE_COMERCIAL ECO ON TBJ.TBJ_ID = ECO.TBJ_ID AND ECO.ECO_NUM_EXPEDIENTE = " + numExpediente  + " " +

@@ -159,4 +159,14 @@ bye
 EOF
 echo "Fichero movido satisfactoriamente"
 
+cd $INSTALL_DIR/control/etl/suncapital/output
+
+echo "Gestoria SUNCAPITAL - SUNCAPITAL_DOCUMENTOS_RESUL_RG_${1}.dat"
+lftp -u sftp_suncapital,"johl:ohzoS3u" sftp://192.168.49.14 <<EOF
+cd /output/
+mput $INSTALL_DIR/control/etl/suncapital/output/SUNCAPITAL_DOCUMENTOS_RESUL_RG_${1}.dat
+bye
+EOF
+echo "Fichero movido satisfactoriamente"
+
 echo "Fin del proceso de volcado de los ficheros de documentos de resultado a las gestorias"

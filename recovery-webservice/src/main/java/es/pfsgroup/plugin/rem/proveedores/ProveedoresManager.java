@@ -2114,12 +2114,10 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 		return filter;
 	}
 	
-	
-	
-	@Override
 	@Transactional(readOnly = false)
-	public String uploadConducta(WebFileItem fileItem) throws Exception {
-				
+	public void uploadConducta(WebFileItem webFileItem) throws Exception {
+
+		if(webFileItem == null) return;
 		Adjunto adj = null;
 		Long idDocRestClient = null;
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();

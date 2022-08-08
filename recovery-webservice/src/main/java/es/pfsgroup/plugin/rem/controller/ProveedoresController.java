@@ -867,39 +867,24 @@ public class ProveedoresController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView uploadConducta(HttpServletRequest request, HttpServletResponse response) {
+	public ModelAndView uploadConducta(HttpServletRequest request) {
 		ModelMap model = new ModelMap();
-		WebFileItem fileItem = new WebFileItem();
 
 		try {
-			fileItem = uploadAdapter.getWebFileItem(request);
+			WebFileItem webFileItem = uploadAdapter.getWebFileItem(request);
 
-			String errores = proveedoresApi.uploadConducta(fileItem);
-
-			model.put("errores", errores);
-			model.put("success", errores == null);
+			proveedoresApi.uploadConducta(webFileItem);
+			model.put(RESPONSE_SUCCESS_KEY, true);
 			
 		} catch (GestorDocumentalException ex) {
-			logger.error("Error en ProveedoresController sobre el Gestor Documental", ex);
-			model.put("success", false);
-			if (ex.getMessage().contains("An item with the name '"+fileItem.getFileItem().getFileName()+"' already exists") || ex.getMessage().contains("Ya existe un elemento con el nombre")) {
-				model.put("errorMessage", ProveedoresManager.ERROR_NOMBRE_DOCUMENTO_PROVEEDOR+": "+fileItem.getFileItem().getFileName());
-			} else if (ex.getMessage().contains("Control duplicado, ya existe un documento igual")) {
-			   	DDTipoDocumentoProveedor tipoDocumentoProveedor = genericDao.get(DDTipoDocumentoProveedor.class, 
-			   			genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("tipo")), 
-			   			genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
-				model.put("errorMessage", ProveedoresManager.ERROR_TIPO_UNICO_DOCUMENTO_PROVEEDOR+": "+tipoDocumentoProveedor.getDescripcion());
-			} else {
-				model.put("errorMessage", "Ha habido un problema con la subida del archivo al gestor documental.");
-			}
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put("errorMessage", "Ha habido un problema con la subida del archivo al gestor documental.");
 		} catch (Exception e) {
 			logger.error("Error en ProveedoresController", e);
-			if (ProveedoresManager.ERROR_TIPO_DOCUMENTO_PROVEEDOR.equals(e.getMessage())) {
-				model.put("errorMessage", ProveedoresManager.ERROR_TIPO_DOCUMENTO_PROVEEDOR);
-			}
-			model.put("success", false);
-			model.put("errores", e.getCause());
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put("errorMessage", "Ha habido un problema con la subida del fichero.");
 		}
 
 		return createModelAndViewJson(model);

@@ -325,7 +325,7 @@ public interface ProveedoresApi {
 
 	void saveBloqueoProveedorById(Long id, DtoBloqueoApis dto);
 
-	String uploadConducta(WebFileItem fileItem) throws Exception;
+	void uploadConducta(WebFileItem fileItem) throws Exception;
 
 	void isProveedorValidoParaActivo(ActivoProveedor proveedor, Activo activo) throws JsonViewerException;
 	

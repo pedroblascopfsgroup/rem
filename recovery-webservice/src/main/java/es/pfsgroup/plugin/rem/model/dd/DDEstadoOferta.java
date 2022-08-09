@@ -203,7 +203,7 @@ public class DDEstadoOferta implements Auditable, Dictionary {
 	public static boolean isOfertaActiva(DDEstadoOferta dd) {
 		boolean is = false;
 		if(DDEstadoOferta.isPendiente(dd) || DDEstadoOferta.isTramitada(dd) || DDEstadoOferta.isPendienteConsentimiento(dd) || DDEstadoOferta.isPendienteDeposito(dd)
-		 || DDEstadoOferta.isPendienteDocumentacionTitularesAdicionales(dd)) {
+		 || DDEstadoOferta.isPendienteDocumentacionTitularesAdicionales(dd) || DDEstadoOferta.isPteDoc(dd)) {
 			is = true;
 		}
 		return is;

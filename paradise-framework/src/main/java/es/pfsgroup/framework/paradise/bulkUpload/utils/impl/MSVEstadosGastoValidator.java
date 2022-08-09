@@ -1,34 +1,40 @@
 package es.pfsgroup.framework.paradise.bulkUpload.utils.impl;
 
-import es.capgemini.devon.files.FileItem;
-import es.capgemini.devon.message.MessageService;
-import es.pfsgroup.commons.utils.api.ApiProxyFactory;
-import es.pfsgroup.framework.paradise.bulkUpload.api.MSVProcesoApi;
-import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
-import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVBusinessCompositeValidators;
-import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVBusinessValidationFactory;
-import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVBusinessValidationRunner;
-import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVBusinessValidators;
-import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVDtoValidacion;
-import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVExcelFileItemDto;
-import es.pfsgroup.framework.paradise.bulkUpload.dto.ResultadoValidacion;
-import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
-import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import javax.annotation.Resource;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import es.capgemini.devon.files.FileItem;
+import es.capgemini.devon.message.MessageService;
+import es.pfsgroup.framework.paradise.bulkUpload.api.MSVProcesoApi;
+import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
+import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVBusinessCompositeValidators;
+import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVBusinessValidationFactory;
+import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVBusinessValidationRunner;
+import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVBusinessValidators;
+import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVValidationResult;
+import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.types.MSVColumnValidator;
+import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.types.MSVMultiColumnValidator;
+import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVDtoValidacion;
+import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVExcelFileItemDto;
+import es.pfsgroup.framework.paradise.bulkUpload.dto.ResultadoValidacion;
+import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
+import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
+
 @Component
 public class MSVEstadosGastoValidator extends MSVExcelValidatorAbstract{
 
+	private static final String CODIGO_SUBCARTERA_LIVING_CENTER = "161";
+	
 	private static final String CHECK_COD_APR_RECH_INCORRECTO = "msg.error.masivo.apr.rech.incorrecto";
 	private static final String CHECK_GASTO_EXIST = "msg.error.masivo.gasto.exist";
 	private static final String CHECK_MOTIVO_RECHAZO_INFORMADO = "msg.error.masivo.mot.rechazo.informado";
@@ -84,9 +90,6 @@ public class MSVEstadosGastoValidator extends MSVExcelValidatorAbstract{
 	private MSVBusinessValidationRunner validationRunner;
 	
 	@Autowired
-	private ApiProxyFactory proxyFactory;
-	
-	@Autowired
 	private ParticularValidatorApi particularValidator;
 	
 	@Autowired
@@ -105,8 +108,7 @@ public class MSVEstadosGastoValidator extends MSVExcelValidatorAbstract{
 	public MSVDtoValidacion validarContenidoFichero(MSVExcelFileItemDto dtoFile) throws Exception {
 		Long idTipoOperacion = dtoFile.getIdTipoOperacion();
 		if (idTipoOperacion == null) {
-			throw new IllegalArgumentException(
-					"MSVActualizadorCargaCamposAccesibilidad -> idTipoOperacion no puede ser null");
+			throw new IllegalArgumentException("MSVEstadosGastoValidator -> idTipoOperacion no puede ser null");
 		}
 
 		List<String> lista = recuperarFormato(idTipoOperacion);
@@ -154,8 +156,13 @@ public class MSVEstadosGastoValidator extends MSVExcelValidatorAbstract{
 
 				esCorrecto = validaGastosDatosGeneric(exc, fila, numGasto, autorizaRechaza, motivoRechazo);
 
-				validaAutorizaRechaza = validaAutorizaRechaza();
-
+				if(esCorrecto) {
+					if(COD_APR.equals(autorizaRechaza)) {
+						validaAutorizaRechaza = validaAutoriza(fila, numGasto);
+					} else if(COD_RECH.equals(autorizaRechaza)) {
+						validaAutorizaRechaza = validaRechaza(fila, numGasto);
+					}
+				}
 
 			} catch (Exception e) {
 				logger.error(e.getMessage());
@@ -166,8 +173,56 @@ public class MSVEstadosGastoValidator extends MSVExcelValidatorAbstract{
 		return esCorrecto && validaAutorizaRechaza;
 	}
 
-	private boolean validaAutorizaRechaza() {
-		return false;
+	private boolean validaRechaza(int fila, String numGasto) {
+		boolean rechaza = true;
+		
+		if(particularValidator.esGastoRefacturadoHijo(numGasto)){
+			mapaErrores.get(messageServices.getMessage(CHECK_RECH_GASTO_REFACTURADO)).add(fila);
+			rechaza = false;
+		}
+		if(particularValidator.esGastoRechazado(numGasto)){
+			mapaErrores.get(messageServices.getMessage(CHECK_RECH_GASTO_YA_RECHAZADO)).add(fila);
+			rechaza = false;
+		}
+		if(particularValidator.esGastoAutorizadoAdministracion(numGasto)){
+			mapaErrores.get(messageServices.getMessage(CHECK_RECH_GASTOS_NO_AUT_ADMON)).add(fila);
+			rechaza = false;
+		}
+		
+		return rechaza;
+	}
+	
+	private boolean validaAutoriza(int fila, String numGasto) {
+		boolean autoriza = true;
+		
+		if(particularValidator.esGastoPadreSuplido(numGasto) && !particularValidator.esGastoConSuplidosVinculados(numGasto)){
+			mapaErrores.get(messageServices.getMessage(CHECK_AUT_SUPLIDO_SIN_SUPLIDOS_VINC)).add(fila);
+			autoriza = false;
+		}
+		if(particularValidator.esGastoSuplido(numGasto)) {
+			if(!particularValidator.esGastoSuplidoConPadreAutorizado(numGasto)){
+				mapaErrores.get(messageServices.getMessage(CHECK_AUT_SUPLIDO_SIN_PRINCIPAL)).add(fila);
+				autoriza = false;
+			}
+			if(!particularValidator.tieneGastoSuplidoNIFIgualGastoPadreNIF(numGasto) || !particularValidator.tieneGastoSuplidoAbonoCuenta(numGasto)){
+				mapaErrores.get(messageServices.getMessage(CHECK_AUT_SUPLIDO_SIN_DATOS_PAGO_PRINCIPAL)).add(fila);
+				autoriza = false;
+			}
+		}
+		if(particularValidator.esGastoCaixaBank(numGasto, null) && particularValidator.esGastoAlquiler(numGasto) && !particularValidator.tieneGastoActivosONumeroContrato(numGasto)){
+			mapaErrores.get(messageServices.getMessage(CHECK_AUT_SIN_ACTIVOS_O_CONT_CAIXA)).add(fila);
+			autoriza = false;
+		}
+		if(particularValidator.esGastoCaixaBank(numGasto, CODIGO_SUBCARTERA_LIVING_CENTER) && !particularValidator.tieneGastoFechaDevengoEspecialOFechaAnteriorAEmision(numGasto)){
+			mapaErrores.get(messageServices.getMessage(CHECK_AUT_NO_FECHA_DEVENGO_LIVINGCENTER)).add(fila);
+			autoriza = false;
+		}
+		if(particularValidator.esGastoCaixaBank(numGasto, CODIGO_SUBCARTERA_LIVING_CENTER) && !particularValidator.tieneGastoCampoObligatorioNIFTitularCartaPago(numGasto)){
+			mapaErrores.get(messageServices.getMessage(CHECK_AUT_SIN_NIF_TITULAR_LIVINGCENTER)).add(fila);
+			autoriza = false;
+		}
+		
+		return autoriza;
 	}
 
 	private boolean validaGastosDatosGeneric(MSVHojaExcel exc, int fila, String numGasto, String autorizaRechaza, String motivoRechazo) {
@@ -175,19 +230,31 @@ public class MSVEstadosGastoValidator extends MSVExcelValidatorAbstract{
 
 		esCorrecto = validaDatosNoExistentes(exc, fila, numGasto, autorizaRechaza, motivoRechazo);
 
-		if(esCorrecto){
+		if(esCorrecto) {
 
-			if(!particularValidator.yaRechazadoPropietarioGasto(numGasto)){
+			if(particularValidator.yaRechazadoPropietarioGasto(numGasto)){
 				mapaErrores.get(messageServices.getMessage(CHECK_GASTO_RECHAZADO_PROPIETARIO)).add(fila);
-				return false;
+				esCorrecto = false;
 			}
 			if(particularValidator.carteraTangoGasto(numGasto)){
 				mapaErrores.get(messageServices.getMessage(CHECK_GASTO_CARTERA_TANGO)).add(fila);
-				return false;
+				esCorrecto = false;
 			}
 			if(particularValidator.esAgrupadoGasto(numGasto)){
 				mapaErrores.get(messageServices.getMessage(CHECK_GASTO_AGRUPADO)).add(fila);
-				return false;
+				esCorrecto = false;
+			}
+			if(particularValidator.esGastoBBVA(numGasto) && !particularValidator.tieneGastoCampoObligatorioCuentaContable(numGasto)){
+				mapaErrores.get(messageServices.getMessage(CHECK_CUENTA_CONTABLE_OBL_BBVA)).add(fila);
+				esCorrecto = false;
+			}
+			if(particularValidator.esGastoUnicaja(numGasto) && !particularValidator.tieneGastoCamposObligatoriosCuentaPartidaApartadoCapitulo(numGasto)){
+				mapaErrores.get(messageServices.getMessage(CHECK_OBL_CART_UNICAJA)).add(fila);
+				esCorrecto = false;
+			}
+			if(!particularValidator.tieneGastoCamposObligatoriosCuentaPartida(numGasto)){
+				mapaErrores.get(messageServices.getMessage(CHECK_CUENTA_Y_PARTIDA)).add(fila);
+				esCorrecto = false;
 			}
 
 		}
@@ -202,10 +269,10 @@ public class MSVEstadosGastoValidator extends MSVExcelValidatorAbstract{
 		if(!existeGasto){
 			mapaErrores.get(messageServices.getMessage(CHECK_GASTO_EXIST)).add(fila);
 			return false;
-		}else if(!("01".equals(autorizaRechaza) || "02".equals(autorizaRechaza))){
+		} else if(COD_RECH.equals(autorizaRechaza) && motivoRechazo == null) {
 			mapaErrores.get(messageServices.getMessage(CHECK_MOTIVO_RECHAZO_INFORMADO)).add(fila);
 			return false;
-		}else if(!existeCodMotivoRechazo || ("02".equals(autorizaRechaza) && motivoRechazo == null)){
+		} else if(COD_RECH.equals(autorizaRechaza) && motivoRechazo != null && !existeCodMotivoRechazo) {
 			mapaErrores.get(messageServices.getMessage(CHECK_MOTIVO_RECHAZO_INFORMADO)).add(fila);
 			return false;
 		}
@@ -325,9 +392,17 @@ public class MSVEstadosGastoValidator extends MSVExcelValidatorAbstract{
 
 	}
 
-
 	protected ResultadoValidacion validaContenidoCelda(String nombreColumna, String contenidoCelda, MSVBusinessValidators contentValidators) {
-		return null;
+		ResultadoValidacion resultado = new ResultadoValidacion();
+		resultado.setValido(true);
+		
+		if ((contentValidators != null) && (contentValidators.getValidatorForColumn(nombreColumna.trim()) != null)){
+			MSVColumnValidator v = contentValidators.getValidatorForColumn(nombreColumna.trim());
+			MSVValidationResult result = validationRunner.runValidation(v,contenidoCelda);
+			resultado.setValido(result.isValid());
+			resultado.setErroresFila(result.getErrorMessage());
+		}
+		return resultado;
 	}
 
 	/**
@@ -340,9 +415,19 @@ public class MSVEstadosGastoValidator extends MSVExcelValidatorAbstract{
 			Map<String, String> mapaDatos,
 			List<String> listaCabeceras,
 			MSVBusinessCompositeValidators compositeValidators) {
-		return null;
+		ResultadoValidacion resultado = new ResultadoValidacion();
+		resultado.setValido(true);
+		
+		if (compositeValidators != null) {
+			List<MSVMultiColumnValidator> listaValidadores = compositeValidators.getValidatorForColumns(listaCabeceras);
+			if (listaValidadores != null) {
+				MSVValidationResult result = validationRunner.runCompositeValidation(listaValidadores, mapaDatos);
+				resultado.setValido(result.isValid());
+				resultado.setErroresFila(result.getErrorMessage());
+			}
+		}
+		return resultado;
 	}
-
 
 	@Override
 	public Integer getNumFilasHoja() {

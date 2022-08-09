@@ -9601,9 +9601,9 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		 FROM GPV_GASTOS_PROVEEDOR GPV"
-				+ "		 JOIN ADG_ADJUNTOS_GASTO ADG ON GPV.GPV_ID = ADG.GPV_ID"
+				+ "		 JOIN ADG_ADJUNTOS_GASTO ADG ON GPV.GPV_ID = ADG.GPV_ID AND ADG.BORRADO = 0"
 				+ "		 WHERE GPV.GPV_NUM_GASTO_HAYA = :numGasto "
-				+ "		 	AND BORRADO = 0");
+				+ "		 	AND GPV.BORRADO = 0");
 		return !"0".equals(resultado);
 	}
 
@@ -9616,10 +9616,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		if(Checks.esNulo(numGasto))
 			return false;
 
-		String resultado = rawDao.getExecuteSQL("SELECT GPV_NUM_GASTO_GESTORIA "
+		String resultado = rawDao.getExecuteSQL("SELECT GPV.GPV_NUM_GASTO_GESTORIA "
 				+ "		 FROM GPV_GASTOS_PROVEEDOR GPV"
 				+ "		 WHERE GPV.GPV_NUM_GASTO_HAYA = :numGasto "
-				+ "		 	AND BORRADO = 0");
+				+ "		 	AND GPV.BORRADO = 0");
 		return resultado != null && !resultado.isEmpty();
 	}
 
@@ -9634,9 +9634,9 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		 FROM GPV_GASTOS_PROVEEDOR GPV"
-				+ "		 JOIN GLD_GASTOS_LINEA_DETALLE ADG ON GPV.GPV_ID = ADG.GPV_ID"
+				+ "		 JOIN GLD_GASTOS_LINEA_DETALLE GLD ON GPV.GPV_ID = GLD.GPV_ID AND GLD.BORRADO = 0"
 				+ "		 WHERE GPV.GPV_NUM_GASTO_HAYA = :numGasto "
-				+ "		 	AND BORRADO = 0");
+				+ "		 	AND GPV.BORRADO = 0");
 		return !"0".equals(resultado);
 	}
 
@@ -9649,10 +9649,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		if(Checks.esNulo(numGasto))
 			return false;
 
-		String resultado = rawDao.getExecuteSQL("SELECT DD_TGA_ID "
+		String resultado = rawDao.getExecuteSQL("SELECT GPV.DD_TGA_ID "
 				+ "		 FROM GPV_GASTOS_PROVEEDOR GPV"
 				+ "		 WHERE GPV.GPV_NUM_GASTO_HAYA = :numGasto "
-				+ "		 	AND BORRADO = 0");
+				+ "		 	AND GPV.BORRADO = 0");
 		return resultado != null && !resultado.isEmpty();
 	}
 
@@ -9665,10 +9665,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		if(Checks.esNulo(numGasto))
 			return false;
 
-		String resultado = rawDao.getExecuteSQL("SELECT PVE_ID_EMISOR "
+		String resultado = rawDao.getExecuteSQL("SELECT GPV.PVE_ID_EMISOR "
 				+ "		 FROM GPV_GASTOS_PROVEEDOR GPV"
 				+ "		 WHERE GPV.GPV_NUM_GASTO_HAYA = :numGasto "
-				+ "		 	AND BORRADO = 0");
+				+ "		 	AND GPV.BORRADO = 0");
 		return resultado != null && !resultado.isEmpty();
 	}
 
@@ -9681,10 +9681,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		if(Checks.esNulo(numGasto))
 			return false;
 
-		String resultado = rawDao.getExecuteSQL("SELECT PRO_ID "
+		String resultado = rawDao.getExecuteSQL("SELECT GPV.PRO_ID "
 				+ "		 FROM GPV_GASTOS_PROVEEDOR GPV"
 				+ "		 WHERE GPV.GPV_NUM_GASTO_HAYA = :numGasto "
-				+ "		 	AND BORRADO = 0");
+				+ "		 	AND GPV.BORRADO = 0");
 		return resultado != null && !resultado.isEmpty();
 	}
 
@@ -9697,10 +9697,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		if(Checks.esNulo(numGasto))
 			return false;
 
-		String resultado = rawDao.getExecuteSQL("SELECT GPV_FECHA_EMISION "
+		String resultado = rawDao.getExecuteSQL("SELECT GPV.GPV_FECHA_EMISION "
 				+ "		 FROM GPV_GASTOS_PROVEEDOR GPV"
 				+ "		 WHERE GPV.GPV_NUM_GASTO_HAYA = :numGasto "
-				+ "		 	AND BORRADO = 0");
+				+ "		 	AND GPV.BORRADO = 0");
 		return resultado != null && !resultado.isEmpty();
 	}
 
@@ -9713,10 +9713,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		if(Checks.esNulo(numGasto))
 			return false;
 
-		String resultado = rawDao.getExecuteSQL("SELECT DD_TOG_ID "
+		String resultado = rawDao.getExecuteSQL("SELECT GPV.DD_TOG_ID "
 				+ "		 FROM GPV_GASTOS_PROVEEDOR GPV"
 				+ "		 WHERE GPV.GPV_NUM_GASTO_HAYA = :numGasto "
-				+ "		 	AND BORRADO = 0");
+				+ "		 	AND GPV.BORRADO = 0");
 		return resultado != null && !resultado.isEmpty();
 	}
 
@@ -9729,10 +9729,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		if(Checks.esNulo(numGasto))
 			return false;
 
-		String resultado = rawDao.getExecuteSQL("SELECT DD_TPE_ID "
+		String resultado = rawDao.getExecuteSQL("SELECT GPV.DD_TPE_ID "
 				+ "		 FROM GPV_GASTOS_PROVEEDOR GPV"
 				+ "		 WHERE GPV.GPV_NUM_GASTO_HAYA = :numGasto "
-				+ "		 	AND BORRADO = 0");
+				+ "		 	AND GPV.BORRADO = 0");
 		return resultado != null && !resultado.isEmpty();
 	}
 
@@ -9745,10 +9745,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		if(Checks.esNulo(numGasto))
 			return false;
 
-		String resultado = rawDao.getExecuteSQL("SELECT GPV_CONCEPTO "
+		String resultado = rawDao.getExecuteSQL("SELECT GPV.GPV_CONCEPTO "
 				+ "		 FROM GPV_GASTOS_PROVEEDOR GPV"
 				+ "		 WHERE GPV.GPV_NUM_GASTO_HAYA = :numGasto "
-				+ "		 	AND BORRADO = 0");
+				+ "		 	AND GPV.BORRADO = 0");
 		return resultado != null && !resultado.isEmpty();
 	}
 
@@ -9761,11 +9761,11 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		if(Checks.esNulo(numGasto))
 			return false;
 
-		String resultado = rawDao.getExecuteSQL("SELECT GDE_IMPORTE_TOTAL "
+		String resultado = rawDao.getExecuteSQL("SELECT GDE.GDE_IMPORTE_TOTAL "
 				+ "		 FROM GPV_GASTOS_PROVEEDOR GPV"
-				+ "		 JOIN GDE_GASTOS_DETALLE_ECONOMICO ADG ON GPV.GPV_ID = ADG.GPV_ID"
+				+ "		 JOIN GDE_GASTOS_DETALLE_ECONOMICO GDE ON GPV.GPV_ID = GDE.GPV_ID AND GDE.BORRADO = 0"
 				+ "		 WHERE GPV.GPV_NUM_GASTO_HAYA = :numGasto "
-				+ "		 	AND BORRADO = 0");
+				+ "		 	AND GPV.BORRADO = 0");
 		return resultado != null && !resultado.isEmpty();
 	}
 
@@ -9778,11 +9778,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		if(Checks.esNulo(numGasto))
 			return false;
 
-		String resultado = rawDao.getExecuteSQL("SELECT NUM_GASTO_ABONADO "
+		String resultado = rawDao.getExecuteSQL("SELECT GPV.NUM_GASTO_ABONADO "
 				+ "		 FROM GPV_GASTOS_PROVEEDOR GPV"
-				+ "		 JOIN GDE_GASTOS_DETALLE_ECONOMICO ADG ON GPV.GPV_ID = ADG.GPV_ID"
 				+ "		 WHERE GPV.GPV_NUM_GASTO_HAYA = :numGasto "
-				+ "		 	AND BORRADO = 0");
+				+ "		 	AND GPV.BORRADO = 0");
 		return resultado != null && !resultado.isEmpty();
 	}
 
@@ -9800,7 +9799,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "		 FROM GPV_GASTOS_PROVEEDOR GPV"
 				+ "		 JOIN DD_EGA_ESTADOS_GASTO ADG ON GPV.DD_EGA_ID = ADG.DD_EGA_ID AND ADG.DD_EGA_CODIGO = :codigo"
 				+ "		 WHERE GPV.GPV_NUM_GASTO_HAYA = :numGasto "
-				+ "		 	AND BORRADO = 0");
+				+ "		 	AND GPV.BORRADO = 0");
 		return !"0".equals(resultado);
 	}
 
@@ -9815,11 +9814,11 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 			return false;
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
-				+ "		 FROM GPV_GASTOS_PROVEEDOR GPV"
-				+ "		 JOIN ACT_PRO_PROPIETARIO ADG ON GPV.PRO_ID = ADG.PRO_ID "
-				+ "		 JOIN DD_CRA_ID CRA ON ADG.DD_CRA_ID = CRA.DD_CRA_ID AND CRA.DD_CRA_CODIGO :codigo"
+				+ "		 FROM REM01.GPV_GASTOS_PROVEEDOR GPV"
+				+ "		 JOIN REM01.ACT_PRO_PROPIETARIO PRO ON GPV.PRO_ID = PRO.PRO_ID AND PRO.BORRADO = 0"
+				+ "		 JOIN REM01.DD_CRA_CARTERA CRA ON PRO.DD_CRA_ID = CRA.DD_CRA_ID AND CRA.DD_CRA_CODIGO = :codigo"
 				+ "		 WHERE GPV.GPV_NUM_GASTO_HAYA = :numGasto "
-				+ "		 	AND BORRADO = 0");
+				+ "		 	AND GPV.BORRADO = 0");
 		return !"0".equals(resultado);
 	}
 
@@ -9834,8 +9833,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		 FROM VI_BUSQUEDA_GASTOS_PROVISION GPV"
-				+ "		 WHERE GPV.GPV_NUM_GASTO_HAYA = :numGasto "
-				+ "		 	AND BORRADO = 0");
+				+ "		 WHERE GPV.GPV_NUM_GASTO_HAYA = :numGasto");
 		return !"0".equals(resultado);
 	}
 
@@ -9853,8 +9851,384 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 					+ "		 FROM GPV_GASTOS_PROVEEDOR GPV"
 					+ "		 JOIN DD_EGA_ESTADOS_GASTO ADG ON GPV.DD_EGA_ID = ADG.DD_EGA_ID AND ADG.DD_EGA_CODIGO = :codigo"
 					+ "		 WHERE GPV.GPV_NUM_GASTO_HAYA = :numGasto "
-					+ "		 	AND BORRADO = 0");
+					+ "		 	AND GPV.BORRADO = 0");
 			return !"0".equals(resultado);
 		}
+	
+	@Override
+	public Boolean esGastoBBVA(String numGasto) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codigo", "16");
+		params.put("numGasto", numGasto);
+		rawDao.addParams(params);
+
+		if(Checks.esNulo(numGasto))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*)"
+				+ "		 FROM REM01.GPV_GASTOS_PROVEEDOR GPV"
+				+ "		 JOIN REM01.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = GPV.PRO_ID AND PRO.BORRADO = 0" 
+				+ "		 JOIN REM01.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = PRO.DD_CRA_ID AND CRA.BORRADO = 0" 
+				+ "		 WHERE GPV.BORRADO = 0" 
+				+ "		 AND CRA.DD_CRA_CODIGO = :codigo"
+				+ "		 AND GPV.GPV_NUM_GASTO_HAYA = :numGasto");
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean esGastoUnicaja(String numGasto) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codigo", "08");
+		params.put("numGasto", numGasto);
+		rawDao.addParams(params);
+
+		if(Checks.esNulo(numGasto))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*)"
+				+ "		 FROM REM01.GPV_GASTOS_PROVEEDOR GPV"
+				+ "		 JOIN REM01.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = GPV.PRO_ID AND PRO.BORRADO = 0" 
+				+ "		 JOIN REM01.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = PRO.DD_CRA_ID AND CRA.BORRADO = 0" 
+				+ "		 WHERE GPV.BORRADO = 0" 
+				+ "		 AND CRA.DD_CRA_CODIGO = :codigo"
+				+ "		 AND GPV.GPV_NUM_GASTO_HAYA = :numGasto");
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean esGastoCaixaBank(String numGasto, String subcartera) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codigoCartera", "03");
+		params.put("numGasto", numGasto);
+		rawDao.addParams(params);
+
+		if(Checks.esNulo(numGasto))
+			return false;
+		
+		String consultaSCR = "";
+		if(subcartera != null) {
+			consultaSCR = " AND SCR.DD_SCR_CODIGO = ".concat(subcartera);
+		}
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*)"
+				+ "		 FROM REM01.GPV_GASTOS_PROVEEDOR GPV"
+				+ "		 JOIN REM01.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = GPV.PRO_ID AND PRO.BORRADO = 0" 
+				+ "		 JOIN REM01.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = PRO.DD_CRA_ID AND CRA.BORRADO = 0"
+				+ "		 LEFT JOIN REM01.DD_SCR_SUBCARTERA SCR ON SCR.DD_CRA_ID = CRA.DD_CRA_ID AND SCR.BORRADO = 0"
+				+ "		 WHERE GPV.BORRADO = 0" 
+				+ "		 AND CRA.DD_CRA_CODIGO = :codigoCartera"
+				+ 		 consultaSCR
+				+ "		 AND GPV.GPV_NUM_GASTO_HAYA = :numGasto");
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean tieneGastoCampoObligatorioCuentaContable(String numGasto) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numGasto", numGasto);
+		rawDao.addParams(params);
+
+		if(Checks.esNulo(numGasto))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*)"
+				+ "		 FROM REM01.GPV_GASTOS_PROVEEDOR GPV" 
+				+ "		 JOIN REM01.GLD_GASTOS_LINEA_DETALLE GLD ON GLD.GPV_ID = GPV.GPV_ID AND GLD.BORRADO = 0"
+				+ "		 WHERE GPV.BORRADO = 0" 
+				+ "		 AND GLD.GLD_CCC_BASE IS NOT NULL" 
+				+ "		 AND GPV.GPV_NUM_GASTO_HAYA = :numGasto");
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean tieneGastoCamposObligatoriosCuentaPartidaApartadoCapitulo(String numGasto) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numGasto", numGasto);
+		rawDao.addParams(params);
+
+		if(Checks.esNulo(numGasto))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*)" 
+				+ "		 FROM REM01.GPV_GASTOS_PROVEEDOR GPV" 
+				+ "		 JOIN REM01.GLD_GASTOS_LINEA_DETALLE GLD ON GLD.GPV_ID = GPV.GPV_ID AND GLD.BORRADO = 0" 
+				+ "		 JOIN REM01.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = GPV.PRO_ID AND PRO.BORRADO = 0"
+				+ "		 WHERE GPV.BORRADO = 0"
+				+ "		 AND GLD.GLD_CCC_BASE IS NOT NULL" 
+				+ "		 AND GLD.GLD_CPP_BASE IS NOT NULL" 
+				+ "		 AND GLD.GLD_CAPITULO_BASE IS NOT NULL" 
+				+ "		 AND GLD.GLD_APARTADO_BASE IS NOT NULL" 
+				+ "		 AND GPV.GPV_NUM_GASTO_HAYA = :numGasto");
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean tieneGastoCamposObligatoriosCuentaPartida(String numGasto) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numGasto", numGasto);
+		rawDao.addParams(params);
+
+		if(Checks.esNulo(numGasto))
+			return false;
+		
+		String cartera = rawDao.getExecuteSQL("SELECT COUNT(*)" 
+				+ "		 FROM REM01.GPV_GASTOS_PROVEEDOR GPV"
+				+ "		 JOIN REM01.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = GPV.PRO_ID AND PRO.BORRADO = 0" 
+				+ "		 JOIN REM01.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = PRO.DD_CRA_ID AND CRA.BORRADO = 0" 
+				+ "		 JOIN REM01.DD_SCR_SUBCARTERA SCR ON SCR.DD_CRA_ID = CRA.DD_CRA_ID AND SCR.BORRADO = 0" 
+				+ "		 WHERE GPV.BORRADO = 0" 
+				+ "		 AND CRA.DD_CRA_CODIGO NOT IN ('16','03','17','07','11','08')" 
+				+ "		 AND SCR.DD_SCR_CODIGO NOT IN ('137','135','38','37','39','68')"
+				+ "		 AND GPV.GPV_NUM_GASTO_HAYA = :numGasto");
+
+		if(!"0".equals(cartera)) {
+			String resultado = rawDao.getExecuteSQL("SELECT COUNT(*)" 
+					+ "		 FROM REM01.GPV_GASTOS_PROVEEDOR GPV" 
+					+ "		 JOIN REM01.GLD_GASTOS_LINEA_DETALLE GLD ON GLD.GPV_ID = GPV.GPV_ID AND GLD.BORRADO = 0"
+					+ "		 WHERE GPV.BORRADO = 0"
+					+ "		 AND GLD.GLD_CCC_BASE IS NOT NULL" 
+					+ "		 AND GLD.GLD_CPP_BASE IS NOT NULL" 
+					+ "		 AND GPV.GPV_NUM_GASTO_HAYA = :numGasto");
+			return !"0".equals(resultado);
+		}
+		
+		return true;
+		
+	}
+	
+	@Override
+	public Boolean esGastoAlquiler(String numGasto) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numGasto", numGasto);
+		rawDao.addParams(params);
+
+		if(Checks.esNulo(numGasto))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*)" 
+				+ "		 FROM REM01.GPV_GASTOS_PROVEEDOR GPV"
+				+ "		 JOIN REM01.DD_TGA_TIPOS_GASTO TGA ON TGA.DD_TGA_ID = GPV.DD_TGA_ID AND TGA.BORRADO = 0" 
+				+ "		 WHERE GPV.BORRADO = 0" 
+				+ "		 AND TGA.DD_TGA_CODIGO = '19'"
+				+ "		 AND GPV.GPV_NUM_GASTO_HAYA = :numGasto");
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean tieneGastoActivosONumeroContrato(String numGasto) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numGasto", numGasto);
+		rawDao.addParams(params);
+
+		if(Checks.esNulo(numGasto))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*)" 
+				+ "		 FROM REM01.GPV_GASTOS_PROVEEDOR GPV" 
+				+ "		 JOIN REM01.GLD_GASTOS_LINEA_DETALLE GLD ON GLD.GPV_ID = GPV.GPV_ID AND GLD.BORRADO = 0"
+				+ "		 WHERE GPV.BORRADO = 0"
+				+ "		 AND (GPV.GPV_NUM_CONTR_ALQUILER IS NOT NULL" 
+				+ "		 		OR" 
+				+ "		     (GLD.GLD_LINEA_SIN_ACTIVOS = 1 AND GPV.GPV_NUM_CONTR_ALQUILER IS NOT NULL))" 
+				+ "		 AND GPV.GPV_NUM_GASTO_HAYA = :numGasto");
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean tieneGastoFechaDevengoEspecialOFechaAnteriorAEmision(String numGasto) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numGasto", numGasto);
+		rawDao.addParams(params);
+
+		if(Checks.esNulo(numGasto))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*)"
+				+ "		 FROM REM01.GPV_GASTOS_PROVEEDOR GPV" 
+				+ "		 JOIN REM01.GIC_GASTOS_INFO_CONTABILIDAD GIC ON GIC.GPV_ID = GPV.GPV_ID AND GIC.BORRADO = 0" 
+				+ "		 JOIN REM01.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = GPV.PRO_ID AND PRO.BORRADO = 0"
+				+ "		 WHERE GPV.BORRADO = 0" 
+				+ "		 AND PRO.PRO_DOCIDENTIF= 'A58032244'"
+				+ "		 AND GIC.GIC_FECHA_DEVENGO_ESPECIAL IS NOT NULL" 
+				+ "		 AND GPV.GPV_FECHA_EMISION > TO_DATE('15/11/2021','dd/MM/yyyy')" 
+				+ "		 AND GPV.GPV_NUM_GASTO_HAYA = :numGasto");
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean tieneGastoCampoObligatorioNIFTitularCartaPago(String numGasto) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numGasto", numGasto);
+		rawDao.addParams(params);
+
+		if(Checks.esNulo(numGasto))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*)" 
+				+ "		 FROM REM01.GPV_GASTOS_PROVEEDOR GPV" 
+				+ "		 JOIN REM01.GIC_GASTOS_INFO_CONTABILIDAD GIC ON GIC.GPV_ID = GPV.GPV_ID AND GIC.BORRADO = 0" 
+				+ "		 JOIN REM01.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = GPV.PRO_ID AND PRO.BORRADO = 0"
+				+ "		 JOIN REM01.DD_TGA_TIPOS_GASTO TGA ON TGA.DD_TGA_ID = GPV.DD_TGA_ID AND TGA.BORRADO = 0"
+				+ "		 WHERE GPV.BORRADO = 0" 
+				+ "		 AND PRO.PRO_DOCIDENTIF = 'A58032244'"
+				+ "		 AND TGA.DD_TGA_CODIGO IN ('01','02')" 
+				+ "		 AND GPV.PRO_ID_TITULAR_CARTA IS NOT NULL" 
+				+ "		 AND GIC.GIC_FECHA_DEVENGO_ESPECIAL IS NOT NULL" 
+				+ "		 AND GIC.GIC_FECHA_DEVENGO_ESPECIAL > TO_DATE('01/01/2022','dd/MM/yyyy')" 
+				+ "		 AND GPV.GPV_NUM_GASTO_HAYA = :numGasto");
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean esGastoRechazado(String numGasto) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numGasto", numGasto);
+		rawDao.addParams(params);
+
+		if(Checks.esNulo(numGasto))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*)"
+				+ "		 FROM REM01.GPV_GASTOS_PROVEEDOR GPV" 
+				+ "		 JOIN REM01.DD_EGA_ESTADOS_GASTO EGA ON EGA.DD_EGA_ID = GPV.DD_EGA_ID AND EGA.BORRADO = 0" 
+				+ "		 WHERE GPV.BORRADO = 0" 
+				+ "		 AND EGA.DD_EGA_CODIGO = '02'" 
+				+ "		 AND GPV.GPV_NUM_GASTO_HAYA = :numGasto");
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean esGastoAutorizadoAdministracion(String numGasto) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numGasto", numGasto);
+		rawDao.addParams(params);
+
+		if(Checks.esNulo(numGasto))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*)"
+				+ "		 FROM REM01.GPV_GASTOS_PROVEEDOR GPV" 
+				+ "		 JOIN REM01.DD_EGA_ESTADOS_GASTO EGA ON EGA.DD_EGA_ID = GPV.DD_EGA_ID AND EGA.BORRADO = 0" 
+				+ "		 WHERE GPV.BORRADO = 0" 
+				+ "		 AND EGA.DD_EGA_CODIGO = '03'" 
+				+ "		 AND GPV.GPV_NUM_GASTO_HAYA = :numGasto");
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean esGastoPadreSuplido(String numGasto) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numGasto", numGasto);
+		rawDao.addParams(params);
+
+		if(Checks.esNulo(numGasto))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*)" 
+				+ "		 FROM REM01.GPV_GASTOS_PROVEEDOR GPV"
+				+ "		 JOIN REMMASTER.DD_SIN_SINO SIN ON SIN.DD_SIN_CODIGO = '01'"
+				+ "		 WHERE GPV.BORRADO = 0" 
+				+ "		 AND GPV.GPV_SUPLIDOS_VINCULADOS = SIN.DD_SIN_CODIGO" 
+				+ "		 AND GPV.GPV_NUM_GASTO_HAYA = :numGasto");
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean esGastoConSuplidosVinculados(String numGasto) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numGasto", numGasto);
+		rawDao.addParams(params);
+
+		if(Checks.esNulo(numGasto))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*)" 
+				+ "		 FROM REM01.GPV_GASTOS_PROVEEDOR GPV"
+				+ "		 JOIN REMMASTER.DD_SIN_SINO SIN ON SIN.DD_SIN_CODIGO = '01'" 
+				+ "		 JOIN REM01.GSS_GASTOS_SUPLIDOS GSS ON GSS.GPV_ID_PADRE = GPV.GPV_ID AND GSS.BORRADO = 0" 
+				+ "		 WHERE GPV.BORRADO = 0" 
+				+ "		 AND GPV.GPV_SUPLIDOS_VINCULADOS = SIN.DD_SIN_CODIGO" 
+				+ "		 AND GPV.GPV_NUM_GASTO_HAYA = :numGasto");
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean esGastoSuplido(String numGasto) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numGasto", numGasto);
+		rawDao.addParams(params);
+
+		if(Checks.esNulo(numGasto))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*)" 
+				+ "		 FROM REM01.GPV_GASTOS_PROVEEDOR GPV"
+				+ "		 JOIN REM01.GSS_GASTOS_SUPLIDOS GSS ON GSS.GPV_ID_SUPLIDO = GPV.GPV_ID AND GSS.BORRADO = 0"
+				+ "		 WHERE GPV.BORRADO = 0"
+				+ "		 AND GPV.GPV_NUM_GASTO_HAYA = :numGasto");
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean esGastoSuplidoConPadreAutorizado(String numGasto) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numGasto", numGasto);
+		rawDao.addParams(params);
+
+		if(Checks.esNulo(numGasto))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*)" 
+				+ "		 FROM REM01.GPV_GASTOS_PROVEEDOR GPV" 
+				+ "		 JOIN REMMASTER.DD_SIN_SINO SIN ON SIN.DD_SIN_CODIGO = '01'" 
+				+ "		 JOIN REM01.GSS_GASTOS_SUPLIDOS GSS ON GSS.GPV_ID_SUPLIDO = GPV.GPV_ID AND GSS.BORRADO = 0"
+				+ "		 JOIN REM01.GPV_GASTOS_PROVEEDOR GPVP ON GPVP.GPV_ID = GSS.GPV_ID_PADRE AND GPVP.BORRADO = 0"
+				+ "		 JOIN REM01.DD_EGA_ESTADOS_GASTO EGA ON EGA.DD_EGA_ID = GPVP.DD_EGA_ID AND EGA.BORRADO = 0"
+				+ "		 WHERE GPV.BORRADO = 0"
+				+ "		 AND GPVP.GPV_SUPLIDOS_VINCULADOS = SIN.DD_SIN_CODIGO"
+				+ "		 AND EGA.DD_EGA_CODIGO = '03'"
+				+ "		 AND GPV.GPV_NUM_GASTO_HAYA = :numGasto");
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean tieneGastoSuplidoNIFIgualGastoPadreNIF(String numGasto) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numGasto", numGasto);
+		rawDao.addParams(params);
+
+		if(Checks.esNulo(numGasto))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*)" 
+				+ "		 FROM REM01.GPV_GASTOS_PROVEEDOR GPV"
+				+ "		 JOIN REM01.GSS_GASTOS_SUPLIDOS GSS ON GSS.GPV_ID_SUPLIDO = GPV.GPV_ID AND GSS.BORRADO = 0" 
+				+ "		 JOIN REM01.GDE_GASTOS_DETALLE_ECONOMICO GDE ON GPV.GPV_ID = GDE.GPV_ID AND GDE.BORRADO = 0"
+				+ "		 JOIN REM01.GPV_GASTOS_PROVEEDOR GPVP ON GPVP.GPV_ID = GSS.GPV_ID_PADRE AND GPVP.BORRADO = 0" 
+				+ "		 JOIN REM01.ACT_PVE_PROVEEDOR PVE ON GPVP.PVE_ID_EMISOR = PVE.PVE_ID AND PVE.BORRADO = 0"
+				+ "		 WHERE GPV.BORRADO = 0"
+				+ "		 AND GDE.GDE_NIF_TITULAR_CUENTA = PVE.PVE_DOCIDENTIF" 
+				+ "		 AND GPV.GPV_NUM_GASTO_HAYA = :numGasto");
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean tieneGastoSuplidoAbonoCuenta(String numGasto) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numGasto", numGasto);
+		rawDao.addParams(params);
+
+		if(Checks.esNulo(numGasto))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*)"
+				+ "		 FROM REM01.GPV_GASTOS_PROVEEDOR GPV" 
+				+ "		 JOIN REM01.GSS_GASTOS_SUPLIDOS GSS ON GSS.GPV_ID_SUPLIDO = GPV.GPV_ID AND GSS.BORRADO = 0" 
+				+ "		 JOIN REM01.GDE_GASTOS_DETALLE_ECONOMICO GDE ON GPV.GPV_ID = GDE.GPV_ID AND GDE.BORRADO = 0"
+				+ "		 WHERE GPV.BORRADO = 0"
+				+ "		 AND GDE.GDE_ABONO_CUENTA <> 0" 
+				+ "		 AND GPV.GPV_NUM_GASTO_HAYA = :numGasto");
+		return !"0".equals(resultado);
+	}
 }
 

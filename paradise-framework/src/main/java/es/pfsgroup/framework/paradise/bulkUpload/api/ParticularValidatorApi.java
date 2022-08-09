@@ -1554,4 +1554,41 @@ public interface ParticularValidatorApi {
 	Boolean esAgrupadoGasto(String numGasto);
 
 	Boolean estaEstadoNoPermitidoGasto(String numGasto, String codigo);
+
+	Boolean esGastoBBVA(String numGasto);
+
+	Boolean esGastoUnicaja(String numGasto);
+	
+	Boolean esGastoCaixaBank(String numGasto, String subcartera);
+
+	Boolean tieneGastoCamposObligatoriosCuentaPartidaApartadoCapitulo(String numGasto);
+
+	Boolean tieneGastoCampoObligatorioCuentaContable(String numGasto);
+
+	Boolean tieneGastoCamposObligatoriosCuentaPartida(String numGasto);
+
+	Boolean tieneGastoFechaDevengoEspecialOFechaAnteriorAEmision(String numGasto);
+
+	Boolean tieneGastoCampoObligatorioNIFTitularCartaPago(String numGasto);
+
+	Boolean esGastoRechazado(String numGasto);
+
+	Boolean esGastoAutorizadoAdministracion(String numGasto);
+
+	Boolean esGastoConSuplidosVinculados(String numGasto);
+
+	Boolean esGastoSuplidoConPadreAutorizado(String numGasto);
+
+	Boolean tieneGastoSuplidoNIFIgualGastoPadreNIF(String numGasto);
+
+	Boolean tieneGastoSuplidoAbonoCuenta(String numGasto);
+
+	Boolean esGastoSuplido(String numGasto);
+
+	Boolean esGastoPadreSuplido(String numGasto);
+
+	Boolean esGastoAlquiler(String numGasto);
+
+	Boolean tieneGastoActivosONumeroContrato(String numGasto);
+	
 }

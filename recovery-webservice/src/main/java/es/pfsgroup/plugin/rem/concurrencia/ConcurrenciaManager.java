@@ -298,6 +298,9 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 	public void caducaOfertasRelacionadasConcurrencia(Long idActivo, Long idOferta, String codigoEnvioCorreo){
 		try {
 			Activo act = genericDao.get(Activo.class, genericDao.createFilter(FilterType.EQUALS, "id", idActivo));
+			Oferta ofertaGanadora = ofertaApi.getOfertaById(idOferta);
+			Concurrencia concurrencia = ofertaGanadora.getConcurrencia();
+			
 			if(act != null){
 				List<ActivoOferta> ofertas = act.getOfertas();
 				HashMap<Long, List<Long>> noEntraDeposito = new HashMap<Long, List<Long>>();
@@ -314,7 +317,8 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 							
 							genericDao.save(Oferta.class, ofr);
 							
-							if(ConcurrenciaApi.COD_OFERTAS_PERDEDORAS.equals(codigoEnvioCorreo)) {
+							if(ConcurrenciaApi.COD_OFERTAS_PERDEDORAS.equals(codigoEnvioCorreo) && concurrencia != null && ofr.getConcurrencia() != null 
+									&& concurrencia.getId().equals(ofr.getConcurrencia().getId())) {
 								idOfertaList.add(ofr.getId());
 							}
 						}						

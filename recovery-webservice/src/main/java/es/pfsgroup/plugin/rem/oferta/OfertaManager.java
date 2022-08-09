@@ -183,7 +183,6 @@ import es.pfsgroup.plugin.rem.model.OfertaTestigos;
 import es.pfsgroup.plugin.rem.model.OfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.ProveedorGestorCajamar;
-import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.TextosOferta;
 import es.pfsgroup.plugin.rem.model.TitularesAdicionalesOferta;
@@ -325,7 +324,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	private static final String RESPONSE_SUCCESS_KEY = "success";	
 	private static final String RESPONSE_ERROR_KEY = "error";
 	
-	private static final String MSJ_ERROR_NO_CONCURRENCIA = "El activo/agrupación está en un período de concurrencia y solo se pueden crear ofertas de concurrencia.";
+	private static final String MSJ_ERROR_CONCURRENCIA = "El activo/agrupación está en un período de concurrencia y solo se pueden crear ofertas de concurrencia.";
+	private static final String MSJ_ERROR_NO_CONCURRENCIA = "El activo/agrupación no está en un período de concurrencia y no se pueden crear ofertas de concurrencia.";
 	//private static final String MSJ_ERROR_IMPORTE_MENOR_PUJA = "El importe de la puja no puede ser menor que la primera.";
 	//private static final String MSJ_ERROR_IMPORTE_MENOR_MINIMO = "El importe de la oferta debe ser mayor al importe mínimo de la concurrencia.";
 
@@ -9918,10 +9918,14 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		if(agrupacionConcurrencia != null 
 				&& ((concurrenciaApi.isAgrupacionEnConcurrencia(agrupacionConcurrencia) && ofertaDto.getCreadaConcurrencia() != null && !ofertaDto.getCreadaConcurrencia()) 
 						|| (concurrenciaApi.isAgrupacionEnConcurrencia(agrupacionConcurrencia) && ofertaDto.getCreadaConcurrencia() == null))){
-			errorsList.put("creadaConcurrencia", MSJ_ERROR_NO_CONCURRENCIA);
+			errorsList.put("creadaConcurrencia", MSJ_ERROR_CONCURRENCIA);
 		}else if(activoConcurrencia != null 
 				&& ((concurrenciaApi.isActivoEnConcurrencia(activoConcurrencia) && ofertaDto.getCreadaConcurrencia() != null && !ofertaDto.getCreadaConcurrencia())
 						|| (concurrenciaApi.isActivoEnConcurrencia(activoConcurrencia) && ofertaDto.getCreadaConcurrencia() == null))){
+			errorsList.put("creadaConcurrencia", MSJ_ERROR_CONCURRENCIA);
+		} else if(agrupacionConcurrencia != null && !concurrenciaApi.isAgrupacionEnConcurrencia(agrupacionConcurrencia) && ofertaDto.getCreadaConcurrencia() != null && ofertaDto.getCreadaConcurrencia()) {
+			errorsList.put("creadaConcurrencia", MSJ_ERROR_NO_CONCURRENCIA);
+		} else if(activoConcurrencia != null && !concurrenciaApi.isActivoEnConcurrencia(activoConcurrencia) && ofertaDto.getCreadaConcurrencia() != null && ofertaDto.getCreadaConcurrencia()) {
 			errorsList.put("creadaConcurrencia", MSJ_ERROR_NO_CONCURRENCIA);
 		}
 	}

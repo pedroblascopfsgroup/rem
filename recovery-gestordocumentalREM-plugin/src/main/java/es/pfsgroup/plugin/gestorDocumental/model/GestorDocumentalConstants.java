@@ -21,6 +21,7 @@ public class GestorDocumentalConstants {
 	public static final String CODIGO_TIPO_EXPEDIENTE_PROPUESTAS = "PR";
 	public static final String CODIGO_TIPO_JUNTA = "OP";
 	public static final String CODIGO_TIPO_PLUSVALIAS = "OP";
+	public static final String CODIGO_TIPO_CONDUCTAS_INAPROPIADAS = "PC";
 	
 	public static final String CODIGO_CLASE_EXPEDIENTE_PROYECTO = "01";
 	public static final String CODIGO_CLASE_EXPEDIENTE_PROMOCION = "02";

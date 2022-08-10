@@ -60,7 +60,7 @@ public class ConductasInapropiadas implements Serializable, Auditable {
 	
 	@JoinColumn(name = "COI_ADJUNTO")  
     @ManyToOne(fetch = FetchType.LAZY)
-	private ActivoAdjuntoProveedor adjunto;
+	private AdjuntoConductasInapropiadas adjunto;
 	    
 	@Version   
 	private Long version;
@@ -108,11 +108,11 @@ public class ConductasInapropiadas implements Serializable, Auditable {
 		this.comentarios = comentarios;
 	}
 
-	public ActivoAdjuntoProveedor getAdjunto() {
+	public AdjuntoConductasInapropiadas getAdjunto() {
 		return adjunto;
 	}
 
-	public void setAdjunto(ActivoAdjuntoProveedor adjunto) {
+	public void setAdjunto(AdjuntoConductasInapropiadas adjunto) {
 		this.adjunto = adjunto;
 	}
 

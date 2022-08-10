@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.gestorDocumental.api;
 
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearEntidadCompradorDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearActuacionTecnicaDto;
+import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearConductasInapropiadasDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearExpedienteComercialDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearGastoDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearJuntaDto;
@@ -38,5 +39,6 @@ public interface GestorDocumentalExpedientesApi {
 	RespuestaCrearExpediente crearProyecto(CrearProyectoDto crearProyecto) throws GestorDocumentalException;	
 
 	RespuestaCrearExpediente crearProveedor(CrearProveedorDto crearProveedorDto) throws GestorDocumentalException;	
-
+	
+	RespuestaCrearExpediente crearConductasInapropiadas(CrearConductasInapropiadasDto crearConductasInapropiadasDto) throws GestorDocumentalException;
 }

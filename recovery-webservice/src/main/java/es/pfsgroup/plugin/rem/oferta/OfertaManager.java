@@ -1607,10 +1607,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		
 			boolean necesitaDeposito = false;
 
-			if(!Checks.esNulo(ofertaDto.getIdActivoHaya()) && activo!= null && activo.getSubcartera() != null ) {
-				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "numActivo", ofertaDto.getIdActivoHaya());
-				Activo ActivoCuentaVirtual = genericDao.get(Activo.class, filtro);
-				if(depositoApi.esNecesarioDepositoNuevaOferta(ActivoCuentaVirtual) && DDTipoOferta.isTipoVenta(oferta.getTipoOferta())){
+			if(activo!= null && activo.getSubcartera() != null ) {
+
+				if(depositoApi.esNecesarioDepositoNuevaOferta(activo) && DDTipoOferta.isTipoVenta(oferta.getTipoOferta())){
 					necesitaDeposito = true;
 					Double importe = depositoApi.getImporteDeposito(oferta);
 					if(importe == null) {
@@ -2203,6 +2202,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			
 			if (!Checks.esNulo(ofertaDto.getIdOfertaHayaHome())) {
 				oferta.setIdOfertaHayaHome(ofertaDto.getIdOfertaHayaHome());
+				modificado = true;
 			}
 
 			if(!Checks.esNulo(ofertaDto.getTitularesConfirmados())) {
@@ -8825,6 +8825,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						&& !DDEstadosExpedienteComercial.FINALIZADA.equals(actOfr.getPrimaryKey().getOferta().getExpedienteComercial().getEstado().getCodigo())
 						&& !DDEstadosExpedienteComercial.VENDIDO.equals(actOfr.getPrimaryKey().getOferta().getExpedienteComercial().getEstado().getCodigo())
 						&& !DDEstadosExpedienteComercial.FIRMADO.equals(actOfr.getPrimaryKey().getOferta().getExpedienteComercial().getEstado().getCodigo())
+						&& !DDEstadosExpedienteComercial.DENEGADA_OFERTA_CES.equals(actOfr.getPrimaryKey().getOferta().getExpedienteComercial().getEstado().getCodigo())
 						&& !DDEstadosExpedienteComercial.CONGELADA.equals(codEstadoExpediente)) {
 					DDMotivoIndisponibilidad motivoIndisponibilidad = genericDao.get(DDMotivoIndisponibilidad.class,
 							genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoIndisponibilidad.CODIGO_OTRA_OFERTA_APROBADA));

@@ -20,7 +20,6 @@ import org.springframework.ui.ModelMap;
 
 import es.capgemini.devon.beans.Service;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -81,9 +80,6 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 	
 	@Autowired
 	private ConcurrenciaDao concurrenciaDao;
-	
-	@Autowired
-	private ApiProxyFactory proxyFactory;
 
 	@Autowired
 	private OfertaApi ofertaApi;
@@ -138,12 +134,8 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 
 	@Override
 	public Concurrencia getUltimaConcurrenciaByActivo(Activo activo) {
-		Order orderFechaFincConcurrencia = new Order(OrderType.DESC, "fechaFin");
-		List<Concurrencia> concurrenciaList = genericDao.getListOrdered(Concurrencia.class, orderFechaFincConcurrencia, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
-		Concurrencia concurrencia = null;
-		if(concurrenciaList != null && !concurrenciaList.isEmpty()) {
-			concurrencia = concurrenciaList.get(0);
-		}
+		Long idConcurrencia = concurrenciaDao.getIdConcurrenciaReciente(activo.getId(), null);
+		Concurrencia concurrencia = genericDao.get(Concurrencia.class, genericDao.createFilter(FilterType.EQUALS, "id", idConcurrencia));
 		
 		return concurrencia;
 	}

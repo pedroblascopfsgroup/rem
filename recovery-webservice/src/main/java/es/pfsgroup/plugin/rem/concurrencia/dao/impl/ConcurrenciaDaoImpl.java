@@ -60,11 +60,60 @@ public class ConcurrenciaDaoImpl extends AbstractEntityDao<Concurrencia, Long> i
 		
 		if(idConcurrencia != null) {
 			hb.appendWhere(" voac.idConcurrencia = "+ idConcurrencia);
+		} else {
+			Long conId = getIdConcurrenciaReciente(idActivo, null);
+			if(conId != null)
+				hb.appendWhere(" voac.idConcurrencia = "+ conId);
 		}
 
 		
 		return (List<VGridOfertasActivosConcurrencia>) this.getSessionFactory().getCurrentSession()
 				.createQuery(hb.toString()).list();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<VGridOfertasActivosConcurrencia> getListOfertasVivasAgrupacionConcurrentes(Long idAgrupacion, Long numeroAgrupacion, Long idConcurrencia) {
+
+		String hql = " from VGridOfertasActivosConcurrencia voac ";
+
+		HQLBuilder hb = new HQLBuilder(hql);
+
+		if(numeroAgrupacion != null) {
+			hb.appendWhere(" voac.numActivoAgrupacion = "+numeroAgrupacion);
+		}
+		
+		if(idConcurrencia != null) {
+			hb.appendWhere(" voac.idConcurrencia = "+ idConcurrencia);
+		} else {
+			Long conId = getIdConcurrenciaReciente(null, idAgrupacion);
+			if(conId != null)
+				hb.appendWhere(" voac.idConcurrencia = "+ conId);
+		}
+
+		
+		return (List<VGridOfertasActivosConcurrencia>) this.getSessionFactory().getCurrentSession()
+				.createQuery(hb.toString()).list();
+	}
+	
+	@Override
+	public Long getIdConcurrenciaReciente(Long idActivo, Long idAgrupacion) {
+		
+		String consulta = "";
+		
+		if(idAgrupacion != null)
+			consulta = " agr_id = " + idAgrupacion + " and";
+		else if (idActivo != null)
+			consulta = " act_id = " + idActivo + " and";
+		
+		String resultado = rawDao.getExecuteSQL("SELECT con_id FROM (SELECT con_id, act_id, agr_id" +
+				"               FROM con_concurrencia WHERE con_fecha_ini <= SYSDATE" +
+				"               ORDER BY con_fecha_fin DESC) WHERE" + consulta + " ROWNUM = 1");
+		
+		if (resultado != null)
+			return Long.valueOf(resultado);
+		
+		return null;
 	}
 	
 	@SuppressWarnings("unchecked")

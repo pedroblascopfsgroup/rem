@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Javier Esbri
---## FECHA_CREACION=20220804
+--## AUTOR=Alejandro Valverde
+--## FECHA_CREACION=20220810
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-18511
+--## INCIDENCIA_LINK=HREOS-18526
 --## PRODUCTO=NO
 --## Finalidad: VI_GRID_OFR_CONCURRENCIA
 --##           
@@ -16,6 +16,7 @@
 --##         0.4 Alejandro Valverde (HREOS-18445) - Añadir campos EST_CODIGO_C4C y FECHA_ENT_CRM_SF
 --##         0.5 Alejandro Valverde (HREOS-18495) - Añadir campo OFR_ID
 --##         0.6 Javier Esbri (HREOS-18511) - Añadir campo OFR_CONCURRENCIA
+--##         0.7 Alejandro Valverde (HREOS-18526) - Incidencia datos incorrectos
 --##########################################
 --*/
 
@@ -83,7 +84,7 @@ BEGIN
 		INNER JOIN '|| V_ESQUEMA ||'.DD_EOF_ESTADOS_OFERTA EOF ON EOF.DD_EOF_ID = OFR.DD_EOF_ID
 		join '|| V_ESQUEMA ||'.act_ofr aof on ofr.ofr_id = aof.ofr_id 
 		join '|| V_ESQUEMA ||'.act_Activo act on act.act_id = aof.act_id
-		join '|| V_ESQUEMA ||'.con_concurrencia cnc on act.act_id = cnc.act_id
+		join '|| V_ESQUEMA ||'.con_concurrencia cnc on act.act_id = cnc.act_id and ofr.con_id = cnc.con_id and cnc.borrado = 0
 		JOIN '|| V_ESQUEMA ||'.CLC_CLIENTE_COMERCIAL CLC ON CLC.CLC_ID = OFR.CLC_ID
     LEFT JOIN ' || V_ESQUEMA || '.ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = cnc.AGR_ID AND AGR.BORRADO = 0
 		LEFT JOIN '|| V_ESQUEMA ||'.DEP_DEPOSITO DEP ON DEP.OFR_ID = OFR.OFR_ID and DEP.borrado = 0

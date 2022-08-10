@@ -74,6 +74,7 @@ import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.api.TramitacionOfertasApi;
 import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
+import es.pfsgroup.plugin.rem.concurrencia.dao.ConcurrenciaDao;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
@@ -307,6 +308,9 @@ public class AgrupacionAdapter {
 	@Autowired
 	private DepositoApi depositoApi;
 
+	@Autowired
+	private ConcurrenciaDao concurrenciaDao;
+	
 	@Autowired
 	private TramitacionOfertasApi tramitacionOfertasApi;
 
@@ -5666,17 +5670,10 @@ public class AgrupacionAdapter {
 	}
 	
 	public List<VGridOfertasActivosConcurrencia> getListOfertasVivasConcurrenciaAgrupacion(Long idAgrupacion) {
-
-		List<VGridOfertasActivosConcurrencia> ofertasAgrupacion = new ArrayList<VGridOfertasActivosConcurrencia>();
 		
 		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(idAgrupacion);
 		
-		if(agrupacion != null && agrupacion.getNumAgrupRem() != null) {
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "numActivoAgrupacion", agrupacion.getNumAgrupRem());
-			ofertasAgrupacion = genericDao.getList(VGridOfertasActivosConcurrencia.class, filtro);
-		}
-
-		return ofertasAgrupacion;
+		return concurrenciaDao.getListOfertasVivasAgrupacionConcurrentes(agrupacion.getId(), agrupacion.getNumAgrupRem(), null);
 
 	}
 

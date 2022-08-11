@@ -74,6 +74,7 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 	private static final String MENSAJE_BC = "Para el número del inmueble BC: ";
 	private static final String CODIGO_TRAMITE_T015 = "T015";
 	private static final String BUZON_HMEDIADORES = "buzonhonorariosmediadores";
+	private static final String[] BUZON_VSP_CAJAMAR = {"balameda","gpradena"};
 		
 	private List<String> mailsPara 	= new ArrayList<String>();
 	private List<String> mailsCC 	= new ArrayList<String>();
@@ -1455,7 +1456,15 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 		if (!Checks.esNulo(buzonHonorarios)) {
 			mailsPara.add(buzonHonorarios.getEmail());
 		}
-
+		
+		if (DDCartera.isCarteraCajamar(activo.getCartera())) {
+			for (String username: BUZON_VSP_CAJAMAR) {
+				Usuario usuarioCajamar = usuarioManager.getByUsername(username);
+				if (!Checks.esNulo(usuarioCajamar))
+					mailsPara.add(usuarioCajamar.getEmail());
+			}
+		}
+		
 		mailsCC.add(this.getCorreoFrom());
 		
 		String contenido = String.format("<p>La oferta con número identificador %s ha sido reservada y está marcada con Venta sobre plano.</p>", 

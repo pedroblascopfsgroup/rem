@@ -103,7 +103,7 @@ public class UpdaterServiceSancionOfertaAlquileresElevarASancion implements Upda
 				
 				expedienteComercial.setFechaAnulacion(new Date());
 				expedienteComercial.setPeticionarioAnulacion(peticionario);
-				ofertaApi.finalizarOferta(oferta);
+				ofertaApi.inicioRechazoDeOfertaSinLlamadaBC(oferta, DDEstadosExpedienteComercial.ANULADO);
 			}
 			
 			if(COMITE.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) { 
@@ -184,12 +184,7 @@ public class UpdaterServiceSancionOfertaAlquileresElevarASancion implements Upda
 
 			// Una vez aprobado el expediente, se congelan el resto de ofertas que no
 			// estén rechazadas (aceptadas y pendientes)
-			List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());
-			for (Oferta ofertaCongelar : listaOfertas) {
-				if (!ofertaCongelar.getId().equals(oferta.getId()) && !DDEstadoOferta.CODIGO_RECHAZADA.equals(ofertaCongelar.getEstadoOferta().getCodigo())) {
-					ofertaApi.congelarOferta(ofertaCongelar);
-				}
-			}
+			ofertaApi.congelarOfertasAndReplicate(oferta.getActivoPrincipal(), oferta);
 
 		}else if(DDRespuestaOfertante.CODIGO_RECHAZA.equals(resolucion)) {
 			codigoEstadoExpediente =  DDEstadosExpedienteComercial.ANULADO;

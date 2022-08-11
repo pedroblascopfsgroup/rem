@@ -38,7 +38,7 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        T_TIPO_DATA('01','Conducta inapropiada','Conducta inapropiada', 'PS-01-OTRO-23')
+        T_TIPO_DATA('01','Conducta inapropiada','Conducta inapropiada', 'PC-01-OTRO-23')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

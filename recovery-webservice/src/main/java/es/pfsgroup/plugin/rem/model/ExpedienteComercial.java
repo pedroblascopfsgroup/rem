@@ -355,6 +355,9 @@ public class ExpedienteComercial implements Serializable, Auditable {
 	@Column(name = "ECO_FECHA_FIN_CONTRATO_ANT")
 	private Date fechaFinContratoAnterior;
 
+	@Column(name = "ECO_FECHA_MOD_EEB")
+	private Date fechaModificacionEstadoBc;
+
     
     @Version   
 	private Long version;
@@ -966,6 +969,14 @@ public class ExpedienteComercial implements Serializable, Auditable {
 	}
 
 	public void setEstadoBc(DDEstadoExpedienteBc estadoBc) {
+		if (this.estadoBc != null){
+			if (!this.estadoBc.getId().equals(estadoBc != null ? estadoBc.getId() : null)){
+				this.fechaModificacionEstadoBc = new Date();
+			}
+		}else {
+			if (estadoBc != null)
+				this.fechaModificacionEstadoBc = new Date();
+		}
 		this.estadoBc = estadoBc;
 	}
 

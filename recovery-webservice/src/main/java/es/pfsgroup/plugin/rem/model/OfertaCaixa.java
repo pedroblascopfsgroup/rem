@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -131,6 +132,9 @@ public class OfertaCaixa implements Serializable, Auditable {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="DD_EOB_ID")
 	private DDEstadoOfertaBC estadoOfertaBc;
+
+	@Column(name="OFR_FECHA_MOD_EOB")
+	private Date fechaModificacionEstadoBc;
 	
     @Version
     private Integer version;
@@ -377,6 +381,14 @@ public class OfertaCaixa implements Serializable, Auditable {
 	}
 
 	public void setEstadoOfertaBc(DDEstadoOfertaBC estadoOfertaBc) {
+		if (this.estadoOfertaBc != null){
+			if (!this.estadoOfertaBc.getId().equals(estadoOfertaBc != null ? estadoOfertaBc.getId() : null)){
+				this.fechaModificacionEstadoBc = new Date();
+			}
+		}else {
+			if (estadoOfertaBc != null)
+				this.fechaModificacionEstadoBc = new Date();
+		}
 		this.estadoOfertaBc = estadoOfertaBc;
 	}
 	

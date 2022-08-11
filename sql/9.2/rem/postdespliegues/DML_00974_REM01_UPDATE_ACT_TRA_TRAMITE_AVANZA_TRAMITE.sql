@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Lara Pablo
---## FECHA_CREACION=20220623
+--## FECHA_CREACION=20220804
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-17749
@@ -37,38 +37,152 @@ DECLARE
     
 BEGIN
 	
-	 FOR r_product IN (
-	       select distinct TO_CHAR(eco.eco_num_expediente) ECO_NUM_EXPEDIENTE
-				from #ESQUEMA#.eco_expediente_comercial eco
-				inner join #ESQUEMA#.act_ofr actofr on actofr.ofr_id = eco.ofr_id
-				inner join #ESQUEMA#.ofr_ofertas ofr on ofr.ofr_id = actofr.ofr_id
-				inner join #ESQUEMA#.coe_condicionantes_expediente coe on eco.eco_id = coe.eco_id
-				inner join #ESQUEMA#.act_activo act on act.act_id = actofr.act_id
-				inner join #ESQUEMA#.act_tra_tramite atr on eco.tbj_id = atr.tbj_id
-				inner join #ESQUEMA#.tac_tareas_activos tac on atr.tra_id = tac.tra_id
-				inner join #ESQUEMA#.tar_tareas_notificaciones tar on tar.tar_id = tac.tar_id
-				inner join #ESQUEMA#.tex_tarea_externa txt on txt.tar_id = tar.tar_id
-				inner join #ESQUEMA#.tap_tarea_procedimiento tap on txt.tap_id = tap.tap_id
-				where tar.tar_tarea_finalizada in (0)
-				and tap.tap_codigo in ('T017_PBCReserva')
-				AND coe.coe_importe_reserva < 20000.00
-				and act.dd_cra_id in (SELECT dd_cra_id FROM #ESQUEMA#.DD_CRA_CARTERA WHERE dd_cra_codigo = '07')
-				and act.dd_scr_id in (SELECT dd_scr_id FROM #ESQUEMA#.DD_SCR_SUBCARTERA WHERE dd_scr_codigo IN ('138','150','70'))
-		   )
-	 LOOP
-	    ECO_NUM_EXPEDIENTE := r_product.eco_num_expediente;
-	    IF V_CONTADOR = 10 THEN
-	        COMMIT;
-	        V_CONTADOR := 1;
-	    ELSE
-	        DBMS_OUTPUT.PUT_LINE('[INFO]: AVANZAR TRAMITE DE EXPEDIENTE '|| ECO_NUM_EXPEDIENTE);
-	        REM01.AVANCE_TRAMITE(V_USUARIO,ECO_NUM_EXPEDIENTE,'T017_InstruccionesReserva', null, null, PL_OUTPUT);
-	        DBMS_OUTPUT.PUT_LINE(PL_OUTPUT);
-	        DBMS_OUTPUT.PUT_LINE('[INFO]: Nº EXPEDIENTES AVANZADOS '|| V_CONTADOR);
-	        V_CONTADOR := V_CONTADOR +1;
-	    END IF;
-	 END LOOP;
-
+	DBMS_OUTPUT.PUT_LINE('[INFO]: AVANZAR TRAMITE DE EXPEDIENTE '|| ECO_NUM_EXPEDIENTE);
+	REM01.AVANCE_TRAMITE(V_USUARIO,'314362
+, 315055
+, 318406
+, 318607
+, 318818
+, 318846
+, 317113
+, 313753
+, 316696
+, 318416
+, 316944
+, 316367
+, 310019
+, 309382
+, 314459
+, 315315
+, 316718
+, 314353
+, 314888
+, 315745
+, 317050
+, 319859
+, 315612
+, 315608
+, 315614
+, 317204
+, 315838
+, 317330
+, 319637
+, 313139
+, 316756
+, 314486
+, 313646
+, 315906
+, 316270
+, 317345
+, 318999
+, 318882
+, 313476
+, 313678
+, 319820
+, 318542
+, 318948
+, 319043
+, 319432
+, 318359
+, 318704
+, 319296
+, 319638
+, 316674
+, 315202
+, 310948
+, 317053
+, 313505
+, 315696
+, 315620
+, 316291
+, 314848
+, 314751
+, 315181
+, 314142
+, 318936
+, 312608
+, 310759
+, 317342
+, 314956
+, 310055
+, 316506
+, 312762
+, 316118
+, 316864
+, 319699
+, 314723
+, 314308
+, 319332
+, 308292
+, 319052
+, 318714
+, 309396
+, 313517
+, 313573
+, 316260
+, 291402
+, 319720
+, 314897
+, 315847
+, 317333
+, 316954
+, 319232
+, 319212
+, 319327
+, 317006
+, 316970
+, 308121
+, 313376
+, 316134
+, 307841
+, 315271
+, 316809
+, 317385
+, 319220
+, 319244
+, 315919
+, 316293
+, 317357
+, 317372
+, 318348
+, 306529
+, 301310
+, 314865
+, 318471
+, 312819
+, 318377
+, 319474
+, 316634
+, 314834
+, 317018
+, 318641
+, 309165
+, 317291
+, 316149
+, 316711
+, 318358
+, 309320
+, 319730
+, 317441
+, 317488
+, 318721
+, 315083
+, 313961
+, 313130
+, 316700
+, 319235
+, 316679
+, 316811
+, 312647
+, 317078
+, 316939
+, 317202
+, 317206
+, 318862
+, 318452
+, 319773','T017_InstruccionesReserva', null, null, PL_OUTPUT);
+	DBMS_OUTPUT.PUT_LINE(PL_OUTPUT);
+	DBMS_OUTPUT.PUT_LINE('[INFO]: Nº EXPEDIENTES AVANZADOS '|| V_CONTADOR);
 
 
 	COMMIT;

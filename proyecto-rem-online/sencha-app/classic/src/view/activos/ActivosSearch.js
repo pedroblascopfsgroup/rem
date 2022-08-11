@@ -157,7 +157,8 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 				        },
 				        { 
 				        	fieldLabel: HreRem.i18n('fieldlabel.referencia.catastral'),
-				        	name: 'refCatastral'
+				        	name: 'refCatastral',
+							minLength: 20
 				        },
 				    	{ 
 				    		xtype: 'currencyfieldbase',

@@ -31,6 +31,26 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoProveedor', {
     	var me = this;
 		var url = me.bloque == '02' ? $AC.getRemoteUrl(me.entidad + "/uploadConducta") : $AC.getRemoteUrl(me.entidad + "/upload");
 		var isConductas = me.bloque == '02';
+		
+		if(isConductas){
+			me.storeDocumento = Ext.create('Ext.data.Store', {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'conductasInapropiadas'}
+				}
+			     });
+		}else{
+			me.storeDocumento = Ext.create('Ext.data.Store', {
+				 model: 'HreRem.model.ComboBase',
+				 proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDocumentosProveedor',
+					extraParams: {codBloque: me.bloque}
+				 }
+			     });
+		}
 
     	me.setTitle(HreRem.i18n("title.adjuntar.documento"));
     	
@@ -38,8 +58,7 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoProveedor', {
     	
     	me.buttons = [ { formBind: true, itemId: 'btnGuardar', text: 'Adjuntar', handler: 'onClickBotonAdjuntarDocumento', scope: this},{ itemId: 'btnCancelar', text: 'Cancelar', handler: 'closeWindow', scope: this}];
 
-    	me.items = [
-					{
+    	me.items = [{
 						xtype: 'label',
 						html: '<span style="font-weight: bold;margin: 0px 0px 0px 40px;">' + HreRem.i18n('msg.info.archivo.comprimido') + '</span>',
 			        	hidden : !isConductas					
@@ -91,14 +110,7 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoProveedor', {
 						        	publishes: 'value',
 						        	width: '100%',
 						        	bind: {
-						        		store: {
-											model: 'HreRem.model.ComboBase',
-											proxy: {
-												type: 'uxproxy',
-												remoteUrl: 'generic/getDocumentosProveedor',
-												extraParams: {codBloque: me.bloque}
-											}
-										}
+						        		store: me.storeDocumento
 						        	},
 					            	displayField	: 'descripcion',	    							
 								    valueField		: 'codigo',

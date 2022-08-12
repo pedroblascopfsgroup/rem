@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Javier Esbri
---## FECHA_CREACION=20220804
+--## AUTOR=Alejandro Valverde
+--## FECHA_CREACION=20220812
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-18511
+--## INCIDENCIA_LINK=HREOS-18526
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -16,6 +16,7 @@
 --##        HREOS-18322: Quitar relaciones con la tabla OFC_OFERTAS_CONCURRENCIA.
 --##        HREOS-18445: Alejandro Valverde - Añadir campo FECHA_ENT_CRM_SF
 --##        HREOS-18511: Javier Esbri - Añadir campo OFR_CONCURRENCIA
+--##		HREOS-18526: Alejandro Valverde - Eliminar comprobacion DEP_FECHA_INICIO IS NOT NULL
 --##########################################
 --*/
 
@@ -66,7 +67,7 @@ BEGIN
 					ofr.OFR_IMPORTE AS IMPORTE
 					
 					FROM ' || V_ESQUEMA || '.OFR_OFERTAS OFR
-					JOIN ' || V_ESQUEMA || '.DEP_DEPOSITO DEP ON DEP.OFR_ID = OFR.OFR_ID AND DEP.DEP_FECHA_INGRESO IS NOT NULL AND DEP.DEP_FECHA_INICIO IS NOT NULL AND DEP.BORRADO = 0
+					JOIN ' || V_ESQUEMA || '.DEP_DEPOSITO DEP ON DEP.OFR_ID = OFR.OFR_ID AND DEP.DEP_FECHA_INGRESO IS NOT NULL AND DEP.BORRADO = 0
 					WHERE OFR.BORRADO  = 0  AND OFR.OFR_CONCURRENCIA = 1
 					
 				UNION 

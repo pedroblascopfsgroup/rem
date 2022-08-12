@@ -30,6 +30,7 @@ import es.pfsgroup.plugin.rem.model.HistoricoReagendacion;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 
 @Component
@@ -62,20 +63,16 @@ public class UpdaterServiceAgendarFirmaNoComercial implements UpdaterService {
 	private static final String CODIGO_T018_AGENDAR_FIRMA = "T018_AgendarFirma";
 	
 	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
-		boolean anular = false;
-		boolean modificadoEstadoBC = false;
-		String fechaFirma = null;
-		boolean fechaOfertaModificada = false;
+		boolean estadoBcModificado = false;
+		boolean estadoModificado = false;
 		boolean fianzaExonerada = false;
 		boolean fechaReagendacionRelleno = false;
-		boolean tareaAgendar = false;
 		String fechaAgendacionValor = null;
 		String fechaReagendarIngresoValor = null;
 		String importe = null;
 		String ibanDevolucion = null;
 		String codigoTarea = tareaExternaActual.getTareaProcedimiento().getCodigo();
 		Fianzas fianza = null;
-		String estadoBc = null;
 		
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
 		Activo activo =tramite.getActivo();
@@ -83,6 +80,8 @@ public class UpdaterServiceAgendarFirmaNoComercial implements UpdaterService {
 		Usuario usu = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 		Filter filterOfr =  genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId());
 		Fianzas fia = genericDao.get(Fianzas.class, filterOfr);
+		DDEstadoExpedienteBc estadoExpBC = null;
+ 		DDEstadosExpedienteComercial estadoExpComercial = null;
 		
 		for(TareaExternaValor valor :  valores){
 			
@@ -114,9 +113,10 @@ public class UpdaterServiceAgendarFirmaNoComercial implements UpdaterService {
 				genericDao.save(Fianzas.class, fia);
 			}
 			
-			/*estadoBc = DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA;
-			expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class,genericDao.createFilter(FilterType.EQUALS,"codigo", estadoBc)));
-			genericDao.save(ExpedienteComercial.class, expedienteComercial);*/
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigoC4C", "120");
+			estadoExpBC = genericDao.get(DDEstadoExpedienteBc.class,filtro);
+//			Filter filtroEstadoExpComer = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PDTE_FIRMA);
+//			estadoExpComercial = genericDao.get(DDEstadosExpedienteComercial.class,filtroEstadoExpComer);
 			
 		} else {
 			if (fia != null) {
@@ -177,10 +177,17 @@ public class UpdaterServiceAgendarFirmaNoComercial implements UpdaterService {
 				genericDao.save(HistoricoReagendacion.class, histReagendacion);
 			}
 			
-			/*estadoBc = DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA;
-			expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class,genericDao.createFilter(FilterType.EQUALS,"codigo", estadoBc)));
-			genericDao.save(ExpedienteComercial.class, expedienteComercial);*/
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigoC4C", "470");
+			estadoExpBC = genericDao.get(DDEstadoExpedienteBc.class,filtro);
+//			Filter filtroEstadoExpComer = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PDTE_FIRMA);
+//			estadoExpComercial = genericDao.get(DDEstadosExpedienteComercial.class,filtroEstadoExpComer);
 		}	
+		
+		expedienteComercial.setEstadoBc(estadoExpBC);
+		estadoBcModificado = true;
+		expedienteComercial.setEstado(estadoExpComercial);
+		estadoModificado = true;
+		genericDao.save(ExpedienteComercial.class, expedienteComercial);
 	}
 
 	public String[] getCodigoTarea() {

@@ -64,6 +64,8 @@ public class AccionesCaixaController extends ParadiseJsonController {
     public static final String ACCION_RECHAZO_MODIFICACION_TITULARES = "025";
     public static final String ACCION_BLOQUEO_SCORING = "042";
     public static final String ACCION_DESBLOQUEO_SCORING = "043";
+    public static final String ACCION_RESCINDIR_CONTRATO = "048";
+    public static final String ACCION_APROBADO_CONTRAOFERTA = "049";
 
 
     private final Log logger = LogFactory.getLog(getClass());
@@ -629,6 +631,48 @@ public class AccionesCaixaController extends ParadiseJsonController {
     }
     
     public ModelAndView accionEntregaFianzas(JSONObject dto){
+    	ModelMap model = new ModelMap();
+        try {
+            boolean success = accionesCaixaApi.avanzarTareaGenericoSinReplicar(dto);
+            model.put("success", success);
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.put("success", false);
+            model.put("msgError", e.getMessage() == null ? RestApi.REST_MSG_UNEXPECTED_ERROR : e.getMessage());
+        }
+
+        return createModelAndViewJson(model);
+    }
+    
+    public ModelAndView accionRespuestaBcContraoferta(JSONObject dto){
+    	ModelMap model = new ModelMap();
+        try {
+            boolean success = accionesCaixaApi.avanzarTareaGenericoSinReplicar(dto);
+            model.put("success", success);
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.put("success", false);
+            model.put("msgError", e.getMessage() == null ? RestApi.REST_MSG_UNEXPECTED_ERROR : e.getMessage());
+        }
+
+        return createModelAndViewJson(model);
+    }
+    
+    public ModelAndView accionRespuestaBcOfertaAlquiler(JSONObject dto){
+    	ModelMap model = new ModelMap();
+        try {
+            boolean success = accionesCaixaApi.avanzarTareaGenericoSinReplicar(dto);
+            model.put("success", success);
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.put("success", false);
+            model.put("msgError", e.getMessage() == null ? RestApi.REST_MSG_UNEXPECTED_ERROR : e.getMessage());
+        }
+
+        return createModelAndViewJson(model);
+    }
+    
+    public ModelAndView accionRespuestaBcReagendacion(JSONObject dto){
     	ModelMap model = new ModelMap();
         try {
             boolean success = accionesCaixaApi.avanzarTareaGenericoSinReplicar(dto);

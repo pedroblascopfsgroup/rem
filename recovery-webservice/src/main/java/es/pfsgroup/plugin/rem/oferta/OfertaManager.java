@@ -183,6 +183,7 @@ import es.pfsgroup.plugin.rem.model.OfertaTestigos;
 import es.pfsgroup.plugin.rem.model.OfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.ProveedorGestorCajamar;
+import es.pfsgroup.plugin.rem.model.Puja;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.TextosOferta;
 import es.pfsgroup.plugin.rem.model.TitularesAdicionalesOferta;
@@ -2424,6 +2425,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				if(isOfertaConActivoEnConcurrenciaViva) {
 					oferta.setImporteOferta(ofertaDto.getImporte());
 					crearPuja(ofertaDto, oferta, agrConc, activoConc);
+					this.saveImporteOfertaByPuja(ofertaDto, activoConc, oferta);
 				}
 			}
 
@@ -9946,6 +9948,13 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		return oferta;
 	}
 	
-		
+	private void saveImporteOfertaByPuja(OfertaDto ofertaDto, Activo activo, Oferta oferta) {
+		List<ActivoOferta>activoOfertaList = activo.getOfertas();
+		for (ActivoOferta activoOferta : activoOfertaList) {
+			if(activoOferta.getOferta().equals(oferta.getId())) {
+				activoOferta.setImporteActivoOferta(ofertaDto.getImporte());
+			}
+		}
+	}	
 }
 

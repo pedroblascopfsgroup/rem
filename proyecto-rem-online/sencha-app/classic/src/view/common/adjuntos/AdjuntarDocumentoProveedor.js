@@ -33,8 +33,10 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoProveedor', {
 		var isConductas = me.bloque == '02';
 		
 		if(isConductas){
-			me.storeDocumento = Ext.create('Ext.data.Store', {
+			me.store = Ext.create('Ext.data.Store', {
+				pageSize: $AC.getDefaultPageSize(),
 				model: 'HreRem.model.ComboBase',
+				autoLoad: false,
 				proxy: {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getDiccionario',
@@ -42,8 +44,10 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoProveedor', {
 				}
 			     });
 		}else{
-			me.storeDocumento = Ext.create('Ext.data.Store', {
+			me.store = Ext.create('Ext.data.Store', {
+				pageSize: $AC.getDefaultPageSize(),
 				 model: 'HreRem.model.ComboBase',
+				 autoLoad: false,
 				 proxy: {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getDocumentosProveedor',
@@ -53,7 +57,7 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoProveedor', {
 		}
 
     	me.setTitle(HreRem.i18n("title.adjuntar.documento"));
-    	
+    	    	
     	me.buttonAlign = 'left';
     	
     	me.buttons = [ { formBind: true, itemId: 'btnGuardar', text: 'Adjuntar', handler: 'onClickBotonAdjuntarDocumento', scope: this},{ itemId: 'btnCancelar', text: 'Cancelar', handler: 'closeWindow', scope: this}];
@@ -109,9 +113,7 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoProveedor', {
 						        	msgTarget: 'side',
 						        	publishes: 'value',
 						        	width: '100%',
-						        	bind: {
-						        		store: me.storeDocumento
-						        	},
+						        	store: me.store,
 					            	displayField	: 'descripcion',	    							
 								    valueField		: 'codigo',
 									allowBlank: false,

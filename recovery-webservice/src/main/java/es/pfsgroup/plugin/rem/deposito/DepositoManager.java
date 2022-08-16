@@ -336,6 +336,9 @@ public class DepositoManager extends BusinessOperationOverrider<DepositoApi> imp
 		deposito.setEstadoDeposito(genericDao.get(DDEstadoDeposito.class,
 				genericDao.createFilter(FilterType.EQUALS, "codigo", codigoEstadoDeposito)));
 
+		if(deposito.getOferta() != null && DDEstadoOferta.isPteDoc(deposito.getOferta().getEstadoOferta())) {
+			deposito.setFechaInicio(new Date());
+		}
 		genericDao.save(Deposito.class, deposito);
 	}
 

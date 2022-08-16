@@ -327,9 +327,15 @@ public class DepositoManager extends BusinessOperationOverrider<DepositoApi> imp
 		if (Checks.esNulo(deposito))
 			return;
 
+		boolean isOfertaAnulada = deposito.getOferta() != null && deposito.getOferta().esOfertaAnulada();
+
+		String codigoEstadoDeposito = isOfertaAnulada ? DDEstadoDeposito.CODIGO_PDTE_DECISION_DEVOLUCION_INCAUTACION
+				: DDEstadoDeposito.CODIGO_INGRESADO;
+
 		deposito.setFechaIngreso(new Date());
-		deposito.setEstadoDeposito(genericDao.get(DDEstadoDeposito.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoDeposito.CODIGO_INGRESADO)));
-			
+		deposito.setEstadoDeposito(genericDao.get(DDEstadoDeposito.class,
+				genericDao.createFilter(FilterType.EQUALS, "codigo", codigoEstadoDeposito)));
+
 		genericDao.save(Deposito.class, deposito);
 	}
 

@@ -9807,7 +9807,6 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	public Boolean carteraTangoGasto(String numGasto){
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("codigo", "10");
-		params.put("numGasto", numGasto);
 		rawDao.addParams(params);
 
 		if(Checks.esNulo(numGasto))
@@ -9817,7 +9816,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "		 FROM REM01.GPV_GASTOS_PROVEEDOR GPV"
 				+ "		 JOIN REM01.ACT_PRO_PROPIETARIO PRO ON GPV.PRO_ID = PRO.PRO_ID AND PRO.BORRADO = 0"
 				+ "		 JOIN REM01.DD_CRA_CARTERA CRA ON PRO.DD_CRA_ID = CRA.DD_CRA_ID AND CRA.DD_CRA_CODIGO = :codigo"
-				+ "		 WHERE GPV.GPV_NUM_GASTO_HAYA = :numGasto "
+				+ "		 WHERE GPV.GPV_NUM_GASTO_HAYA = " + numGasto
 				+ "		 	AND GPV.BORRADO = 0");
 		return !"0".equals(resultado);
 	}
@@ -9971,14 +9970,17 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		if(Checks.esNulo(numGasto))
 			return false;
 		
-		String cartera = rawDao.getExecuteSQL("SELECT COUNT(*)" 
+		String cartera = rawDao.getExecuteSQL("SELECT COUNT(*)"
 				+ "		 FROM REM01.GPV_GASTOS_PROVEEDOR GPV"
-				+ "		 JOIN REM01.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = GPV.PRO_ID AND PRO.BORRADO = 0" 
-				+ "		 JOIN REM01.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = PRO.DD_CRA_ID AND CRA.BORRADO = 0" 
-				+ "		 JOIN REM01.DD_SCR_SUBCARTERA SCR ON SCR.DD_CRA_ID = CRA.DD_CRA_ID AND SCR.BORRADO = 0" 
-				+ "		 WHERE GPV.BORRADO = 0" 
-				+ "		 AND CRA.DD_CRA_CODIGO NOT IN ('16','03','17','07','11','08')" 
-				+ "		 AND SCR.DD_SCR_CODIGO NOT IN ('137','135','38','37','39','68')"
+				+ "		 JOIN REM01.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = GPV.PRO_ID AND PRO.BORRADO = 0"
+				+ "		 JOIN REM01.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = PRO.DD_CRA_ID AND CRA.BORRADO = 0"
+				+ "		 JOIN REM01.GLD_GASTOS_LINEA_DETALLE GLD ON GLD.GPV_ID = GPV.GPV_ID AND GLD.BORRADO = 0" 
+				+ "		 JOIN REM01.GLD_ENT ENT ON ENT.GLD_ID = GLD.GLD_ID AND ENT.BORRADO = 0"
+				+ "		 JOIN REM01.ACT_ACTIVO ACT ON ACT.ACT_ID = ENT.ENT_ID AND ACT.BORRADO = 0"
+				+ "		 JOIN REM01.DD_SCR_SUBCARTERA SCR ON SCR.DD_SCR_ID = ACT.DD_SCR_ID AND SCR.BORRADO = 0" 
+				+ "		 WHERE GPV.BORRADO = 0"
+				+ "		 AND CRA.DD_CRA_CODIGO NOT IN ('03','17')" 
+				+ "		 AND SCR.DD_SCR_ID NOT IN ('137','135','38','37','39','68')" 
 				+ "		 AND GPV.GPV_NUM_GASTO_HAYA = :numGasto");
 
 		if(!"0".equals(cartera)) {
@@ -9988,8 +9990,8 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 					+ "		 WHERE GPV.BORRADO = 0"
 					+ "		 AND GLD.GLD_CCC_BASE IS NOT NULL" 
 					+ "		 AND GLD.GLD_CPP_BASE IS NOT NULL" 
-					+ "		 AND GPV.GPV_NUM_GASTO_HAYA = :numGasto");
-			return !"0".equals(resultado);
+					+ "		 AND GPV.GPV_NUM_GASTO_HAYA = " + numGasto);
+			return !"0".equals(resultado);			
 		}
 		
 		return true;
@@ -10227,6 +10229,47 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "		 JOIN REM01.GDE_GASTOS_DETALLE_ECONOMICO GDE ON GPV.GPV_ID = GDE.GPV_ID AND GDE.BORRADO = 0"
 				+ "		 WHERE GPV.BORRADO = 0"
 				+ "		 AND GDE.GDE_ABONO_CUENTA <> 0" 
+				+ "		 AND GPV.GPV_NUM_GASTO_HAYA = :numGasto");
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean tieneGastoTipoImpuestoIndirectoIncorrecto(String numGasto) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numGasto", numGasto);
+		rawDao.addParams(params);
+
+		if(Checks.esNulo(numGasto))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*)" 
+				+ "		 FROM REM01.GPV_GASTOS_PROVEEDOR GPV"
+				+ "		 JOIN REM01.GLD_GASTOS_LINEA_DETALLE GLD ON GLD.GPV_ID = GPV.GPV_ID AND GLD.BORRADO = 0" 
+				+ "		 WHERE GPV.BORRADO = 0"
+				+ "		 AND GPV.PVE_ID_GESTORIA IS NULL" 
+				+ "		 AND GLD.DD_TIT_ID IS NULL"
+				+ "		 AND GLD.GLD_PRINCIPAL_SUJETO IS NOT NULL"
+				+ "		 AND GLD.GLD_PRINCIPAL_SUJETO <> 0.0"
+				+ "		 AND GPV.GPV_NUM_GASTO_HAYA = :numGasto");
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean tieneGastoLineaDetalleEntidades(String numGasto) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numGasto", numGasto);
+		rawDao.addParams(params);
+
+		if(Checks.esNulo(numGasto))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*)" 
+				+ "		 FROM REM01.GPV_GASTOS_PROVEEDOR GPV" 
+				+ "		 JOIN REM01.GLD_GASTOS_LINEA_DETALLE GLD ON GLD.GPV_ID = GPV.GPV_ID AND GLD.BORRADO = 0" 
+				+ "		 JOIN REM01.GLD_ENT ENT ON ENT.GLD_ID = GLD.GLD_ID AND ENT.BORRADO = 0"
+				+ "		 WHERE GPV.BORRADO = 0"
+				+ "		 AND (GLD.GLD_LINEA_SIN_ACTIVOS = 0 OR GLD.GLD_LINEA_SIN_ACTIVOS IS NULL)"
+				+ "		 AND ENT.GLD_ID = GLD.GLD_ID"
 				+ "		 AND GPV.GPV_NUM_GASTO_HAYA = :numGasto");
 		return !"0".equals(resultado);
 	}

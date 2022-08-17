@@ -1590,5 +1590,9 @@ public interface ParticularValidatorApi {
 	Boolean esGastoAlquiler(String numGasto);
 
 	Boolean tieneGastoActivosONumeroContrato(String numGasto);
+
+	Boolean tieneGastoTipoImpuestoIndirectoIncorrecto(String numGasto);
+
+	Boolean tieneGastoLineaDetalleEntidades(String numGasto);
 	
 }

@@ -184,7 +184,7 @@ public class MSVEstadosGastoValidator extends MSVExcelValidatorAbstract{
 			mapaErrores.get(messageServices.getMessage(CHECK_RECH_GASTO_YA_RECHAZADO)).add(fila);
 			rechaza = false;
 		}
-		if(particularValidator.esGastoAutorizadoAdministracion(numGasto)){
+		if(!particularValidator.esGastoAutorizadoAdministracion(numGasto)){
 			mapaErrores.get(messageServices.getMessage(CHECK_RECH_GASTOS_NO_AUT_ADMON)).add(fila);
 			rechaza = false;
 		}
@@ -208,6 +208,10 @@ public class MSVEstadosGastoValidator extends MSVExcelValidatorAbstract{
 				mapaErrores.get(messageServices.getMessage(CHECK_AUT_SUPLIDO_SIN_DATOS_PAGO_PRINCIPAL)).add(fila);
 				autoriza = false;
 			}
+		}
+		if(!particularValidator.tieneGastoAbonadoGasto(numGasto)){
+			mapaErrores.get(messageServices.getMessage(CHECK_AUT_SIN_ID_ABONADO)).add(fila);
+			return false;
 		}
 		if(particularValidator.esGastoCaixaBank(numGasto, null) && particularValidator.esGastoAlquiler(numGasto) && !particularValidator.tieneGastoActivosONumeroContrato(numGasto)){
 			mapaErrores.get(messageServices.getMessage(CHECK_AUT_SIN_ACTIVOS_O_CONT_CAIXA)).add(fila);
@@ -247,13 +251,15 @@ public class MSVEstadosGastoValidator extends MSVExcelValidatorAbstract{
 			if(particularValidator.esGastoBBVA(numGasto) && !particularValidator.tieneGastoCampoObligatorioCuentaContable(numGasto)){
 				mapaErrores.get(messageServices.getMessage(CHECK_CUENTA_CONTABLE_OBL_BBVA)).add(fila);
 				esCorrecto = false;
-			}
-			if(particularValidator.esGastoUnicaja(numGasto) && !particularValidator.tieneGastoCamposObligatoriosCuentaPartidaApartadoCapitulo(numGasto)){
+			} else if(particularValidator.esGastoUnicaja(numGasto) && !particularValidator.tieneGastoCamposObligatoriosCuentaPartidaApartadoCapitulo(numGasto)){
 				mapaErrores.get(messageServices.getMessage(CHECK_OBL_CART_UNICAJA)).add(fila);
 				esCorrecto = false;
-			}
-			if(!particularValidator.tieneGastoCamposObligatoriosCuentaPartida(numGasto)){
+			} else if(!particularValidator.tieneGastoCamposObligatoriosCuentaPartida(numGasto)){
 				mapaErrores.get(messageServices.getMessage(CHECK_CUENTA_Y_PARTIDA)).add(fila);
+				esCorrecto = false;
+			}
+			if(particularValidator.tieneGastoTipoImpuestoIndirectoIncorrecto(numGasto)){
+				mapaErrores.get(messageServices.getMessage(CHECK_SIN_IMPUESTO_IND)).add(fila);
 				esCorrecto = false;
 			}
 
@@ -269,7 +275,14 @@ public class MSVEstadosGastoValidator extends MSVExcelValidatorAbstract{
 		if(!existeGasto){
 			mapaErrores.get(messageServices.getMessage(CHECK_GASTO_EXIST)).add(fila);
 			return false;
-		} else if(COD_RECH.equals(autorizaRechaza) && motivoRechazo == null) {
+		}
+		
+		if(!COD_RECH.equals(autorizaRechaza) && !COD_APR.equals(autorizaRechaza)){
+			mapaErrores.get(messageServices.getMessage(CHECK_COD_APR_RECH_INCORRECTO)).add(fila);
+			return false;
+		}
+
+		if(COD_RECH.equals(autorizaRechaza) && motivoRechazo == null) {
 			mapaErrores.get(messageServices.getMessage(CHECK_MOTIVO_RECHAZO_INFORMADO)).add(fila);
 			return false;
 		} else if(COD_RECH.equals(autorizaRechaza) && motivoRechazo != null && !existeCodMotivoRechazo) {
@@ -289,6 +302,11 @@ public class MSVEstadosGastoValidator extends MSVExcelValidatorAbstract{
 
 		if(!particularValidator.tieneLineaDetalleGasto(numGasto)){
 			mapaErrores.get(messageServices.getMessage(CHECK_SIN_LINEA_DET)).add(fila);
+			return false;
+		}
+		
+		if(!particularValidator.tieneGastoLineaDetalleEntidades(numGasto)){
+			mapaErrores.get(messageServices.getMessage(CHECK_OBL_ACT_X_LINEA)).add(fila);
 			return false;
 		}
 
@@ -329,11 +347,6 @@ public class MSVEstadosGastoValidator extends MSVExcelValidatorAbstract{
 
 		if(!particularValidator.tieneImporteGasto(numGasto)){
 			mapaErrores.get(messageServices.getMessage(CHECK_SIN_IMPORTE)).add(fila);
-			return false;
-		}
-
-		if(!particularValidator.tieneGastoAbonadoGasto(numGasto)){
-			mapaErrores.get(messageServices.getMessage(CHECK_AUT_SIN_ID_ABONADO)).add(fila);
 			return false;
 		}
 

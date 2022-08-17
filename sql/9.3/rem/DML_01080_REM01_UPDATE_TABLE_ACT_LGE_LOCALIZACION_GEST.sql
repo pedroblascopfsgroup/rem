@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Ivan Rubio
---## FECHA_CREACION=20220720
+--## AUTOR= Lara Pablo
+--## FECHA_CREACION=20220817
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-18402
@@ -24,8 +24,6 @@ DECLARE
     V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
     V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
     V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.  
-    DD_SEG_ID NUMBER(16);
-    DD_ELO_ID NUMBER(16);
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.	
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
@@ -59,23 +57,14 @@ BEGIN
       LOOP
       
         V_TMP_TIPO_DATA := V_TIPO_DATA(I);
-
-        --Obtenemos el DD_SEG_ID
-        V_SQL := 'SELECT DD_SEG_ID FROM '||V_ESQUEMA||'.'||V_TABLA_DD_SEG||' WHERE DD_'||V_CDG||'_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(2))||'''';
-        EXECUTE IMMEDIATE V_SQL INTO DD_SEG_ID;
-
-        --Obtenemos el DD_ELO_ID
-        V_SQL := 'SELECT DD_ELO_ID FROM '||V_ESQUEMA||'.'||V_TABLA_DD_ELO||' WHERE DD_'||V_CDG_ELO||'_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
-        EXECUTE IMMEDIATE V_SQL INTO DD_ELO_ID;
-
-          
-          DBMS_OUTPUT.PUT_LINE('[INFO]: MODIFICAMOS LOS REGISTROS CON DD_SEG_ID = '''|| DD_SEG_ID ||''' y DD_ELO_ID = '''|| DD_ELO_ID ||'''');
+         
+          DBMS_OUTPUT.PUT_LINE('[INFO]: MODIFICAMOS LOS REGISTROS CON DD_SEG_ID = '''|| TRIM(V_TMP_TIPO_DATA(2)) ||''' y DD_ELO_ID = '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');
        	  V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.'||V_TABLA||' '||
                   	'SET BORRADO = 1,				   	
 					USUARIOBORRAR = '''||V_USR||''', 
                     FECHABORRAR = SYSDATE 
-					WHERE DD_SEG_ID = '''||DD_SEG_ID||'''
-          AND DD_ELO_ID = '''||DD_ELO_ID||'''';
+					WHERE DD_SEG_ID = (SELECT DD_SEG_ID FROM '||V_ESQUEMA||'.'||V_TABLA_DD_SEG||' WHERE DD_'||V_CDG||'_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(2))||''')
+          			AND DD_ELO_ID = (SELECT DD_ELO_ID FROM '||V_ESQUEMA||'.'||V_TABLA_DD_ELO||' WHERE DD_'||V_CDG_ELO||'_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||''')';
                    
           EXECUTE IMMEDIATE V_MSQL;
           DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO MODIFICADO CORRECTAMENTE');

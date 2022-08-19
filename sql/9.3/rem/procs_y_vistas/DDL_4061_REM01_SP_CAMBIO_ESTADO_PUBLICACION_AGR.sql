@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210721
+--## FECHA_CREACION=20220819
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-14686
@@ -23,6 +23,7 @@
 --##		1.1 José A. Gigante - HREOS-8998-9055-9265 - Historificación de cambios al cambiar el canal de publicación
 --##		1.3 Carles Molins - REMVIP-5994
 --##		1.4 Daniel Algaba - HREOS-14686 - Añadir nuevas agrupaciones Restringida Alquiler y Restringida OB-REM
+--##		1.5 IRC - REMVIP-12118 - Periodo de transparencia caixa, no historificar si el estado es el mismo
 --##########################################
 --*/
 
@@ -129,7 +130,7 @@ create or replace PROCEDURE #ESQUEMA#.SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUM
              SET APU_MOT_OCULTACION_MANUAL_A = NULL
                , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
                , FECHAMODIFICAR = SYSDATE
-          WHERE BORRADO = 0
+          WHERE BORRADO = 0 AND APU_MOT_OCULTACION_MANUAL_A IS NOT NULL
               ';
 
     EXECUTE IMMEDIATE V_MSQL;
@@ -150,7 +151,7 @@ create or replace PROCEDURE #ESQUEMA#.SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUM
              SET APU_MOT_OCULTACION_MANUAL_V = NULL
                , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
                , FECHAMODIFICAR = SYSDATE
-          WHERE BORRADO = 0
+          WHERE BORRADO = 0 AND APU_MOT_OCULTACION_MANUAL_V IS NOT NULL
               ';
 
     EXECUTE IMMEDIATE V_MSQL;
@@ -175,7 +176,9 @@ create or replace PROCEDURE #ESQUEMA#.SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUM
 			  , APU_FECHA_INI_ALQUILER = SYSDATE
               , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
               , FECHAMODIFICAR = SYSDATE
-          WHERE BORRADO = 0
+          WHERE BORRADO = 0 AND DD_EPA_ID != (SELECT DD_EPA_ID
+                                     FROM '|| V_ESQUEMA ||'.DD_EPA_ESTADO_PUB_ALQUILER
+                                    WHERE BORRADO = 0 AND DD_EPA_CODIGO = '''||pESTADO||''')
               ';
 
     EXECUTE IMMEDIATE V_MSQL;
@@ -200,7 +203,9 @@ create or replace PROCEDURE #ESQUEMA#.SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUM
 			  , APU_FECHA_INI_VENTA = SYSDATE
               , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
               , FECHAMODIFICAR = SYSDATE
-          WHERE BORRADO = 0
+          WHERE BORRADO = 0 AND DD_EPV_ID != (SELECT DD_EPV_ID
+                                     FROM '|| V_ESQUEMA ||'.DD_EPV_ESTADO_PUB_VENTA
+                                    WHERE BORRADO = 0 AND DD_EPV_CODIGO = '''||pESTADO||''')
               ';
 
     EXECUTE IMMEDIATE V_MSQL;
@@ -260,7 +265,9 @@ create or replace PROCEDURE #ESQUEMA#.SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUM
                   , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
                   , FECHAMODIFICAR = SYSDATE
                   , APU_MOT_OCULTACION_MANUAL_V = NULL
-              WHERE BORRADO = 0
+              WHERE BORRADO = 0 AND APU_MOT_OCULTACION_MANUAL_A != (SELECT substr(PAC.PAC_MOTIVO_PUBLICAR,1,250)
+                                                FROM '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO PAC
+                                            WHERE PAC.ACT_ID = ACT.ACT_ID AND PAC.BORRADO = 0)
                   ';
 
 		    EXECUTE IMMEDIATE V_MSQL;
@@ -283,7 +290,9 @@ create or replace PROCEDURE #ESQUEMA#.SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUM
 				  , APU_FECHA_INI_ALQUILER = SYSDATE
                   , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
                   , FECHAMODIFICAR = SYSDATE
-              WHERE BORRADO = 0
+              WHERE BORRADO = 0 AND APU_MOT_OCULTACION_MANUAL_A != (SELECT substr(PAC.PAC_MOTIVO_PUBLICAR,1,250)
+                                                FROM '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO PAC
+                                            WHERE PAC.ACT_ID = ACT.ACT_ID AND PAC.BORRADO = 0)
                   ';
 
 		    EXECUTE IMMEDIATE V_MSQL;
@@ -342,7 +351,9 @@ create or replace PROCEDURE #ESQUEMA#.SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUM
 				  , APU_FECHA_INI_VENTA = SYSDATE
                   , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
                   , FECHAMODIFICAR = SYSDATE
-              WHERE BORRADO = 0
+              WHERE BORRADO = 0 AND APU_MOT_OCULTACION_MANUAL_V != (SELECT substr(PAC.PAC_MOTIVO_PUBLICAR,1,250)
+                                                            FROM '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO PAC
+                                                        WHERE PAC.ACT_ID = ACT.ACT_ID AND PAC.BORRADO = 0)
                   ';
 
 		    EXECUTE IMMEDIATE V_MSQL;
@@ -365,7 +376,9 @@ create or replace PROCEDURE #ESQUEMA#.SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUM
 				  , APU_FECHA_INI_VENTA = SYSDATE
                   , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
                   , FECHAMODIFICAR = SYSDATE
-              WHERE BORRADO = 0
+              WHERE BORRADO = 0 AND APU_MOT_OCULTACION_MANUAL_V != (SELECT substr(PAC.PAC_MOTIVO_PUBLICAR,1,250)
+                                                            FROM '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO PAC
+                                                        WHERE PAC.ACT_ID = ACT.ACT_ID AND PAC.BORRADO = 0)
                   ';
 
 		    EXECUTE IMMEDIATE V_MSQL;
@@ -465,6 +478,12 @@ create or replace PROCEDURE #ESQUEMA#.SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUM
 					  , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
 					  , FECHAMODIFICAR = SYSDATE
 				  WHERE BORRADO = 0
+                        AND (DD_EPV_ID != (SELECT DD_EPV_ID
+                                           FROM '|| V_ESQUEMA ||'.DD_EPV_ESTADO_PUB_VENTA
+                                          WHERE BORRADO = 0 AND DD_EPV_CODIGO = ''03'')
+                        OR DD_TPU_V_ID != (SELECT DD_TPU_ID
+                                           FROM '|| V_ESQUEMA ||'.DD_TPU_TIPO_PUBLICACION
+                                          WHERE BORRADO = 0 AND DD_TPU_CODIGO = ''01''))
 					  ';
 
           EXECUTE IMMEDIATE V_MSQL;
@@ -490,6 +509,12 @@ create or replace PROCEDURE #ESQUEMA#.SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUM
 					  , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
 					  , FECHAMODIFICAR = SYSDATE
 				  WHERE BORRADO = 0
+                        AND (DD_EPV_ID != (SELECT DD_EPV_ID
+                                           FROM '|| V_ESQUEMA ||'.DD_EPV_ESTADO_PUB_VENTA
+                                          WHERE BORRADO = 0 AND DD_EPV_CODIGO = ''03'')
+                        OR DD_TPU_V_ID != (SELECT DD_TPU_ID
+                                           FROM '|| V_ESQUEMA ||'.DD_TPU_TIPO_PUBLICACION
+                                          WHERE BORRADO = 0 AND DD_TPU_CODIGO = ''02''))
 					  ';
           EXECUTE IMMEDIATE V_MSQL;
           IF SQL%ROWCOUNT > 0 THEN
@@ -515,6 +540,12 @@ create or replace PROCEDURE #ESQUEMA#.SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUM
                         , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
                         , FECHAMODIFICAR = SYSDATE
 				  WHERE BORRADO = 0
+                        AND (DD_EPV_ID != (SELECT DD_EPV_ID
+                                           FROM '|| V_ESQUEMA ||'.DD_EPV_ESTADO_PUB_VENTA
+                                          WHERE BORRADO = 0 AND DD_EPV_CODIGO = ''02'')
+                        OR DD_TPU_V_ID != (SELECT DD_TPU_ID
+                                           FROM '|| V_ESQUEMA ||'.DD_TPU_TIPO_PUBLICACION
+                                          WHERE BORRADO = 0 AND DD_TPU_CODIGO = ''01''))
 					  ';
         EXECUTE IMMEDIATE V_MSQL;
         IF SQL%ROWCOUNT > 0 THEN
@@ -541,6 +572,12 @@ create or replace PROCEDURE #ESQUEMA#.SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUM
                         , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
                         , FECHAMODIFICAR = SYSDATE
 				  WHERE BORRADO = 0
+                        AND (DD_EPV_ID != (SELECT DD_EPV_ID
+                                           FROM '|| V_ESQUEMA ||'.DD_EPV_ESTADO_PUB_VENTA
+                                          WHERE BORRADO = 0 AND DD_EPV_CODIGO = ''03'')
+                        OR DD_TPU_V_ID != (SELECT DD_TPU_ID
+                                           FROM '|| V_ESQUEMA ||'.DD_TPU_TIPO_PUBLICACION
+                                          WHERE BORRADO = 0 AND DD_TPU_CODIGO = ''02''))
 					  ';
         EXECUTE IMMEDIATE V_MSQL;
         IF SQL%ROWCOUNT > 0 THEN
@@ -579,6 +616,12 @@ IF pINFORME_COMERCIAL = 1 THEN
 							, USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
 							, FECHAMODIFICAR = SYSDATE
 						WHERE  BORRADO = 0
+                            AND (DD_EPA_ID != (SELECT DD_EPA_ID
+											FROM '|| V_ESQUEMA ||'.DD_EPA_ESTADO_PUB_ALQUILER
+											WHERE BORRADO = 0 AND DD_EPA_CODIGO = ''03'')
+							OR DD_TPU_A_ID != (SELECT DD_TPU_ID
+											FROM '|| V_ESQUEMA ||'.DD_TPU_TIPO_PUBLICACION
+											WHERE BORRADO = 0 AND DD_TPU_CODIGO = ''01''))
 						';
 
 			EXECUTE IMMEDIATE V_MSQL;
@@ -603,6 +646,12 @@ IF pINFORME_COMERCIAL = 1 THEN
 							, USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
 							, FECHAMODIFICAR = SYSDATE
 						WHERE  BORRADO = 0
+                            AND (DD_EPA_ID != (SELECT DD_EPA_ID
+											FROM '|| V_ESQUEMA ||'.DD_EPA_ESTADO_PUB_ALQUILER
+											WHERE BORRADO = 0 AND DD_EPA_CODIGO = ''03'')
+							OR DD_TPU_A_ID != (SELECT DD_TPU_ID
+											FROM '|| V_ESQUEMA ||'.DD_TPU_TIPO_PUBLICACION
+											WHERE BORRADO = 0 AND DD_TPU_CODIGO = ''02''))
 						';
 
 			EXECUTE IMMEDIATE V_MSQL;
@@ -628,6 +677,12 @@ IF pINFORME_COMERCIAL = 1 THEN
 							, USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
 							, FECHAMODIFICAR = SYSDATE
 						WHERE  BORRADO = 0
+                            AND (DD_EPA_ID != (SELECT DD_EPA_ID
+											FROM '|| V_ESQUEMA ||'.DD_EPA_ESTADO_PUB_ALQUILER
+											WHERE BORRADO = 0 AND DD_EPA_CODIGO = ''02'')
+							OR DD_TPU_A_ID != (SELECT DD_TPU_ID
+											FROM '|| V_ESQUEMA ||'.DD_TPU_TIPO_PUBLICACION
+											WHERE BORRADO = 0 AND DD_TPU_CODIGO = ''01''))
 					  ';
 
 			EXECUTE IMMEDIATE V_MSQL;
@@ -653,6 +708,12 @@ IF pINFORME_COMERCIAL = 1 THEN
 								, USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
 								, FECHAMODIFICAR = SYSDATE
 							WHERE BORRADO = 0
+                            AND (DD_EPA_ID != (SELECT DD_EPA_ID
+											FROM '|| V_ESQUEMA ||'.DD_EPA_ESTADO_PUB_ALQUILER
+											WHERE BORRADO = 0 AND DD_EPA_CODIGO = ''03'')
+							OR DD_TPU_A_ID != (SELECT DD_TPU_ID
+											FROM '|| V_ESQUEMA ||'.DD_TPU_TIPO_PUBLICACION
+											WHERE BORRADO = 0 AND DD_TPU_CODIGO = ''02''))
 						';
 
 				EXECUTE IMMEDIATE V_MSQL;
@@ -679,6 +740,12 @@ IF pINFORME_COMERCIAL = 1 THEN
                         , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
                         , FECHAMODIFICAR = SYSDATE
                     WHERE BORRADO = 0
+                            AND (DD_EPA_ID != (SELECT DD_EPA_ID
+											FROM '|| V_ESQUEMA ||'.DD_EPA_ESTADO_PUB_ALQUILER
+											WHERE BORRADO = 0 AND DD_EPA_CODIGO = ''02'')
+							OR DD_TPU_A_ID != (SELECT DD_TPU_ID
+											FROM '|| V_ESQUEMA ||'.DD_TPU_TIPO_PUBLICACION
+											WHERE BORRADO = 0 AND DD_TPU_CODIGO = ''01''))
                   ';
 
         EXECUTE IMMEDIATE V_MSQL;
@@ -707,6 +774,12 @@ ELSE
 							, USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
 							, FECHAMODIFICAR = SYSDATE
 				  WHERE BORRADO = 0
+                            AND (DD_EPA_ID != (SELECT DD_EPA_ID
+											FROM '|| V_ESQUEMA ||'.DD_EPA_ESTADO_PUB_ALQUILER
+											WHERE BORRADO = 0 AND DD_EPA_CODIGO = ''02'')
+							OR DD_TPU_A_ID != (SELECT DD_TPU_ID
+											FROM '|| V_ESQUEMA ||'.DD_TPU_TIPO_PUBLICACION
+											WHERE BORRADO = 0 AND DD_TPU_CODIGO = ''01''))
 					  ';
 			EXECUTE IMMEDIATE V_MSQL;
 			IF SQL%ROWCOUNT > 0 THEN
@@ -732,6 +805,12 @@ ELSE
 							, USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
 							, FECHAMODIFICAR = SYSDATE
 				  WHERE BORRADO = 0
+                            AND (DD_EPA_ID != (SELECT DD_EPA_ID
+											FROM '|| V_ESQUEMA ||'.DD_EPA_ESTADO_PUB_ALQUILER
+											WHERE BORRADO = 0 AND DD_EPA_CODIGO = ''03'')
+							OR DD_TPU_A_ID != (SELECT DD_TPU_ID
+											FROM '|| V_ESQUEMA ||'.DD_TPU_TIPO_PUBLICACION
+											WHERE BORRADO = 0 AND DD_TPU_CODIGO = ''02''))
 					  ';
 
 			EXECUTE IMMEDIATE V_MSQL;

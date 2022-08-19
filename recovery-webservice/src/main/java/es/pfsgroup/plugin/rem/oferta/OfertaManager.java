@@ -813,11 +813,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}
 			}
 			
-			oferta = getOfertaByNumOfertaRem(ofertaDto.getIdOfertaWebcom());
-			
-			if(oferta == null) {
-				oferta = getOfertaByNumOfertaRem(ofertaDto.getIdOfertaRem());	
-			}
+			oferta = this.getOfertaByTipoId(ofertaDto);
 
 		}
 		if (!Checks.esNulo(ofertaDto.getCodEstadoOferta())) {

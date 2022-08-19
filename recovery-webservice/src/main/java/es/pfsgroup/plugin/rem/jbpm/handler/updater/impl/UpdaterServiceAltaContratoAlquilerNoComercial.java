@@ -12,12 +12,14 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 
 @Component
 public class UpdaterServiceAltaContratoAlquilerNoComercial implements UpdaterService {
@@ -31,25 +33,41 @@ public class UpdaterServiceAltaContratoAlquilerNoComercial implements UpdaterSer
     protected static final Log logger = LogFactory.getLog(UpdaterServiceAltaContratoAlquilerNoComercial.class);
     
 	private static final String COMBO_RESULTADO = "comboResultado";
-
 	private static final String CODIGO_T018_ALTA_CONTRATO_ALQUILER = "T018_AltaContratoAlquiler";
 	
 	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
 
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
-		String estadoBc = null;
+		boolean dadoAlta = false;
+		boolean estadoBcModificado = false;
+		boolean estadoModificado = false;
+ 		DDEstadoExpedienteBc estadoExpBC = null;
+ 		DDEstadosExpedienteComercial estadoExpComercial = null;
 		
 		for(TareaExternaValor valor :  valores){
 			
 			if(COMBO_RESULTADO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-				if(DDSiNo.NO.equals(valor.getValor())) {
-					estadoBc = DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA;
-					expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class,genericDao.createFilter(FilterType.EQUALS,"codigo", estadoBc)));
-					genericDao.save(ExpedienteComercial.class, expedienteComercial);
+				if(DDSiNo.SI.equals(valor.getValor())) {
+					dadoAlta = true;
 				}
 			}
-
 		}
+		
+		if (dadoAlta) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigoC4C", "130");
+			estadoExpBC = genericDao.get(DDEstadoExpedienteBc.class,filtro);
+			Filter filtroEstadoExpComer = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.FIRMADO);
+			estadoExpComercial = genericDao.get(DDEstadosExpedienteComercial.class,filtroEstadoExpComer);
+		} else {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA);
+			estadoExpBC = genericDao.get(DDEstadoExpedienteBc.class,filtro);
+		}
+		
+		expedienteComercial.setEstadoBc(estadoExpBC);
+		estadoBcModificado = true;
+		expedienteComercial.setEstado(estadoExpComercial);
+		estadoModificado = true;
+		genericDao.save(ExpedienteComercial.class, expedienteComercial);
 			
 	}
 

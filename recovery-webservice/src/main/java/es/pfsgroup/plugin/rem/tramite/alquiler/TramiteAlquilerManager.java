@@ -357,41 +357,4 @@ public class TramiteAlquilerManager implements TramiteAlquilerApi {
 		
 		return resultado;
 	}
-	
-	/*@Override
-	public boolean checkIBANValido(TareaExterna tareaExterna, String numIban) {
-		boolean resultado = false;
-		IBANCheckDigit iban = new IBANCheckDigit();
-		
-		try {
-			resultado = iban.isValid(numIban);
-		} catch (Exception e) {
-			logger.error("error en TramiteAlquilerManager", e);
-		}
-			
-		return resultado;
-	}
-	
-	@Override
-	public boolean checkCuentasVirtualesAlquilerLibres(TareaExterna tareaExterna) {
-		boolean resultado = false;
-		ExpedienteComercial eco = expedienteComercialApi.tareaExternaToExpedienteComercial(tareaExterna);
-		if (eco != null && eco.getOferta() != null) {
-			Oferta ofr = eco.getOferta();
-			if (ofr != null) {
-				Filter filterCva =  genericDao.createFilter(FilterType.EQUALS, "subcartera", ofr.getActivoPrincipal().getSubcartera());
-				List <CuentasVirtualesAlquiler> cva = genericDao.getList(CuentasVirtualesAlquiler.class, filterCva);
-				if (cva != null && cva.size() >= 1 && !cva.isEmpty()) {
-					for (CuentasVirtualesAlquiler cuentasVirtualesAlquiler : cva) {
-						if (Checks.isFechaNula(cuentasVirtualesAlquiler.getFechaInicio())) {
-							resultado = true;
-							break;
-						}
-					}
-				}
-			}
-		}
-			
-		return resultado;
-	}*/
 }

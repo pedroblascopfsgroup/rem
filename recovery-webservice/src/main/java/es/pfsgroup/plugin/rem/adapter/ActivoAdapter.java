@@ -1328,15 +1328,13 @@ public class ActivoAdapter {
 		} catch (InvocationTargetException e) {
 			logger.error("Error en ActivoAdapter", e);
 		}
-		try {
-			if(page == null || lista.isEmpty()) {
-				throw new NullPointerException();
-			}
-			return new DtoPage(lista,page.getTotalCount());
-		}catch(NullPointerException npe){
-			logger.error("Error en ActivoAdapter, page o lista es nula", npe);
+	
+		if(page == null || lista.isEmpty()) {
 			return null;
 		}
+		
+		return new DtoPage(lista,page.getTotalCount());
+		
 	}
 
 	public List<VBusquedaAgrupacionByActivo> getListAgrupacionesActivoById(Long id) {

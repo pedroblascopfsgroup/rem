@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20220727
+--## FECHA_CREACION=20220819
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-18391
+--## INCIDENCIA_LINK=HREOS-18572
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -15,6 +15,7 @@
 --##        0.3 Controlar el FLAG NUEVO_PRECIO_CONCURRENCIA - [HREOS-18369] - Alejandra García
 --##        0.4 Modificar el FLAG NUEVO_PRECIO_CONCURRENCIA = 0  - [HREOS-18369] - Alejandra García
 --##        0.5 Comentar merge ACT_ACTIVO_CAIXA Y añadir condición: las fechas de concurrencia No sean nulas - [HREOS-18391] - Alejandra García
+--##        0.6 Añadir TRUNC a fechas - [HREOS-18572] - Alejandra García
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -173,8 +174,8 @@ SALIDA := SALIDA ||'[INFO] 1.2 SE CREA UN NUEVO REGISTRO EN LA TABLA CPC_CMB_PER
                      AND CON.BORRADO = 0
                   JOIN '||V_ESQUEMA||'.DD_ACO_ACCIONES_CONCURRENCIA ACO ON ACO.DD_ACO_CODIGO = ''01'' 
                      AND ACO.BORRADO = 0
-                  WHERE CON.CON_FECHA_INI = TO_DATE(AUX.FEC_INICIO_CONCURENCIA, ''yyyymmdd'')
-                  AND CON.CON_FECHA_FIN = TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''yyyymmdd'')
+                  WHERE TRUNC(CON.CON_FECHA_INI) = TRUNC(TO_DATE(AUX.FEC_INICIO_CONCURENCIA, ''yyyymmdd''))
+                  AND TRUNC(CON.CON_FECHA_FIN) = TRUNC(TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''yyyymmdd''))
                   AND TRUNC(CON.FECHACREAR) = TRUNC(SYSDATE)
                   AND CON.USUARIOCREAR = ''apr_alta_assets_from_caixabank''
                   AND AUX.FLAG_EN_REM = '|| FLAG_EN_REM ||'
@@ -252,8 +253,8 @@ SALIDA := SALIDA ||'[INFO] PARA LOS ACTIVOS QUE TENGAN REGISTROS EN LA TABLA CON
                                        FROM '||V_ESQUEMA||'.CON_CONCURRENCIA CON1
                                        WHERE CON1.ACT_ID = FUT.ACT_ID
                                        AND CON1.AGR_ID = FUT.AGR_ID
-                                       AND CON1.CON_FECHA_INI = FUT.FEC_INICIO_CONCURENCIA
-                                       AND CON1.CON_FECHA_FIN = FUT.FEC_FIN_CONCURENCIA
+                                       AND TRUNC(CON1.CON_FECHA_INI) = TRUNC(FUT.FEC_INICIO_CONCURENCIA)
+                                       AND TRUNC(CON1.CON_FECHA_FIN) = TRUNC(FUT.FEC_FIN_CONCURENCIA)
                                        )
                   )SELECT
                       CONCU.CON_ID
@@ -327,8 +328,8 @@ SALIDA := SALIDA ||'[INFO] 1.4 SE MODIFICA LA FECHA FIN EN LA TABLA CPC_CMB_PERI
                                        FROM '||V_ESQUEMA||'.CON_CONCURRENCIA CON1
                                        WHERE CON1.ACT_ID = FUT.ACT_ID
                                        AND CON1.AGR_ID = FUT.AGR_ID
-                                       AND CON1.CON_FECHA_INI = FUT.FEC_INICIO_CONCURENCIA
-                                       AND CON1.CON_FECHA_FIN = FUT.FEC_FIN_CONCURENCIA
+                                       AND TRUNC(CON1.CON_FECHA_INI) = TRUNC(FUT.FEC_INICIO_CONCURENCIA)
+                                       AND TRUNC(CON1.CON_FECHA_FIN) = TRUNC(FUT.FEC_FIN_CONCURENCIA)
                                        )
                   )SELECT
                         CONCU.CON_ID

@@ -91,11 +91,16 @@ SALIDA := SALIDA || '[INFO] PARA LOS ACTIVOS QUE NO TENGAN REGISTROS EN LA TABLA
                            AND AGA.BORRADO = 0
                      JOIN '||V_ESQUEMA||'.ACT_VAL_VALORACIONES VAL ON VAL.ACT_ID = ACT.ACT_ID
                         AND VAL.BORRADO = 0
+                     JOIN '||V_ESQUEMA||'.DD_TPC_TIPO_PRECIO TPC ON TPC.DD_TPC_ID = VAL.DD_TPC_ID
+                        AND TPC.BORRADO = 0
                      WHERE (CON.CON_ID IS NULL
                      OR 
                      TRUNC(CON.CON_FECHA_FIN) <  TRUNC(SYSDATE) )
                      AND AUX.FLAG_EN_REM = '|| FLAG_EN_REM ||'
                      AND AUX.FEC_INICIO_CONCURENCIA IS NOT NULL AND AUX.FEC_FIN_CONCURENCIA IS NOT NULL
+                     AND TPC.DD_TPC_CODIGO = ''02''
+                     AND TRUNC(VAL.VAL_FECHA_INICIO) <= TRUNC(SYSDATE) 
+                     AND (VAL.VAL_FECHA_FIN IS NULL OR TRUNC(VAL.VAL_FECHA_FIN) > TRUNC(SYSDATE))
                   ), CONCURRENCIA_FUTURA AS (
                      SELECT 
                            ACT.ACT_ID
@@ -115,10 +120,15 @@ SALIDA := SALIDA || '[INFO] PARA LOS ACTIVOS QUE NO TENGAN REGISTROS EN LA TABLA
                            AND AGA.BORRADO = 0
                      JOIN '||V_ESQUEMA||'.ACT_VAL_VALORACIONES VAL ON VAL.ACT_ID = ACT.ACT_ID
                         AND VAL.BORRADO = 0
+                     JOIN '||V_ESQUEMA||'.DD_TPC_TIPO_PRECIO TPC ON TPC.DD_TPC_ID = VAL.DD_TPC_ID
+                        AND TPC.BORRADO = 0
                      WHERE TRUNC(CON.CON_FECHA_INI) >  TRUNC(SYSDATE)
                      AND TRUNC(CON.FECHACREAR) <> TRUNC(SYSDATE)
                      AND AUX.FLAG_EN_REM = '|| FLAG_EN_REM ||'
                      AND AUX.FEC_INICIO_CONCURENCIA IS NOT NULL AND AUX.FEC_FIN_CONCURENCIA IS NOT NULL
+                     AND TPC.DD_TPC_CODIGO = ''02''
+                     AND TRUNC(VAL.VAL_FECHA_INICIO) <= TRUNC(SYSDATE) 
+                     AND (VAL.VAL_FECHA_FIN IS NULL OR TRUNC(VAL.VAL_FECHA_FIN) > TRUNC(SYSDATE))
                   ), CONCURRENCIA AS (
                      SELECT DISTINCT
                            SIN_CONCU.ACT_ID
@@ -233,12 +243,17 @@ SALIDA := SALIDA ||'[INFO] PARA LOS ACTIVOS QUE TENGAN REGISTROS EN LA TABLA CON
                            AND AGA.BORRADO = 0
                      JOIN '||V_ESQUEMA||'.ACT_VAL_VALORACIONES VAL ON VAL.ACT_ID = ACT.ACT_ID
                         AND VAL.BORRADO = 0
+                     JOIN '||V_ESQUEMA||'.DD_TPC_TIPO_PRECIO TPC ON TPC.DD_TPC_ID = VAL.DD_TPC_ID
+                        AND TPC.BORRADO = 0
                      WHERE TRUNC(CON.CON_FECHA_INI) >  TRUNC(SYSDATE)
                      AND TRUNC(CON.FECHACREAR) <> TRUNC(SYSDATE)
                      AND TRUNC(TO_DATE(AUX.FEC_INICIO_CONCURENCIA, ''yyyymmdd'')) <> TRUNC(CON.CON_FECHA_INI)
                      AND TRUNC(TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''yyyymmdd'')) <> TRUNC(CON.CON_FECHA_FIN)
                      AND AUX.FLAG_EN_REM = '|| FLAG_EN_REM ||'
                      AND AUX.FEC_INICIO_CONCURENCIA IS NOT NULL AND AUX.FEC_FIN_CONCURENCIA IS NOT NULL
+                     AND TPC.DD_TPC_CODIGO = ''02''
+                     AND TRUNC(VAL.VAL_FECHA_INICIO) <= TRUNC(SYSDATE) 
+                     AND (VAL.VAL_FECHA_FIN IS NULL OR TRUNC(VAL.VAL_FECHA_FIN) > TRUNC(SYSDATE))
                   ), CONCURRENCIA AS (
                      SELECT DISTINCT 
                            FUT.CON_ID
@@ -306,6 +321,8 @@ SALIDA := SALIDA ||'[INFO] 1.4 SE MODIFICA LA FECHA FIN EN LA TABLA CPC_CMB_PERI
                            AND CPC.BORRADO = 0
                      JOIN '||V_ESQUEMA||'.ACT_VAL_VALORACIONES VAL ON VAL.ACT_ID = ACT.ACT_ID
                         AND VAL.BORRADO = 0
+                     JOIN '||V_ESQUEMA||'.DD_TPC_TIPO_PRECIO TPC ON TPC.DD_TPC_ID = VAL.DD_TPC_ID
+                        AND TPC.BORRADO = 0
                      WHERE TRUNC(CON.CON_FECHA_INI) >  TRUNC(SYSDATE)
                      AND TRUNC(CON.FECHACREAR) <> TRUNC(SYSDATE)
                      AND TRUNC(TO_DATE(AUX.FEC_INICIO_CONCURENCIA, ''yyyymmdd'')) = TRUNC(CON.CON_FECHA_INI)
@@ -313,6 +330,9 @@ SALIDA := SALIDA ||'[INFO] 1.4 SE MODIFICA LA FECHA FIN EN LA TABLA CPC_CMB_PERI
                      AND CPC.CPC_FECHA_FIN <> TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''yyyymmdd'')
                      AND AUX.FLAG_EN_REM = '|| FLAG_EN_REM ||'
                      AND AUX.FEC_INICIO_CONCURENCIA IS NOT NULL AND AUX.FEC_FIN_CONCURENCIA IS NOT NULL
+                     AND TPC.DD_TPC_CODIGO = ''02''
+                     AND TRUNC(VAL.VAL_FECHA_INICIO) <= TRUNC(SYSDATE) 
+                     AND (VAL.VAL_FECHA_FIN IS NULL OR TRUNC(VAL.VAL_FECHA_FIN) > TRUNC(SYSDATE))
                   ), CONCURRENCIA AS (
                      SELECT DISTINCT 
                            FUT.CON_ID
@@ -506,7 +526,8 @@ SALIDA := SALIDA ||'[INFO] 2.3 SE MODIFICA REGISTRO EXISTENTE EN LA TABLA CON_CO
                   , T1.FECHAMODIFICAR = SYSDATE';
    EXECUTE IMMEDIATE V_MSQL;
 
-DBMS_OUTPUT.PUT_LINE('[INFO] '||SQL%ROWCOUNT||' REGISTROS MODIFICADOS EN CON_CONCURRENCIA');  
+DBMS_OUTPUT.PUT_LINE('[INFO] '||SQL%ROWCOUNT||' REGISTROS MODIFICADOS EN CON_CONCURRENCIA'); 
+SALIDA := SALIDA || '   [INFO] REGISTROS INSERTADOS EN CON_CONCURRENCIA: '|| SQL%ROWCOUNT|| CHR(10); 
 SALIDA := SALIDA ||' '||CHR(10);
 SALIDA := SALIDA ||' '||CHR(10);
 

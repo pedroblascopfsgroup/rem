@@ -135,9 +135,12 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 	@Override
 	public Concurrencia getUltimaConcurrenciaByActivo(Activo activo) {
 		Long idConcurrencia = concurrenciaDao.getIdConcurrenciaReciente(activo.getId(), null);
-		Concurrencia concurrencia = genericDao.get(Concurrencia.class, genericDao.createFilter(FilterType.EQUALS, "id", idConcurrencia));
-		
+		Concurrencia concurrencia = null;
+		if (idConcurrencia != null) {	
+			 concurrencia = genericDao.get(Concurrencia.class, genericDao.createFilter(FilterType.EQUALS, "id", idConcurrencia));
+		}
 		return concurrencia;
+		
 	}
 
 	//Mostramos la pestaña de concurrencia Siempre que un activo

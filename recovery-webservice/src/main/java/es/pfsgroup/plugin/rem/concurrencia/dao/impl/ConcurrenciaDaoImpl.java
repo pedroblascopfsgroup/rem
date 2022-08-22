@@ -160,13 +160,13 @@ public class ConcurrenciaDaoImpl extends AbstractEntityDao<Concurrencia, Long> i
 		return Integer.parseInt(resultados) > 0;
 	}
 	
-	@Override
+	/*@Override
 	public String getPeriodoConcurrencia(Long idConcurrencia) {
 		
 		String resultados = rawDao.getExecuteSQL("SELECT ROUND(CON_FECHA_FIN-CON_FECHA_INI, 0) AS PERIODO_CONCURRENCIA FROM CON_CONCURRENCIA WHERE CON_ID="+idConcurrencia);
 		
 		return resultados;
-	}
+	}*/
 
 	@SuppressWarnings("unchecked")
 	@Override

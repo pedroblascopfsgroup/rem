@@ -24,7 +24,7 @@ public interface ConcurrenciaDao extends AbstractDao<Concurrencia, Long>{
 
 	boolean isOfertaEnPlazoEntrega(Long idOferta);
 
-	String getPeriodoConcurrencia(Long idConcurrencia);
+	/*String getPeriodoConcurrencia(Long idConcurrencia);*/
 
 	List<VGridCambiosPeriodoConcurrencia> getListCambiosPeriodoConcurenciaByIdConcurrencia(Long idConcurrencia);
 	

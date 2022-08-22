@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Alejandro Valverde
---## FECHA_CREACION=20220810
+--## AUTOR=Santi Monzó
+--## FECHA_CREACION=20220822
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-18526
+--## INCIDENCIA_LINK=HREOS-18574
 --## PRODUCTO=NO
 --## Finalidad: VI_GRID_OFR_CONCURRENCIA
 --##           
@@ -17,6 +17,7 @@
 --##         0.5 Alejandro Valverde (HREOS-18495) - Añadir campo OFR_ID
 --##         0.6 Javier Esbri (HREOS-18511) - Añadir campo OFR_CONCURRENCIA
 --##         0.7 Alejandro Valverde (HREOS-18526) - Incidencia datos incorrectos
+--##         0.8 Santi Monzó (HREOS-18574) - Incidencia DIASCONCURRENCIA
 --##########################################
 --*/
 
@@ -69,7 +70,10 @@ BEGIN
 		,EDP.DD_EDP_CODIGO AS ESTADODEPOSITOCODIGO
 		,EDP.DD_EDP_DESCRIPCION AS ESTADODEPOSITO
 		,ofr.OFR_FECHA_ALTA AS FECHAALTA
-		,ROUND(CON_FECHA_FIN-CON_FECHA_INI, 0) AS DIASCONCURRENCIA
+		,CASE
+        WHEN CON_FECHA_FIN > sysdate THEN ROUND(SYSDATE-ofr.OFR_FECHA_ALTA, 0)
+        ELSE ROUND(CON_FECHA_FIN-ofr.OFR_FECHA_ALTA, 0)         
+    END AS DIASCONCURRENCIA
 		,act.ACT_ID		
 		,act.ACT_NUM_ACTIVO
 		,cnc.CON_ID

@@ -298,23 +298,18 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 			
 			if(act != null){
 				List<ActivoOferta> ofertas = act.getOfertas();
-				HashMap<Long, List<Long>> noEntraDeposito = new HashMap<Long, List<Long>>();
 				List<Long> idOfertaList = new ArrayList<Long>();
 	
 				if(ofertas != null && !ofertas.isEmpty()) {
 					for(ActivoOferta actOfr: ofertas){
 						if(actOfr != null && actOfr.getOferta() != null && !idOferta.toString().equals(actOfr.getOferta().toString())) {
 							Oferta ofr = actOfr.getPrimaryKey().getOferta();
-							if(!ofr.esOfertaAnulada() && !this.entraEnTiempoDeposito(ofr)) {
-								noEntraDeposito.put(actOfr.getOferta(), rellenaMapOfertaCorreos(ofr));
-								ofertaApi.rechazoOfertaNew(ofr, null);
-							}
-							
-							genericDao.save(Oferta.class, ofr);
-							
-							if(ConcurrenciaApi.COD_OFERTAS_PERDEDORAS.equals(codigoEnvioCorreo) && concurrencia != null && ofr.getConcurrencia() != null 
-									&& concurrencia.getId().equals(ofr.getConcurrencia().getId())) {
+							if((!ofr.esOfertaAnulada() && !this.entraEnTiempoDeposito(ofr)) || 
+								(ConcurrenciaApi.COD_OFERTAS_PERDEDORAS.equals(codigoEnvioCorreo) && concurrencia != null && ofr.getConcurrencia() != null && concurrencia.getId().equals(ofr.getConcurrencia().getId()) )
+							) {
 								idOfertaList.add(ofr.getId());
+								ofertaApi.rechazoOfertaNew(ofr, null);
+								genericDao.save(Oferta.class, ofr);
 							}
 						}						
 					}

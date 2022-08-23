@@ -1699,8 +1699,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			oferta.getActivoPrincipal();
 			
 			Concurrencia concurrencia = concurrenciaApi.getUltimaConcurrenciaByActivo(oferta.getActivoPrincipal());
-			if(concurrencia != null)
-				oferta.setConcurrencia(concurrencia);
+			if(concurrencia != null && concurrencia.getFechaInicio() != null && concurrencia.getFechaFin() != null) {
+				Date hoy = new Date();
+				if( hoy.after(concurrencia.getFechaInicio()) && hoy.before(concurrencia.getFechaFin())) {
+					oferta.setConcurrencia(concurrencia);
+				}
+			}			
 			
 			Long idOferta = this.saveOferta(oferta);
 

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Santi Monzó
---## FECHA_CREACION=20220822
+--## FECHA_CREACION=20220824
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-18574
@@ -17,7 +17,7 @@
 --##        HREOS-18445: Alejandro Valverde - Añadir campo FECHA_ENT_CRM_SF
 --##        HREOS-18511: Javier Esbri - Añadir campo OFR_CONCURRENCIA
 --##		HREOS-18526: Alejandro Valverde - Eliminar comprobacion DEP_FECHA_INICIO IS NOT NULL
---##        HREOS-18574  Santi Monzó - Incidencia DIASCONCURRENCIA
+--##        HREOS-18574  Santi Monzó - Incidencia PERIODO_CONCURRENCIA
 --##########################################
 --*/
 
@@ -128,10 +128,10 @@ BEGIN
 			CON.CON_ID,
 				CON.CON_FECHA_INI AS FECHA_INICIO_CONCURRENCIA,
 				CON.CON_FECHA_FIN AS FECHA_FIN_CONCURRENCIA,
-				,CASE
+				CASE
 					WHEN CON.CON_FECHA_FIN > sysdate THEN ROUND(SYSDATE-OFR.OFR_FECHA_ALTA, 0)
 					ELSE ROUND(CON.CON_FECHA_FIN-OFR.OFR_FECHA_ALTA, 0)         
-				END AS DIASCONCURRENCIA
+				END AS PERIODO_CONCURRENCIA,
 			ORDENACION.ORDENFINAL	AS ORDEN_GANADOR,
 			OFR.FECHA_ENT_CRM_SF,
 			OFR.OFR_CONCURRENCIA AS OFERTA_CONCURRENCIA

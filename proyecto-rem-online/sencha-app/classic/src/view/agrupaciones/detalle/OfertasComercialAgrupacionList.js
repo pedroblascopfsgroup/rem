@@ -232,10 +232,9 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 		if (numActivos == null || numActivos == '' || numActivos == '0') {
 			me.fireEvent("errorToast", HreRem.i18n("msg.comercialAnyadirOferta.agrupacion.sin.activos.error"));	
 		}else if ((tipoComercialAlquiler == CONST.TIPOS_AGRUPACION['COMERCIAL_ALQUILER'] || tipoComercialAlquiler == CONST.TIPOS_AGRUPACION['LOTE_COMERCIAL']) 
-			&& (tipoComercializacion == CONST.TIPOS_COMERCIALIZACION['ALQUILER_VENTA'] || tipoComercializacion == CONST.TIPOS_COMERCIALIZACION['SOLO_ALQUILER'])){
-			if (codigoTipoAlquiler == null || codigoTipoAlquiler == '' || codigoTipoAlquiler == '05') {
-				me.fireEvent("errorToast", HreRem.i18n("msg.comercialAnyadirTipoAlquiler.error"));
-			}
+				&& (tipoComercializacion == CONST.TIPOS_COMERCIALIZACION['ALQUILER_VENTA'] || tipoComercializacion == CONST.TIPOS_COMERCIALIZACION['SOLO_ALQUILER'])
+				&& (codigoTipoAlquiler == null || codigoTipoAlquiler == '' || codigoTipoAlquiler == '05')) {
+			me.fireEvent("errorToast", HreRem.i18n("msg.comercialAnyadirTipoAlquiler.error"));
 		}
 		else {
 			var parent= me.up('ofertascomercialagrupacion');

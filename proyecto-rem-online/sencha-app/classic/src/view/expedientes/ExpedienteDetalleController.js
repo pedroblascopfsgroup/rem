@@ -3155,31 +3155,31 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		    			grupoImpuesto.allowBlank = false;
 		    			grupoImpuesto.setDisabled(false);
 		    			tributosPropiedad.setDisabled(false);
-	    			}
 	    			
-		    		if ( CONST.TIPO_GRUPO_IMPUESTO['CODIGO_EXENTO'] == grupoImpuesto.value ) {
-		    			tipoAplicable.setDisabled(false);
-		    			tipoAplicable.allowBlank = false;
-		    			renunciaExencion.setDisabled(false);
-		    		}else{
-		    			tipoAplicable.setDisabled(true);
-		    			tipoAplicable.allowBlank = true;
-		    			tipoAplicable.reset();
-		    			renunciaExencion.setDisabled(true);
-		    			renunciaExencion.reset();
-		    		}
-		    		
-		    		if(CONST.TIPO_GRUPO_IMPUESTO['CODIGO_TASA_CERO'] == grupoImpuesto.value){
-		    			tipoAplicable.setDisabled(true);
-		    			tipoAplicable.allowBlank = true;
-		    			tipoAplicable.reset();
-		    			renunciaExencion.setDisabled(true);
-		    			renunciaExencion.reset();
-		    		}else{
-		    			tipoAplicable.setDisabled(false);
-		    			tipoAplicable.allowBlank = false;
-		    			renunciaExencion.setDisabled(false);
-		    		}
+			    		if ( CONST.TIPO_GRUPO_IMPUESTO['CODIGO_EXENTO'] == grupoImpuesto.value ) {
+			    			tipoAplicable.setDisabled(false);
+			    			tipoAplicable.allowBlank = false;
+			    			renunciaExencion.setDisabled(false);
+			    		}else{
+			    			tipoAplicable.setDisabled(true);
+			    			tipoAplicable.allowBlank = true;
+			    			tipoAplicable.reset();
+			    			renunciaExencion.setDisabled(true);
+			    			renunciaExencion.reset();
+			    		}
+			    		
+			    		if(CONST.TIPO_GRUPO_IMPUESTO['CODIGO_TASA_CERO'] == grupoImpuesto.value){
+			    			tipoAplicable.setDisabled(true);
+			    			tipoAplicable.allowBlank = true;
+			    			tipoAplicable.reset();
+			    			renunciaExencion.setDisabled(true);
+			    			renunciaExencion.reset();
+			    		}else{
+			    			tipoAplicable.setDisabled(false);
+			    			tipoAplicable.allowBlank = false;
+			    			renunciaExencion.setDisabled(false);
+			    		}
+	    			}
 	    		}
 
 			}

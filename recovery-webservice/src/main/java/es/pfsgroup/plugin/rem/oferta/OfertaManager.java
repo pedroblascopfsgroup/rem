@@ -755,6 +755,24 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			} else if (!Checks.esNulo(ofertaDto.getIbanDevolucion()) && !depositoApi.validarIban(ofertaDto.getIbanDevolucion())) {
 				errorsList.put("ibanDevolucion", RestApi.REST_MSG_UNKNOWN_KEY);
 			}
+			
+			//Validación canal de distribución
+			Long numActivo = ofertaDto.getIdActivoHaya() != null ? ofertaDto.getIdActivoHaya() : ofertaDto.getActivosLote().get(0).getIdActivoHaya();
+			if(numActivo != null){
+				ActivoCaixa activoCaixa = genericDao.get(ActivoCaixa.class, genericDao.createFilter(FilterType.EQUALS, "activo.numActivo", numActivo));
+				if(activoCaixa != null){
+					DDTipoOferta tipoOferta = genericDao.get(DDTipoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", ofertaDto.getCodTipoOferta()));
+					if(DDTipoOferta.isTipoVenta(tipoOferta)){
+						if(activoCaixa.getCanalDistribucionVenta() == null) {
+							errorsList.put("idActivoHaya", RestApi.MSJ_ERROR_CANAL_DISTRIBUCION);
+						}				
+					} else if(DDTipoOferta.isTipoAlquiler(tipoOferta) || DDTipoOferta.isTipoAlquilerNoComercial(tipoOferta)){
+						if(activoCaixa.getCanalDistribucionAlquiler() == null) {
+							errorsList.put("idActivoHaya", RestApi.MSJ_ERROR_CANAL_DISTRIBUCION);
+						}
+					}
+				}
+			}
 		} else {
 			errorsList = restApi.validateRequestObject(ofertaDto, TIPO_VALIDACION.UPDATE);
 			// Validación para la actualización de ofertas
@@ -9449,7 +9467,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						throw new Exception("El activo no tiene canal de distribución");
 					}
 				} else if(DDTipoOferta.isTipoAlquiler(tipoOferta) || DDTipoOferta.isTipoAlquilerNoComercial(tipoOferta)){
-					if(activoCaixa.getCanalDistribucionVenta() != null) {
+					if(activoCaixa.getCanalDistribucionAlquiler() != null) {
 						if (DDTipoComercializar.CODIGO_SINGULAR.equals(activoCaixa.getCanalDistribucionAlquiler().getCodigo())){
 							tipoComercializar = genericDao.get(DDTipoComercializar.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoComercializar.CODIGO_SINGULAR));
 							break;

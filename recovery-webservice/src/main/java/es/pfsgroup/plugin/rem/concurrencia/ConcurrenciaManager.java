@@ -304,8 +304,9 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 					for(ActivoOferta actOfr: ofertas){
 						if(actOfr != null && actOfr.getOferta() != null && !idOferta.toString().equals(actOfr.getOferta().toString())) {
 							Oferta ofr = actOfr.getPrimaryKey().getOferta();
-							if((!ofr.esOfertaAnulada() && !this.entraEnTiempoDeposito(ofr)) || 
-								(ConcurrenciaApi.COD_OFERTAS_PERDEDORAS.equals(codigoEnvioCorreo) && concurrencia != null && ofr.getConcurrencia() != null && concurrencia.getId().equals(ofr.getConcurrencia().getId()) )
+							if((!ofr.esOfertaAnulada() && (!this.entraEnTiempoDeposito(ofr)) || 
+								(ConcurrenciaApi.COD_OFERTAS_PERDEDORAS.equals(codigoEnvioCorreo) && concurrencia != null 
+								&& ofr.getConcurrencia() != null && concurrencia.getId().equals(ofr.getConcurrencia().getId())))
 							) {
 								idOfertaList.add(ofr.getId());
 								ofertaApi.rechazoOfertaNew(ofr, null);

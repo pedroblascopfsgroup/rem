@@ -417,8 +417,15 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		// enviamos un email/notificacion.
 		if (DDEstadoOferta.CODIGO_RECHAZADA.equals(estadoOferta.getCodigo())) {
 			resultado = doRechazaOferta(dto, oferta);
-			if (oferta.getActivoPrincipal() != null && DDCartera.isCarteraBk(oferta.getActivoPrincipal().getCartera()))
+			if (oferta.getActivoPrincipal() != null && DDCartera.isCarteraBk(oferta.getActivoPrincipal().getCartera())) {
 				oferta.setReplicateBC(Boolean.TRUE);
+
+				if(oferta.getIsEnConcurrencia() != null && oferta.getIsEnConcurrencia()) {
+					List<Long> idOfertaList = new ArrayList<Long>();
+					idOfertaList.add(oferta.getId());
+					concurrenciaApi.comunicacionSFMC(idOfertaList, ConcurrenciaApi.COD_OFERTAS_PERDEDORAS, ConcurrenciaApi.TIPO_ENVIO_UNICO, new ModelMap());
+				}
+			}
 			
 			depositoApi.modificarEstadoDepositoSiIngresado(oferta);
 		}

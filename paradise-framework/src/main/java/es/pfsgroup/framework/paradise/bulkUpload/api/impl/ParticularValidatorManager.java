@@ -9651,5 +9651,26 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		return !"0".equals(resultado);
 	}
+	
+	@Override
+	public Boolean existeActivoConOfertaConcurrenciaViva(String numActivo) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
+		if(Checks.esNulo(numActivo))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		FROM ACT_ACTIVO ACT "
+				+ " 	JOIN ACT_OFR ACTOF ON ACT.ACT_ID = ACTOF.ACT_ID "
+				+ " 	JOIN OFR_OFERTAS OFR ON ACTOF.OFR_ID = OFR.OFR_ID "
+				+ " 	JOIN DD_EOF_ESTADOS_OFERTA EOF ON OFR.DD_EOF_ID = EOF.DD_EOF_ID "
+				+ "		WHERE ACT.ACT_NUM_ACTIVO =:numActivo "
+				+ " 	AND EOF.DD_EOF_CODIGO IN ('01','03','04','5','7','8','9')"
+				+ " 	AND OFR.OFR_CONCURRENCIA = 1"
+				+ "		AND ACT.BORRADO = 0 AND OFR.BORRADO = 0 AND EOF.BORRADO = 0");
+		return !"0".equals(resultado);
+	}
 }
 

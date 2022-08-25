@@ -134,7 +134,9 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 						}
 						if (DDResolucionComite.CODIGO_APRUEBA.equals(valor.getValor())) {
 							aprueba = true;
-							ofertaApi.congelarOfertasAndReplicate(activo, ofertaAceptada);
+							if(ofertaAceptada.getIsEnConcurrencia() == null || !ofertaAceptada.getIsEnConcurrencia()) {
+								ofertaApi.congelarOfertasAndReplicate(activo, ofertaAceptada);
+							}
 							
 							if(reserva && ge!=null && gestorExpedienteComercialApi.getGestorByExpedienteComercialYTipo(expediente, "GBOAR") == null) {
 								EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi

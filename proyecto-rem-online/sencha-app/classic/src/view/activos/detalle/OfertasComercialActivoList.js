@@ -463,6 +463,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
         var enConcurrencia = me.lookupController().getViewModel().getData().activo.get('enConcurrencia');
 		var codigoEstadoAnterior = context.record.get("codigoEstadoOferta");
 		var codigoEstadoNuevo =  context.newValues.estadoOferta;  
+		var activoOfertasConcurrencia = me.lookupController().getViewModel().getData().activo.get('activoOfertasConcurrencia');
 
         if(enConcurrencia && CONST.TIPOS_OFERTA["VENTA"] === codigoTipoOferta && CONST.ESTADOS_OFERTA['PDTE_DOCUMENTACION'] == codigoEstadoAnterior && CONST.ESTADOS_OFERTA['RECHAZADA'] != codigoEstadoNuevo){
         	me.fireEvent("errorToast", HreRem.i18n("msg.error.periodo.concurrencia.cambio.anulado"));
@@ -496,7 +497,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 						return false;
 					}
 				}
-				if(activo.get('cambioEstadoPublicacion') && !enConcurrencia){
+				if(activo.get('cambioEstadoPublicacion') && !enConcurrencia && !activoOfertasConcurrencia){
 					if($AU.userHasFunction(['CAMBIAR_ESTADO_OFERTA_BANKIA']) || activo.get('estadoVentaCodigo') == '03'){
 						me.fireEvent("warnToast", HreRem.i18n("msg.cambio.estado.publicacion"));
 					}else{

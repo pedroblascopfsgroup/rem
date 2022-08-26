@@ -9667,7 +9667,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ " 	JOIN OFR_OFERTAS OFR ON ACTOF.OFR_ID = OFR.OFR_ID "
 				+ " 	JOIN DD_EOF_ESTADOS_OFERTA EOF ON OFR.DD_EOF_ID = EOF.DD_EOF_ID "
 				+ "		WHERE ACT.ACT_NUM_ACTIVO =:numActivo "
-				+ " 	AND EOF.DD_EOF_CODIGO IN ('01','03','04','5','7','8','9')"
+				+ " 	AND EOF.DD_EOF_CODIGO IN ('01','03','04','05','07','08','09')"
 				+ " 	AND OFR.OFR_CONCURRENCIA = 1"
 				+ "		AND ACT.BORRADO = 0 AND OFR.BORRADO = 0 AND EOF.BORRADO = 0");
 		return !"0".equals(resultado);

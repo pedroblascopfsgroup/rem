@@ -1123,7 +1123,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		
 		if(activo != null) {
 			Double precioVentaActivo = activoApi.getImporteValoracionActivoByCodigo(activo, DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA);
-			if(precioVentaActivo != null && ofertaDto.getImporte() < precioVentaActivo) {
+			Double precioDescuentoVentaActivo = activoApi.getImporteValoracionActivoByCodigo(activo, DDTipoPrecio.CODIGO_TPC_DESC_APROBADO);
+			if((precioDescuentoVentaActivo != null && ofertaDto.getImporte() < precioDescuentoVentaActivo) || (precioVentaActivo != null && ofertaDto.getImporte() < precioVentaActivo)) {
 				errorsList.put("importe", RestApi.MSJ_ERROR_IMPORTE_MENOR_MINIMO);
 			}
 		}

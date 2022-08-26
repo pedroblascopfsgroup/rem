@@ -1826,6 +1826,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					ofertaCaixa.setOferta(oferta);
 					ofertaCaixa.setCanalDistribucionBc(calcularCanalDistribucionBcOfrCaixa(oferta, oferta.getTipoOferta()));
 					ofertaCaixa.setAuditoria(Auditoria.getNewInstance());
+					oferta.setOfertaCaixa(ofertaCaixa);
 
 					genericDao.save(OfertaCaixa.class,ofertaCaixa);
 				}else {

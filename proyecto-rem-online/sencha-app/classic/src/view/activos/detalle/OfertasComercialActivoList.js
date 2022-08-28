@@ -404,6 +404,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		var enConcurrencia = me.lookupController().getViewModel().getData().activo.get('enConcurrencia');
         var codigoTipoOferta = context.record.get('codigoTipoOferta');
 		var gencat = context.record.get('gencat');
+		var activoOfertasConcurrencia = me.lookupController().getViewModel().getData().activo.get('activoOfertasConcurrencia');
 		var msg = HreRem.i18n('msg.desea.aceptar.oferta');
 		
 		var url = $AC.getRemoteUrl('ofertas/isActivoEnDND');
@@ -424,7 +425,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
     				msg = HreRem.i18n("msg.desea.aceptar.oferta.activos.dnd.sin.agrupacion") + HreRem.i18n("msg.desea.aceptar.oferta.esta.de.acuerdo");
     			}
     			
-    			if (msg == HreRem.i18n('msg.desea.aceptar.oferta') && enConcurrencia) {
+    			if (msg == HreRem.i18n('msg.desea.aceptar.oferta') && activoOfertasConcurrencia) {
     				if (context.record.get("descripcionTipoOferta") == CONST.TIPO_COMERCIALIZACION_ACTIVO['VENTA']) {
 						me.up('activosdetalle').lookupController().mostrarCrearOfertaTramitada(editor, me, context);
 					} else {
@@ -534,7 +535,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 				}
 			} 
 			
-			if(enConcurrencia && context.rowIdx != 0) {
+			if(activoOfertasConcurrencia && context.rowIdx != 0) {
 				Ext.Msg.show({
 				   title: HreRem.i18n('title.confirmar.oferta.aceptacion'),
 				   msg: HreRem.i18n('msg.desea.aceptar.oferta.concurrencia'),

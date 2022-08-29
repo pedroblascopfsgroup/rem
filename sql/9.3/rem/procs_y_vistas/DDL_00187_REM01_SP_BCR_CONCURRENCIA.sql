@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20220822
+--## FECHA_CREACION=20220829
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-18572
+--## INCIDENCIA_LINK=HREOS-18634
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -17,6 +17,7 @@
 --##        0.5 Comentar merge ACT_ACTIVO_CAIXA Y añadir condición: las fechas de concurrencia No sean nulas - [HREOS-18391] - Alejandra García
 --##        0.6 Añadir TRUNC a fechas - [HREOS-18572] - Alejandra García
 --##        0.7 Corrección primer merge, para que no se reinserten filas - [HREOS-18572] - Alejandra García
+--##        0.8 Corrección campo IMP_PRECIO_VENTA para que tenga en cuenta el IMP_PRECIO_CAMP_VENTA - [HREOS-18634] - Alejandra García
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -73,14 +74,42 @@ SALIDA := SALIDA || '[INFO] PARA LOS ACTIVOS QUE NO TENGAN REGISTROS EN LA TABLA
                   ,FECHACREAR
                   ,BORRADO
                )
-               WITH SIN_CONCURRENCIA AS (
-                     SELECT 
+               WITH DESC_APROBADO_VENTA AS (
+                  SELECT
+                      ACT.ACT_ID
+                     ,VAL.VAL_ID
+                     ,VAL.VAL_FECHA_INICIO
+                     ,VAL.VAL_FECHA_FIN
+                     ,VAL.VAL_IMPORTE
+                  FROM '||V_ESQUEMA||'.AUX_APR_BCR_STOCK AUX
+                  JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = AUX.NUM_IDENTIFICATIVO
+                     AND ACT.BORRADO = 0
+                  JOIN '||V_ESQUEMA||'.ACT_VAL_VALORACIONES VAL ON VAL.ACT_ID = ACT.ACT_ID
+                     AND VAL.BORRADO = 0
+                  JOIN '||V_ESQUEMA||'.DD_TPC_TIPO_PRECIO TPC ON TPC.DD_TPC_ID = VAL.DD_TPC_ID
+                     AND TPC.BORRADO = 0
+                  WHERE AUX.FEC_INICIO_CONCURENCIA IS NOT NULL AND AUX.FEC_FIN_CONCURENCIA IS NOT NULL
+                  AND AUX.FLAG_EN_REM = '|| FLAG_EN_REM ||'
+                  AND TPC.DD_TPC_CODIGO = ''07''
+                  AND TRUNC(VAL.VAL_FECHA_INICIO) <= TRUNC(SYSDATE) 
+                  AND (VAL.VAL_FECHA_FIN IS NULL OR TRUNC(VAL.VAL_FECHA_FIN) > TRUNC(SYSDATE))
+               ), SIN_CONCURRENCIA AS (
+                     SELECT DISTINCT
                            ACT.ACT_ID
                            ,CASE
                               WHEN AGA.ACT_ID IS NOT NULL THEN AGA.AGR_ID
                               ELSE NULL
                            END AGR_ID
-                           ,NVL(TO_NUMBER(AUX.IMP_PRECIO_VENTA)/100, VAL.VAL_IMPORTE) IMP_PRECIO_VENTA
+                           ,CASE
+                              WHEN AUX.IMP_PRECIO_CAMP_VENTA IS NOT NULL THEN TO_NUMBER(AUX.IMP_PRECIO_CAMP_VENTA/100)
+                              WHEN AUX.IMP_PRECIO_CAMP_VENTA IS NULL
+                                  AND
+                                 (DESCE.VAL_ID IS NOT NULL 
+                                    OR 
+                                 (TRUNC(DESCE.VAL_FECHA_INICIO) <= TRUNC(SYSDATE) 
+                                  AND (DESCE.VAL_FECHA_FIN IS NULL OR TRUNC(DESCE.VAL_FECHA_FIN) > TRUNC(SYSDATE)))) THEN DESCE.VAL_IMPORTE
+                              ELSE NVL(TO_NUMBER(AUX.IMP_PRECIO_VENTA)/100, VAL1.VAL_IMPORTE)
+                            END IMP_PRECIO_VENTA
                            ,TO_DATE(AUX.FEC_INICIO_CONCURENCIA, ''yyyymmdd'') FEC_INICIO_CONCURENCIA
                            ,TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''yyyymmdd'') FEC_FIN_CONCURENCIA
                      FROM '||V_ESQUEMA||'.AUX_APR_BCR_STOCK AUX
@@ -90,18 +119,19 @@ SALIDA := SALIDA || '[INFO] PARA LOS ACTIVOS QUE NO TENGAN REGISTROS EN LA TABLA
                            AND CON.BORRADO = 0
                      LEFT JOIN '||V_ESQUEMA||'.ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.ACT_ID = ACT.ACT_ID
                            AND AGA.BORRADO = 0
-                     JOIN '||V_ESQUEMA||'.ACT_VAL_VALORACIONES VAL ON VAL.ACT_ID = ACT.ACT_ID
-                        AND VAL.BORRADO = 0
-                     JOIN '||V_ESQUEMA||'.DD_TPC_TIPO_PRECIO TPC ON TPC.DD_TPC_ID = VAL.DD_TPC_ID
-                        AND TPC.BORRADO = 0
+                     JOIN '||V_ESQUEMA||'.ACT_VAL_VALORACIONES VAL1 ON VAL1.ACT_ID = ACT.ACT_ID
+                        AND VAL1.BORRADO = 0
+                     JOIN '||V_ESQUEMA||'.DD_TPC_TIPO_PRECIO TPC1 ON TPC1.DD_TPC_ID = VAL1.DD_TPC_ID
+                        AND TPC1.BORRADO = 0
+                     LEFT JOIN DESC_APROBADO_VENTA DESCE ON DESCE.ACT_ID = ACT.ACT_ID
                      WHERE (CON.CON_ID IS NULL
                      OR 
                      TRUNC(CON.CON_FECHA_FIN) <  TRUNC(SYSDATE) )
                      AND AUX.FLAG_EN_REM = '|| FLAG_EN_REM ||'
                      AND AUX.FEC_INICIO_CONCURENCIA IS NOT NULL AND AUX.FEC_FIN_CONCURENCIA IS NOT NULL
-                     AND TPC.DD_TPC_CODIGO = ''02''
-                     AND TRUNC(VAL.VAL_FECHA_INICIO) <= TRUNC(SYSDATE) 
-                     AND (VAL.VAL_FECHA_FIN IS NULL OR TRUNC(VAL.VAL_FECHA_FIN) > TRUNC(SYSDATE))
+                     AND TPC1.DD_TPC_CODIGO = ''02''
+                     AND TRUNC(VAL1.VAL_FECHA_INICIO) <= TRUNC(SYSDATE) 
+                     AND (VAL1.VAL_FECHA_FIN IS NULL OR TRUNC(VAL1.VAL_FECHA_FIN) > TRUNC(SYSDATE))
                   ), CONCURRENCIA_FUTURA AS (
                      SELECT 
                            ACT.ACT_ID
@@ -225,15 +255,43 @@ SALIDA := SALIDA ||'[INFO] 1.3 SE MODIFICA EL REGISTRO EN LA TABLA CON_CONCURREN
 SALIDA := SALIDA ||'[INFO] PARA LOS ACTIVOS QUE TENGAN REGISTROS EN LA TABLA CON PERIODOS DE CONCURRENCIA FUTUROS'||CHR(10);
    V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.CON_CONCURRENCIA T1
                USING (
-                  WITH CONCURRENCIA_FUTURA AS (
-                     SELECT 
+                  WITH DESC_APROBADO_VENTA AS (
+                     SELECT
+                           ACT.ACT_ID
+                        ,VAL.VAL_ID
+                        ,VAL.VAL_FECHA_INICIO
+                        ,VAL.VAL_FECHA_FIN
+                        ,VAL.VAL_IMPORTE
+                     FROM '||V_ESQUEMA||'.AUX_APR_BCR_STOCK AUX
+                     JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = AUX.NUM_IDENTIFICATIVO
+                        AND ACT.BORRADO = 0
+                     JOIN '||V_ESQUEMA||'.ACT_VAL_VALORACIONES VAL ON VAL.ACT_ID = ACT.ACT_ID
+                        AND VAL.BORRADO = 0
+                     JOIN '||V_ESQUEMA||'.DD_TPC_TIPO_PRECIO TPC ON TPC.DD_TPC_ID = VAL.DD_TPC_ID
+                        AND TPC.BORRADO = 0
+                     WHERE AUX.FEC_INICIO_CONCURENCIA IS NOT NULL AND AUX.FEC_FIN_CONCURENCIA IS NOT NULL
+                     AND AUX.FLAG_EN_REM = '|| FLAG_EN_REM ||'
+                     AND TPC.DD_TPC_CODIGO = ''07''
+                     AND TRUNC(VAL.VAL_FECHA_INICIO) <= TRUNC(SYSDATE) 
+                     AND (VAL.VAL_FECHA_FIN IS NULL OR TRUNC(VAL.VAL_FECHA_FIN) > TRUNC(SYSDATE))
+                  ), CONCURRENCIA_FUTURA AS (
+                     SELECT DISTINCT
                            CON.CON_ID
                            ,ACT.ACT_ID
                            ,CASE
                               WHEN AGA.ACT_ID IS NOT NULL THEN AGA.AGR_ID
                               ELSE NULL
                            END AGR_ID
-                           ,NVL(TO_NUMBER(AUX.IMP_PRECIO_VENTA)/100, VAL.VAL_IMPORTE) IMP_PRECIO_VENTA
+                           ,CASE
+                              WHEN AUX.IMP_PRECIO_CAMP_VENTA IS NOT NULL THEN TO_NUMBER(AUX.IMP_PRECIO_CAMP_VENTA/100)
+                              WHEN AUX.IMP_PRECIO_CAMP_VENTA IS NULL
+                                  AND
+                                 (DESCE.VAL_ID IS NOT NULL 
+                                    OR 
+                                 (TRUNC(DESCE.VAL_FECHA_INICIO) <= TRUNC(SYSDATE) 
+                                  AND (DESCE.VAL_FECHA_FIN IS NULL OR TRUNC(DESCE.VAL_FECHA_FIN) > TRUNC(SYSDATE)))) THEN DESCE.VAL_IMPORTE
+                              ELSE NVL(TO_NUMBER(AUX.IMP_PRECIO_VENTA)/100, VAL1.VAL_IMPORTE)
+                            END IMP_PRECIO_VENTA
                            ,TO_DATE(AUX.FEC_INICIO_CONCURENCIA, ''yyyymmdd'') FEC_INICIO_CONCURENCIA
                            ,TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''yyyymmdd'') FEC_FIN_CONCURENCIA
                      FROM '||V_ESQUEMA||'.AUX_APR_BCR_STOCK AUX
@@ -243,19 +301,20 @@ SALIDA := SALIDA ||'[INFO] PARA LOS ACTIVOS QUE TENGAN REGISTROS EN LA TABLA CON
                            AND CON.BORRADO = 0
                      LEFT JOIN '||V_ESQUEMA||'.ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.ACT_ID = ACT.ACT_ID
                            AND AGA.BORRADO = 0
-                     JOIN '||V_ESQUEMA||'.ACT_VAL_VALORACIONES VAL ON VAL.ACT_ID = ACT.ACT_ID
-                        AND VAL.BORRADO = 0
-                     JOIN '||V_ESQUEMA||'.DD_TPC_TIPO_PRECIO TPC ON TPC.DD_TPC_ID = VAL.DD_TPC_ID
-                        AND TPC.BORRADO = 0
+                     JOIN '||V_ESQUEMA||'.ACT_VAL_VALORACIONES VAL1 ON VAL1.ACT_ID = ACT.ACT_ID
+                        AND VAL1.BORRADO = 0
+                     JOIN '||V_ESQUEMA||'.DD_TPC_TIPO_PRECIO TPC1 ON TPC1.DD_TPC_ID = VAL1.DD_TPC_ID
+                        AND TPC1.BORRADO = 0
+                     LEFT JOIN DESC_APROBADO_VENTA DESCE ON DESCE.ACT_ID = ACT.ACT_ID
                      WHERE TRUNC(CON.CON_FECHA_INI) >  TRUNC(SYSDATE)
                      AND TRUNC(CON.FECHACREAR) <> TRUNC(SYSDATE)
                      AND TRUNC(TO_DATE(AUX.FEC_INICIO_CONCURENCIA, ''yyyymmdd'')) <> TRUNC(CON.CON_FECHA_INI)
                      AND TRUNC(TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''yyyymmdd'')) <> TRUNC(CON.CON_FECHA_FIN)
                      AND AUX.FLAG_EN_REM = '|| FLAG_EN_REM ||'
                      AND AUX.FEC_INICIO_CONCURENCIA IS NOT NULL AND AUX.FEC_FIN_CONCURENCIA IS NOT NULL
-                     AND TPC.DD_TPC_CODIGO = ''02''
-                     AND TRUNC(VAL.VAL_FECHA_INICIO) <= TRUNC(SYSDATE) 
-                     AND (VAL.VAL_FECHA_FIN IS NULL OR TRUNC(VAL.VAL_FECHA_FIN) > TRUNC(SYSDATE))
+                     AND TPC1.DD_TPC_CODIGO = ''02''
+                     AND TRUNC(VAL1.VAL_FECHA_INICIO) <= TRUNC(SYSDATE) 
+                     AND (VAL1.VAL_FECHA_FIN IS NULL OR TRUNC(VAL1.VAL_FECHA_FIN) > TRUNC(SYSDATE))
                   ), CONCURRENCIA AS (
                      SELECT DISTINCT 
                            FUT.CON_ID

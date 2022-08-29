@@ -304,13 +304,18 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 					for(ActivoOferta actOfr: ofertas){
 						if(actOfr != null && actOfr.getOferta() != null && !idOferta.toString().equals(actOfr.getOferta().toString())) {
 							Oferta ofr = actOfr.getPrimaryKey().getOferta();
-							if(!ofr.esOfertaAnulada() && !ofr.esOfertaCaducada() && !this.entraEnTiempoDeposito(ofr) && 
-									ConcurrenciaApi.COD_OFERTAS_PERDEDORAS.equals(codigoEnvioCorreo) && concurrencia != null 
-								&& ofr.getConcurrencia() != null && concurrencia.getId().equals(ofr.getConcurrencia().getId())
-							) {
-								idOfertaList.add(ofr.getId());
-								ofertaApi.rechazoOfertaNew(ofr, null);
-								genericDao.save(Oferta.class, ofr);
+							if(!ofr.esOfertaAnulada() && !ofr.esOfertaCaducada()) {
+								if(ConcurrenciaApi.COD_OFERTAS_PERDEDORAS.equals(codigoEnvioCorreo)) {
+									if(concurrencia != null && ofr.getConcurrencia() != null && concurrencia.getId().equals(ofr.getConcurrencia().getId())) {
+										idOfertaList.add(ofr.getId());
+										ofertaApi.rechazoOfertaNew(ofr, null);
+										genericDao.save(Oferta.class, ofr);
+									}
+								}else if(!this.entraEnTiempoDeposito(ofr)){
+									idOfertaList.add(ofr.getId());
+									ofertaApi.rechazoOfertaNew(ofr, null);
+									genericDao.save(Oferta.class, ofr);
+								}
 							}
 						}						
 					}

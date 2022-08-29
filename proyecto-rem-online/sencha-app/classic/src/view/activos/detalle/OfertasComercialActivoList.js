@@ -286,10 +286,19 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
         
         me.addListener ('beforeedit', function(editor, context) {
             var estado = context.record.get("codigoEstadoOferta");
-            var numAgrupacion = context.record.get("numAgrupacionRem"); 
+            var numAgrupacion = context.record.get("numAgrupacionRem");
+            var enConcurrencia = me.lookupController().getViewModel().getData().activo.get('enConcurrencia');
             
-            var allowEdit = estado != '01' && estado != '02' && estado != '05' && estado != '06' && estado != '08' && estado != '09' && Ext.isEmpty(numAgrupacion);
-            if (($AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTOR_COMERCIAL_BO_INM']) || $AU.userIsRol(CONST.PERFILES['SUPERVISOR_COMERCIAL_BO_INM'])) && estado == '08') {
+            if(!enConcurrencia) {
+            	var allowEdit = estado != '01' && estado != '02' && estado != '05' && estado != '06' && estado != '08' && estado != '09' && Ext.isEmpty(numAgrupacion);
+                if (($AU.userIsRol(CONST.PERFILES['GESTOR_COMERCIAL_BO_INM']) || $AU.userIsRol(CONST.PERFILES['SUPERVISOR_COMERCIAL_BO_INM'])) && estado == '08') {
+                	allowEdit = true;
+                }
+            } else {
+            	allowEdit = false;
+            }
+            
+            if ($AU.userIsRol(CONST.PERFILES['HAYASUPER'])) {
             	allowEdit = true;
             }
 			

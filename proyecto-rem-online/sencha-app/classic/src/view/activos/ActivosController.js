@@ -20,9 +20,18 @@ Ext.define('HreRem.view.activos.ActivosController', {
     //Funcion que se ejecuta al hacer click en el botón buscar
 	
 	onSearchClick: function(btn) {
-		
 		var me = this;
-		this.lookupReference('activoslist').getStore().loadPage(1);
+		refCatastralValue = this.lookupReference('activossearch').down('[name="refCatastral"]').value;
+		
+		if (!Ext.isEmpty(refCatastralValue)){
+			if (refCatastralValue.length==20){
+				this.lookupReference('activoslist').getStore().loadPage(1);	
+			}else{
+				me.fireEvent("warnToast",HreRem.i18n("msg.warn.refCatastral.noLongitud"));
+			}
+		}else{
+			this.lookupReference('activoslist').getStore().loadPage(1);
+		}
         
 	},
 	

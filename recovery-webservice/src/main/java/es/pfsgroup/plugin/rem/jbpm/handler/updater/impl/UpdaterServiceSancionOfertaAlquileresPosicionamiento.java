@@ -111,13 +111,7 @@ public class UpdaterServiceSancionOfertaAlquileresPosicionamiento implements Upd
 		
 		// Una vez aprobado el expediente, se congelan el resto de
 		// ofertas que no estén rechazadas (aceptadas y pendientes)
-		List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());
-		for (Oferta oferta : listaOfertas) {
-			if (!oferta.getId().equals(ofertaAceptada.getId())
-					&& !DDEstadoOferta.CODIGO_RECHAZADA.equals(oferta.getEstadoOferta().getCodigo())) {
-				ofertaApi.congelarOferta(oferta);
-			}
-		}
+		ofertaApi.congelarOfertasAndReplicate(ofertaAceptada.getActivoPrincipal(), ofertaAceptada);
 		
 		// Crear trabajo de Adecuacion técnica tipo limpieza 
 		

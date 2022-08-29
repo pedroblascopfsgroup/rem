@@ -107,9 +107,6 @@ Ext.define('HreRem.model.OfertaActivo', {
     		name: 'estadoDeposito'
 		},
 		{
-    		name: 'ordenGanador'
-    	},
-		{
     		name: 'codigoEstadoC4C'
 		},
 		{

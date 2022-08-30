@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20220124
+--## FECHA_CREACION=20220822
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-11055
@@ -23,6 +23,7 @@
 --##   		0.11 REMVIP-10864 - Nuevo motivo ocultacion "Oferta aprobada" caixa, si ha pasado las tareas ''T017_ResolucionCES'',''T015_ElevarASancion''
 --##    0.11 REMVIP-11055 - Se añade el motivo de ocultación "Oferta aprobada" para ofertas migradas
 --##    0.12 REMVIP-11055 - Se borra el motivo "Oferta aprobada" si ha pasado las tareas ''T017_ResolucionCES'',''T015_ElevarASancion''. Está ocultando inclusive si la oferta se anula
+--##      0.13 REMVIP-12146 - Nuevos estados para no ocultar por oferta aprobada
 --##########################################
 --*/
 
@@ -176,7 +177,7 @@ create or replace PROCEDURE SP_MOTIVO_OCULTACION (pACT_ID IN NUMBER
                                     JOIN '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.OFR_ID = OFR.OFR_ID AND ECO.BORRADO = 0
                                     LEFT JOIN '||V_ESQUEMA||'.DD_MTO_MOTIVOS_OCULTACION MTO ON MTO.DD_MTO_CODIGO = ''18'' AND MTO.BORRADO = 0 /*Aprobado*/
                                     JOIN '||V_ESQUEMA||'.DD_EEB_ESTADO_EXPEDIENTE_BC EEB ON EEB.DD_EEB_ID = ECO.DD_EEB_ID
-                                    WHERE EEB.DD_EEB_CODIGO NOT IN (''001'',''002'',''022'',''030'',''037'')
+                                    WHERE EEB.DD_EEB_CODIGO NOT IN (''001'',''002'',''022'',''030'',''037'', ''023'', ''050'', ''028'')
                                     AND ACT.ACT_ID ='||pACT_ID||'
                             UNION
                           SELECT APU.ACT_ID

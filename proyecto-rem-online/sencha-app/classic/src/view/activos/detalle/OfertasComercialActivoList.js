@@ -279,6 +279,11 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		            text: HreRem.i18n('fieldlabel.estado.deposito'),
 		            flex: 1,
 		            hidden: false
+		        },
+		        {
+		            dataIndex: 'ordenGanador',
+		            text: HreRem.i18n('PruebaOrdenGanador'),
+		            flex: 1
 		        }
 		        
 		        
@@ -544,19 +549,30 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 				}
 			} 
 			
-			if(activoOfertasConcurrencia && context.rowIdx != 0) {
-				Ext.Msg.show({
-				   title: HreRem.i18n('title.confirmar.oferta.aceptacion'),
-				   msg: HreRem.i18n('msg.desea.aceptar.oferta.concurrencia'),
-				   buttons: Ext.MessageBox.YESNO,
-				   fn: function(buttonId) {
-				        if (buttonId == 'yes') {
-				        	me.decisionTramitarOferta(editor, context);
-				        } else {
-							me.getStore().load(); 	
-						}
+			if(activoOfertasConcurrencia) {
+				var items = this.store.data.items;
+				var ordenGanador = context.record.data.ordenGanador;
+				var esganadora = true;
+				for( var i = 0; i < items; i++){
+					if(ordenGanador > items[i].data.ordenGanador){
+						esganadora = false;
+						break;
 					}
-				});	
+				}
+				if(!esganadora){
+					Ext.Msg.show({
+					   title: HreRem.i18n('title.confirmar.oferta.aceptacion'),
+					   msg: HreRem.i18n('msg.desea.aceptar.oferta.concurrencia'),
+					   buttons: Ext.MessageBox.YESNO,
+					   fn: function(buttonId) {
+					        if (buttonId == 'yes') {
+					        	me.decisionTramitarOferta(editor, context);
+					        } else {
+								me.getStore().load(); 	
+							}
+						}
+					});	
+				}
 			} else {
 				me.decisionTramitarOferta(editor, context);
 			}

@@ -2104,10 +2104,10 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		HQLBuilder.montaAppendWhere(hb," exists (select 1 from ActivoAgrupacionActivo aga where aga.agrupacion.numAgrupRem = #PARAM# and vgrid.id = aga.activo.id) ", 
 				new String[] {"aga.agrupacion.numAgrupRem"},new Object[] {dto.getNumAgrupacion()},"#PARAM#", false);
 		
-		HQLBuilder.montaAppendWhere(hb," exists (select 1 from ActivoCatastro cat where upper(cat.catastro.refCatastral) like '%'||#PARAM#||'%' and vgrid.id = cat.activo.id) or exists (select 1 from ActivoCatastro cat where upper(cat.refCatastral) like '%'||#PARAM#||'%' and vgrid.id = cat.activo.id) ",
-					new String[] {"cat.catastro.refCatastral","cat.refCatastral"},
-					new Object[] {dto.getRefCatastral(),dto.getRefCatastral()},
-					"#PARAM#",true);			
+		HQLBuilder.montaAppendWhere(hb," exists (select 1 from ActivoCatastro cat where cat.catastro.refCatastral = #PARAM# and vgrid.id = cat.activo.id) or exists (select 1 from ActivoCatastro cat where cat.refCatastral = #PARAM# and vgrid.id = cat.activo.id) ",
+				new String[] {"cat.catastro.refCatastral","cat.refCatastral"},
+				new Object[] {dto.getRefCatastral(),dto.getRefCatastral()},
+				"#PARAM#",true);
 		
 		if (dto.getNumActivo() != null && StringUtils.isNumeric(dto.getNumActivo()))
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.numActivo", Long.valueOf(dto.getNumActivo()));						

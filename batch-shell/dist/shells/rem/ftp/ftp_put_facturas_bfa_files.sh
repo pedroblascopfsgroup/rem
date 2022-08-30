@@ -2,7 +2,7 @@ cd ${DIR_SALIDA}
 
 echo "Inicio de transferencia ficheros RUFACTUCP_BFA_$1.txt / RUFACTUSP_BFA_$1.txt"
 
-lftp -u pfs,SwQdLRyFE8A5 sftp://192.168.126.7 <<EOF
+lftp -u pfs,SwQdLRyFE8A5 sftp://intercambio2.haya.es <<EOF
 	
 	cd /Archivos/REM/PFSToHaya/BFA
   	mput ${DIR_SALIDA}RUFACTUCP_BFA_$1.txt

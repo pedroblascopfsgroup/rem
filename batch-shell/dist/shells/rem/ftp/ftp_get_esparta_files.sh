@@ -1,7 +1,7 @@
 cd $DIR_INPUT_AUX
 rm -f DELTA.csv
 
-lftp -u pfs,SwQdLRyFE8A5 sftp://192.168.126.7 <<EOF
+lftp -u pfs,SwQdLRyFE8A5 sftp://intercambio2.haya.es <<EOF
 cd /Archivos/REM/HayaToPFS
 mget DELTA.csv
 bye
@@ -11,7 +11,7 @@ check_integrity_1=`md5sum DELTA.csv`
 rm -f DELTA.csv
 sleep 30
 
-lftp -u pfs,SwQdLRyFE8A5 sftp://192.168.126.7 <<EOF
+lftp -u pfs,SwQdLRyFE8A5 sftp://intercambio2.haya.es <<EOF
 cd /Archivos/REM/HayaToPFS
 mget DELTA.csv
 bye

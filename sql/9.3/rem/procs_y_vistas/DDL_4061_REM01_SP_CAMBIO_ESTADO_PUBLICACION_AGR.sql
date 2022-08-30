@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210721
+--## FECHA_CREACION=20220822
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-14686
@@ -23,6 +23,7 @@
 --##		1.1 José A. Gigante - HREOS-8998-9055-9265 - Historificación de cambios al cambiar el canal de publicación
 --##		1.3 Carles Molins - REMVIP-5994
 --##		1.4 Daniel Algaba - HREOS-14686 - Añadir nuevas agrupaciones Restringida Alquiler y Restringida OB-REM
+--##		1.5 IRC - REMVIP-12118 - Insertar DD_POR_ID de la APU en historico alquileres por problema de transparencia
 --##########################################
 --*/
 
@@ -1389,6 +1390,7 @@ ELSE
                                                   ,AHP_CHECK_OCULTAR_A,AHP_CHECK_OCULTAR_PRECIO_A
                                                   ,AHP_CHECK_PUB_SIN_PRECIO_A
                                                   ,AHP_FECHA_INI_ALQUILER
+                                                  ,DD_POR_ID
                                                   ,VERSION
                                                   ,USUARIOCREAR,FECHACREAR
                                                   ,BORRADO
@@ -1407,6 +1409,7 @@ ELSE
                                                   ,APU_CHECK_OCULTAR_A,APU_CHECK_OCULTAR_PRECIO_A
                                                   ,APU_CHECK_PUB_SIN_PRECIO_A
                                                   ,SYSDATE
+                                                  ,DD_POR_ID
                                                   ,VERSION
                                                   ,'''||pUSUARIOMODIFICAR||''' USUARIOCREAR, SYSDATE FECHACREAR
                                                   ,0 BORRADO

@@ -4750,6 +4750,7 @@ public class ActivoAdapter {
 				if (DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION.equals(codigoEstado)) {
 					ofertaApi.llamadaPbc(oferta, DDTipoOfertaAcciones.ACCION_SOLICITUD_DOC_MINIMA);
 				}
+				ofertaApi.setEstadoOfertaBC(oferta, null);
 			}
 
 		} catch (Exception ex) {
@@ -4763,19 +4764,22 @@ public class ActivoAdapter {
 	public String setEstadoOfertaByEsNecesarioDeposito(DtoOfertasFilter dto, String codigoEstado, Oferta oferta) {
 		DDEstadoOferta estadoOferta;
 		DDCartera cartera = oferta.getActivoPrincipal().getCartera();
-		if(cartera != null && !DDCartera.isCarteraCaixaBank(cartera)) {
-			if(depositoApi.esNecesarioDeposito(oferta)) {
-				codigoEstado = DDEstadoOferta.CODIGO_PDTE_DEPOSITO;	
+		if(cartera != null) {
+			if (!DDCartera.isCarteraCaixaBank(cartera)){
+				if(depositoApi.esNecesarioDeposito(oferta)) {
+					codigoEstado = DDEstadoOferta.CODIGO_PDTE_DEPOSITO;
+				}else {
+					codigoEstado = DDEstadoOferta.CODIGO_PENDIENTE;
+				}
+				estadoOferta = (DDEstadoOferta) utilDiccionarioApi
+						.dameValorDiccionarioByCod(DDEstadoOferta.class, codigoEstado);
+				oferta.setEstadoOferta(estadoOferta);
+				if (DDEstadoOferta.CODIGO_PENDIENTE.equals(oferta.getEstadoOferta().getCodigo()) && oferta.getFechaOfertaPendiente() == null){
+					oferta.setFechaOfertaPendiente(new Date());
+				}
 			}else {
-				codigoEstado = DDEstadoOferta.CODIGO_PENDIENTE;
+				ofertaApi.setEstadoOfertaBC(oferta, null);
 			}
-			estadoOferta = (DDEstadoOferta) utilDiccionarioApi
-					.dameValorDiccionarioByCod(DDEstadoOferta.class, codigoEstado);
-			oferta.setEstadoOferta(estadoOferta);
-			if (DDEstadoOferta.CODIGO_PENDIENTE.equals(oferta.getEstadoOferta().getCodigo()) && oferta.getFechaOfertaPendiente() == null){
-				oferta.setFechaOfertaPendiente(new Date());
-			}
-			ofertaApi.setEstadoOfertaBC(oferta, null);
 		}
 		return codigoEstado;
 	}

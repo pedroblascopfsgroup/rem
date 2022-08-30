@@ -3264,6 +3264,8 @@ public class AgrupacionAdapter {
 					ofertaApi.llamadaPbc(oferta, DDTipoOfertaAcciones.ACCION_SOLICITUD_DOC_MINIMA);
 				}
 
+				ofertaApi.setEstadoOfertaBC(oferta, null);
+
 			}
 			
 			ofertaApi.llamaReplicarCambioEstado(ofertaNueva.getId(), ofertaNueva.getEstadoOferta().getCodigo());

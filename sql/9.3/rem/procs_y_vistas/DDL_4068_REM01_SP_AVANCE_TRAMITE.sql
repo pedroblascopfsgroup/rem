@@ -1,7 +1,7 @@
 --/*
 --#########################################
 --## AUTOR=DAP
---## FECHA_CREACION=20220309
+--## FECHA_CREACION=20220728
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=2.0.14
 --## INCIDENCIA_LINK=REMVIP-5828
@@ -16,6 +16,7 @@
 --##	      0.3 Se modifica para avanzar tareas de trámite comercial de Apple ( T017.. )
 --##        0.4 REMVIP-9773 - IVAN REPISO - ADAPTAR ASIGNACIÓN GFORM COMO REMVIP-8239
 --##        0.5 REMVIP-11103 - Juan José Sanjuan - Actualizar asignaciones de usuarios
+--##        0.6 REMVIP-12148 - IVAN REPISO - No asigna en T013_DocumentosPostVenta
 --#########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -191,7 +192,7 @@ BEGIN
           USING (
               SELECT DISTINCT MIG.OFR_ID, GEE.USU_ID
               FROM '||V_ESQUEMA||'.MIG2_TRAMITES_OFERTAS_REP MIG
-              JOIN '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP ON TAP.TAP_ID = MIG.TAP_ID AND TAP.TAP_CODIGO IN (''T013_PosicionamientoYFirma'', ''T017_ObtencionContratoReserva'', ''T017_PosicionamientoYFirma'', ''T017_DocsPosVenta'' )
+              JOIN '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP ON TAP.TAP_ID = MIG.TAP_ID AND TAP.TAP_CODIGO IN (''T013_PosicionamientoYFirma'', ''T017_ObtencionContratoReserva'', ''T017_PosicionamientoYFirma'', ''T017_DocsPosVenta'', ''T013_DocumentosPostVenta'' )
               JOIN '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.OFR_ID = MIG.OFR_ID
               JOIN '||V_ESQUEMA||'.GCO_GESTOR_ADD_ECO GCO ON GCO.ECO_ID = ECO.ECO_ID
               JOIN '||V_ESQUEMA||'.GEE_GESTOR_ENTIDAD GEE ON GEE.GEE_ID = GCO.GEE_ID
@@ -210,7 +211,7 @@ BEGIN
           ON (T1.ACT_ID = T2.ACT_ID AND T2.RN = 1)
           WHEN MATCHED THEN UPDATE SET
             T1.USU_ID = T2.USU_ID
-          WHERE T1.USU_ID IS NULL AND T1.TAP_ID IN (SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO IN (''T013_PosicionamientoYFirma'', ''T017_ObtencionContratoReserva'', ''T017_PosicionamientoYFirma'', ''T017_DocsPosVenta''  ))';
+          WHERE T1.USU_ID IS NULL AND T1.TAP_ID IN (SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO IN (''T013_PosicionamientoYFirma'', ''T017_ObtencionContratoReserva'', ''T017_PosicionamientoYFirma'', ''T017_DocsPosVenta'', ''T013_DocumentosPostVenta''  ))';
         EXECUTE IMMEDIATE V_MSQL;
         V_UPDATE := V_UPDATE + SQL%ROWCOUNT;
         PL_OUTPUT := PL_OUTPUT ||chr(10) || '   [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' actualizada (Gestoría comercialización). '||V_UPDATE||' Filas.';
@@ -373,6 +374,28 @@ BEGIN
         V_UPDATE := V_UPDATE + SQL%ROWCOUNT;
         PL_OUTPUT := PL_OUTPUT ||chr(10) || '   [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' actualizada (Supervisor formalización). '||V_UPDATE||' Filas.';
 
+        V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.MIG2_TRAMITES_OFERTAS_REP T1
+          USING (
+              SELECT DISTINCT MIG.OFR_ID,
+              CASE WHEN CHECK_FORZADO_CAJAMAR IS NOT NULL
+                    THEN CHECK_FORZADO_CAJAMAR
+                  WHEN CHECK_FORM_CAJAMAR IS NOT NULL
+                    THEN CHECK_FORM_CAJAMAR
+                  ELSE 0 END AS CHECK_CAJAMAR
+              FROM '||V_ESQUEMA||'.MIG2_TRAMITES_OFERTAS_REP MIG
+              JOIN '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP ON TAP.TAP_ID = MIG.TAP_ID AND TAP.TAP_CODIGO IN ( ''T013_DocumentosPostVenta'',''T013_ResultadoPBC'',''T013_PosicionamientoYFirma'')
+              JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_ID = MIG.ACT_ID AND ACT.BORRADO = 0
+              JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID AND CRA.BORRADO = 0
+              JOIN '||V_ESQUEMA||'.OFR_OFERTAS OFR ON OFR.OFR_ID = MIG.OFR_ID
+              WHERE CRA.DD_CRA_CODIGO = ''01''
+            ) T2
+          ON (T1.OFR_ID = T2.OFR_ID AND T2.CHECK_CAJAMAR = 1)
+          WHEN MATCHED THEN UPDATE SET
+              T1.USU_ID = (SELECT USU_ID FROM REMMASTER.USU_USUARIOS WHERE USU_USERNAME = ''gestformcajamar'')';
+        EXECUTE IMMEDIATE V_MSQL;
+        V_UPDATE := SQL%ROWCOUNT;
+
+        PL_OUTPUT := PL_OUTPUT ||chr(10) || '   [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' actualizada (gestformcajamar). '||V_UPDATE||' Filas.';
 
   --****
 

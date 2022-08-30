@@ -34,6 +34,7 @@ import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.message.MessageService;
+import es.capgemini.devon.security.SecurityUtils;
 //import es.capgemini.devon.utils.PropertyUtils;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
@@ -2240,6 +2241,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 			GastoProveedor gasto = findOne(idGasto);
 			GastoInfoContabilidad contabilidadGasto = gasto.getGastoInfoContabilidad();
+			GastoGestion gestionGasto = gasto.getGastoGestion();
 
 			DtoInfoContabilidadGasto dtoIni = infoContabilidadToDtoInfoContabilidad(gasto);
 
@@ -2300,7 +2302,17 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					DDTipoComisionado tipoComision = genericDao.get(DDTipoComisionado.class, filtro);
 					contabilidadGasto.setTipoComisionadoHre(tipoComision);
 				}
-
+				
+				if (dtoContabilidadGasto.getFechaDevengoEspecial() != null && gestionGasto != null) {
+					gestionGasto.setGestionGastoClientePagador(null);
+					gestionGasto.setGestionGastoClienteInformador(null);
+					
+					gestionGasto.getAuditoria().setFechaModificar(new Date());
+					gestionGasto.getAuditoria().setUsuarioModificar(SecurityUtils.getCurrentUser().getUsername());
+					gasto.setGastoGestion(gestionGasto);
+				}
+				contabilidadGasto.getAuditoria().setFechaModificar(new Date());
+				contabilidadGasto.getAuditoria().setUsuarioModificar(SecurityUtils.getCurrentUser().getUsername());
 				gasto.setGastoInfoContabilidad(contabilidadGasto);
 			}
 
@@ -2317,7 +2329,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				updaterStateApi.updaterStates(gasto, null);
 			}
 
-			genericDao.update(GastoProveedor.class, gasto);
+			genericDao.save(GastoProveedor.class, gasto);
 
 			return true;
 

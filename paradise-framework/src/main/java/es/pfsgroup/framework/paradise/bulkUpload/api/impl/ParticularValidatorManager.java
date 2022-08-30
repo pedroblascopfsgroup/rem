@@ -9532,6 +9532,9 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		
 		return !"0".equals(resultado);
 	}
+
+	
+	@Override
 	public Boolean isActivoMaccMarina(String numActivo) {
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("numActivo", numActivo);
@@ -9617,6 +9620,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return !"0".equals(resultado);
 	}
 	
+	@Override
 	public Boolean isFasePublicacionVySubfaseExcluidoPublicacionEstrategiaCliente(String numActivo) {
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("numActivo", numActivo);

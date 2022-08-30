@@ -127,8 +127,11 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
                 return false;
             }
         }
+        if (ofr != null){
+            ofr.setEstadoOferta(genericDao.get(DDEstadoOferta.class,genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_RECHAZADA)));
+        }
         ofertaApi.setEstadoOfertaBC(ofr, null);
-        return false;
+        return true;
     }
 
     @Override
@@ -695,10 +698,6 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
         dataHolder.setIdTarea(Long.parseLong(dto.get("idTarea").toString()));
         dataHolder.setPreviousStateExpedienteBcCod(expedienteComercialApi.getEstadoExpedienteBcFromIdTarea(dataHolder.getIdTarea()));
         boolean success = adapter.save(createRequestAvanzarTareaGenerico(dto));
-
-        if(success){
-            replicacionOfertasApi.callReplicateOferta(dataHolder, success);
-        }
 
         return success;
     }

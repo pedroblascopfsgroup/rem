@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20211125
+--## FECHA_CREACION=20220816
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-16502
@@ -15,6 +15,7 @@
 --##        0.3 Se cambia la cartera por la nuevo Titulizada - [HREOS-15634] - Daniel Algaba
 --##        0.4 Se refactoriza la consulta para que solo mire si son de la cartera Titulizada y están en perímetro - [HREOS-15969] - Daniel Algaba
 --##        0.5 Se quita la corrección de comas en decimales - [HREOS-16362] - Daniel Algaba
+--##        0.6 Se añade X en campo venta para indicar la venta - [REMVIP-12265] - IRC
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -56,6 +57,7 @@ BEGIN
                      , REPLACE(VENTA.IMP_VENTA,'','',''.'') IMP_VENTA
                      , VENTA.NIF_COMPRADOR NIF_COMPRADOR
                      , NULL INGRESOS_COMPRADOR
+                     , ''X'' VENTA
                      FROM '|| V_ESQUEMA ||'.ACT_ACTIVO ACT
                      JOIN '|| V_ESQUEMA ||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID AND DD_CRA_CODIGO = ''18''
                      JOIN '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO PAC ON PAC.ACT_ID = ACT.ACT_ID AND PAC.BORRADO = 0
@@ -81,7 +83,8 @@ BEGIN
                      RBC_TIT.FEC_VENTA = AUX.FEC_VENTA
                      , RBC_TIT.IMP_VENTA = AUX.IMP_VENTA
                      , RBC_TIT.NIF_COMPRADOR = AUX.NIF_COMPRADOR
-                     , RBC_TIT.INGRESOS_COMPRADOR = AUX.INGRESOS_COMPRADOR';
+                     , RBC_TIT.INGRESOS_COMPRADOR = AUX.INGRESOS_COMPRADOR
+                     , RBC_TIT.VENTA = AUX.VENTA';
 
    EXECUTE IMMEDIATE V_MSQL;
    

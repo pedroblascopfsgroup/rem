@@ -1,26 +1,14 @@
 package es.pfsgroup.plugin.rem.model.dd;
 
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.persistence.Version;
-
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Where;
-
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 import es.pfsgroup.commons.utils.Checks;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Where;
+
+import javax.persistence.*;
 
 /**
  * Modelo que gestiona el diccionario de subcarteras.
@@ -83,9 +71,7 @@ public class DDSubcartera implements Auditable, Dictionary {
 	public static final String CODIGO_TITULIZADA_EDT = "162";
 	public static final String CODIGO_TITULIZADA_TDA = "163";
 	public static final String CODIGO_MACC_MARINA = "71";
-	
-	
-	
+	public static final String CODIGO_CIBE = "164";
 
 	@Id
 	@Column(name = "DD_SCR_ID")
@@ -186,6 +172,30 @@ public class DDSubcartera implements Auditable, Dictionary {
 			is = true;
 		}
 		return is;
+	}
+
+	public static boolean isSubcarteraApple (DDSubcartera subcartera) {
+		boolean isSubcartera = false;
+		if(subcartera != null && (CODIGO_APPLE_INMOBILIARIO.equals(subcartera.getCodigo()))) {
+			isSubcartera = true;
+		}
+		return isSubcartera;
+	}
+
+	public static boolean isSubcarteraDivarian (DDSubcartera subcartera) {
+		boolean isSubcartera = false;
+		if(subcartera != null && (CODIGO_DIVARIAN_ARROW_INMB.equals(subcartera.getCodigo())) || CODIGO_DIVARIAN_REMAINING_INMB.equals(subcartera.getCodigo())) {
+			isSubcartera = true;
+		}
+		return isSubcartera;
+	}
+
+	public static boolean isSubcarteraJaguar (DDSubcartera subcartera) {
+		boolean isSubcartera = false;
+		if(subcartera != null && (CODIGO_JAGUAR.equals(subcartera.getCodigo()))) {
+			isSubcartera = true;
+		}
+		return isSubcartera;
 	}
 
 	public static boolean isSubcarteraDivarianArrowInmob(DDSubcartera subcartera) {

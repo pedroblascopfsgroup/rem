@@ -1,7 +1,7 @@
 --/* 
 --##########################################
 --## AUTOR=Carles Molins
---## FECHA_CREACION=20200601
+--## FECHA_CREACION=20220822
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-5994
@@ -24,6 +24,7 @@
 --##		1.2 Vicente Martinez - HREOS-9509 - Añadir adecuacion en proceso
 --##		1.3 Cristian Montoya - REMVIP-6642 - Añadir adecuacion Adecuado - incidentado
 --##		1.4 Carles Molins - REMVIP-5994
+--##		1.5 IRC - REMVIP-12118 - Insertar DD_POR_ID de la APU en historico alquileres por problema de transparencia
 --##########################################
 --*/
 
@@ -1247,6 +1248,7 @@ END IF;
 		                                          ,AHP_CHECK_OCULTAR_A,AHP_CHECK_OCULTAR_PRECIO_A
 		                                          ,AHP_CHECK_PUB_SIN_PRECIO_A
 		                                          ,AHP_FECHA_INI_ALQUILER
+                                                  ,DD_POR_ID
 		                                          ,VERSION
 		                                          ,USUARIOCREAR,FECHACREAR
 		                                          ,BORRADO
@@ -1265,6 +1267,7 @@ END IF;
 		                                          ,APU_CHECK_OCULTAR_A,APU_CHECK_OCULTAR_PRECIO_A
 		                                          ,APU_CHECK_PUB_SIN_PRECIO_A
 		                                          ,SYSDATE
+                                                  ,DD_POR_ID
 		                                          ,VERSION
 		                                          ,'''||pUSUARIOMODIFICAR||''' USUARIOCREAR, SYSDATE FECHACREAR
 												  ,0 BORRADO

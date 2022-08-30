@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20220610
+--## FECHA_CREACION=20220722
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-17266
@@ -12,6 +12,7 @@
 --## VERSIONES:
 --##        0.1 Versión inicial - [HREOS-17266] - Alejandra García
 --##        0.2 Añadir a la retención los gastos con propietario BH anteriores a 2018 (fecha emisión) - [REMVIP-11767] - Alejandra García
+--##        0.3 Cambiar la fecha de consulta para gastos anteriores a 2018 (fecha alta REM) y añadir auditoria - [REMVIP-12109] - Ivan Repiso
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -114,7 +115,7 @@ V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.GASTOS_RETENIDOS_BC (GPV_ID)
                 OR                
 					(PRO.PRO_SOCIEDAD_PAGADORA = ''3148''
 						AND
-					 TRUNC(GPV.GPV_FECHA_EMISION) < TO_DATE(''01/01/18'',''dd/MM/yy'')
+					 TRUNC(GGE.GGE_FECHA_ALTA) < TO_DATE(''01/01/18'',''dd/MM/yy'')
 					)
 			)	
 				
@@ -281,7 +282,7 @@ WHERE GPV.BORRADO = 0
 		OR                
 			(PRO.PRO_SOCIEDAD_PAGADORA = ''3148''
 				AND
-			 TRUNC(GPV.GPV_FECHA_EMISION) < TO_DATE(''01/01/18'',''dd/MM/yy'')
+			 TRUNC(GGE.GGE_FECHA_ALTA) < TO_DATE(''01/01/18'',''dd/MM/yy'')
 			)
 	)	
 		';
@@ -297,7 +298,9 @@ USING (
 ) T2
 ON (T1.GPV_ID = T2.GPV_ID)
 WHEN MATCHED THEN
-    UPDATE SET T1.DD_EGA_ID = T2.DD_EGA_ID';
+    UPDATE SET T1.DD_EGA_ID = T2.DD_EGA_ID,
+	T1.USUARIOMODIFICAR = ''SP_RETENCION_GASTOS_BC'',
+	T1.FECHAMODIFICAR = SYSDATE';
 EXECUTE IMMEDIATE V_MSQL;
 GASTOS_RETENIDOS := SQL%ROWCOUNT;
 

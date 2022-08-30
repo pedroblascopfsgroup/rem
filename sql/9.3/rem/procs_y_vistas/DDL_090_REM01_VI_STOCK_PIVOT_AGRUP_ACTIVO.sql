@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210720
+--## FECHA_CREACION=20220802
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-14686
@@ -13,6 +13,7 @@
 --##        0.1 Versión inicial ANAHUAC DE VICENTE
 --##		0.2 Versión Adrián Molina Garrido
 --##		0.3 Se añaden las nuevas agrupaciones Restringida Alquiler y Restringida OB-REM
+--##		0.4 [REMVIP-12176] Se envia a webcom activos en agrupaciones borradas (borrado en la AGA)
 --##########################################
 --*/
 
@@ -75,7 +76,7 @@ BEGIN/*versión 0.3*/
 		      TAG.DD_TAG_CODIGO,
 		      DECODE (AGR.AGR_ACT_PRINCIPAL, AGA.ACT_ID, 1, 0) AS PRINCIPAL
 		    FROM '|| V_ESQUEMA ||'.ACT_AGR_AGRUPACION AGR
-		    JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.AGR_ID = AGR.AGR_ID
+		    JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.AGR_ID = AGR.AGR_ID AND AGA.BORRADO = 0
 		    JOIN DD_TAG_TIPO_AGRUPACION TAG ON (TAG.DD_TAG_ID = AGR.DD_TAG_ID AND TAG.DD_TAG_CODIGO IN (''01'',''02'',''13'',''17'',''18''))
 		    WHERE AGR.BORRADO = 0 AND AGR.AGR_FECHA_BAJA IS NULL
 		) PIVOT (MAX(AGR_NUM_AGRUP_REM) AS NUM_REM, MAX(PRINCIPAL) AS PRINCIPAL FOR DD_TAG_CODIGO IN (''01'' OBRA_NUEVA,''02'' LOTE,''13'' ASISTIDA,''17'' LOTE_ALQUILER,''18'' LOTE_OBREM))';

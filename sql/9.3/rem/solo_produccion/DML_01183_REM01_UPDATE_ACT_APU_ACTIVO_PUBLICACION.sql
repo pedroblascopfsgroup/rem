@@ -277,7 +277,7 @@ BEGIN
 
     END LOOP;
 
-    ROLLBACK;
+    COMMIT;
 
     DBMS_OUTPUT.PUT_LINE('[FIN]');
  

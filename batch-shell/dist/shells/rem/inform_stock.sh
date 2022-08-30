@@ -7,7 +7,7 @@ cd $DIR_SALIDA
 
 if [[ -f $fichero ]] && [[ $date ]]; then
 	echo "Subiendo fichero $fichero al FTP..."
-	lftp -u pfs,SwQdLRyFE8A5 sftp://192.168.126.7 <<EOF
+	lftp -u pfs,SwQdLRyFE8A5 sftp://intercambio2.haya.es <<EOF
 	cd "/Archivos/REM/HayaToPFS/BankiaToREM/"
 	mput $fichero
 	bye

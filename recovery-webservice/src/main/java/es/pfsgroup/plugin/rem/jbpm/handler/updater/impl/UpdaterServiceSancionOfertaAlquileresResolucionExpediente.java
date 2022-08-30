@@ -85,12 +85,7 @@ public class UpdaterServiceSancionOfertaAlquileresResolucionExpediente implement
 					notificatorOfertaManager.enviarMailAprobacion(oferta);
 					
 					//comprobamos si existen más ofertas para ese activo en estado pendiente. Si es así, las pasamos a congeladas
-					List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());
-					for (Oferta ofertaB : listaOfertas) {
-						if (!ofertaB.getId().equals(oferta.getId()) && !DDEstadoOferta.CODIGO_RECHAZADA.equals(ofertaB.getEstadoOferta().getCodigo())) {
-							ofertaApi.congelarOferta(ofertaB);
-						}
-					}
+					ofertaApi.congelarOfertasAndReplicate(oferta.getActivoPrincipal(), oferta);
 
 				}else if(DDResolucionComite.CODIGO_RECHAZA.equals(valor.getValor())) {
 					estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.ANULADO));

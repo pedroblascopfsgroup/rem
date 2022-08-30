@@ -1,7 +1,7 @@
 cd $DIR_INPUT_AUX
 rm -f $2_$1.*
 
-lftp -u pfs,SwQdLRyFE8A5 sftp://192.168.126.7 <<EOF
+lftp -u pfs,SwQdLRyFE8A5 sftp://intercambio2.haya.es <<EOF
 cd /Archivos/REM/HayaToPFS/$1
 mget $2_$1.*
 bye
@@ -11,7 +11,7 @@ check_integrity_1=`md5sum $2_$1.dat`
 rm -f $2_$1.*
 sleep 30
 
-lftp -u pfs,SwQdLRyFE8A5 sftp://192.168.126.7 <<EOF
+lftp -u pfs,SwQdLRyFE8A5 sftp://intercambio2.haya.es <<EOF
 cd /Archivos/REM/HayaToPFS/$1
 mget $2_$1.*
 bye

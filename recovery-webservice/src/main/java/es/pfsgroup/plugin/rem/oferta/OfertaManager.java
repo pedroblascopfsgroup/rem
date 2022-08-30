@@ -1827,13 +1827,14 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					ofertaCaixa.setOferta(oferta);
 					ofertaCaixa.setCanalDistribucionBc(calcularCanalDistribucionBcOfrCaixa(oferta, oferta.getTipoOferta()));
 					ofertaCaixa.setAuditoria(Auditoria.getNewInstance());
+					oferta.setOfertaCaixa(ofertaCaixa);
 
 					genericDao.save(OfertaCaixa.class,ofertaCaixa);
 				}else {
 					ofertaCaixa = oferta.getOfertaCaixa();
 				}
-				
-				setEstadoOfertaBC(oferta, ofertaCaixa);
+
+				activoAdapter.setEstadoOfertaByEsNecesarioDeposito(null, oferta.getEstadoOferta() != null ? oferta.getEstadoOferta().getCodigo() : null, oferta);
 
 				if(DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION.equals(oferta.getEstadoOferta().getCodigo())){
 					llamadaPbc(oferta, DDTipoOfertaAcciones.ACCION_SOLICITUD_DOC_MINIMA);
@@ -2690,6 +2691,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 
 			OfertaCaixa ofertaCaixa = genericDao.get(OfertaCaixa.class, genericDao.createFilter(FilterType.EQUALS, "oferta", oferta));
+
+			if (ofertaCaixa != null && oferta.getEstadoOferta() != null && DDEstadoOferta.isCaducada(oferta.getEstadoOferta())){
+					ofertaCaixa.setEstadoOfertaBc(genericDao.get(DDEstadoOfertaBC.class,genericDao.createFilter(FilterType.EQUALS,"codigo",DDEstadoOfertaBC.CODIGO_CANCELADA)));
+					genericDao.save(OfertaCaixa.class,ofertaCaixa);
+			}
 
 			if(DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION.equals(oferta.getEstadoOferta().getCodigo()) && ofertaCaixa != null){
 				llamadaPbc(oferta, DDTipoOfertaAcciones.ACCION_SOLICITUD_DOC_MINIMA);

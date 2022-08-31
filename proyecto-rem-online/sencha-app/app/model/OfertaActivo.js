@@ -112,8 +112,12 @@ Ext.define('HreRem.model.OfertaActivo', {
 		{
     		name: 'ofertaCreadaConcurrencia',
 			type: 'boolean'
+    	},
+		{
+    		name: 'ofertaEnConcurrenciaActiva',
+			type: 'boolean'
     	}
-
+    	
     ],
     
     proxy: {

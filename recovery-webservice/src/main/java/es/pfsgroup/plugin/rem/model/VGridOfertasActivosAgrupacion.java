@@ -96,6 +96,9 @@ public class VGridOfertasActivosAgrupacion implements Serializable {
 	
 	@Column(name="OFERTA_CONCURRENCIA")
 	private Boolean ofertaCreadaConcurrencia;
+	
+	@Column(name="OFERTA_CONCURRENCIA_ACTIVA")
+	private Boolean ofertaEnConcurrenciaActiva;
 
 	public Long getId() {
 		return id;
@@ -311,6 +314,14 @@ public class VGridOfertasActivosAgrupacion implements Serializable {
 
 	public void setOfertaCreadaConcurrencia(Boolean ofertaCreadaConcurrencia) {
 		this.ofertaCreadaConcurrencia = ofertaCreadaConcurrencia;
+	}
+
+	public Boolean getOfertaEnConcurrenciaActiva() {
+		return ofertaEnConcurrenciaActiva;
+	}
+
+	public void setOfertaEnConcurrenciaActiva(Boolean ofertaEnConcurrenciaActiva) {
+		this.ofertaEnConcurrenciaActiva = ofertaEnConcurrenciaActiva;
 	}
 	
 }

@@ -86,6 +86,10 @@ Ext.define('HreRem.model.OfertasAgrupacion', {
 		{
     		name: 'ofertaCreadaConcurrencia',
 			type: 'boolean'
+    	},
+		{
+    		name: 'ofertaEnConcurrenciaActiva',
+			type: 'boolean'
     	}
     		
     ],

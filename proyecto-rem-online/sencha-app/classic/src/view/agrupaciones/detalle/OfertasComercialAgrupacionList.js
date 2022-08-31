@@ -25,6 +25,7 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
         var me = this;
 		var agrupacion = me.lookupController().getViewModel().get('agrupacionficha');
 		var enConcurrencia = me.lookupController().getViewModel().getData().agrupacionficha.get('enConcurrencia');
+		var userPefSuper = $AU.userIsRol(CONST.PERFILES['HAYASUPER']);
         
         me.topBar = $AU.userHasFunction(['EDITAR_TAB_COMERCIAL_AGRUPACION']);
         
@@ -70,7 +71,13 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 		            dataIndex: 'importeOferta',
 		            text: HreRem.i18n('header.oferta.importeOferta'),
 		            flex: 1,
-			        hidden: enConcurrencia
+		            renderer: function(value, metadata, record) {
+			        	if (!userPefSuper && enConcurrencia && record.get("ofertaEnConcurrenciaActiva")) {
+			        		return "*****";
+			        	} else {
+			        		return  value;
+			        	}
+			        }
 		        },
 		        {
 		            dataIndex: 'estadoOferta',

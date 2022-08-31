@@ -101,7 +101,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		            dataIndex: 'importeOferta',
 		            flex: 1,
 			        renderer: function(value, metadata, record) {
-			        	if (!userPefSuper && enConcurrencia) {
+			        	if (!userPefSuper && enConcurrencia && record.get("ofertaEnConcurrenciaActiva")) {
 			        		return "*****";
 			        	} else {
 			        		return  value;

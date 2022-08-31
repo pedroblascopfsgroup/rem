@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Santi Monzó
---## FECHA_CREACION=20220822
+--## AUTOR=Alejandro Valverde
+--## FECHA_CREACION=20220831
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-18574
+--## INCIDENCIA_LINK=HREOS-18638
 --## PRODUCTO=NO
 --## Finalidad: VI_GRID_OFR_CONCURRENCIA
 --##           
@@ -18,6 +18,7 @@
 --##         0.6 Javier Esbri (HREOS-18511) - Añadir campo OFR_CONCURRENCIA
 --##         0.7 Alejandro Valverde (HREOS-18526) - Incidencia datos incorrectos
 --##         0.8 Santi Monzó (HREOS-18574) - Incidencia DIASCONCURRENCIA
+--##         0.9 Alejandro Valverde (HREOS-18638) - Añadir campo OFERTA_CONCURRENCIA_ACTIVA
 --##########################################
 --*/
 
@@ -82,7 +83,11 @@ BEGIN
 		,EEC.DD_EEC_DESCRIPCION
 		,C4C.DD_ECC_CODIGO AS EST_CODIGO_C4C
 		,OFR.FECHA_ENT_CRM_SF
-    ,OFR.OFR_CONCURRENCIA AS OFERTA_CONCURRENCIA
+    	,OFR.OFR_CONCURRENCIA AS OFERTA_CONCURRENCIA
+		,CASE WHEN OFR.CON_ID IS NOT NULL AND CNC.CON_FECHA_INI <= SYSDATE AND CNC.CON_FECHA_FIN >= SYSDATE
+            THEN 1
+            ELSE 0
+        END OFERTA_CONCURRENCIA_ACTIVA
 		FROM '|| V_ESQUEMA ||'.ofr_ofertas ofr
 		INNER JOIN '|| V_ESQUEMA ||'.DD_TOF_TIPOS_OFERTA TOF ON TOF.DD_TOF_ID = OFR.DD_TOF_ID
 		INNER JOIN '|| V_ESQUEMA ||'.DD_EOF_ESTADOS_OFERTA EOF ON EOF.DD_EOF_ID = OFR.DD_EOF_ID

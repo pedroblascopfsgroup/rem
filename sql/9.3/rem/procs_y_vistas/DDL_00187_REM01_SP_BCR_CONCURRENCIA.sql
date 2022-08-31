@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20220829
+--## FECHA_CREACION=20220831
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-18634
@@ -18,6 +18,7 @@
 --##        0.6 Añadir TRUNC a fechas - [HREOS-18572] - Alejandra García
 --##        0.7 Corrección primer merge, para que no se reinserten filas - [HREOS-18572] - Alejandra García
 --##        0.8 Corrección campo IMP_PRECIO_VENTA para que tenga en cuenta el IMP_PRECIO_CAMP_VENTA - [HREOS-18634] - Alejandra García
+--##        0.9 Modifiación fecha fin concurrencia a SYSDATE en la cancelación - [HREOS-18634] - Alejandra García
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -605,7 +606,6 @@ SALIDA := SALIDA ||'[INFO] 3.1 SE CREA UN NUEVO REGISTRO EN LA TABLA CPC_CMB_PER
                   SELECT
                      CON.CON_ID
                      ,ACO.DD_ACO_ID
-                     ,TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''yyyymmdd'') CPC_FECHA_FIN
                   FROM '||V_ESQUEMA||'.AUX_APR_BCR_STOCK AUX
                   JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = AUX.NUM_IDENTIFICATIVO
                      AND ACT.BORRADO = 0
@@ -634,7 +634,7 @@ SALIDA := SALIDA ||'[INFO] 3.1 SE CREA UN NUEVO REGISTRO EN LA TABLA CPC_CMB_PER
                   '||V_ESQUEMA||'.S_CPC_CMB_PERIODO_CONCURRENCIA.NEXTVAL
                   ,T2.CON_ID
                   ,T2.DD_ACO_ID
-                  ,T2.CPC_FECHA_FIN + INTERVAL ''18:00:00'' HOUR TO SECOND
+                  ,SYSDATE
                   ,0
                   ,''apr_alta_assets_from_caixabank''
                   ,SYSDATE
@@ -700,7 +700,6 @@ SALIDA := SALIDA ||'[INFO] 3.3 SE MODIFICA REGISTRO EXISTENTE EN LA TABLA CON_CO
                USING (
                   SELECT
                       CON.CON_ID
-                     ,TO_DATE(AUX.FEC_FIN_CONCURENCIA, ''yyyymmdd'') FEC_FIN_CONCURENCIA
                   FROM '||V_ESQUEMA||'.AUX_APR_BCR_STOCK AUX
                   JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = AUX.NUM_IDENTIFICATIVO
                      AND ACT.BORRADO = 0
@@ -714,7 +713,7 @@ SALIDA := SALIDA ||'[INFO] 3.3 SE MODIFICA REGISTRO EXISTENTE EN LA TABLA CON_CO
                   AND AUX.FEC_INICIO_CONCURENCIA IS NOT NULL AND AUX.FEC_FIN_CONCURENCIA IS NOT NULL
                ) T2 ON(T1.CON_ID = T2.CON_ID)
                WHEN MATCHED THEN UPDATE SET
-                  T1.CON_FECHA_FIN = T2.FEC_FIN_CONCURENCIA + INTERVAL ''18:00:00'' HOUR TO SECOND
+                  T1.CON_FECHA_FIN = SYSDATE
                   , T1.USUARIOMODIFICAR = ''apr_alta_assets_from_caixabank''
                   , T1.FECHAMODIFICAR = SYSDATE';
    EXECUTE IMMEDIATE V_MSQL;

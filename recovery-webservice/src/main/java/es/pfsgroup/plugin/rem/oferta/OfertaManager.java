@@ -1126,19 +1126,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 		}
 		
-		if(filtroConcurrencia != null && activo != null) {
-			filtroConcurrencia = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-
-		}
-		
-		if(filtroConcurrencia != null) {
-			Concurrencia concu = genericDao.get(Concurrencia.class, filtroConcurrencia);
-			if(concu.getFechaFin().before(new Date())) {
-				errorsList.put("concurrencia", RestApi.MSJ_CONCURRENCIA_TERMINADA);
-			}
-		}
-		
-
 		return errorsList;
 	}
 

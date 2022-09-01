@@ -9955,10 +9955,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			errorsList.put("creadaConcurrencia", MSJ_ERROR_NO_CONCURRENCIA);
 		} else if(activoConcurrencia != null && !concurrenciaApi.isActivoEnConcurrencia(activoConcurrencia) && ofertaDto.getCreadaConcurrencia() != null && ofertaDto.getCreadaConcurrencia()) {
 			errorsList.put("creadaConcurrencia", MSJ_ERROR_NO_CONCURRENCIA);
+		}else if(activoConcurrencia != null && particularValidatorApi.existeActivoConOfertaConcurrenciaViva(String.valueOf(activoConcurrencia.getNumActivo()))) {
+			errorsList.put("creadaConcurrencia", RestApi.MSJ_CONCURRENCIA_TERMINADA);
 		}
-//		} else if(activoConcurrencia != null && particularValidatorApi.existeActivoConOfertaConcurrenciaViva(activoConcurrencia.getNumActivo().toString())) {
-//			errorsList.put("creadaConcurrencia", MSJ_ERROR_NO_CONCURRENCIA);
-//		}
 	}
 	
 	private Oferta getOfertaByTipoId(OfertaDto ofertaDto) {

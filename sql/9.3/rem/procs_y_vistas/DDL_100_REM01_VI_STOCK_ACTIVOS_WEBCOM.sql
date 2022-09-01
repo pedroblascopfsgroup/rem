@@ -435,8 +435,16 @@ BEGIN/*Versión 0.18*/
 		CAST(GALQ.USU_MAIL AS VARCHAR2(60 CHAR)) 													AS EMAIL_GESTOR_COMERCIAL_ALQUILER,
         CAST(PRO.PRO_NOMBRE AS VARCHAR2(20 CHAR))                                                   AS PRO_NOMBRE,
         CAT.CAT_CORRECTO,
-        ACO.CON_FECHA_INI                                                                           AS DESDE_PERIODO_CONCURRENCIA,
-        ACO.CON_FECHA_FIN                                                                           AS HASTA_PERIODO_CONCURRENCIA,
+		CASE WHEN (ACO.CON_FECHA_INI IS NOT NULL) 
+			THEN CAST(TO_CHAR(ACO.CON_FECHA_INI ,
+				''YYYY-MM-DD"T"HH24:MM:SS'') AS VARCHAR2(50 CHAR))
+			ELSE NULL
+		END                                                                            				DESDE_PERIODO_CONCURRENCIA,
+		CASE WHEN (ACO.CON_FECHA_FIN IS NOT NULL) 
+			THEN CAST(TO_CHAR(ACO.CON_FECHA_FIN ,
+				''YYYY-MM-DD"T"HH24:MM:SS'') AS VARCHAR2(50 CHAR))
+			ELSE NULL
+		END                                                                          				HASTA_PERIODO_CONCURRENCIA,
         ACO.CON_ID                                                                                  AS ID_PERIODO_CONCURRENCIA
 
 

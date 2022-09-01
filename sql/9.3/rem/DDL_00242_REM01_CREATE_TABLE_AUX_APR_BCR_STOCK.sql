@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20220328
+--## AUTOR=Alejandra García
+--## FECHA_CREACION=20220901
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-17515
+--## INCIDENCIA_LINK=HREOS-18617
 --## PRODUCTO=NO
 --## Finalidad: Interfax Stock REM 
 --##           
@@ -29,6 +29,7 @@
 --##        0.16  HREOS-17367 -  Daniel Algaba - Añadir nuevos campos
 --##        0.17  HREOS-17497 -  Daniel Algaba - Se quita campo NUM_CARTILLA
 --##        0.18  HREOS-17515 -  Daniel Algaba - Se añade campo NUM_CARTILLA
+--##        0.19  HREOS-18617 -  Alejandra García - Se añade campo FLAG_SUP_INMOBILIARIA a la AUX_APR_RBC_STOCK
 --##########################################
 --*/
 
@@ -62,7 +63,7 @@ DECLARE
   TYPE T_ARRAY_COL IS TABLE OF T_COL;
   V_COL T_ARRAY_COL := T_ARRAY_COL(
   	  T_COL('AUX_APR_BCR_STOCK',',FLAG_EN_REM NUMBER (1)',',FLAG_FICHEROS VARCHAR2(1 CHAR)',',FLAG_OFERTA_VIVA NUMBER (1)'),
-      T_COL('AUX_APR_RBC_STOCK','','',''),
+      T_COL('AUX_APR_RBC_STOCK','',',TIPO_SUP_INMOBILIARIA NUMBER(16,0)',''),
       T_COL('AUX_APR_BCR_DELTA',',FLAG_EN_REM NUMBER (1)','',''),
       T_COL('AUX_APR_RBC_DELTA','','','')
 	  

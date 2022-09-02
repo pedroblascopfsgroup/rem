@@ -2075,6 +2075,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		sanitizarDescripciones(dto);
 		List<UsuarioCartera> usuarioCartera = genericDao.getList(UsuarioCartera.class,genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuLogado.getId()));
 		List<String> subcarteras = new ArrayList<String>();
+		boolean filtroRefCatastral = !Checks.esNulo(dto.getRefCatastral());
 		
 		HQLBuilder hb = new HQLBuilder(" select vgrid from VGridBusquedaActivos vgrid ");
 		
@@ -2162,9 +2163,13 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		HQLBuilder.montaAppendWhere(hb, " exists (select 1 from GestorActivo ga where ga.tipoGestor.codigo = #PARAM# and ga.usuario.id = #PARAM# and vgrid.id = ga.activo.id) ",
 					new String[] {"ga.tipoGestor.codigo","ga.usuario.id"},
 					new Object[] {dto.getTipoGestorCodigo(),dto.getUsuarioGestor()}, "#PARAM#", false);
+		
+		if (!filtroRefCatastral) {
 		HQLBuilder.montaAppendWhere(hb, " exists (select 1 from VBusquedaActivosGestorias bag where bag.gestoria = #PARAM# and vgrid.id = bag.id) ",
 					new String[] {"bag.gestoria"},
 					new Object[] {dto.getGestoria()}, "#PARAM#", false);
+		}
+		
 		HQLBuilder.montaAppendWhere(hb, " exists (select 1 from ActivoInfoComercial aic where aic.mediadorInforme.id = #PARAM# and vgrid.id = aic.activo.id) ",
 					new String[] {"aic.mediadorInforme.id"},
 					new Object[] {dto.getApiPrimarioId()}, "#PARAM#", false);

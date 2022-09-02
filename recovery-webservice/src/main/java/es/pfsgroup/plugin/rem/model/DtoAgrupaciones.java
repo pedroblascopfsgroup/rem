@@ -95,6 +95,7 @@ public class DtoAgrupaciones extends WebDto {
 	private Boolean isConcurrencia;
 	private Boolean bloquearEdicionEstadoOfertas;
 	private Boolean esNecesarioDeposito;
+	private Boolean agrConOfertasConcurrencia;
 
 	public Boolean getEstaCaducada() {
 		return estaCaducada;
@@ -585,6 +586,12 @@ public class DtoAgrupaciones extends WebDto {
 	}
 	public void setBloquearEdicionEstadoOfertas(Boolean bloquearEdicionEstadoOfertas) {
 		this.bloquearEdicionEstadoOfertas = bloquearEdicionEstadoOfertas;
+	}
+	public Boolean getAgrConOfertasConcurrencia() {
+		return agrConOfertasConcurrencia;
+	}
+	public void setAgrConOfertasConcurrencia(Boolean agrConOfertasConcurrencia) {
+		this.agrConOfertasConcurrencia = agrConOfertasConcurrencia;
 	}
 	
 }

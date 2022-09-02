@@ -362,6 +362,7 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 		var msg = HreRem.i18n('msg.desea.aceptar.oferta');
 		var agrupacion = me.lookupController().getViewModel().get('agrupacionficha');
 		var enConcurrencia = me.lookupController().getViewModel().getData().agrupacionficha.get('enConcurrencia');
+		var agrConOfertasConcurrencia = me.lookupController().getViewModel().getData().agrupacionficha.get('agrConOfertasConcurrencia');
         var codigoTipoOferta = context.record.get('codigoTipoOferta');
 
 		if(CONST.ESTADOS_OFERTA['PENDIENTE'] != estado){
@@ -388,7 +389,7 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 						return false;
 					}
 				}
-				if(agrupacion.get('cambioEstadoPrecio')){
+				if(agrupacion.get('cambioEstadoPrecio') && !enConcurrencia && !agrConOfertasConcurrencia){
 					if($AU.userHasFunction(['CAMBIAR_ESTADO_OFERTA_BANKIA'])){
 						me.fireEvent("warnToast", HreRem.i18n("msg.cambio.valor.precio"));
 					}else{
@@ -397,7 +398,7 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 						return false;
 					}
 				}
-				if(agrupacion.get('cambioEstadoPublicacion') && !enConcurrencia){
+				if(agrupacion.get('cambioEstadoPublicacion') && !enConcurrencia && !agrConOfertasConcurrencia){
 					if($AU.userHasFunction(['CAMBIAR_ESTADO_OFERTA_BANKIA']) || activo.get('estadoVentaCodigo') == '03'){
 						me.fireEvent("warnToast", HreRem.i18n("msg.cambio.estado.publicacion"));
 					}else{
@@ -418,19 +419,32 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 		
 		if(CONST.ESTADOS_OFERTA['ACEPTADA'] == estado) {
 			
-			if(enConcurrencia && context.rowIdx != 0) {
-				Ext.Msg.show({
-				   title: HreRem.i18n('title.confirmar.oferta.aceptacion'),
-				   msg: HreRem.i18n('msg.desea.aceptar.oferta.concurrencia'),
-				   buttons: Ext.MessageBox.YESNO,
-				   fn: function(buttonId) {
-				        if (buttonId == 'yes') {
-				        	me.decisionTramitarOferta(editor, context);
-				        } else {
-							me.getStore().load(); 	
-						}
+			if(agrConOfertasConcurrencia) {
+				var items = this.store.data.items;
+				var ordenGanador = context.record.data.ordenGanador;
+				var esganadora = true;
+				for( var i = 0; i < items.length; i++){
+					if(ordenGanador > items[i].data.ordenGanador){
+						esganadora = false;
+						break;
 					}
-				});	
+				}
+				if(!esganadora){
+					Ext.Msg.show({
+					   title: HreRem.i18n('title.confirmar.oferta.aceptacion'),
+					   msg: HreRem.i18n('msg.desea.aceptar.oferta.concurrencia'),
+					   buttons: Ext.MessageBox.YESNO,
+					   fn: function(buttonId) {
+					        if (buttonId == 'yes') {
+					        	me.decisionTramitarOferta(editor, context);
+					        } else {
+								me.getStore().load(); 	
+							}
+						}
+					});	
+				}else {
+					me.decisionTramitarOferta(editor, context);
+				}
 			} else {
 				me.decisionTramitarOferta(editor, context);
 			}

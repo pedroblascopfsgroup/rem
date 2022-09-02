@@ -355,7 +355,11 @@ Ext.define('HreRem.model.AgrupacionFicha', {
 	            {
 	            	name:'bloquearEdicionEstadoOfertas',
 	            	type: 'boolean'
-	            }
+	            },
+	            {
+					name: 'agrConOfertasConcurrencia',
+					type: 'boolean'
+				}
     ],
     
 	proxy: {

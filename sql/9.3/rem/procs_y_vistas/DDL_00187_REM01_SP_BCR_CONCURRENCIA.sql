@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20220831
+--## FECHA_CREACION=20220902
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-18634
@@ -19,6 +19,7 @@
 --##        0.7 Corrección primer merge, para que no se reinserten filas - [HREOS-18572] - Alejandra García
 --##        0.8 Corrección campo IMP_PRECIO_VENTA para que tenga en cuenta el IMP_PRECIO_CAMP_VENTA - [HREOS-18634] - Alejandra García
 --##        0.9 Modifiación fecha fin concurrencia a SYSDATE en la cancelación - [HREOS-18634] - Alejandra García
+--##        0.10 Modifiación comprobar que el importe está vigente - [HREOS-18634] - Alejandra García
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -93,7 +94,7 @@ SALIDA := SALIDA || '[INFO] PARA LOS ACTIVOS QUE NO TENGAN REGISTROS EN LA TABLA
                   AND AUX.FLAG_EN_REM = '|| FLAG_EN_REM ||'
                   AND TPC.DD_TPC_CODIGO = ''07''
                   AND TRUNC(VAL.VAL_FECHA_INICIO) <= TRUNC(SYSDATE) 
-                  AND (VAL.VAL_FECHA_FIN IS NULL OR TRUNC(VAL.VAL_FECHA_FIN) > TRUNC(SYSDATE))
+                  AND (VAL.VAL_FECHA_FIN IS NULL OR TRUNC(VAL.VAL_FECHA_FIN) >= TRUNC(SYSDATE))
                ), SIN_CONCURRENCIA AS (
                      SELECT DISTINCT
                            ACT.ACT_ID
@@ -160,7 +161,7 @@ SALIDA := SALIDA || '[INFO] PARA LOS ACTIVOS QUE NO TENGAN REGISTROS EN LA TABLA
                      AND AUX.FEC_INICIO_CONCURENCIA IS NOT NULL AND AUX.FEC_FIN_CONCURENCIA IS NOT NULL
                      AND TPC.DD_TPC_CODIGO = ''02''
                      AND TRUNC(VAL.VAL_FECHA_INICIO) <= TRUNC(SYSDATE) 
-                     AND (VAL.VAL_FECHA_FIN IS NULL OR TRUNC(VAL.VAL_FECHA_FIN) > TRUNC(SYSDATE))
+                     AND (VAL.VAL_FECHA_FIN IS NULL OR TRUNC(VAL.VAL_FECHA_FIN) >= TRUNC(SYSDATE))
                   ), CONCURRENCIA AS (
                      SELECT DISTINCT
                            SIN_CONCU.ACT_ID
@@ -274,7 +275,7 @@ SALIDA := SALIDA ||'[INFO] PARA LOS ACTIVOS QUE TENGAN REGISTROS EN LA TABLA CON
                      AND AUX.FLAG_EN_REM = '|| FLAG_EN_REM ||'
                      AND TPC.DD_TPC_CODIGO = ''07''
                      AND TRUNC(VAL.VAL_FECHA_INICIO) <= TRUNC(SYSDATE) 
-                     AND (VAL.VAL_FECHA_FIN IS NULL OR TRUNC(VAL.VAL_FECHA_FIN) > TRUNC(SYSDATE))
+                     AND (VAL.VAL_FECHA_FIN IS NULL OR TRUNC(VAL.VAL_FECHA_FIN) >= TRUNC(SYSDATE))
                   ), CONCURRENCIA_FUTURA AS (
                      SELECT DISTINCT
                            CON.CON_ID
@@ -395,7 +396,7 @@ SALIDA := SALIDA ||'[INFO] 1.4 SE MODIFICA LA FECHA FIN EN LA TABLA CPC_CMB_PERI
                      AND AUX.FEC_INICIO_CONCURENCIA IS NOT NULL AND AUX.FEC_FIN_CONCURENCIA IS NOT NULL
                      AND TPC.DD_TPC_CODIGO = ''02''
                      AND TRUNC(VAL.VAL_FECHA_INICIO) <= TRUNC(SYSDATE) 
-                     AND (VAL.VAL_FECHA_FIN IS NULL OR TRUNC(VAL.VAL_FECHA_FIN) > TRUNC(SYSDATE))
+                     AND (VAL.VAL_FECHA_FIN IS NULL OR TRUNC(VAL.VAL_FECHA_FIN) >= TRUNC(SYSDATE))
                   ), CONCURRENCIA AS (
                      SELECT DISTINCT 
                            FUT.CON_ID

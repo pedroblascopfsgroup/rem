@@ -283,7 +283,8 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		        {
 		            dataIndex: 'ordenGanador',
 		            text: HreRem.i18n('PruebaOrdenGanador'),
-		            flex: 1
+		            flex: 1,
+		            hidden: true
 		        }
 		        
 		        
@@ -503,7 +504,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 						return false;
 					} 
 				}
-				if(activo.get('cambioEstadoPrecio')){
+				if(activo.get('cambioEstadoPrecio') && !enConcurrencia  &&  !activoOfertasConcurrencia){
 					if($AU.userHasFunction(['CAMBIAR_ESTADO_OFERTA_BANKIA'])){
 						me.fireEvent("warnToast", HreRem.i18n("msg.cambio.valor.precio"));
 					}else{
@@ -553,7 +554,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 				var items = this.store.data.items;
 				var ordenGanador = context.record.data.ordenGanador;
 				var esganadora = true;
-				for( var i = 0; i < items; i++){
+				for( var i = 0; i < items.length; i++){
 					if(ordenGanador > items[i].data.ordenGanador){
 						esganadora = false;
 						break;
@@ -572,6 +573,8 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 							}
 						}
 					});	
+				}else {
+					me.decisionTramitarOferta(editor, context);
 				}
 			} else {
 				me.decisionTramitarOferta(editor, context);

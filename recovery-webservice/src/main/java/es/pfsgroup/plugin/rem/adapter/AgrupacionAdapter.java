@@ -995,6 +995,8 @@ public class AgrupacionAdapter {
 				dtoAgrupacion.setDireccion(activoCero.getDireccionCompleta());
 			}
 			
+			
+			dtoAgrupacion.setAgrConOfertasConcurrencia(concurrenciaApi.tieneAgrupacionOfertasDeConcurrencia(agrupacion));
 			dtoAgrupacion.setIsConcurrencia(concurrenciaApi.isAgrupacionEnConcurrencia(agrupacion) || concurrenciaApi.tieneAgrupacionOfertasDeConcurrencia(agrupacion));
 			
 			dtoAgrupacion.setBloquearEdicionEstadoOfertas(concurrenciaApi.bloquearEditarOfertasPorConcurrenciaAgrupacion(agrupacion));

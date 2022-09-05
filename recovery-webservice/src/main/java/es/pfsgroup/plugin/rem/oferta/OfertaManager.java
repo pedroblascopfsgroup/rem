@@ -9528,7 +9528,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			filtroEstadoOfertaBC = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOfertaBC.CODIGO_TRAMITE_PDTE_TRAMITACION);
 		else if(DDEstadoOferta.CODIGO_CONGELADA.equals(estadoOferta.getCodigo()))
 			filtroEstadoOfertaBC = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOfertaBC.CODIGO_TRAMITE_CONGELADA);
-		else if (DDEstadoOferta.CODIGO_RECHAZADA.equals(estadoOferta.getCodigo()) || DDEstadoOferta.isCongelada(estadoOferta)) {
+		else if (DDEstadoOferta.CODIGO_RECHAZADA.equals(estadoOferta.getCodigo()) || DDEstadoOferta.isCaducada(estadoOferta)) {
 			filtroEstadoOfertaBC = genericDao.createFilter(FilterType.EQUALS, "codigo", estadoOfertaByCondiciones(oferta));
 		}
 

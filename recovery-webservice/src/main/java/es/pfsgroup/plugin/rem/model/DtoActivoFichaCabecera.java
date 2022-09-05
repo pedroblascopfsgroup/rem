@@ -313,18 +313,10 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	
 	private Boolean pazSocial;
 	private String numActivoDivarian;
-	private Boolean activoEpa;
-    private String empresa;
-    private String oficina;
-    private String contrapartida;
-    private String folio;
-    private String cdpen;
     
 	private String numActivoBbva;
     private Long lineaFactura;
     private Long idOrigenHre;
-    private String uicBbva;
-    private String cexperBbva;
     private String tipoTransmisionCodigo;
     private String tipoAltaCodigo;
     private String tipoTransmisionDescripcion;
@@ -2275,46 +2267,6 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	public void setNumActivoDivarian(String numActivoDivarian) {
 		this.numActivoDivarian = numActivoDivarian;
 	}
-	
-	public Boolean getActivoEpa() {
-		return activoEpa;
-	}
-
-	public void setActivoEpa(Boolean activoEpa) {
-		this.activoEpa = activoEpa;
-	}
-
-	public String getEmpresa() {
-		return empresa;
-	}
-
-	public void setEmpresa(String empresa) {
-		this.empresa = empresa;
-	}
-
-	public String getOficina() {
-		return oficina;
-	}
-
-	public void setOficina(String oficina) {
-		this.oficina = oficina;
-	}
-
-	public String getContrapartida() {
-		return contrapartida;
-	}
-
-	public void setContrapartida(String contrapartida) {
-		this.contrapartida = contrapartida;
-	}
-
-	public String getFolio() {
-		return folio;
-	}
-
-	public void setFolio(String folio) {
-		this.folio = folio;
-	}
 
 	public String getNumActivoBbva() {
 		return numActivoBbva;
@@ -2338,22 +2290,6 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setIdOrigenHre(Long idOrigenHre) {
 		this.idOrigenHre = idOrigenHre;
-	}
-
-	public String getUicBbva() {
-		return uicBbva;
-	}
-
-	public void setUicBbva(String uicBbva) {
-		this.uicBbva = uicBbva;
-	}
-
-	public String getCexperBbva() {
-		return cexperBbva;
-	}
-
-	public void setCexperBbva(String cexperBbva) {
-		this.cexperBbva = cexperBbva;
 	}
 
 	public String getTipoTransmisionCodigo() {
@@ -2804,14 +2740,6 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setCodPromocionBbva(String codPromocionBbva) {
 		this.codPromocionBbva = codPromocionBbva;
-	}
-
-	public String getCdpen() {
-		return cdpen;
-	}
-
-	public void setCdpen(String cdpen) {
-		this.cdpen = cdpen;
 	}
 
 	public Boolean getEsActivoPrincipalAgrupacionRestringida() {

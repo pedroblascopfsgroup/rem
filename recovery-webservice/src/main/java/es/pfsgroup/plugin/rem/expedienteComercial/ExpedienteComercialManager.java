@@ -75,7 +75,6 @@ import es.pfsgroup.plugin.rem.restclient.caixabc.ReplicarOfertaDto;
 import es.pfsgroup.plugin.rem.service.InterlocutorCaixaService;
 import es.pfsgroup.plugin.rem.service.InterlocutorGenericService;
 import es.pfsgroup.plugin.rem.tareasactivo.ValorTareaBC;
-import es.pfsgroup.plugin.rem.thread.ConvivenciaRecovery;
 import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
 import es.pfsgroup.plugin.rem.thread.TramitacionOfertasAsync;
 import es.pfsgroup.plugin.rem.utils.FileItemUtils;
@@ -2676,8 +2675,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					&& DDCartera.CODIGO_CARTERA_BBVA.equals(listaActivosOferta.get(0).getPrimaryKey().getActivo().getCartera().getCodigo())) {
 				for (ActivoOferta activosOferta : listaActivosOferta) {
 					Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activosOferta.getPrimaryKey().getActivo().getId());
-					ActivoBbvaActivos activoBbva  = genericDao.get(ActivoBbvaActivos.class, filtroActivo);
-					if(activoBbva != null && activoBbva.getActivoEpa() != null && DDSinSiNo.CODIGO_SI.equals(activoBbva.getActivoEpa().getCodigo())) {
+					ActivoBbvaUic activoBbvaUic  = genericDao.get(ActivoBbvaUic.class, filtroActivo);
+					if(activoBbvaUic != null && activoBbvaUic.getActivoEpa() != null && DDSinSiNo.CODIGO_SI.equals(activoBbvaUic.getActivoEpa().getCodigo())) {
 						return true;
 					}
 				}

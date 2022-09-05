@@ -307,6 +307,7 @@ rem_mirror|func-rem-bloqueoScoring
 rem_mirror|func-rem-hydra-modificacionesEnero
 func-rem-hydra-modificacionesEnero|R-Ellendale
 func-rem-bloqueoScoring|R-Ellendale
+rem_mirror|func-rem-variosUICsPorEntidad
 rem_mirror|func-rem-reposicionamientoCalculoRiesgo
 func-rem-automatizacionBajasContablesBBVA|R-Navelate
 rem_mirror|func-rem-onuFase2

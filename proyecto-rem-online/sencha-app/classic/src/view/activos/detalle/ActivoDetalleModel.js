@@ -4627,6 +4627,17 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {diccionario: 'tasadoraCaixa'}
 			},
 			autoLoad: true
+		},			
+		
+		storeActivoBbvaUic : {
+			model : 'HreRem.model.ActivoBbvaUicGridModel',
+			proxy : {
+				type : 'uxproxy',
+				remoteUrl : 'activo/getActivoBbvaUic',				
+				extraParams : {
+					id : '{activo.id}'
+				}
+			}
 		},
 
 		comboBajasContablesBBVA: {

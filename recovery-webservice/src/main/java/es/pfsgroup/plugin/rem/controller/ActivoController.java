@@ -92,6 +92,7 @@ import es.pfsgroup.plugin.rem.model.ActivoFoto;
 import es.pfsgroup.plugin.rem.model.AdjuntoComprador;
 import es.pfsgroup.plugin.rem.model.AuditoriaExportaciones;
 import es.pfsgroup.plugin.rem.model.DtoActivoAdministracion;
+import es.pfsgroup.plugin.rem.model.DtoActivoBbvaUic;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargas;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargasTab;
 import es.pfsgroup.plugin.rem.model.DtoActivoCatastro;
@@ -4448,5 +4449,69 @@ public class ActivoController extends ParadiseJsonController {
 		}
 
 		return new ModelAndView("jsonView", model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getActivoBbvaUic(Long id, ModelMap model) {
+		
+		try {
+			List<DtoActivoBbvaUic> dtoActivoBbvaUicList = adapter.getActivoBbvaUic(id);
+			model.put("data", dtoActivoBbvaUicList);
+			model.put("success", true);			
+		} catch (Exception e) {
+			logger.error(e.getMessage(),e);
+			model.put("success", false);		
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	List<DtoActivoBbvaUic> getActivoBbvaUic(Long id){
+		return adapter.getActivoBbvaUic(id);
+	}
+	
+	@RequestMapping(method = RequestMethod.POST)
+		public ModelAndView createActivoBbvaUic(DtoActivoBbvaUic dto, ModelMap model) {
+			try {
+				Boolean success = activoApi.createOrUpdateActivoBbvaUic(dto);
+				model.put(RESPONSE_SUCCESS_KEY, success);
+
+			} catch (Exception e) {
+				model.put(RESPONSE_SUCCESS_KEY, false);
+				model.put(RESPONSE_ERROR_MESSAGE_KEY, e.getMessage());
+				logger.error("error en createActivoBbvaUic", e);
+			}
+
+			return createModelAndViewJson(model);
+		}
+	
+	@RequestMapping(method = RequestMethod.POST)
+		public ModelAndView destroyActivoBbvaUic(Long idActivo, String uicBbva,ModelMap model) {
+			try {
+				Boolean success = activoApi.destroyActivoBbvaUic(idActivo, uicBbva);
+				model.put(RESPONSE_SUCCESS_KEY, success);
+
+			} catch (Exception e) {
+				model.put(RESPONSE_SUCCESS_KEY, false);
+				logger.error("error en destroyActivoBbvaUic", e);
+			}
+
+			return createModelAndViewJson(model);
+		}
+	
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView updateActivoBbvaUicProp(DtoActivoBbvaUic dto, ModelMap model) {
+		try {
+			Boolean success = activoApi.updateActivoBbvaUicProp(dto);
+			model.put(RESPONSE_SUCCESS_KEY, success);
+
+		} catch (Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_MESSAGE_KEY, e.getMessage());
+			logger.error("error en createActivoBbvaUic", e);
+		}
+
+		return createModelAndViewJson(model);
 	}
 }

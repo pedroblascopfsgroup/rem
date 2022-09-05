@@ -1,16 +1,12 @@
 package es.pfsgroup.plugin.rem.api.services.webcom.dto;
 
-import java.util.List;
-
-import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.BooleanDataType;
-import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.DateDataType;
-import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.DoubleDataType;
-import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.LongDataType;
-import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.StringDataType;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.*;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.DecimalDataTypeFormat;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.MappedColumn;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.NestedDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.WebcomRequired;
+
+import java.util.List;
 
 public class StockDto implements WebcomRESTDto{
 	@WebcomRequired //No se puede quitar

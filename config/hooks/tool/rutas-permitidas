@@ -335,6 +335,8 @@ rem_mirror|func-rem-deposito
 func-rem-deposito|R-Baal
 func-rem-proveedoresNoHomologables|R-Nagami
 func-rem-datosProveedores|R-Nagami
+remvip-11238-rem|R-Caracara
+rem_mirror|func-rem-ofrecimientosAlquilerSocialBBVA
 rem_mirror|version-@-rem
 remvip-11238-rem|R-Caracara
 func-rem-gestionAPIs|R-Ashe

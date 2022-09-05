@@ -77,6 +77,13 @@ Ext.define('HreRem.model.ActivoPatrimonio', {
     		},
     		{
     			name: 'activoPromoEstrategico'
+    		},
+    		{
+    			name: 'aplicaAlquilerSocial'
+    		},
+    		{
+    			name: 'isCarteraBBVA',
+    			type: 'boolean'
     		}
     ],
     

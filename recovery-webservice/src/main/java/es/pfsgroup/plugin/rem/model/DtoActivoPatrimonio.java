@@ -51,6 +51,8 @@ public class DtoActivoPatrimonio extends DtoTabActivo {
 	private String acuerdoPago;
 	private String moroso;
 	private String activoPromoEstrategico;	
+	private Boolean isCarteraBBVA;
+	private String aplicaAlquilerSocial;
 	
 	public Boolean getChkSubrogado() {
 		return chkSubrogado;
@@ -244,5 +246,18 @@ public class DtoActivoPatrimonio extends DtoTabActivo {
 	public void setActivoPromoEstrategico(String activoPromoEstrategico) {
 		this.activoPromoEstrategico = activoPromoEstrategico;
 	}
+	public Boolean getIsCarteraBBVA() {
+		return isCarteraBBVA;
+	}
+	public void setIsCarteraBBVA(Boolean isCarteraBBVA) {
+		this.isCarteraBBVA = isCarteraBBVA;
+	}
+	public String getAplicaAlquilerSocial() {
+		return aplicaAlquilerSocial;
+	}
+	public void setAplicaAlquilerSocial(String aplicaAlquilerSocial) {
+		this.aplicaAlquilerSocial = aplicaAlquilerSocial;
+	}
+	
     
 }

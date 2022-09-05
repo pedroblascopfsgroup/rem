@@ -166,7 +166,9 @@ public class TabActivoPatrimonio implements TabActivoService {
 			activoPatrimonioDto.setAcuerdoPago(Checks.esNulo(activoP.getAcuerdopago()) ? DDSinSiNo.CODIGO_NO: activoP.getAcuerdopago().booleanValue() == true ? DDSinSiNo.CODIGO_SI: DDSinSiNo.CODIGO_NO);
 			activoPatrimonioDto.setMoroso(Checks.esNulo(activoP.getMoroso()) ? DDSinSiNo.CODIGO_NO: activoP.getMoroso().booleanValue() == true ? DDSinSiNo.CODIGO_SI: DDSinSiNo.CODIGO_NO);
 			activoPatrimonioDto.setActivoPromoEstrategico(Checks.esNulo(activoP.getActivoPromoEstrategico()) ? DDSinSiNo.CODIGO_NO: activoP.getActivoPromoEstrategico().booleanValue() == true ? DDSinSiNo.CODIGO_SI: DDSinSiNo.CODIGO_NO);
-			
+			if(activoP.getAplicaAlquilerSocial() != null) {
+				activoPatrimonioDto.setAplicaAlquilerSocial(activoP.getAplicaAlquilerSocial().getCodigo());
+			}
 		}
 		
 		if(!Checks.esNulo(activo))
@@ -193,6 +195,7 @@ public class TabActivoPatrimonio implements TabActivoService {
 					|| DDCartera.CODIGO_CARTERA_BBVA.equals(activo.getCartera().getCodigo()));
 			
 			activoPatrimonioDto.setIsCarteraTitulizada(DDCartera.CODIGO_CARTERA_TITULIZADA.equals(activo.getCartera().getCodigo()));
+			activoPatrimonioDto.setIsCarteraBBVA(DDCartera.CODIGO_CARTERA_BBVA.equals(activo.getCartera().getCodigo()));
 			
 			if(!Checks.esNulo(activo.getTipoAlquiler())) {
 				activoPatrimonioDto.setTipoAlquilerCodigo(activo.getTipoAlquiler().getCodigo());

@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -24,6 +25,7 @@ import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.plugin.rem.model.dd.DDAdecuacionAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionUso;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoInquilino;
 
@@ -94,6 +96,13 @@ public class ActivoPatrimonio implements Serializable, Auditable {
 	
 	@Column(name="ACTIVO_PROMO_ESTRATEG")
 	private Boolean activoPromoEstrategico;
+	
+	@ManyToOne
+	@JoinColumn(name = "APLICA_ALQUILER_SOCIAL")
+	private DDSinSiNo aplicaAlquilerSocial;
+	  
+    @Column(name = "FECHA_CAMBIO_ALQUILER_SOCIAL")
+    private Date fechaCambioAlquilerSocial;
 	
 	@Version
 	private Long version;
@@ -228,6 +237,21 @@ public class ActivoPatrimonio implements Serializable, Auditable {
 	public void setActivoPromoEstrategico(Boolean activoPromoEstrategico) {
 		this.activoPromoEstrategico = activoPromoEstrategico;
 	}
-	
+
+	public DDSinSiNo getAplicaAlquilerSocial() {
+		return aplicaAlquilerSocial;
+	}
+
+	public void setAplicaAlquilerSocial(DDSinSiNo aplicaAlquilerSocial) {
+		this.aplicaAlquilerSocial = aplicaAlquilerSocial;
+	}
+
+	public Date getFechaCambioAlquilerSocial() {
+		return fechaCambioAlquilerSocial;
+	}
+
+	public void setFechaCambioAlquilerSocial(Date fechaCambioAlquilerSocial) {
+		this.fechaCambioAlquilerSocial = fechaCambioAlquilerSocial;
+	}	
 	
 }

@@ -792,10 +792,19 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		crearCompradores(oferta, nuevoExpediente);
 
 		nuevoExpediente.setTipoAlquiler(oferta.getActivoPrincipal().getTipoAlquiler());
+		
+		DDEstadoExpedienteBc estadoBc = null;
+		
 		if (DDCartera.isCarteraBk(activo.getCartera())) {
-			DDEstadoExpedienteBc estadoBc = (DDEstadoExpedienteBc) utilDiccionarioApi
-					.dameValorDiccionarioByCod(DDEstadoExpedienteBc.class,
-							DDEstadoExpedienteBc.CODIGO_EN_TRAMITE);
+			if(oferta.getIsEnConcurrencia() != null && oferta.getIsEnConcurrencia()) {
+				estadoBc = (DDEstadoExpedienteBc) utilDiccionarioApi
+						.dameValorDiccionarioByCod(DDEstadoExpedienteBc.class,
+								DDEstadoExpedienteBc.CODIGO_OFERTA_TRAMITE_CONCURRENCIA_TRAMITACION);
+			}else {
+				estadoBc = (DDEstadoExpedienteBc) utilDiccionarioApi
+						.dameValorDiccionarioByCod(DDEstadoExpedienteBc.class,
+								DDEstadoExpedienteBc.CODIGO_EN_TRAMITE);
+			}
 			if (estadoBc != null) {
 				nuevoExpediente.setEstadoBc(estadoBc);
 			}

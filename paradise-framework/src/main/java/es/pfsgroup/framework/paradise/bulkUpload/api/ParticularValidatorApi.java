@@ -1531,6 +1531,4 @@ public interface ParticularValidatorApi {
 
 	Boolean isPerimetroMacc(String numActivo);
 
-	Boolean existeActivoConOfertaConcurrenciaViva(String numActivo);
-
 }

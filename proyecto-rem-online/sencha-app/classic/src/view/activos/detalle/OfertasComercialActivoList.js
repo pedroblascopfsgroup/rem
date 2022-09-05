@@ -327,7 +327,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		            }
 		        },{
 					xtype:'checkboxfieldbase',
-					
+					reference: 'checkMostrarOfertasAnuladas',
 					labelSeparator: '',
 				    hideLabel: true,
 				    boxLabel: HreRem.i18n('check.comercial.ofertas.anuladas.fieldlabel'),
@@ -480,6 +480,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		var codigoEstadoAnterior = context.record.get("codigoEstadoOferta");
 		var codigoEstadoNuevo =  context.newValues.estadoOferta;  
 		var activoOfertasConcurrencia = me.lookupController().getViewModel().getData().activo.get('activoOfertasConcurrencia');
+		var checkMostrarAnuladas = false;
 
         if(enConcurrencia && CONST.TIPOS_OFERTA["VENTA"] === codigoTipoOferta && CONST.ESTADOS_OFERTA['PDTE_DOCUMENTACION'] == codigoEstadoAnterior && CONST.ESTADOS_OFERTA['RECHAZADA'] != codigoEstadoNuevo){
         	me.fireEvent("errorToast", HreRem.i18n("msg.error.periodo.concurrencia.cambio.anulado"));
@@ -551,6 +552,19 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 			} 
 			
 			if(activoOfertasConcurrencia) {
+				var itemMostrarAnuladas = me.dockedItems.filterBy(
+			    		function (item, key) {
+			    			return item.reference == "checkMostrarOfertasAnuladas";
+			    		}
+			    	);
+				if(itemMostrarAnuladas != null && !Ext.isEmpty(itemMostrarAnuladas.items)){
+					checkMostrarAnuladas = itemMostrarAnuladas.items[0].checked;
+				}
+				if(checkMostrarAnuladas){
+					me.fireEvent("errorToast", HreRem.i18n("msg.oferta.tramitar.vista.normal"));
+					me.getStore().load();
+					return;
+				}
 				var items = this.store.data.items;
 				var ordenGanador = context.record.data.ordenGanador;
 				var esganadora = true;

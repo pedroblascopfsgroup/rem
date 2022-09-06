@@ -67,8 +67,8 @@ DECLARE
     TYPE T_TABLA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_TABLA IS TABLE OF T_TABLA;
 	
-    M_TABLA T_ARRAY_TABLA := T_ARRAY_TABLA(															--*******El DD_EAL_CODIGO (posición 9) ya NO se utiliza en la tabla, el array en esa posición está vacío**
-																									--*******El PRIMERA POSESION (posición 11) ya NO se utiliza en la tabla, el array en esa posición está como null**
+    M_TABLA T_ARRAY_TABLA := T_ARRAY_TABLA(					--*******El DD_EAL_CODIGO (posición 9) ya NO se utiliza en la tabla, el array en esa posición está vacío**
+																									--*******El PRIMERA POSESION (posición 12) ya NO se utiliza en la tabla, el array en esa posición está como null**
       --DD_ETG_CODIGO  Elemento PEP	CLASE/GRUPO	  TIPO	SUBTIPO	DD_TGA_CODIGO	DD_STG_CODIGO	DD_CBC_CODIGO	DD_EAL_CODIGO	DD_TTR_CODIGO	PRIMERA POSESION    DD_SED_CODIGO    DD_PRO_ID	DD_SCM_CODIGO  EJE_ANYO
 
   T_TABLA('185','XXXX-22-2-COM','22','00','2','05','26','01','','','null','null','','','','2022'),

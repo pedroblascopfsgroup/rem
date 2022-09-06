@@ -428,12 +428,12 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			depositoApi.modificarEstadoDepositoSiIngresado(oferta);
 		}
 		
-		if (DDEstadoOferta.CODIGO_CADUCADA.equals(estadoOferta.getCodigo()) 
-				&& oferta.getActivoPrincipal() != null && oferta.getActivoPrincipal().getCartera() != null 
-				&& DDCartera.isCarteraBk(oferta.getActivoPrincipal().getCartera()) 
-				&& oferta.getIsEnConcurrencia() != null && oferta.getIsEnConcurrencia()) {
+		if (DDEstadoOferta.CODIGO_CADUCADA.equals(estadoOferta.getCodigo())  && oferta.getActivoPrincipal() != null && oferta.getActivoPrincipal().getCartera() != null 
+			&& DDCartera.isCarteraBk(oferta.getActivoPrincipal().getCartera())) {
 			oferta.setReplicateBC(Boolean.TRUE);
-			envioCorreoOfertasPerdedoras = true;
+			if(oferta.getIsEnConcurrencia() != null && oferta.getIsEnConcurrencia()) {
+				envioCorreoOfertasPerdedoras = true;
+			}
 		}
 
 		if(envioCorreoOfertasPerdedoras) {

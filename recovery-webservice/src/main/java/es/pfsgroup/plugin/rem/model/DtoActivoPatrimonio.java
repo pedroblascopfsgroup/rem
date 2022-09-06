@@ -53,7 +53,6 @@ public class DtoActivoPatrimonio extends DtoTabActivo {
 	private String activoPromoEstrategico;	
 	private Boolean isCarteraBBVA;
 	private String aplicaAlquilerSocial;
-	private String activoPromoEstrategico;
 	private Double precioCompra;
 	private Boolean altaPrimaOpcionCompra;
 	private Boolean renunciaDerechoTanteo;

@@ -82,7 +82,26 @@ Ext.define('HreRem.model.ActivoPatrimonio', {
     			name: 'aplicaAlquilerSocial'
     		},
     		{
-    			name: 'isCarteraBBVA',
+				name: 'isCarteraBBVA',
+				type: 'boolean'
+			},
+			{
+    			name: 'precioCompra'
+    		},
+    		{
+    			name: 'altaPrimaOpcionCompra',
+    			type: 'boolean'
+    		},
+    		{
+    			name: 'renunciaDerechoTanteo',
+    			type: 'boolean'
+    		},
+    		{
+    			name: 'isCarteraCajamar',
+    			type: 'boolean'
+    		},
+    		{
+    			name: 'isCarteraLiberbank',
     			type: 'boolean'
     		}
     ],

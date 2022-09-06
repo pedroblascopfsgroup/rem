@@ -166,8 +166,20 @@ public class TabActivoPatrimonio implements TabActivoService {
 			activoPatrimonioDto.setAcuerdoPago(Checks.esNulo(activoP.getAcuerdopago()) ? DDSinSiNo.CODIGO_NO: activoP.getAcuerdopago().booleanValue() == true ? DDSinSiNo.CODIGO_SI: DDSinSiNo.CODIGO_NO);
 			activoPatrimonioDto.setMoroso(Checks.esNulo(activoP.getMoroso()) ? DDSinSiNo.CODIGO_NO: activoP.getMoroso().booleanValue() == true ? DDSinSiNo.CODIGO_SI: DDSinSiNo.CODIGO_NO);
 			activoPatrimonioDto.setActivoPromoEstrategico(Checks.esNulo(activoP.getActivoPromoEstrategico()) ? DDSinSiNo.CODIGO_NO: activoP.getActivoPromoEstrategico().booleanValue() == true ? DDSinSiNo.CODIGO_SI: DDSinSiNo.CODIGO_NO);
+			
 			if(activoP.getAplicaAlquilerSocial() != null) {
 				activoPatrimonioDto.setAplicaAlquilerSocial(activoP.getAplicaAlquilerSocial().getCodigo());
+			}
+			
+			if (activoP.getPrecioCompra() != null) {
+				activoPatrimonioDto.setPrecioCompra(activoP.getPrecioCompra());
+			}
+			if (activoP.getAltaPrimaOpcionCompra() != null) {
+				activoPatrimonioDto.setAltaPrimaOpcionCompra(activoP.getAltaPrimaOpcionCompra() ? true : false);
+
+			}
+			if (activoP.getRenunciaDerechoTanteo() != null) {
+				activoPatrimonioDto.setRenunciaDerechoTanteo(activoP.getRenunciaDerechoTanteo() ? true : false);
 			}
 		}
 		
@@ -201,6 +213,9 @@ public class TabActivoPatrimonio implements TabActivoService {
 				activoPatrimonioDto.setTipoAlquilerCodigo(activo.getTipoAlquiler().getCodigo());
 				activoPatrimonioDto.setTipoAlquilerDescripcion(activo.getTipoAlquiler().getDescripcion());
 			}
+			
+			activoPatrimonioDto.setIsCarteraCajamar(DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activo.getCartera().getCodigo()));
+			activoPatrimonioDto.setIsCarteraLiberbank(DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo()));
 		}
 		
 		return activoPatrimonioDto;

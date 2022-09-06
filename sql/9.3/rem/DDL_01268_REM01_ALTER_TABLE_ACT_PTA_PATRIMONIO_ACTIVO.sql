@@ -1,12 +1,12 @@
 --/*
 --##########################################
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20220607
+--## AUTOR=Javier Esbri
+--## FECHA_CREACION=20220121
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-16973
+--## INCIDENCIA_LINK=HREOS-16897
 --## PRODUCTO=NO
---## Finalidad: Añadir columnas a la AUX_ACT_DCA_DTS_CNT_ALQ
+--## Finalidad: Insercion DE COLUMNAS
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -35,27 +35,24 @@ DECLARE
 
  
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar 
-    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'AUX_ACT_DCA_DTS_CNT_ALQ'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'ACT_PTA_PATRIMONIO_ACTIVO'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+	V_CREAR_FK VARCHAR2(2 CHAR) := 'SI'; -- [SI, NO] Vble. para indicar al script si debe o no crear tambien las relaciones Foreign Keys.
+
     
     /* -- ARRAY CON NUEVAS COLUMNAS */
     TYPE T_ALTER IS TABLE OF VARCHAR2(4000);
     TYPE T_ARRAY_ALTER IS TABLE OF T_ALTER;
     V_ALTER T_ARRAY_ALTER := T_ARRAY_ALTER(
-    			-- NOMBRE CAMPO			    TIPO CAMPO		
-    	T_ALTER(  'TIPO_CONTRATO',   'VARCHAR2(100 CHAR)'),
-        T_ALTER(  'TIPO_CONTRATO_BANKIA',   'VARCHAR2(100 CHAR)'),
-        T_ALTER(  'RENUNCIA_TANTEO',   'NUMBER(1,0)'),
-        T_ALTER(  'PRECIO_COMPRA',   'NUMBER(16,2)'),
-        T_ALTER(  'ALTA_PRIMA_COMPRA',   'NUMBER(1,0)'),
-        T_ALTER(  'TIPO_ALTA_ARRENDAMIENTO',   'VARCHAR2(100 CHAR)'),
-        T_ALTER(  'OBLIGADO_CUMPLIMIENTO',   'DATE'),
-        T_ALTER(  'FIANZA_OBLIGATORIA',   'NUMBER(16,2)'),
-        T_ALTER(  'FECHA_REGISTRO',   'DATE'),
-        T_ALTER(  'IMPORTE_GARANTIA',   'NUMBER(16,2)'),
-        T_ALTER(  'FECHA_AVAL',   'DATE'),
-        T_ALTER(  'IMPORTE_AVAL',   'NUMBER(16,2)'),
-        T_ALTER(  'TIPO_INQUILINO',   'VARCHAR2(100 CHAR)')
-
+    			-- NOMBRE CAMPO						TIPO CAMPO							DESCRIPCION           
+    	T_ALTER(  'PRECIO_COMPRA',	 			 	'NUMBER(16,2)',			'Precio compra', '', '', ''),
+		T_ALTER(  'ALTA_PRIMA_OPCION_COMPRA',	 	'NUMBER(1,0)',			'Alta prima opción a compra', '', '', ''),
+		T_ALTER(  'RENUNCIA_DERECHO_TANTEO',		'NUMBER(1,0)',			'Renuncia expresa al derecho de tanteo ', '', '', ''),
+		T_ALTER(  'DD_SOC_ID',						'NUMBER(16,0)',			'Código identificador único del diccionario de suborigen contrato', 'FK_DD_SOC_PTA',	V_ESQUEMA||'.DD_SOC_SUBORIGEN_CONTRATO', 'DD_SOC_ID'),
+		T_ALTER(  'OBLIGADO_CUMPLIMIENTO',	 		'DATE',					'Fecha fin de obligado cumplimiento del contrato', '', '', ''),
+		T_ALTER(  'FIANZA_OBLIGATORIA',	 			'NUMBER(16,2)',			'Fianza obligatoria', '', '', ''),
+		T_ALTER(  'FECHA_AVAL_BANC',				'DATE',					'Fecha registro Aval bancario', '', '', ''),
+		T_ALTER(  'IMPORTE_AVAL_BANC',	 			'NUMBER(16,2)',			'Importe Aval bancario', '', '', ''),
+		T_ALTER(  'IMPORTE_DEPOS_BANC',	 			'NUMBER(16,2)',			'Importe Depósito bancario', '', '', '')
 	);
     V_T_ALTER T_ALTER;
 
@@ -64,40 +61,43 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('********' ||V_TEXT_TABLA|| '********'); 
 	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comprobaciones previas *************************************************');
 
-	-- Renombramos columna, para luego copiar sus datos en la nueva columna, y borrarla finalmente.
-
+	
 	-- Bucle que CREA las nuevas columnas 
 	FOR I IN V_ALTER.FIRST .. V_ALTER.LAST
 	LOOP
 
 		V_T_ALTER := V_ALTER(I);
 
-		-- Verificar si la columna ya existe.
+		-- Verificar si la columna ya existe. Si ya existe la columna, no se hace nada con esta (no tiene en cuenta si al existir los tipos coinciden)
 		V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLS WHERE COLUMN_NAME = '''||V_T_ALTER(1)||''' and TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
 		EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;	
-		IF V_NUM_TABLAS = 0 THEN -- Si no existe la columna la creamos
-			
-			DBMS_OUTPUT.PUT_LINE('[INFO] Cambios en ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'['||V_T_ALTER(1)||'] ADD COLUMN------------------------------');
+		IF V_NUM_TABLAS = 0 THEN
+			--No existe la columna y la creamos
+			DBMS_OUTPUT.PUT_LINE('[INFO] Cambios en ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'['||V_T_ALTER(1)||'] -------------------------------------------');
 			V_MSQL := 'ALTER TABLE '||V_TEXT_TABLA|| ' 
-					   ADD ('||V_T_ALTER(1)||' '||V_T_ALTER(2)||')
+					   ADD ('||V_T_ALTER(1)||' '||V_T_ALTER(2)||' )
 			';
 
 			EXECUTE IMMEDIATE V_MSQL;
 			--DBMS_OUTPUT.PUT_LINE('[1] '||V_MSQL);
 			DBMS_OUTPUT.PUT_LINE('[INFO] ... '||V_T_ALTER(1)||' Columna INSERTADA en tabla, con tipo '||V_T_ALTER(2));
-			
-			
-		ELSE 
-			DBMS_OUTPUT.PUT_LINE('[INFO] ... '||V_T_ALTER(1)||' Columna existe en tabla, con tipo '||V_T_ALTER(2));
+
+			-- Añadimos LA CLAVE AJENA si tiene
+	        IF V_T_ALTER(4) != 'NO' THEN
+				DBMS_OUTPUT.PUT_LINE('  [INFO] Inicio creación FK del campo '||V_T_ALTER(1)||''); 
+	            EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD CONSTRAINT '||V_T_ALTER(4)||' FOREIGN KEY ('||V_T_ALTER(1)||')
+		  							REFERENCES '||V_T_ALTER(5)||' ('||V_T_ALTER(6)||') ON DELETE SET NULL ENABLE';
+				DBMS_OUTPUT.PUT_LINE('  [INFO] FK del campo '||V_T_ALTER(1)||' creada'); 
+	  		END IF; 
+
+			-- Creamos comentario	
+			V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.'||V_T_ALTER(1)||' IS '''||V_T_ALTER(3)||'''';		
+			EXECUTE IMMEDIATE V_MSQL;
+			--DBMS_OUTPUT.PUT_LINE('[2] '||V_MSQL);
+			DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comentario en columna creado.');
 		END IF;
 
 	END LOOP;
-
-	COMMIT;
-	DBMS_OUTPUT.PUT_LINE('[INFO] COMMIT');
-	DBMS_OUTPUT.PUT_LINE('[INFO] Columnas añadidas correctamente');
-	
-
 
 EXCEPTION
      WHEN OTHERS THEN 

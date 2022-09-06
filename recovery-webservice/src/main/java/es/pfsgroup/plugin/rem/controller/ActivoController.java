@@ -626,10 +626,17 @@ public class ActivoController extends ParadiseJsonController {
 	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListAsociadosById(DtoActivoVistaPatrimonioContrato dto, ModelMap model) {
+		List<?> resultCount = null;
+		Integer totalCount = 0;
 		try {
 			DtoPage page = adapter.getListAsociadosById(dto);
-			model.put(RESPONSE_DATA_KEY, page.getResults());
-			model.put(RESPONSE_TOTALCOUNT_KEY, page.getTotalCount());
+			
+			if(page != null) {
+				resultCount = page.getResults();
+				totalCount = page.getTotalCount();
+			}
+			model.put(RESPONSE_DATA_KEY, resultCount);
+			model.put(RESPONSE_TOTALCOUNT_KEY, totalCount);
 			model.put(RESPONSE_SUCCESS_KEY, true);
 		} catch (Exception e) {
 			logger.error("error en activoController", e);

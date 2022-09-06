@@ -102,13 +102,16 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 			        		store, record;
 			        		
 			        		if(!Ext.isEmpty(comboEditor)) {
-				        		store = comboEditor.getStore(),							        		
-				        		record = store.findRecord("codigo", value);
-			        		
-				        		if(!Ext.isEmpty(record)) {								        			
-				        			return record.get("descripcion");								        		
+				        		store = comboEditor.getStore();
+				        		if(!Ext.isEmpty(store) && store.data.length > 0) {
+				        			record = store.findRecord("descripcion", value);				        		
+					        		if(!Ext.isEmpty(record)) {								        			
+					        			return record.get("descripcion");								        		
+					        		} else {
+					        			comboEditor.setValue(value);								        			
+					        		}
 				        		} else {
-				        			comboEditor.setValue(value);								        			
+				        			return record.data.estadoOferta;
 				        		}
 			        		}
 			        },
@@ -191,9 +194,9 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 	            var estado = context.record.get("codigoEstadoOferta");  
 	            var allowEdit = estado != '01' && estado != '02' && estado != '05' && estado != '06' && estado != '08';
 	            var enConcurrencia = me.lookupController().getViewModel().getData().agrupacionficha.get('enConcurrencia');
-	            
+
 	            if(!enConcurrencia) {
-	            	var bloqueoEditarOferta = me.lookupController().getViewModel().get('activo').get("bloquearEdicionEstadoOfertas"); 
+	            	var bloqueoEditarOferta = me.lookupController().getViewModel().get('agrupacionficha').get("bloquearEdicionEstadoOfertas"); 
 					if(bloqueoEditarOferta){
 						allowEdit = false;
 					}else{
@@ -356,8 +359,8 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 	editFuncion: function(editor, context){
 
 		var me= this;
-		var estado = context.record.get("codigoEstadoOferta");
-		var	estadoAnterior = context.record.modified.codigoEstadoOferta;
+		var estado = context.record.get("estadoOferta");
+		var	estadoAnterior = context.record.get("codigoEstadoOferta");
 		var gencat = context.record.get("gencat");
 		var msg = HreRem.i18n('msg.desea.aceptar.oferta');
 		var agrupacion = me.lookupController().getViewModel().get('agrupacionficha');
@@ -544,7 +547,7 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 		for (i=0; !hayOfertaAceptada && i<me.getStore().getData().items.length;i++){
 			
 			if(me.getStore().getData().items[i].data.idOferta != record.data.idOferta){
-				var codigoEstadoOferta=  me.getStore().getData().items[i].data.codigoEstadoOferta;
+				var codigoEstadoOferta=  me.getStore().getData().items[i].data.estadoOferta;
 				hayOfertaAceptada = CONST.ESTADOS_OFERTA['ACEPTADA'] == codigoEstadoOferta;
 				var codigoEstadoExpediente=  me.getStore().getData().items[i].data.codigoEstadoExpediente;
 				var expedienteBlocked = CONST.ESTADOS_EXPEDIENTE['APROBADO'] == codigoEstadoExpediente || CONST.ESTADOS_EXPEDIENTE['RESERVADO'] == codigoEstadoExpediente 
@@ -557,7 +560,7 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 			}
 		}
 
-		var codigoEstadoNuevo = record.data.codigoEstadoOferta;
+		var codigoEstadoNuevo = record.data.estadoOferta;
 
 		if(codigoEstadoAnterior != null && CONST.ESTADOS_OFERTA['PDTE_DEPOSITO'] == codigoEstadoAnterior 
 				&& CONST.ESTADOS_OFERTA['RECHAZADA'] != codigoEstadoNuevo && CONST.ESTADO_DEPOSITO['COD_INGRESADO'] != record.get('codigoEstadoDeposito')){
@@ -640,7 +643,7 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 	
 	saveSuccessFn: function (oferta, operation, c) {
    		var me = this;
-		if(oferta.get('codigoEstadoOferta') == CONST.ESTADOS_OFERTA['ACEPTADA']){
+		if(oferta.get('estadoOferta') == CONST.ESTADOS_OFERTA['ACEPTADA']){
 			me.mask(HreRem.i18n("msg.mask.espere"));			
 			Ext.Ajax.request({
 				url : $AC.getRemoteUrl('tramitacionofertas/doTramitacionOferta'),

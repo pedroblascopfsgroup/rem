@@ -432,6 +432,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 				&& oferta.getActivoPrincipal() != null && oferta.getActivoPrincipal().getCartera() != null 
 				&& DDCartera.isCarteraBk(oferta.getActivoPrincipal().getCartera()) 
 				&& oferta.getIsEnConcurrencia() != null && oferta.getIsEnConcurrencia()) {
+			oferta.setReplicateBC(Boolean.TRUE);
 			envioCorreoOfertasPerdedoras = true;
 		}
 

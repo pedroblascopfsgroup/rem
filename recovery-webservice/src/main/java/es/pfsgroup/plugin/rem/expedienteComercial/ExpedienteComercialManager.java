@@ -680,7 +680,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				
 				depositoApi.modificarEstadoDepositoSiIngresado(oferta);
 				ofertaApi.inicioRechazoDeOfertaSinLlamadaBC(oferta, DDEstadosExpedienteComercial.ANULADO);
-				ofertaApi.darDebajaAgrSiOfertaEsLote(oferta);
 
 			}
 			ofertaApi.setEstadoOfertaBC(oferta, null);

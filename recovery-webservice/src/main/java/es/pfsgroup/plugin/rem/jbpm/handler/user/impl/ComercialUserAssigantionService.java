@@ -304,14 +304,15 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 			}	
 		}
 		
-		if((DDCartera.CODIGO_CARTERA_CERBERUS.equals(codigoCartera) && (CODIGO_T017_PBC_VENTA.equals(codigoTarea) || CODIGO_T017_PBC_RESERVA.equals(codigoTarea)))
-				|| (DDCartera.CODIGO_CARTERA_BBVA.equals(codigoCartera) && (CODIGO_T017_PBC_VENTA.equals(codigoTarea) || CODIGO_T017_PBC_RESERVA.equals(codigoTarea)))
-				|| ((DDCartera.CODIGO_CARTERA_BANKIA.equals(codigoCartera)
-						|| DDCartera.CODIGO_CARTERA_LIBERBANK.equals(codigoCartera)
-						|| DDCartera.CODIGO_CARTERA_SAREB.equals(codigoCartera)
-						|| (DDCartera.CODIGO_CARTERA_CAJAMAR.equals(codigoCartera) && !formalizacionCajamar)
-						|| DDCartera.CODIGO_CARTERA_TITULIZADA.equals(codigoCartera))
-						&& CODIGO_T013_RESULTADO_PBC.equals(codigoTarea))) {		
+		if((DDCartera.CODIGO_CARTERA_CERBERUS.equals(codigoCartera) 
+				|| DDCartera.CODIGO_CARTERA_BBVA.equals(codigoCartera)
+				|| DDCartera.CODIGO_CARTERA_BANKIA.equals(codigoCartera))
+					&& (CODIGO_T017_PBC_VENTA.equals(codigoTarea) || CODIGO_T017_PBC_RESERVA.equals(codigoTarea))
+				|| (DDCartera.CODIGO_CARTERA_LIBERBANK.equals(codigoCartera)
+				|| DDCartera.CODIGO_CARTERA_SAREB.equals(codigoCartera)
+				|| (DDCartera.CODIGO_CARTERA_CAJAMAR.equals(codigoCartera) && !formalizacionCajamar)
+				|| DDCartera.CODIGO_CARTERA_TITULIZADA.equals(codigoCartera))
+					&& (CODIGO_T013_RESULTADO_PBC.equals(codigoTarea) || CODIGO_T013_PBC_RESERVA.equals(codigoTarea))) {		
 			Filter filtroUsuario = genericDao.createFilter(FilterType.EQUALS, "username", USUARIO_GESTOR_FORMALIZACION);
 			usuarioDevolver = genericDao.get(Usuario.class, filtroUsuario);
 			

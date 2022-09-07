@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20220723
+--## AUTOR=Alejandra García
+--## FECHA_CREACION=20220906
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-18404
+--## INCIDENCIA_LINK=HREOS-18646
 --## PRODUCTO=NO
 --##
 --## Finalidad: Script que añade en DD_EQV_CAIXA_REM los datos añadidos en T_ARRAY_DATA para todos los diccionarios
@@ -24,6 +24,7 @@
 --##	     0.12 Nuevos motivos no comercializacion - [REMVIP-11574] - Juan Bautista Alfonso
 --##	     0.13 Añadir valores CLASE_USO - [REMVIP-11860] - Juan Bautista Alfonso
 --##	     0.14 Añadir valores - [HREOS-18404] - Santi Monzó
+--##       0.15 Modificaciones [HREOS-18646] Alejandra García
 --##########################################
 --*/
 
@@ -1323,8 +1324,11 @@ DECLARE
         T_TIPO_DATA('EST_CONSERVACION','001901','Buen estado','DD_ECV_ESTADO_CONSERVACION','07','0'),
         T_TIPO_DATA('EST_CONSERVACION','001902','A reformar','DD_ECV_ESTADO_CONSERVACION','08','0'),
         T_TIPO_DATA('EST_CONSERVACION','001904','Malo','DD_ECV_ESTADO_CONSERVACION','04','0'),
-        T_TIPO_DATA('EST_CONSERVACION','001905','Ruinoso','DD_ECV_ESTADO_CONSERVACION','05','0'),
+        T_TIPO_DATA('EST_CONSERVACION','001905','Ruinoso','DD_ECV_ESTADO_CONSERVACION','999','0'),
         T_TIPO_DATA('EST_CONSERVACION','001907','Actualizar','DD_ECV_ESTADO_CONSERVACION','03','0'),
+        T_TIPO_DATA('EST_CONSERVACION_2','079101','Reformado','DD_ECV_ESTADO_CONSERVACION','05','0'),
+        T_TIPO_DATA('EST_CONSERVACION_2','079102','De Origen','DD_ECV_ESTADO_CONSERVACION','06','0'),
+        T_TIPO_DATA('EST_CONSERVACION_2','079103','Necesita reforma','DD_ECV_ESTADO_CONSERVACION','07','0'),
         --- Balcón
         T_TIPO_DATA('BALCON','015201','Sí','DD_SIN_SINO','01','0'),
         T_TIPO_DATA('BALCON','015202','No','DD_SIN_SINO','02','0'),
@@ -1342,6 +1346,8 @@ DECLARE
         --- Piscina
         T_TIPO_DATA('PISCINA','004201','Sí','DD_DIS_DISPONIBILIDAD','03','0'),
         T_TIPO_DATA('PISCINA','004202','No','DD_DIS_DISPONIBILIDAD','01','0'),
+        T_TIPO_DATA('PISCINA_2','009601','Piscina Uso propio','DD_DIS_DISPONIBILIDAD','03','0'),
+        T_TIPO_DATA('PISCINA_2','009602','Piscina Comunitario','DD_DIS_DISPONIBILIDAD','02','0'),
         --- Salida de humos
         T_TIPO_DATA('SALIDA_HUMOS','079401','Sí','DD_SIN_SINO','01','0'),
         T_TIPO_DATA('SALIDA_HUMOS','079402','No','DD_SIN_SINO','02','0'),
@@ -1393,22 +1399,22 @@ DECLARE
         T_TIPO_DATA('CONSERV_EDIF','073902','Rehabilitación parcial','DD_ESC_ESTADO_CONSERVACION_EDIFICIO','02','0'),
         T_TIPO_DATA('CONSERV_EDIF','073903','De Origen','DD_ESC_ESTADO_CONSERVACION_EDIFICIO','04','0'),
         T_TIPO_DATA('CONSERV_EDIF','073904','Necesita rehabilitación','DD_ESC_ESTADO_CONSERVACION_EDIFICIO','03','0'),
-        T_TIPO_DATA('CONSERV_EDIF','079801','Rehabilitación integral','DD_ESC_ESTADO_CONSERVACION_EDIFICIO','01','0'),
-        T_TIPO_DATA('CONSERV_EDIF','079802','Rehabilitación parcial','DD_ESC_ESTADO_CONSERVACION_EDIFICIO','02','0'),
-        T_TIPO_DATA('CONSERV_EDIF','079803','De Origen','DD_ESC_ESTADO_CONSERVACION_EDIFICIO','04','0'),
-        T_TIPO_DATA('CONSERV_EDIF','079804','Necesita rehabilitación','DD_ESC_ESTADO_CONSERVACION_EDIFICIO','03','0'),
+        T_TIPO_DATA('CONSERV_EDIF_2','079801','Rehabilitación integral','DD_ESC_ESTADO_CONSERVACION_EDIFICIO','01','0'),
+        T_TIPO_DATA('CONSERV_EDIF_2','079802','Rehabilitación parcial','DD_ESC_ESTADO_CONSERVACION_EDIFICIO','02','0'),
+        T_TIPO_DATA('CONSERV_EDIF_2','079803','De Origen','DD_ESC_ESTADO_CONSERVACION_EDIFICIO','04','0'),
+        T_TIPO_DATA('CONSERV_EDIF_2','079804','Necesita rehabilitación','DD_ESC_ESTADO_CONSERVACION_EDIFICIO','03','0'),
         --- Valoracion ubicacion
         T_TIPO_DATA('UBICACION','076501','Por encima nivel medio','DD_VUB_VALORACION_UBICACION','02','0'),
         T_TIPO_DATA('UBICACION','076502','nivel medio','DD_VUB_VALORACION_UBICACION','03','0'),
         T_TIPO_DATA('UBICACION','076503','por debajo nivel medio','DD_VUB_VALORACION_UBICACION','04','0'),
-        T_TIPO_DATA('UBICACION','076601','Por encima nivel medio','DD_VUB_VALORACION_UBICACION','02','0'),
-        T_TIPO_DATA('UBICACION','076602','nivel medio','DD_VUB_VALORACION_UBICACION','03','0'),
-        T_TIPO_DATA('UBICACION','076603','por debajo nivel medio','DD_VUB_VALORACION_UBICACION','04','0'),
+        T_TIPO_DATA('UBICACION_2','076601','Por encima nivel medio','DD_VUB_VALORACION_UBICACION','02','0'),
+        T_TIPO_DATA('UBICACION_2','076602','nivel medio','DD_VUB_VALORACION_UBICACION','03','0'),
+        T_TIPO_DATA('UBICACION_2','076603','por debajo nivel medio','DD_VUB_VALORACION_UBICACION','04','0'),
         --- Instalaciones deportivas
         T_TIPO_DATA('INST_DEPORTIVAS','072801','Sí','DD_SIN_SINO','01','0'),
         T_TIPO_DATA('INST_DEPORTIVAS','072802','No','DD_SIN_SINO','02','0'),
-        T_TIPO_DATA('INST_DEPORTIVAS','077101','Sí','DD_SIN_SINO','01','0'),
-        T_TIPO_DATA('INST_DEPORTIVAS','077102','No','DD_SIN_SINO','02','0'),
+        T_TIPO_DATA('INST_DEPORTIVAS_2','077101','Sí','DD_SIN_SINO','01','0'),
+        T_TIPO_DATA('INST_DEPORTIVAS_2','077102','No','DD_SIN_SINO','02','0'),
          --- Armarios empotrados
         T_TIPO_DATA('ARM_EMPOTRADOS','070301','Sí','DD_SIN_SINO','01','0'),
         T_TIPO_DATA('ARM_EMPOTRADOS','070302','No','DD_SIN_SINO','02','0'),

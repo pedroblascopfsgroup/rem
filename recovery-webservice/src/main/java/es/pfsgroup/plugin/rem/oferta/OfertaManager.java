@@ -9568,15 +9568,21 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	@Override
 	@Transactional
 	public void actualizaEstadoOfertaRemAndBC(Oferta oferta) {
-		if (Checks.esNulo(oferta) || !DDEstadoOferta.isPendienteDeposito(oferta.getEstadoOferta()))
+		if (Checks.esNulo(oferta)) {
 			return;
-
-		oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PENDIENTE)));
-		if (oferta.getFechaOfertaPendiente() == null) {
-			oferta.setFechaOfertaPendiente(new Date());
 		}
-		genericDao.save(Oferta.class, oferta);
-		setEstadoOfertaBC(oferta, oferta.getOfertaCaixa());
+		
+		if(DDEstadoOferta.isPendienteDeposito(oferta.getEstadoOferta())) {
+		    oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PENDIENTE)));
+		    if (oferta.getFechaOfertaPendiente() == null) {
+		        oferta.setFechaOfertaPendiente(new Date());
+		    }
+		    genericDao.save(Oferta.class, oferta);
+		}
+		
+		if(!DDEstadoOferta.isPteDoc(oferta.getEstadoOferta()) && !DDEstadoOferta.isPendienteDocumentacionTitularesAdicionales(oferta.getEstadoOferta())) {
+		    this.setEstadoOfertaBC(oferta, oferta.getOfertaCaixa());
+		}
 	}
 
 	

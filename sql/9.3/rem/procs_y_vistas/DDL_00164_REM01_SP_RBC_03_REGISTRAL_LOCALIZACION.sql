@@ -29,6 +29,7 @@
 --##	      0.17 Quita NUM_CARTILLA - HREOS-17497 - Daniel Algaba
 --##	      0.18 Añadimos REG_SUPERFICIE_CONSTRUIDA - HREOS-17614 - Daniel Algaba
 --##	      0.19 Añadimos REG_SUPERFICIE_ALQUILABLE - HREOS-18641 - Alejandro Valverde
+--##	      0.20 Modificar el campo REG_SUPERFICIE_ALQUILABLE por SUP_ALQUILABLE - HREOS-18641 - Alejandra García
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -217,7 +218,7 @@ BEGIN
                   , ACT_REG.REG_SUPERFICIE_BAJO_RASANTE * 100 SUP_BAJO_RASANTE
                   , ACT_REG.REG_SUPERFICIE_PARCELA * 100 SUP_REG_SOLAR
                   , ACT_REG.REG_SUPERFICIE_CONSTRUIDA * 100 SUP_REG_CONSTRUIDA
-				  , ACT_REG.REG_SUPERFICIE_ALQUILABLE * 100 SUP_REG_ALQUILABLE
+				  , ACT_REG.REG_SUPERFICIE_ALQUILABLE * 100 SUP_ALQUILABLE
                   FROM '|| V_ESQUEMA ||'.BIE_DATOS_REGISTRALES BIE_REG
                   JOIN '|| V_ESQUEMA ||'.ACT_REG_INFO_REGISTRAL ACT_REG ON BIE_REG.BIE_DREG_ID = ACT_REG.BIE_DREG_ID AND ACT_REG.BORRADO = 0
                   JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_ID = ACT_REG.ACT_ID AND ACT.BORRADO = 0
@@ -244,7 +245,7 @@ BEGIN
                   , APR.SUP_BAJO_RASANTE = AUX.SUP_BAJO_RASANTE
                   , APR.SUP_REG_SOLAR = AUX.SUP_REG_SOLAR
                   , APR.SUP_REG_CONSTRUIDA = AUX.SUP_REG_CONSTRUIDA
-				  , APR.SUP_REG_ALQUILABLE = AUX.SUP_REG_ALQUILABLE
+				  , APR.SUP_ALQUILABLE = AUX.SUP_ALQUILABLE
                   WHEN NOT MATCHED THEN
                   INSERT 
                   (NUM_IDENTIFICATIVO
@@ -257,7 +258,7 @@ BEGIN
                   , SUP_BAJO_RASANTE
                   , SUP_REG_SOLAR
                   , SUP_REG_CONSTRUIDA
-				  , SUP_REG_ALQUILABLE)
+				  , SUP_ALQUILABLE)
                   VALUES 
                   (AUX.NUM_IDENTIFICATIVO
                   , AUX.NUM_INMUEBLE
@@ -269,7 +270,7 @@ BEGIN
                   , AUX.SUP_BAJO_RASANTE
                   , AUX.SUP_REG_SOLAR
                   , AUX.SUP_REG_CONSTRUIDA
-                  , AUX.SUP_REG_ALQUILABLE)';
+                  , AUX.SUP_ALQUILABLE)';
    
       EXECUTE IMMEDIATE V_MSQL;
 

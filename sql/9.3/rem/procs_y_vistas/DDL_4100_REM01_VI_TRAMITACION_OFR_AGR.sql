@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Álvaro Valero
---## FECHA_CREACION=20190806
+--## AUTOR=Pier Gotta
+--## FECHA_CREACION=20220824
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-7202
+--## INCIDENCIA_LINK=HREOS-18494
 --## PRODUCTO=NO
 --## Finalidad: Vista que indica si la agrupación tiene activos que ha superado los 7 dias de margen para la publicación de oferas.
 --##           
@@ -12,6 +12,7 @@
 --## VERSIONES:
 --##        0.1 20190806 Versión inicial
 --##        0.2 20190826 Modificación para agregar la relacion con ACT_ATR_AUTO_TRAM_OFERTAS
+--##	    0.3 HREOS-18494 Pier Gotta Añadir concurrencia
 --##########################################
 --*/
 
@@ -62,6 +63,9 @@ BEGIN
       JOIN '|| V_ESQUEMA ||'.DD_EOF_ESTADOS_OFERTA EOF ON OFR.DD_EOF_ID = EOF.DD_EOF_ID
       WHERE EOF.DD_EOF_CODIGO = ''01''
     )
+    AND NOT EXISTS (SELECT (1) FROM '|| V_ESQUEMA ||'.OFR_OFERTAS OFR2
+    JOIN '|| V_ESQUEMA ||'.DD_EOF_ESTADOS_OFERTA EOF ON EOF.DD_EOF_ID = OFR2.DD_EOF_ID
+    WHERE EOF.DD_EOF_CODIGO IN (''04'', ''09'', ''07'', ''05'', ''08'') AND OFR2.OFR_CONCURRENCIA = 1 AND OFR2.OFR_ID = OFR.OFR_ID)
     AND (ATR.FECHA_INI_BLOQUEO IS NULL OR TRUNC(ATR.FECHA_INI_BLOQUEO) < TRUNC(APU.APU_FECHA_CAMB_PUBL_VENTA))
     GROUP BY AGA.AGR_ID';
 

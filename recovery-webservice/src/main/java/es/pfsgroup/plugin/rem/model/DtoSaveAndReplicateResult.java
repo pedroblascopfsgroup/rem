@@ -5,6 +5,7 @@ public class DtoSaveAndReplicateResult {
     private boolean replicateToBc;
     private boolean success;
     private Long numOferta;
+    private String message;
 
 
     public boolean isReplicateToBc() {
@@ -30,4 +31,14 @@ public class DtoSaveAndReplicateResult {
     public void setNumOferta(Long numOferta) {
         this.numOferta = numOferta;
     }
+
+	public String getMessage() {
+		return message;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
+	}
+    
+    
 }

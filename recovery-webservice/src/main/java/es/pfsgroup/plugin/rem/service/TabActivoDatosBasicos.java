@@ -28,6 +28,93 @@ import es.pfsgroup.plugin.rem.alaskaComunicacion.AlaskaComunicacionManager;
 import es.pfsgroup.plugin.rem.api.*;
 import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.model.dd.*;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
+import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
+import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
+import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
+import es.pfsgroup.plugin.rem.api.DepositoApi;
+import es.pfsgroup.plugin.rem.api.ConcurrenciaApi;
+import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.GestorActivoApi;
+import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
+import es.pfsgroup.plugin.rem.api.TareaActivoApi;
+import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
+import es.pfsgroup.plugin.rem.model.ActivoBancario;
+import es.pfsgroup.plugin.rem.model.ActivoBbvaActivos;
+import es.pfsgroup.plugin.rem.model.ActivoCaixa;
+import es.pfsgroup.plugin.rem.model.ActivoEstadosInformeComercialHistorico;
+import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
+import es.pfsgroup.plugin.rem.model.ActivoInfoLiberbank;
+import es.pfsgroup.plugin.rem.model.ActivoLocalizacion;
+import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
+import es.pfsgroup.plugin.rem.model.ActivoPatrimonioContrato;
+import es.pfsgroup.plugin.rem.model.ActivoPrinexActivos;
+import es.pfsgroup.plugin.rem.model.ActivoSareb;
+import es.pfsgroup.plugin.rem.model.ActivoTasacion;
+import es.pfsgroup.plugin.rem.model.Concurrencia;
+import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
+import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
+import es.pfsgroup.plugin.rem.model.DtoListadoGestores;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.HistoricoFasePublicacionActivo;
+import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.PerimetroActivo;
+import es.pfsgroup.plugin.rem.model.TareaActivo;
+import es.pfsgroup.plugin.rem.model.Trabajo;
+import es.pfsgroup.plugin.rem.model.VAdmisionDocumentos;
+import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
+import es.pfsgroup.plugin.rem.model.VPreciosVigentesCaixa;
+import es.pfsgroup.plugin.rem.model.VTramitacionOfertaActivo;
+import es.pfsgroup.plugin.rem.model.dd.ActivoAdmisionRevisionTitulo;
+import es.pfsgroup.plugin.rem.model.dd.DDBajaContableBBVA;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDCategoriaComercializacion;
+import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
+import es.pfsgroup.plugin.rem.model.dd.DDCesionUso;
+import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
+import es.pfsgroup.plugin.rem.model.dd.DDDisponibleAdministracion;
+import es.pfsgroup.plugin.rem.model.dd.DDDisponibleTecnico;
+import es.pfsgroup.plugin.rem.model.dd.DDDistritoCaixa;
+import es.pfsgroup.plugin.rem.model.dd.DDEntradaActivoBankia;
+import es.pfsgroup.plugin.rem.model.dd.DDEquipoGestion;
+import es.pfsgroup.plugin.rem.model.dd.DDEscaleraEdificio;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdecucionSareb;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpIncorrienteBancario;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpRiesgoBancario;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoRegistralActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoGestionComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoTecnico;
+import es.pfsgroup.plugin.rem.model.dd.DDPlantaEdificio;
+import es.pfsgroup.plugin.rem.model.dd.DDPromocionBBVA;
+import es.pfsgroup.plugin.rem.model.dd.DDServicerActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
+import es.pfsgroup.plugin.rem.model.dd.DDSociedadPagoAnterior;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivoBDE;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoClaseActivoBancario;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoActivoBDE;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAlta;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoProductoBancario;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoSegmento;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTransmision;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 import es.pfsgroup.plugin.rem.notificacion.api.AnotacionApi;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 import org.apache.commons.beanutils.BeanUtils;
@@ -155,6 +242,9 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	
 	@Autowired
 	private DepositoApi depositoApi;
+
+	@Autowired
+	private ConcurrenciaApi concurrenciaApi;
 	
 	protected static final Log logger = LogFactory.getLog(TabActivoDatosBasicos.class);	
 
@@ -1271,6 +1361,19 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				activoDto.setIdentificadorTrastero(activoInfoComercial.getIdentificadorTrastero());
 			}
 		}
+		
+		activoDto.setEnConcurrencia(concurrenciaApi.isActivoEnConcurrencia(activo));
+		Boolean activoTieneConcurrencia = false;
+		Concurrencia concurrencia = concurrenciaApi.getUltimaConcurrenciaByActivo(activo);
+		if(concurrencia != null) {
+			activoTieneConcurrencia = true;
+		}
+		activoDto.setActivoOfertasConcurrencia(activoTieneConcurrencia);
+		
+		activoDto.setVistaDeConcurrencia(concurrenciaApi.isActivoEnConcurrencia(activo) || concurrenciaApi.tieneActivoOfertasDeConcurrencia(activo));
+		activoDto.setHistoricoDeConcurrencia(concurrenciaApi.getTabConcurrenciaByActivo(activo));
+		
+		activoDto.setBloquearEdicionEstadoOfertas(concurrenciaApi.bloquearEditarOfertasPorConcurrenciaActivo(activo));
 		
 		return activoDto;
 	}

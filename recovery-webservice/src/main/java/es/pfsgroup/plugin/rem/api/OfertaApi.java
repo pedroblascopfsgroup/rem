@@ -863,5 +863,9 @@ public interface OfertaApi {
 
 	void rechazoOfertasMotivoVendido(Oferta oferta);
 
+	void rechazoOfertaNew(Oferta oferta, String codEstadoExp);
+
+	void llamarCambioEstadoReplicarNoSession(Long idOferta, String codigoEstado);
+	
 	void actualizarOfertaBoarding(Oferta oferta, TareaExterna tareaExterna);
 }

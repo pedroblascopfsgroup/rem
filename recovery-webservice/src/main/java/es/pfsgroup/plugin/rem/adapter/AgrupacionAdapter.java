@@ -40,6 +40,108 @@ import es.pfsgroup.plugin.rem.api.*;
 import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
 import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.model.dd.*;
+import es.pfsgroup.plugin.rem.api.ActivoAgrupacionActivoApi;
+import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
+import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
+import es.pfsgroup.plugin.rem.api.AgrupacionAvisadorApi;
+import es.pfsgroup.plugin.rem.api.ConcurrenciaApi;
+import es.pfsgroup.plugin.rem.api.DepositoApi;
+import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.GestorActivoApi;
+import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.ProveedoresApi;
+import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
+import es.pfsgroup.plugin.rem.api.TramitacionOfertasApi;
+import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
+import es.pfsgroup.plugin.rem.concurrencia.dao.ConcurrenciaDao;
+import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacionObservacion;
+import es.pfsgroup.plugin.rem.model.ActivoAsistida;
+import es.pfsgroup.plugin.rem.model.ActivoBancario;
+import es.pfsgroup.plugin.rem.model.ActivoCaixa;
+import es.pfsgroup.plugin.rem.model.ActivoFoto;
+import es.pfsgroup.plugin.rem.model.ActivoHistoricoPatrimonio;
+import es.pfsgroup.plugin.rem.model.ActivoLoteComercial;
+import es.pfsgroup.plugin.rem.model.ActivoObraNueva;
+import es.pfsgroup.plugin.rem.model.ActivoOferta;
+import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
+import es.pfsgroup.plugin.rem.model.ActivoPromocionAlquiler;
+import es.pfsgroup.plugin.rem.model.ActivoPropietario;
+import es.pfsgroup.plugin.rem.model.ActivoProveedor;
+import es.pfsgroup.plugin.rem.model.ActivoProyecto;
+import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
+import es.pfsgroup.plugin.rem.model.ActivoRestringida;
+import es.pfsgroup.plugin.rem.model.ActivoRestringidaAlquiler;
+import es.pfsgroup.plugin.rem.model.ActivoRestringidaObrem;
+import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
+import es.pfsgroup.plugin.rem.model.AdjuntoComprador;
+import es.pfsgroup.plugin.rem.model.AgrupacionesVigencias;
+import es.pfsgroup.plugin.rem.model.ClienteComercial;
+import es.pfsgroup.plugin.rem.model.ClienteCompradorGDPR;
+import es.pfsgroup.plugin.rem.model.ClienteGDPR;
+import es.pfsgroup.plugin.rem.model.CuentasVirtuales;
+import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
+import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
+import es.pfsgroup.plugin.rem.model.DtoAgrupacionGridFilter;
+import es.pfsgroup.plugin.rem.model.DtoAgrupaciones;
+import es.pfsgroup.plugin.rem.model.DtoAgrupacionesCreateDelete;
+import es.pfsgroup.plugin.rem.model.DtoAviso;
+import es.pfsgroup.plugin.rem.model.DtoComercialAgrupaciones;
+import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionAgrupacion;
+import es.pfsgroup.plugin.rem.model.DtoEstadoDisponibilidadComercial;
+import es.pfsgroup.plugin.rem.model.DtoObservacion;
+import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
+import es.pfsgroup.plugin.rem.model.DtoUsuario;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.GestorActivo;
+import es.pfsgroup.plugin.rem.model.InfoAdicionalPersona;
+import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.OfertaCaixa;
+import es.pfsgroup.plugin.rem.model.OfertaExclusionBulk;
+import es.pfsgroup.plugin.rem.model.OfertasAgrupadasLbk;
+import es.pfsgroup.plugin.rem.model.PerimetroActivo;
+import es.pfsgroup.plugin.rem.model.TmpClienteGDPR;
+import es.pfsgroup.plugin.rem.model.UsuarioCartera;
+import es.pfsgroup.plugin.rem.model.VAgrupacionActivosGestorComercial;
+import es.pfsgroup.plugin.rem.model.VBusquedaVisitasDetalle;
+import es.pfsgroup.plugin.rem.model.VCalculosActivoAgrupacion;
+import es.pfsgroup.plugin.rem.model.VCambioActivoPrecioPublicacionAgrupaciones;
+import es.pfsgroup.plugin.rem.model.VCondicionantesAgrDisponibilidad;
+import es.pfsgroup.plugin.rem.model.VFechasPubCanalesAgr;
+import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionConcurrencia;
+import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionIncAnuladas;
+import es.pfsgroup.plugin.rem.model.VGridOfertasActivosConcurrencia;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
+import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoObraNueva;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoGestionComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDPaises;
+import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
+import es.pfsgroup.plugin.rem.model.dd.DDResponsableDocumentacionCliente;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
+import es.pfsgroup.plugin.rem.model.dd.DDSistemaOrigen;
+import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOfertaAcciones;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 import es.pfsgroup.plugin.rem.service.InterlocutorCaixaService;
@@ -153,7 +255,6 @@ public class AgrupacionAdapter {
 
 	@Autowired
 	private ParticularValidatorApi particularValidator;
-
 	
 	@Autowired
 	private ActivoValoracionDao activoValoracionDao;
@@ -195,11 +296,16 @@ public class AgrupacionAdapter {
 	private ParticularValidatorApi particularValidatorApi;
 	
 	@Autowired
+	private ConcurrenciaApi concurrenciaApi;
+
+	@Autowired
 	private DepositoApi depositoApi;
 
 	@Autowired
+	private ConcurrenciaDao concurrenciaDao;
+	
+	@Autowired
 	private TramitacionOfertasApi tramitacionOfertasApi;
-
 
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -872,6 +978,7 @@ public class AgrupacionAdapter {
 				}
 				dtoAgrupacion.setTramitable(activoAgrupacionApi.isTramitable(agrupacion));
 				dtoAgrupacion.setEsHayaHome(activoApi.esActivoHayaHome(null, agrupacion));
+				dtoAgrupacion.setEnConcurrencia(concurrenciaApi.isAgrupacionEnConcurrencia(agrupacion));
 			}
 			
 		
@@ -881,6 +988,11 @@ public class AgrupacionAdapter {
 				dtoAgrupacion.setDireccion(activoCero.getDireccionCompleta());
 			}
 			
+			
+			dtoAgrupacion.setAgrConOfertasConcurrencia(concurrenciaApi.tieneAgrupacionOfertasDeConcurrencia(agrupacion));
+			dtoAgrupacion.setIsConcurrencia(concurrenciaApi.isAgrupacionEnConcurrencia(agrupacion) || concurrenciaApi.tieneAgrupacionOfertasDeConcurrencia(agrupacion));
+			
+			dtoAgrupacion.setBloquearEdicionEstadoOfertas(concurrenciaApi.bloquearEditarOfertasPorConcurrenciaAgrupacion(agrupacion));
 
 		} catch (IllegalAccessException e) {
 			logger.error("error en agrupacionAdapter", e);
@@ -1062,6 +1174,18 @@ public class AgrupacionAdapter {
 			}
 		}
 		
+		if(concurrenciaApi.tieneActivoOfertasDeConcurrencia(activo))
+			throw new JsonViewerException("El activo que intenta insertar tiene ofertas en periodo de concurrencia");
+
+		if(concurrenciaApi.isActivoEnConcurrencia(activo))
+			throw new JsonViewerException("El activo que intenta insertar se encuetra en periodo de concurrencia");
+
+		if(concurrenciaApi.tieneAgrupacionOfertasDeConcurrencia(agrupacion))
+			throw new JsonViewerException("La agrupación tiene ofertas en un periodo de concurrencia");
+
+		if(concurrenciaApi.isAgrupacionEnConcurrencia(agrupacion))
+			throw new JsonViewerException("La agrupación está en un periodo de concurrencia");
+
 		if (activo != null && activo.getNumActivo() != null) {
 			if (agrupacion != null && 
 					(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())
@@ -1366,6 +1490,39 @@ public class AgrupacionAdapter {
 
 		try {
 			// Validaciones
+			if (Checks.esNulo(agrupacion)) {
+				throw new JsonViewerException("La agrupación no existe");
+			}
+
+			if (Checks.esNulo(activo)) {
+				throw new JsonViewerException("El activo no existe");
+			}
+
+			Filter filterAga = genericDao.createFilter(FilterType.EQUALS, "agrupacion.id", agrupacion.getId());
+			List <ActivoAgrupacionActivo> activoAgrupacion = genericDao.getList(ActivoAgrupacionActivo.class, filterAga);
+
+			if (activoAgrupacion != null) {
+				for (ActivoAgrupacionActivo activoAgrupacionActivo : activoAgrupacion) {
+					if (activoAgrupacionActivo != null) {
+						if (activoAgrupacionActivo.getActivo().getNumActivo().equals(activo.getNumActivo())) {
+							return;
+						}
+					}
+				}
+			}
+
+			if(concurrenciaApi.tieneActivoOfertasDeConcurrencia(activo))
+				throw new JsonViewerException("El activo que intenta insertar tiene ofertas en periodo de concurrencia");
+
+			if(concurrenciaApi.isActivoEnConcurrencia(activo))
+				throw new JsonViewerException("El activo que intenta insertar se encuetra en periodo de concurrencia");
+
+			if(concurrenciaApi.tieneAgrupacionOfertasDeConcurrencia(agrupacion))
+				throw new JsonViewerException("La agrupación tiene ofertas en un periodo de concurrencia");
+
+			if(concurrenciaApi.isAgrupacionEnConcurrencia(agrupacion))
+				throw new JsonViewerException("La agrupación está en un periodo de concurrencia");
+
 			int num = activoAgrupacionActivoApi.numActivosPorActivoAgrupacion(agrupacion.getId());
 
 			// Si es el primer activo, validamos si tenemos los datos necesarios
@@ -2797,7 +2954,7 @@ public class AgrupacionAdapter {
 				if (dto.getTelefono2Rte() != null) {
 					clienteComercial.setTelefonoRepresentante2(dto.getTelefono2Rte());
 				}
-				
+
 				if (dto.getProvinciaRteCodigo() != null && !dto.getProvinciaRteCodigo().trim().isEmpty())
 					clienteComercial.setProvinciaRepresentante(genericDao.get(
 							DDProvincia.class,genericDao.createFilter(
@@ -3092,7 +3249,7 @@ public class AgrupacionAdapter {
 					
 				ofertaApi.setEstadoOfertaBC(ofertaNueva, null);
 				ofrCaixa.setCanalDistribucionBc(calcularCanalDistribucionBcOfrCaixa(agrupacion, oferta.getTipoOferta()));
-				
+
 				if (dto.getCheckSubasta() != null){
 					ofrCaixa.setCheckSubasta(dto.getCheckSubasta());
 					genericDao.save(OfertaCaixa.class,ofrCaixa);
@@ -5507,6 +5664,24 @@ public class AgrupacionAdapter {
 	public DtoAgrupacionesCreateDelete createAgrupacionesGrid(DtoAgrupacionesCreateDelete dto) throws Exception {		
 		dto.setTipoAgrupacion(dto.getTipoAgrupacionDescripcion());
 		return this.createAgrupacion(dto);
+	}
+	
+	public List<VGridOfertasActivosConcurrencia> getListOfertasVivasConcurrenciaAgrupacion(Long idAgrupacion) {
+		
+		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(idAgrupacion);
+		
+		return concurrenciaDao.getListOfertasVivasAgrupacionConcurrentes(agrupacion.getId(), agrupacion.getNumAgrupRem(), null);
+
+	}
+
+	public List<VGridOfertasActivosAgrupacionConcurrencia> getListOfertasTerminadasConcurrenciaAgrupacion(Long idAgrupacion) {
+
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idAgrupacion", idAgrupacion);
+
+		List<VGridOfertasActivosAgrupacionConcurrencia> ofertasAgrupacion = genericDao.getList(VGridOfertasActivosAgrupacionConcurrencia.class, filtro);
+
+		return ofertasAgrupacion;
+
 	}
 
 

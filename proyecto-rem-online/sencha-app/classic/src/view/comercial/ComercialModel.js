@@ -72,22 +72,6 @@ Ext.define('HreRem.view.comercial.ComercialModel', {
 				extraParams: {diccionario: 'tiposOfertas'}
 			}
     	},
-    	comboEstadoOferta: {
-			model: 'HreRem.model.ComboBase',
-			proxy: {
-				type: 'uxproxy',
-				remoteUrl: 'generic/getDiccionario',
-				extraParams: {diccionario: 'estadosOfertas'}
-			}
-    	},
-    	comboEstadoExpediente: {
-			model: 'HreRem.model.ComboBase',
-			proxy: {
-				type: 'uxproxy',
-				remoteUrl: 'generic/getDiccionario',
-				extraParams: {diccionario: 'estadosExpediente'}
-			}
-    	},
     	comboEstadoExpedienteVentas: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
@@ -161,7 +145,17 @@ Ext.define('HreRem.view.comercial.ComercialModel', {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getComboSubcartera'
 				}
-		}
+		},
+		comboEstadoOferta: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'estadosOfertas'}
+			},
+			autoLoad: true
+
+    } 
     		
     }
 });

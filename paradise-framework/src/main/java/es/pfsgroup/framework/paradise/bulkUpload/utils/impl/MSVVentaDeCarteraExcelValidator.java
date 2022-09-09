@@ -48,6 +48,7 @@ public class MSVVentaDeCarteraExcelValidator extends MSVExcelValidatorAbstract {
 	public static final String TITULARES_DIFERENTES = "Los activos tienen que tener los mismos titulares";
 	public static final String FECHA_INGRESO_CHEQUE_OBLIGATORIA = "La fecha ingreso cheque tiene que estar informada.";
 	public static final String ACTIVOS_DIFERENTES_SUBCARTERAS = "Existen activos de diferentes subcarteras en la oferta.";
+	public static final String ACTIVOS_CARTERA_CAIXABANK_BANKIA = "Existen activos de Bankia o Caixabank.";
 	public static final String CARTERA_OBLIGATORIA = "El código de cartera no esta informado.";
 	public static final String ACTIVE_NOT_EXISTS = "El activo no existe.";
 	public static final String ACTIVE_NULL = "El campo número activo no puede estar vacío";
@@ -283,8 +284,9 @@ public class MSVVentaDeCarteraExcelValidator extends MSVExcelValidatorAbstract {
 				mapaErrores.put(CODIGO_PRESCRIPTOR_NULL, esCampoNullByRows(exc, COL_NUM.CODIGO_PRESCRIPTOR));
 				mapaErrores.put(CODIGO_PRESCRIPTOR_NOT_EXISTS, codigoPrescriptorNotExistsByRows(exc));
 				mapaErrores.put(NUMERO_URSUS_TITULAR_NULL, esCampoNullByRows(exc, COL_NUM.NUMERO_URSUS_TITULAR));
-				mapaErrores.put(PORCENTAJE_COMPRA_TITULAR_NULL, esCampoNullByRows(exc, COL_NUM.PORCENTAJE_COMPRA_TITULAR));
+ 				mapaErrores.put(ACTIVOS_CARTERA_CAIXABANK_BANKIA, existenActivosConCarteraCaixabankBankia(exc)); 
 				mapaErrores.put(ACTIVOS_DIFERENTES_SUBCARTERAS, existenActivosDiferentesSubcarterasEnAgrupacion(exc));
+				mapaErrores.put(PORCENTAJE_COMPRA_TITULAR_NULL, esCampoNullByRows(exc, COL_NUM.PORCENTAJE_COMPRA_TITULAR));
 				mapaErrores.put(CARTERA_OBLIGATORIA, esCampoNullByRows(exc, COL_NUM.CODIGO_CARTERA));
 				mapaErrores.put(FECHA_INGRESO_CHEQUE_OBLIGATORIA, existenActivosDeBHSinFechaIngresoCheque(exc));
 				mapaErrores.put(TITULARES_DIFERENTES, validarTitualresOferta(exc));
@@ -783,6 +785,30 @@ public class MSVVentaDeCarteraExcelValidator extends MSVExcelValidatorAbstract {
 				} else {
 					ofertasSubcarteras.put(codigoOferta, codigoSubcartera);
 				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return listaFilas;
+	}
+	
+	private List<Integer> existenActivosConCarteraCaixabankBankia(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		HashMap<String, String> numActivoCarteras = new HashMap<String, String>();
+		String CODIGO_CARTERA_BANKIA = "03";
+		
+		try {
+			for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < this.numFilasHoja; i++) {
+				Integer codigoCarteraExcel = Integer.valueOf(exc.dameCelda(i, COL_NUM.CODIGO_CARTERA));
+				String codigoCarteraBbdd = particularValidator.getCartera(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA));
+				//Se compara desde nuestra BBDD y el excel, por si la cartera difiere entre ella, en ambos casos si la cartera es
+				//BANKIA se  da el aviso
+				if(CODIGO_CARTERA_BANKIA.equals(codigoCarteraBbdd) ||  Integer.valueOf(CODIGO_CARTERA_BANKIA) == codigoCarteraExcel) {
+						listaFilas.add(i);
+						
+				}
+		
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

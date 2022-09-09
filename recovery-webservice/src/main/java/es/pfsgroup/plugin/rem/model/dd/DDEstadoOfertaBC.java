@@ -38,6 +38,11 @@ public class DDEstadoOfertaBC implements Auditable, Dictionary {
 	public static final String CODIGO_C4C_CANCELADA= "20";
 	public static final String CODIGO_C4C_SOLICITAR_RESERVA= "290";
 	public static final String CODIGO_C4C_DEVOLUCION_RESERVA= "490";
+	public static final String CODIGO_C4C_TRAMITE_CONCURRENCIA_PDTE_TITULARES_ADICIONALES = "860";
+	public static final String CODIGO_C4C_TRAMITE_CONCURRENCIA_CON_DOCUMENTACION = "820";
+	public static final String CODIGO_C4C_TRAMITE_CONCURRENCIA_PDTE_PAGO_DEPOSITO = "830";
+	public static final String CODIGO_C4C_TRAMITE_CONCURRENCIA_PDTE_APROBACION = "840";
+	public static final String CODIGO_C4C_TRAMITE_CONCURRENCIA_EN_TRAMITACION = "850";
 	
 	public static final String CODIGO_TRAMITE_PDTE_TITULARES_SECUNDARIOS= "04";
 	public static final String CODIGO_TRAMITE_PDTE_DOCUMENTACION= "05";
@@ -46,7 +51,12 @@ public class DDEstadoOfertaBC implements Auditable, Dictionary {
 	public static final String CODIGO_TRAMITE_CONGELADA= "08";
 	public static final String CODIGO_SOLICITAR_DEVOLUCION_RESERVA_ARRAS= "09";
 	public static final String CODIGO_CANCELADA= "10";
-	public static final String CODIGO_DEVOLUCION_DEPOSITO= "11";
+	public static final String CODIGO_SOLICITAR_DEVOLUCION_RESERVA_DEPOSITO= "11";
+	public static final String CODIGO_TRAMITE_CONCURRENCIA_PDTE_TITULARES_ADICIONALES = "12";
+	public static final String CODIGO_TRAMITE_CONCURRENCIA_CON_DOCUMENTACION = "13";
+	public static final String CODIGO_TRAMITE_CONCURRENCIA_PDTE_PAGO_DEPOSITO = "14";
+	public static final String CODIGO_TRAMITE_CONCURRENCIA_PDTE_APROBACION = "15";
+	public static final String CODIGO_TRAMITE_CONCURRENCIA_EN_TRAMITACION = "16";
 
 	private static final long serialVersionUID = 1L;
 

@@ -1117,7 +1117,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			filtroConcurrencia = genericDao.createFilter(FilterType.EQUALS, "agrupacion.id", agr.getId());
 		}
 		
-		if(activo != null) {
+		if(activo != null && concurrenciaApi.isActivoEnConcurrencia(activo)) {
 			Double precioVentaActivo = activoApi.getImporteValoracionActivoByCodigo(activo, DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA);
 			Double precioDescuentoVentaActivo = activoApi.getImporteValoracionActivoByCodigo(activo, DDTipoPrecio.CODIGO_TPC_DESC_APROBADO);
 			if((precioDescuentoVentaActivo != null && ofertaDto.getImporte() < precioDescuentoVentaActivo) 

@@ -14,6 +14,9 @@ Ext.define('HreRem.model.OfertaActivo', {
     		name: 'numActivoAgrupacion'
     	},
     	{
+    		name: 'numActivo'
+    	},
+    	{
     		name : 'idActivo'
     	},
     	{
@@ -40,9 +43,8 @@ Ext.define('HreRem.model.OfertaActivo', {
     		name : 'precioPublicado'
     	},
     	{
-    		name : 'importeOferta',
-			type: 'number'
-    	},
+    		name : 'importeOferta'
+    	},	
     	{
     		name : 'importeContraOferta',
 			type: 'number'
@@ -96,12 +98,26 @@ Ext.define('HreRem.model.OfertaActivo', {
     		name: 'codRiesgoOperacion'
     	},
     	{
+    		name: 'ordenGanador'
+		},
+    	{
     		name: 'codigoEstadoDeposito'
     	},
     	{
     		name: 'estadoDeposito'
+		},
+		{
+    		name: 'codigoEstadoC4C'
+		},
+		{
+    		name: 'ofertaCreadaConcurrencia',
+			type: 'boolean'
+    	},
+		{
+    		name: 'ofertaEnConcurrenciaActiva',
+			type: 'boolean'
     	}
-
+    	
     ],
     
     proxy: {

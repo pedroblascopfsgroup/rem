@@ -71,6 +71,7 @@ import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoPropagacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.CatastroApi;
+import es.pfsgroup.plugin.rem.api.ConcurrenciaApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.excel.ActivoGridExcelReport;
@@ -89,6 +90,7 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
 import es.pfsgroup.plugin.rem.model.AdjuntoComprador;
 import es.pfsgroup.plugin.rem.model.AuditoriaExportaciones;
+import es.pfsgroup.plugin.rem.model.Concurrencia;
 import es.pfsgroup.plugin.rem.model.DtoActivoAdministracion;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargas;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargasTab;
@@ -130,6 +132,7 @@ import es.pfsgroup.plugin.rem.model.DtoFiltroTasaciones;
 import es.pfsgroup.plugin.rem.model.DtoFoto;
 import es.pfsgroup.plugin.rem.model.DtoGastoAsociadoAdquisicion;
 import es.pfsgroup.plugin.rem.model.DtoGenerarDocGDPR;
+import es.pfsgroup.plugin.rem.model.DtoHistoricoConcurrencia;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoDestinoComercial;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
@@ -153,6 +156,7 @@ import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.DtoPublicacionGridFilter;
+import es.pfsgroup.plugin.rem.model.DtoPujaDetalle;
 import es.pfsgroup.plugin.rem.model.DtoReglasPublicacionAutomatica;
 import es.pfsgroup.plugin.rem.model.DtoSubirDocumento;
 import es.pfsgroup.plugin.rem.model.DtoTasacion;
@@ -249,8 +253,11 @@ public class ActivoController extends ParadiseJsonController {
 	private CaixaBcRestClient caixaBcRestClient;
 	
 	@Autowired
+	private ConcurrenciaApi concurrenciaApi;
+
+	@Autowired
 	private CatastroApi catastroApi;
-	
+
 	@Resource
 	private Properties appProperties;
 
@@ -273,7 +280,7 @@ public class ActivoController extends ParadiseJsonController {
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			model.put(RESPONSE_ERROR_KEY, e.getMessage());
 		}
-		
+
 		return createModelAndViewJson(model);
 	}
 
@@ -1385,7 +1392,13 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("data", adapter.getListOfertasActivos(id)); 
 		}
 		else {
-			model.put("data", adapter.getListOfertasTramitadasVendidasActivos(id));
+			if(concurrenciaApi.isActivoEnConcurrencia(activoDao.getActivoById(id))) {
+				model.put("data", concurrenciaApi.getListOfertasVivasConcurrentes(id, null));
+			} else if (concurrenciaApi.isConcurrenciaTerminadaOfertasEnProgresoActivo(activoDao.getActivoById(id))) {
+				model.put("data", concurrenciaApi.getListOfertasTerminadasConcurrentes(id, null));
+			} else {
+				model.put("data", adapter.getListOfertasTramitadasVendidasActivos(id));
+			}
 		}
 		return createModelAndViewJson(model);
 	}
@@ -4457,6 +4470,29 @@ public class ActivoController extends ParadiseJsonController {
 			logger.error("error en activoController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);
 		}
+		return createModelAndViewJson(model);
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getListConcurrenciasActivoById(Long idActivo,Long idConcurrencia, ModelMap model) {
+		model.put(RESPONSE_DATA_KEY, concurrenciaApi.getListOfertasVivasConcurrentes(idActivo,idConcurrencia));
+
+		return createModelAndViewJson(model);
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getPujasDetalleByIdOferta(Long idActivo, Long idOferta) {
+		ModelMap model = new ModelMap();
+
+		try {
+			List<DtoPujaDetalle> dtoPujasOfertaActivoConcurrencia = concurrenciaApi.getPujasDetalleByIdOferta(idActivo, idOferta);
+			model.put("data", dtoPujasOfertaActivoConcurrencia);
+			model.put("success", true);
+		} catch (Exception e) {
+			logger.error(e.getMessage(),e);
+			model.put("success", false);
+		}
 
 		return createModelAndViewJson(model);
 	}
@@ -4471,6 +4507,22 @@ public class ActivoController extends ParadiseJsonController {
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);
+		}
+		return createModelAndViewJson(model);
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getHistoricoConcurrencia(Long id) {
+		ModelMap model = new ModelMap();
+
+		try {
+			List<DtoHistoricoConcurrencia> listHistoricoConcurrencia = concurrenciaApi.getHistoricoConcurrencia(id);
+			model.put("data", listHistoricoConcurrencia);
+			model.put("success", true);
+		} catch (Exception e) {
+			logger.error(e.getMessage(),e);
+			model.put("success", false);
 		}
 
 		return createModelAndViewJson(model);
@@ -4487,6 +4539,12 @@ public class ActivoController extends ParadiseJsonController {
 			logger.error("error en activoController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);
 		}
+		return createModelAndViewJson(model);
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getListCambiosPeriodoConcurenciaByIdConcurrencia(Long idConcurrencia, ModelMap model) {
+		model.put(RESPONSE_DATA_KEY, concurrenciaApi.getListCambiosPeriodoConcurenciaByIdConcurrencia(idConcurrencia));
 
 		return createModelAndViewJson(model);
 	}

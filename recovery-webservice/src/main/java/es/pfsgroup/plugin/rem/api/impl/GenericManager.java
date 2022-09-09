@@ -2281,5 +2281,11 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 		return listaDDEstadoOferta;
 	}
+	
+	@Override
+	public List<DDEstadoDeposito> getDiccionarioEstadoDeposito(Long idActivo) {
+		List<DDEstadoDeposito> estadosDeposito = genericDao.getList(DDEstadoDeposito.class);
+		return estadosDeposito;
+	}
 
 }

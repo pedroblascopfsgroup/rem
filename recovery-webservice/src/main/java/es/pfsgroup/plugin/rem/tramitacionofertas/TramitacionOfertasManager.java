@@ -1,5 +1,26 @@
 package es.pfsgroup.plugin.rem.tramitacionofertas;
 
+import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Properties;
+
+import javax.annotation.Resource;
+
+import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.ui.ModelMap;
+
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.pfs.auditoria.model.Auditoria;
@@ -27,36 +48,102 @@ import es.pfsgroup.plugin.rem.adapter.AgrupacionAdapter;
 import es.pfsgroup.plugin.rem.adapter.ExpedienteComercialAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.alaskaComunicacion.AlaskaComunicacionManager;
-import es.pfsgroup.plugin.rem.api.*;
+import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
+import es.pfsgroup.plugin.rem.api.BoardingComunicacionApi;
+import es.pfsgroup.plugin.rem.api.ConcurrenciaApi;
+import es.pfsgroup.plugin.rem.api.DepositoApi;
+import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.FuncionesTramitesApi;
+import es.pfsgroup.plugin.rem.api.GencatApi;
+import es.pfsgroup.plugin.rem.api.GenerarPdfAprobacionOfertasApi;
+import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
+import es.pfsgroup.plugin.rem.api.TrabajoApi;
+import es.pfsgroup.plugin.rem.api.TramitacionOfertasApi;
 import es.pfsgroup.plugin.rem.condiciontanteo.CondicionTanteoApi;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.gestor.dao.GestorExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceSancionOfertaAceptacionYRechazo;
-import es.pfsgroup.plugin.rem.model.*;
+import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
+import es.pfsgroup.plugin.rem.model.ActivoBancario;
+import es.pfsgroup.plugin.rem.model.ActivoLoteComercial;
+import es.pfsgroup.plugin.rem.model.ActivoOferta;
+import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
+import es.pfsgroup.plugin.rem.model.ActivoPatrimonioContrato;
+import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
+import es.pfsgroup.plugin.rem.model.ActivoPublicacionHistorico;
+import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
+import es.pfsgroup.plugin.rem.model.ActivoTitulo;
+import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
+import es.pfsgroup.plugin.rem.model.ActivosAlquilados;
+import es.pfsgroup.plugin.rem.model.ClienteComercial;
+import es.pfsgroup.plugin.rem.model.ClienteCompradorGDPR;
+import es.pfsgroup.plugin.rem.model.ClienteGDPR;
+import es.pfsgroup.plugin.rem.model.Comprador;
+import es.pfsgroup.plugin.rem.model.CompradorExpediente;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente.CompradorExpedientePk;
-import es.pfsgroup.plugin.rem.model.dd.*;
+import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
+import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
+import es.pfsgroup.plugin.rem.model.CuentasVirtuales;
+import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
+import es.pfsgroup.plugin.rem.model.DtoSaveAndReplicateResult;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.Formalizacion;
+import es.pfsgroup.plugin.rem.model.GastosExpediente;
+import es.pfsgroup.plugin.rem.model.GestorActivo;
+import es.pfsgroup.plugin.rem.model.InfoAdicionalPersona;
+import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.OfertaCaixa;
+import es.pfsgroup.plugin.rem.model.OfertasAgrupadasLbk;
+import es.pfsgroup.plugin.rem.model.PerimetroActivo;
+import es.pfsgroup.plugin.rem.model.Reserva;
+import es.pfsgroup.plugin.rem.model.TanteoActivoExpediente;
+import es.pfsgroup.plugin.rem.model.TitularesAdicionalesOferta;
+import es.pfsgroup.plugin.rem.model.Trabajo;
+import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
+import es.pfsgroup.plugin.rem.model.dd.DDAdministracion;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
+import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoComunicacionC4C;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoContrasteListas;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoInterlocutor;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOfertaBC;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDInterlocutorOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDRiesgoOperacion;
+import es.pfsgroup.plugin.rem.model.dd.DDSistemaOrigen;
+import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubestadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
 import es.pfsgroup.plugin.rem.oferta.OfertaManager;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertasAgrupadasLbkDao;
-import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.service.InterlocutorCaixaService;
 import es.pfsgroup.plugin.rem.thread.ContenedorExpComercial;
 import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
-import org.springframework.ui.ModelMap;
-
-import javax.annotation.Resource;
-import java.io.File;
-import java.lang.reflect.InvocationTargetException;
-import java.util.*;
 
 @Service("tramitacionOfertasManager")
 public class TramitacionOfertasManager implements TramitacionOfertasApi {
@@ -75,6 +162,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 	private static final String AGRUPACION_BAJA = "agrupacion.baja";
 	private static final String MAESTRO_ORIGEN_WCOM = "WCOM";
 	private static final Integer ES_FORMALIZABLE = new Integer(1);
+	private static final String ERROR_OFERTA_PERIODO_CONCURRENCIA_PENDIENTES_DEPOSITO = "msg.error.oferta.periodo.concurrencia.pendientes.deposito";
 
 	@Resource
 	private MessageService messageServices;
@@ -180,6 +268,9 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 
 	@Autowired
 	private FuncionesTramitesApi funcionesTramitesApi;
+	
+	@Autowired
+	private ConcurrenciaApi concurrenciaApi;
 
 	@Override
 	@Transactional(readOnly = false)
@@ -214,6 +305,10 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 
 		Activo activo = null;
 		ActivoAgrupacion agrupacion = null;
+		
+		if(dto.getIdOferta() == null) {
+			dto.setIdOferta(dto.getId());
+		}
 
 		if (esAgrupacion) {
 			agrupacion = genericDao.get(ActivoAgrupacion.class,
@@ -224,13 +319,33 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			activo = activoAdapter.getActivoById(dto.getIdActivo());
 		}
 
-		final Oferta oferta = saveOferta(dto, activo, esAgrupacion, agrupacion, asincrono);
+		Oferta oferta = genericDao.get(Oferta.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdOferta()));
+		DtoSaveAndReplicateResult dtoSaveAndReplicateResult = new DtoSaveAndReplicateResult();
+		boolean saveOferta = true;
+		
+		if(DDEstadoOferta.CODIGO_PDTE_DEPOSITO.equals(dto.getEstadoOferta())) {
+			saveOferta = !concurrenciaApi.caducaOfertaConcurrencia(oferta.getActivoPrincipal().getId(), oferta.getId());
+		} else if(DDEstadoOferta.CODIGO_ACEPTADA.equals(dto.getEstadoOferta()) && oferta.getIsEnConcurrencia() != null && oferta.getIsEnConcurrencia()) {
+			List<Oferta> listaOfertas = ofertaApi.getListaOfertasByActivo(oferta.getActivoPrincipal());
+			for (Oferta of : listaOfertas) {
+				
+			}
+			saveOferta = !concurrenciaApi.isOfertaEnPlazoConcu(false,  listaOfertas);
+			if(!saveOferta)
+				dtoSaveAndReplicateResult.setMessage(messageServices.getMessage(ERROR_OFERTA_PERIODO_CONCURRENCIA_PENDIENTES_DEPOSITO));
+		}
 
-		return new DtoSaveAndReplicateResult(){{
-			setSuccess(true);
-			setReplicateToBc(oferta.getReplicateBC());
-			setNumOferta(oferta.getNumOferta());
-		}};
+		dtoSaveAndReplicateResult.setSuccess(saveOferta);
+		dtoSaveAndReplicateResult.setNumOferta(oferta.getNumOferta());
+		
+		if(saveOferta) {
+			oferta = saveOferta(dto, activo, esAgrupacion, agrupacion, asincrono);
+			dtoSaveAndReplicateResult.setReplicateToBc(oferta.getReplicateBC());
+		} else {
+			dtoSaveAndReplicateResult.setReplicateToBc(false);
+		}
+
+		return dtoSaveAndReplicateResult;
 	}
 
 
@@ -263,7 +378,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		boolean resultado = true;
 		ExpedienteComercial expediente = null;
 		Boolean esAcepta = false;
-		String codigoEstadoOferta = dto.getCodigoEstadoOferta();
+		String codigoEstadoOferta = dto.getEstadoOferta();
 		
 		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 		
@@ -298,14 +413,33 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 				oferta.setReplicateBC(Boolean.TRUE);
 		}
 
+		boolean envioCorreoOfertasPerdedoras = false;
 		// si la oferta ha sido rechazada guarda los motivos de rechazo y
 		// enviamos un email/notificacion.
 		if (DDEstadoOferta.CODIGO_RECHAZADA.equals(estadoOferta.getCodigo())) {
 			resultado = doRechazaOferta(dto, oferta);
-			if (oferta.getActivoPrincipal() != null && DDCartera.isCarteraBk(oferta.getActivoPrincipal().getCartera()))
+			if (oferta.getActivoPrincipal() != null && DDCartera.isCarteraBk(oferta.getActivoPrincipal().getCartera())) {
 				oferta.setReplicateBC(Boolean.TRUE);
+
+				if(oferta.getIsEnConcurrencia() != null && oferta.getIsEnConcurrencia())
+					envioCorreoOfertasPerdedoras = true;
+			}
 			
 			depositoApi.modificarEstadoDepositoSiIngresado(oferta);
+		}
+		
+		if (DDEstadoOferta.CODIGO_CADUCADA.equals(estadoOferta.getCodigo())  && oferta.getActivoPrincipal() != null && oferta.getActivoPrincipal().getCartera() != null 
+			&& DDCartera.isCarteraBk(oferta.getActivoPrincipal().getCartera())) {
+			oferta.setReplicateBC(Boolean.TRUE);
+			if(oferta.getIsEnConcurrencia() != null && oferta.getIsEnConcurrencia()) {
+				envioCorreoOfertasPerdedoras = true;
+			}
+		}
+
+		if(envioCorreoOfertasPerdedoras) {
+			List<Long> idOfertaList = new ArrayList<Long>();
+			idOfertaList.add(oferta.getId());
+			concurrenciaApi.comunicacionSFMC(idOfertaList, ConcurrenciaApi.COD_OFERTAS_PERDEDORAS, ConcurrenciaApi.TIPO_ENVIO_UNICO, new ModelMap());
 		}
 		
 		if(DDEstadoOferta.CODIGO_PDTE_DEPOSITO.equals(dto.getCodigoEstadoOferta())) {
@@ -627,6 +761,17 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 						estadoEcoCod);
 		nuevoExpediente.setEstado(estadoExpediente);
 		
+		if (DDEstadosExpedienteComercial.EN_TRAMITACION.equals(estadoExpediente.getCodigo()) && 
+				DDCartera.CODIGO_CAIXA.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) && oferta.getOfertaCaixa() != null && concurrenciaApi.isOfertaEnConcurrencia(oferta)) {
+
+			DDEstadoOfertaBC estadoOfertaBC = genericDao.get(DDEstadoOfertaBC.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOfertaBC.CODIGO_TRAMITE_CONCURRENCIA_EN_TRAMITACION));
+			if(estadoOfertaBC != null) {
+				OfertaCaixa ofertaCaixa = oferta.getOfertaCaixa();
+				ofertaCaixa.setEstadoOfertaBc(estadoOfertaBC);
+				genericDao.save(OfertaCaixa.class, ofertaCaixa);
+			}
+		}
+		
 		if(!Checks.esNulo(oferta.getOrigen()) && DDSistemaOrigen.CODIGO_WEBCOM.equals(oferta.getOrigen().getCodigo())) {
 			subestadoCod = DDSubestadosExpedienteComercial.NO_ENVIADO;
 		}
@@ -648,10 +793,19 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		crearCompradores(oferta, nuevoExpediente);
 
 		nuevoExpediente.setTipoAlquiler(oferta.getActivoPrincipal().getTipoAlquiler());
+		
+		DDEstadoExpedienteBc estadoBc = null;
+		
 		if (DDCartera.isCarteraBk(activo.getCartera())) {
-			DDEstadoExpedienteBc estadoBc = (DDEstadoExpedienteBc) utilDiccionarioApi
-					.dameValorDiccionarioByCod(DDEstadoExpedienteBc.class,
-							DDEstadoExpedienteBc.CODIGO_EN_TRAMITE);
+			if(oferta.getIsEnConcurrencia() != null && oferta.getIsEnConcurrencia()) {
+				estadoBc = (DDEstadoExpedienteBc) utilDiccionarioApi
+						.dameValorDiccionarioByCod(DDEstadoExpedienteBc.class,
+								DDEstadoExpedienteBc.CODIGO_OFERTA_TRAMITE_CONCURRENCIA_TRAMITACION);
+			}else {
+				estadoBc = (DDEstadoExpedienteBc) utilDiccionarioApi
+						.dameValorDiccionarioByCod(DDEstadoExpedienteBc.class,
+								DDEstadoExpedienteBc.CODIGO_EN_TRAMITE);
+			}
 			if (estadoBc != null) {
 				nuevoExpediente.setEstadoBc(estadoBc);
 			}

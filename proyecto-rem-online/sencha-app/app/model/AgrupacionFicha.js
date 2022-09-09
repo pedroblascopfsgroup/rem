@@ -387,7 +387,23 @@ Ext.define('HreRem.model.AgrupacionFicha', {
     			{
                 	name: 'esNecesarioDeposito',
     	 			type: 'boolean'
-                }
+                },
+                {
+    	 			name: 'enConcurrencia',
+    	 			type: 'boolean'
+    			},
+    			{
+                	name: 'isConcurrencia',
+    	 			type: 'boolean'
+                },
+	            {
+	            	name:'bloquearEdicionEstadoOfertas',
+	            	type: 'boolean'
+	            },
+	            {
+					name: 'agrConOfertasConcurrencia',
+					type: 'boolean'
+				}
     ],
     
 	proxy: {
@@ -400,5 +416,5 @@ Ext.define('HreRem.model.AgrupacionFicha', {
             destroy: 'agrupacion/getAgrupacionById'
         },
 		extraParams: {pestana: '1'}
-    }    
+	}
 });

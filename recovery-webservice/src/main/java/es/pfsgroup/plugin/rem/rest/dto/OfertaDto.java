@@ -12,9 +12,6 @@ import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Dicci
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.IsNumber;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Lista;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDRespuestaOfertante;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoSocioComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDVinculoCaixa;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadFinanciera;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoJustificacionOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoRCDC;
@@ -23,6 +20,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDRecomendacionRCDC;
 import es.pfsgroup.plugin.rem.model.dd.DDRespuestaOfertante;
 import es.pfsgroup.plugin.rem.model.dd.DDSnsSiNoNosabe;
 import es.pfsgroup.plugin.rem.model.dd.DDTfnTipoFinanciacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoSocioComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDVinculoCaixa;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Insert;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Update;
 
@@ -180,6 +179,8 @@ public class OfertaDto implements Serializable {
 	@Size(max=20,groups = { Insert.class, Update.class })
 	private String codMotivoRechazoRCDC;
 	private String ibanDevolucion;
+	
+	private Boolean creadaConcurrencia;
 	
 	public Long getIdOfertaWebcom() {
 		return idOfertaWebcom;
@@ -758,6 +759,12 @@ public class OfertaDto implements Serializable {
 		this.codMotivoRechazoRCDC = codMotivoRechazoRCDC;
 	}
 
+	public Boolean getCreadaConcurrencia() {
+		return creadaConcurrencia;
+	}
+	public void setCreadaConcurrencia(Boolean creadaConcurrencia) {
+		this.creadaConcurrencia = creadaConcurrencia;
+	}
 	public String getIbanDevolucion() {
 		return ibanDevolucion;
 	}

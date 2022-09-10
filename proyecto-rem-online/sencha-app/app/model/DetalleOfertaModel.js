@@ -78,7 +78,14 @@ Ext.define('HreRem.model.DetalleOfertaModel', {
 		},
 		{
 			name:'titularesConfirmados'
-		}
+		},
+   		{
+   			name: 'enConcurrencia',
+			type: 'boolean'
+   		},
+		{
+			name:'importeOferta'
+    	}
     ],
 
 	proxy: {

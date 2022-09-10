@@ -79,6 +79,7 @@ public class DDEstadoExpedienteBc implements Auditable, Dictionary {
 	public static final String PTE_SANCION_BC = "047";
 	public static final String PTE_SANCION_PBC_SERVICER = "049";
 	public static final String CODIGO_SOLICITAR_DEVOLUCION_DEPOSITO_BC = "050";
+	public static final String CODIGO_OFERTA_TRAMITE_CONCURRENCIA_TRAMITACION = "051";
 	
 	private static final long serialVersionUID = 1L;
 

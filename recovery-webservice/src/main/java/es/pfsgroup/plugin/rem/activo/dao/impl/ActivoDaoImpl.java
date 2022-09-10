@@ -27,12 +27,15 @@ import org.springframework.transaction.annotation.Transactional;
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.dao.AbstractEntityDao;
+import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
+import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -46,6 +49,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.PerfilApi;
+import es.pfsgroup.plugin.rem.concurrencia.dao.ConcurrenciaDao;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
@@ -119,6 +123,12 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	
 	@Autowired
 	private GenericAdapter genericAdapter;
+	
+	@Autowired
+	private ConcurrenciaDao concurrenciaDao;
+	
+	@Autowired
+	private ApiProxyFactory proxyFactory;
 
 	private static final String EXISTEN_UNIDADES_ALQUILABLES_CON_OFERTAS_VIVAS ="activo.matriz.con.unidades.alquilables.ofertas.vivas";
 	private static final String EXISTE_ACTIVO_MATRIZ_CON_OFERTAS_VIVAS ="activo.unidad.alquilable.con.activo.matriz.ofertas.vivas";
@@ -127,7 +137,8 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	private static final String isPrincipalQueryString ="select count(*) from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.agrupacion.activoPrincipal.id = :actId and act.agrupacion.tipoAgrupacion.codigo = :codAgrupacion";
 	private static final String isPrincipalQueryStringIn ="select count(*) from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.agrupacion.activoPrincipal.id = :actId and act.agrupacion.tipoAgrupacion.codigo in (:codAgrupacion)";
 	private static final String activoAgrupacionQueryString ="select act from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.activo.id = :actId and act.agrupacion.tipoAgrupacion.codigo = :codAgrupacion";
-
+	private static final String usuarioSuper = "HAYASUPER";
+	
 	@Override
 	public Object getListActivos(DtoActivoFilter dto, Usuario usuLogado) {
 
@@ -1160,9 +1171,9 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 			hb.appendWhere(" voa.idOferta in (" + listaIdsOfertas + ") ");
 		}
 
-		return (List<VGridOfertasActivosAgrupacionIncAnuladas>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString())
-				.list();
-
+		List<VGridOfertasActivosAgrupacionIncAnuladas> listOfertasActivo = (List<VGridOfertasActivosAgrupacionIncAnuladas>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
+		
+		return listOfertasActivo;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -1188,10 +1199,20 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 
 			hb.appendWhere(" voa2.idOferta in (" + listaIdsOfertas + ") ");
 		}
+		
 
-		return (List<VGridOfertasActivosAgrupacion>) this.getSessionFactory().getCurrentSession()
-				.createQuery(hb.toString()).list();
-
+		List<VGridOfertasActivosAgrupacion> listOfertasTramitadasPendientesActivo = this.getSessionFactory().getCurrentSession()
+		.createQuery(hb.toString()).list();
+		Usuario usuPef=proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+		boolean isHayaSuper =  genericAdapter.isSuper(usuPef);
+		boolean isConcurrencia = concurrenciaDao.isActivoEnConcurrencia(idActivo);
+		if (!isHayaSuper && isConcurrencia) {
+			for (VGridOfertasActivosAgrupacion ofertaTramitadasPendientesActivo : listOfertasTramitadasPendientesActivo) {
+				ofertaTramitadasPendientesActivo.setImporteOferta(null);
+			}
+		}
+		
+		return listOfertasTramitadasPendientesActivo;
 	}
 
 	@Override
@@ -2054,6 +2075,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		sanitizarDescripciones(dto);
 		List<UsuarioCartera> usuarioCartera = genericDao.getList(UsuarioCartera.class,genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuLogado.getId()));
 		List<String> subcarteras = new ArrayList<String>();
+		boolean filtroRefCatastral = !Checks.esNulo(dto.getRefCatastral());
 		
 		HQLBuilder hb = new HQLBuilder(" select vgrid from VGridBusquedaActivos vgrid ");
 		
@@ -2141,9 +2163,13 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		HQLBuilder.montaAppendWhere(hb, " exists (select 1 from GestorActivo ga where ga.tipoGestor.codigo = #PARAM# and ga.usuario.id = #PARAM# and vgrid.id = ga.activo.id) ",
 					new String[] {"ga.tipoGestor.codigo","ga.usuario.id"},
 					new Object[] {dto.getTipoGestorCodigo(),dto.getUsuarioGestor()}, "#PARAM#", false);
+		
+		if (!filtroRefCatastral) {
 		HQLBuilder.montaAppendWhere(hb, " exists (select 1 from VBusquedaActivosGestorias bag where bag.gestoria = #PARAM# and vgrid.id = bag.id) ",
 					new String[] {"bag.gestoria"},
 					new Object[] {dto.getGestoria()}, "#PARAM#", false);
+		}
+		
 		HQLBuilder.montaAppendWhere(hb, " exists (select 1 from ActivoInfoComercial aic where aic.mediadorInforme.id = #PARAM# and vgrid.id = aic.activo.id) ",
 					new String[] {"aic.mediadorInforme.id"},
 					new Object[] {dto.getApiPrimarioId()}, "#PARAM#", false);

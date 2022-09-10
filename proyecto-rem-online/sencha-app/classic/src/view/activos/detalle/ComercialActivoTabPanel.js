@@ -7,7 +7,8 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivoTabPanel', {
     requires	: [
     				'HreRem.view.activos.detalle.VisitasComercialActivo', 
     				'HreRem.view.activos.detalle.OfertasComercialActivo',
-    				'HreRem.view.activos.detalle.GencatComercialActivo'
+    				'HreRem.view.activos.detalle.GencatComercialActivo',
+    				'HreRem.view.activos.detalle.PujasComercialActivo'
     			  ],    
 
 	listeners	: {
@@ -100,16 +101,19 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivoTabPanel', {
 
     initComponent: function () {
     	var me = this;
-
 		var items = [];
-
+		
 		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'ofertascomercialactivo',ocultarBotonesEdicion: true})}, ['TAB_COMERCIAL_OFERTAS']);
 		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'visitascomercialactivo',ocultarBotonesEdicion: true})}, ['TAB_COMERCIAL_VISITAS']);
 		
 		if (me.lookupViewModel().get('activo.afectoAGencat')) {
 			items.push({xtype: 'gencatcomercialactivo'});
 		}
-
+		
+		if (me.lookupViewModel().get('activo.historicoDeConcurrencia')) {
+			items.push({xtype: 'pujascomercialactivo',ocultarBotonesEdicion: true});
+		}
+		
     	me.addPlugin({ptype: 'lazyitems', items: items });
     	me.callParent();
     },

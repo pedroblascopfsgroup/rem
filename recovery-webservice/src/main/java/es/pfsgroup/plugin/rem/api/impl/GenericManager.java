@@ -121,6 +121,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDCondicionIndicadorPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdmision;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoDeposito;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoLocalizacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoProveedor;
@@ -2312,6 +2313,12 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		}
 
 		return listaDDEstadoOferta;
+	}
+	
+	@Override
+	public List<DDEstadoDeposito> getDiccionarioEstadoDeposito(Long idActivo) {
+		List<DDEstadoDeposito> estadosDeposito = genericDao.getList(DDEstadoDeposito.class);
+		return estadosDeposito;
 	}
 
 }

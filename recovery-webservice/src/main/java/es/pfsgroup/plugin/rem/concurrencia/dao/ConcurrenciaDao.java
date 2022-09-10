@@ -18,15 +18,18 @@ public interface ConcurrenciaDao extends AbstractDao<Concurrencia, Long>{
 
 	List<VGridOfertasActivosConcurrencia> getListOfertasVivasConcurrentes(Long idActivo, Long idConcurrencia);
 	
+	List<VGridOfertasActivosConcurrencia> getListOfertasVivasAgrupacionConcurrentes(Long idAgrupacion, Long numeroAgrupacion, Long idConcurrencia);
+	
 	boolean isActivoEnConcurrencia(Long idActivo);
 
 	boolean isOfertaEnPlazoEntrega(Long idOferta);
 
-	String getPeriodoConcurrencia(Long idConcurrencia);
+	/*String getPeriodoConcurrencia(Long idConcurrencia);*/
 
 	List<VGridCambiosPeriodoConcurrencia> getListCambiosPeriodoConcurenciaByIdConcurrencia(Long idConcurrencia);
 	
 	List<VGridOfertasActivosAgrupacionConcurrencia> getListOfertasTerminadasConcurrentes(Long idActivo, Long idConcurrencia);
-	
+
+	Long getIdConcurrenciaReciente(Long idActivo, Long idAgrupacion);
 
 }

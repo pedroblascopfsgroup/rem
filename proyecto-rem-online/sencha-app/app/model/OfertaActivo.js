@@ -107,12 +107,17 @@ Ext.define('HreRem.model.OfertaActivo', {
     		name: 'estadoDeposito'
 		},
 		{
-    		name: 'ordenGanador'
+    		name: 'codigoEstadoC4C'
+		},
+		{
+    		name: 'ofertaCreadaConcurrencia',
+			type: 'boolean'
     	},
 		{
-    		name: 'codigoEstadoC4C'
-		}
-
+    		name: 'ofertaEnConcurrenciaActiva',
+			type: 'boolean'
+    	}
+    	
     ],
     
     proxy: {

@@ -1516,7 +1516,7 @@ public interface ParticularValidatorApi {
 	boolean isAgrupacionConOfertaEnConcurrencia(String agrupacion);
 
 	String getCartera(String numActivo);
-	
+
 	Boolean apiBloqueadoProvincia(String numActivo, String codProveedor);
 
 	Boolean apiBloqueadoCartera(String numActivo, String codProveedor);

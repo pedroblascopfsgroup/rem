@@ -327,9 +327,26 @@ public class DepositoManager extends BusinessOperationOverrider<DepositoApi> imp
 		if (Checks.esNulo(deposito))
 			return;
 
+		Oferta oferta = deposito.getOferta();
+		if (Checks.esNulo(oferta))
+			return;
+		
+		boolean isOfertaAnulada = oferta.esOfertaAnulada() || DDEstadoOferta.isCaducada(oferta.getEstadoOferta());
+
+		String codigoEstadoDeposito = isOfertaAnulada ? DDEstadoDeposito.CODIGO_PDTE_DECISION_DEVOLUCION_INCAUTACION
+				: DDEstadoDeposito.CODIGO_INGRESADO;
+
 		deposito.setFechaIngreso(new Date());
-		deposito.setEstadoDeposito(genericDao.get(DDEstadoDeposito.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoDeposito.CODIGO_INGRESADO)));
-			
+		deposito.setEstadoDeposito(genericDao.get(DDEstadoDeposito.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoEstadoDeposito)));
+
+		if(deposito.getOferta() != null && (DDEstadoOferta.isPteDoc(deposito.getOferta().getEstadoOferta()) || DDEstadoOferta.isPendienteDocumentacionTitularesAdicionales(deposito.getOferta().getEstadoOferta()))) {
+			deposito.setFechaInicio(new Date());
+		}
+		
+
+		if(deposito.getOferta() != null && (DDEstadoOferta.isPteDoc(deposito.getOferta().getEstadoOferta()) || DDEstadoOferta.isPendienteDocumentacionTitularesAdicionales(deposito.getOferta().getEstadoOferta()))) {
+			deposito.setFechaInicio(new Date());
+		}
 		genericDao.save(Deposito.class, deposito);
 	}
 

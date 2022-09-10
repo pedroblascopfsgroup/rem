@@ -83,6 +83,7 @@ public interface RestApi {
 	public static final String MSJ_ERROR_IMPORTE_MENOR_PUJA = "El importe de la puja no puede ser menor que la primera.";
 	public static final String MSJ_ERROR_IMPORTE_MENOR_MINIMO = "El importe de la oferta debe ser mayor al importe mínimo de la concurrencia.";
 	public static final String MSJ_CONCURRENCIA_TERMINADA = "La concurrencia ha terminado";
+	public static final String MSJ_ERROR_CANAL_DISTRIBUCION = "El activo no tiene canal de distribución";
 	
 	/**
 	 * Valida la firma

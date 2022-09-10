@@ -9464,7 +9464,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 					
 		return !"0".equals(resultados);
 	}
-		
+
 	public Boolean apiBloqueadoProvincia(String numActivo, String codProveedor) {
 		String resultado = "0";
 

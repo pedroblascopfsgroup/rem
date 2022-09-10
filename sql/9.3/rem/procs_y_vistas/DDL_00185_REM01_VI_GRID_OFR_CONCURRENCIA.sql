@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Alejandro Valverde
---## FECHA_CREACION=20220728
+--## FECHA_CREACION=20220831
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-18445
+--## INCIDENCIA_LINK=HREOS-18638
 --## PRODUCTO=NO
 --## Finalidad: VI_GRID_OFR_CONCURRENCIA
 --##           
@@ -14,6 +14,11 @@
 --##         0.2 Juan Jose Sanjuan - añadir importe Oferta 
 --##         0.3 Alejandro Valverde (HREOS-18405) - Añadir datos Expediente Comercial
 --##         0.4 Alejandro Valverde (HREOS-18445) - Añadir campos EST_CODIGO_C4C y FECHA_ENT_CRM_SF
+--##         0.5 Alejandro Valverde (HREOS-18495) - Añadir campo OFR_ID
+--##         0.6 Javier Esbri (HREOS-18511) - Añadir campo OFR_CONCURRENCIA
+--##         0.7 Alejandro Valverde (HREOS-18526) - Incidencia datos incorrectos
+--##         0.8 Santi Monzó (HREOS-18574) - Incidencia DIASCONCURRENCIA
+--##         0.9 Alejandro Valverde (HREOS-18638) - Añadir campo OFERTA_CONCURRENCIA_ACTIVA
 --##########################################
 --*/
 
@@ -54,6 +59,7 @@ BEGIN
   V_MSQL := 'CREATE VIEW ' || V_ESQUEMA || '.VI_GRID_OFR_CONCURRENCIA
 	AS
 		SELECT ofr.OFR_ID AS ID
+		,OFR.OFR_ID
     	,NVL2(AGR.AGR_NUM_AGRUP_REM, AGR.AGR_NUM_AGRUP_REM, ACT.ACT_NUM_ACTIVO) AS NUM_ACTIVO_AGRUPACION
 		,ofr.OFR_NUM_OFERTA AS NUMOFERTA
     	,ofr.OFR_IMPORTE AS IMPORTEOFERTA
@@ -65,7 +71,10 @@ BEGIN
 		,EDP.DD_EDP_CODIGO AS ESTADODEPOSITOCODIGO
 		,EDP.DD_EDP_DESCRIPCION AS ESTADODEPOSITO
 		,ofr.OFR_FECHA_ALTA AS FECHAALTA
-		,ROUND(CON_FECHA_FIN-CON_FECHA_INI, 0) AS DIASCONCURRENCIA
+		,CASE
+        WHEN CON_FECHA_FIN > sysdate THEN ROUND(SYSDATE-ofr.OFR_FECHA_ALTA, 0)
+        ELSE ROUND(CON_FECHA_FIN-ofr.OFR_FECHA_ALTA, 0)         
+    END AS DIASCONCURRENCIA
 		,act.ACT_ID		
 		,act.ACT_NUM_ACTIVO
 		,cnc.CON_ID
@@ -74,12 +83,17 @@ BEGIN
 		,EEC.DD_EEC_DESCRIPCION
 		,C4C.DD_ECC_CODIGO AS EST_CODIGO_C4C
 		,OFR.FECHA_ENT_CRM_SF
+    	,OFR.OFR_CONCURRENCIA AS OFERTA_CONCURRENCIA
+		,CASE WHEN OFR.CON_ID IS NOT NULL AND CNC.CON_FECHA_INI <= SYSDATE AND CNC.CON_FECHA_FIN >= SYSDATE
+            THEN 1
+            ELSE 0
+        END OFERTA_CONCURRENCIA_ACTIVA
 		FROM '|| V_ESQUEMA ||'.ofr_ofertas ofr
 		INNER JOIN '|| V_ESQUEMA ||'.DD_TOF_TIPOS_OFERTA TOF ON TOF.DD_TOF_ID = OFR.DD_TOF_ID
 		INNER JOIN '|| V_ESQUEMA ||'.DD_EOF_ESTADOS_OFERTA EOF ON EOF.DD_EOF_ID = OFR.DD_EOF_ID
 		join '|| V_ESQUEMA ||'.act_ofr aof on ofr.ofr_id = aof.ofr_id 
 		join '|| V_ESQUEMA ||'.act_Activo act on act.act_id = aof.act_id
-		join '|| V_ESQUEMA ||'.con_concurrencia cnc on act.act_id = cnc.act_id
+		join '|| V_ESQUEMA ||'.con_concurrencia cnc on act.act_id = cnc.act_id and ofr.con_id = cnc.con_id and cnc.borrado = 0
 		JOIN '|| V_ESQUEMA ||'.CLC_CLIENTE_COMERCIAL CLC ON CLC.CLC_ID = OFR.CLC_ID
     LEFT JOIN ' || V_ESQUEMA || '.ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = cnc.AGR_ID AND AGR.BORRADO = 0
 		LEFT JOIN '|| V_ESQUEMA ||'.DEP_DEPOSITO DEP ON DEP.OFR_ID = OFR.OFR_ID and DEP.borrado = 0

@@ -20,7 +20,6 @@ import org.springframework.ui.ModelMap;
 
 import es.capgemini.devon.beans.Service;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -81,9 +80,6 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 	
 	@Autowired
 	private ConcurrenciaDao concurrenciaDao;
-	
-	@Autowired
-	private ApiProxyFactory proxyFactory;
 
 	@Autowired
 	private OfertaApi ofertaApi;
@@ -138,13 +134,13 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 
 	@Override
 	public Concurrencia getUltimaConcurrenciaByActivo(Activo activo) {
-		List<Concurrencia> concurrenciaList = genericDao.getList(Concurrencia.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
+		Long idConcurrencia = concurrenciaDao.getIdConcurrenciaReciente(activo.getId(), null);
 		Concurrencia concurrencia = null;
-		if(concurrenciaList != null && !concurrenciaList.isEmpty()) {
-			concurrencia = concurrenciaList.get(0);
+		if (idConcurrencia != null) {	
+			 concurrencia = genericDao.get(Concurrencia.class, genericDao.createFilter(FilterType.EQUALS, "id", idConcurrencia));
 		}
-		
 		return concurrencia;
+		
 	}
 
 	//Mostramos la pestaña de concurrencia Siempre que un activo
@@ -297,23 +293,31 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 	public void caducaOfertasRelacionadasConcurrencia(Long idActivo, Long idOferta, String codigoEnvioCorreo){
 		try {
 			Activo act = genericDao.get(Activo.class, genericDao.createFilter(FilterType.EQUALS, "id", idActivo));
+			Oferta ofertaGanadora = ofertaApi.getOfertaById(idOferta);
+			Concurrencia concurrencia = ofertaGanadora.getConcurrencia();
+			
 			if(act != null){
 				List<ActivoOferta> ofertas = act.getOfertas();
-				HashMap<Long, List<Long>> noEntraDeposito = new HashMap<Long, List<Long>>();
 				List<Long> idOfertaList = new ArrayList<Long>();
 	
 				if(ofertas != null && !ofertas.isEmpty()) {
 					for(ActivoOferta actOfr: ofertas){
-						if(actOfr != null && actOfr.getOferta() != null && !idOferta.toString().equals(actOfr.getOferta().toString())
-								&& !actOfr.getPrimaryKey().getOferta().esOfertaAnulada()){
+						if(actOfr != null && actOfr.getOferta() != null && !idOferta.toString().equals(actOfr.getOferta().toString())) {
 							Oferta ofr = actOfr.getPrimaryKey().getOferta();
-							if(!ofr.esOfertaAnulada() && !this.entraEnTiempoDeposito(ofr) || ConcurrenciaApi.COD_OFERTAS_PERDEDORAS.equals(codigoEnvioCorreo)){
-								noEntraDeposito.put(actOfr.getOferta(), rellenaMapOfertaCorreos(ofr));
-								ofertaApi.rechazoOfertaNew(ofr, null);
-								idOfertaList.add(ofr.getId());
+							if(!ofr.esOfertaAnulada() && !ofr.esOfertaCaducada()) {
+								if(ConcurrenciaApi.COD_OFERTAS_PERDEDORAS.equals(codigoEnvioCorreo)) {
+									if(concurrencia != null && ofr.getConcurrencia() != null && concurrencia.getId().equals(ofr.getConcurrencia().getId())) {
+										idOfertaList.add(ofr.getId());
+										ofertaApi.rechazoOfertaNew(ofr, null);
+										genericDao.save(Oferta.class, ofr);
+									}
+								}else if(!this.entraEnTiempoDeposito(ofr)){
+									idOfertaList.add(ofr.getId());
+									ofertaApi.rechazoOfertaNew(ofr, null);
+									genericDao.save(Oferta.class, ofr);
+								}
 							}
-							genericDao.save(Oferta.class, ofr);
-						}
+						}						
 					}
 				}
 				

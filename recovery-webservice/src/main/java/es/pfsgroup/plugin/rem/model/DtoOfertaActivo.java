@@ -14,6 +14,8 @@ public class DtoOfertaActivo extends WebDto {
 
 	private static final long serialVersionUID = 0L;
 
+	//id ==idOferta
+	private Long id;
 	private Long idOferta;
 	private Long idActivo;
 	private Long idAgrupacion;
@@ -29,6 +31,14 @@ public class DtoOfertaActivo extends WebDto {
 	private Boolean ventaSobrePlano;
 	private String codRiesgoOperacion;
 	
+	
+	public Long getId() {
+		return id;
+	}
+	
+	public void setId(Long id) {
+		this.id = id;
+	}
 	
 	public Long getIdOferta() {
 		return idOferta;

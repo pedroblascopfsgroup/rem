@@ -1588,6 +1588,10 @@ public class Oferta implements Serializable, Auditable {
 	public boolean esOfertaAnulada(){
 		return DDEstadoOferta.isRechazada(this.estadoOferta);
 	}
+	
+	public boolean esOfertaCaducada(){
+		return DDEstadoOferta.isCaducada(this.estadoOferta);
+	}
 
 	public Boolean getCheckFormCajamar() {
 		return checkFormCajamar;

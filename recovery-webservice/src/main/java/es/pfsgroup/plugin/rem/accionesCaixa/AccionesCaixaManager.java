@@ -843,10 +843,10 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
 	    }
     	
 		if(!principalCaducada) {
-	    	ofertaApi.actualizaEstadoOfertaRemAndBC(oferta);
-	    	
-	        Deposito deposito = depositoApi.getDepositoByNumOferta(numOferta);
+			Deposito deposito = depositoApi.getDepositoByNumOferta(numOferta);
 	        depositoApi.ingresarDeposito(deposito);
+			
+			ofertaApi.actualizaEstadoOfertaRemAndBC(oferta);
 		}
       
     }

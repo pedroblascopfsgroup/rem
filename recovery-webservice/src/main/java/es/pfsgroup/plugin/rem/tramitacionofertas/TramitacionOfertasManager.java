@@ -305,6 +305,10 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 
 		Activo activo = null;
 		ActivoAgrupacion agrupacion = null;
+		
+		if(dto.getIdOferta() == null) {
+			dto.setIdOferta(dto.getId());
+		}
 
 		if (esAgrupacion) {
 			agrupacion = genericDao.get(ActivoAgrupacion.class,
@@ -409,14 +413,33 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 				oferta.setReplicateBC(Boolean.TRUE);
 		}
 
+		boolean envioCorreoOfertasPerdedoras = false;
 		// si la oferta ha sido rechazada guarda los motivos de rechazo y
 		// enviamos un email/notificacion.
 		if (DDEstadoOferta.CODIGO_RECHAZADA.equals(estadoOferta.getCodigo())) {
 			resultado = doRechazaOferta(dto, oferta);
-			if (oferta.getActivoPrincipal() != null && DDCartera.isCarteraBk(oferta.getActivoPrincipal().getCartera()))
+			if (oferta.getActivoPrincipal() != null && DDCartera.isCarteraBk(oferta.getActivoPrincipal().getCartera())) {
 				oferta.setReplicateBC(Boolean.TRUE);
+
+				if(oferta.getIsEnConcurrencia() != null && oferta.getIsEnConcurrencia())
+					envioCorreoOfertasPerdedoras = true;
+			}
 			
 			depositoApi.modificarEstadoDepositoSiIngresado(oferta);
+		}
+		
+		if (DDEstadoOferta.CODIGO_CADUCADA.equals(estadoOferta.getCodigo())  && oferta.getActivoPrincipal() != null && oferta.getActivoPrincipal().getCartera() != null 
+			&& DDCartera.isCarteraBk(oferta.getActivoPrincipal().getCartera())) {
+			oferta.setReplicateBC(Boolean.TRUE);
+			if(oferta.getIsEnConcurrencia() != null && oferta.getIsEnConcurrencia()) {
+				envioCorreoOfertasPerdedoras = true;
+			}
+		}
+
+		if(envioCorreoOfertasPerdedoras) {
+			List<Long> idOfertaList = new ArrayList<Long>();
+			idOfertaList.add(oferta.getId());
+			concurrenciaApi.comunicacionSFMC(idOfertaList, ConcurrenciaApi.COD_OFERTAS_PERDEDORAS, ConcurrenciaApi.TIPO_ENVIO_UNICO, new ModelMap());
 		}
 		
 		if(DDEstadoOferta.CODIGO_PDTE_DEPOSITO.equals(dto.getCodigoEstadoOferta())) {
@@ -770,10 +793,19 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		crearCompradores(oferta, nuevoExpediente);
 
 		nuevoExpediente.setTipoAlquiler(oferta.getActivoPrincipal().getTipoAlquiler());
+		
+		DDEstadoExpedienteBc estadoBc = null;
+		
 		if (DDCartera.isCarteraBk(activo.getCartera())) {
-			DDEstadoExpedienteBc estadoBc = (DDEstadoExpedienteBc) utilDiccionarioApi
-					.dameValorDiccionarioByCod(DDEstadoExpedienteBc.class,
-							DDEstadoExpedienteBc.CODIGO_EN_TRAMITE);
+			if(oferta.getIsEnConcurrencia() != null && oferta.getIsEnConcurrencia()) {
+				estadoBc = (DDEstadoExpedienteBc) utilDiccionarioApi
+						.dameValorDiccionarioByCod(DDEstadoExpedienteBc.class,
+								DDEstadoExpedienteBc.CODIGO_OFERTA_TRAMITE_CONCURRENCIA_TRAMITACION);
+			}else {
+				estadoBc = (DDEstadoExpedienteBc) utilDiccionarioApi
+						.dameValorDiccionarioByCod(DDEstadoExpedienteBc.class,
+								DDEstadoExpedienteBc.CODIGO_EN_TRAMITE);
+			}
 			if (estadoBc != null) {
 				nuevoExpediente.setEstadoBc(estadoBc);
 			}

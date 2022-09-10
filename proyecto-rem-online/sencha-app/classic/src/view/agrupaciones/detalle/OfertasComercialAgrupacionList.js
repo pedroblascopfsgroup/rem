@@ -25,6 +25,7 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
         var me = this;
 		var agrupacion = me.lookupController().getViewModel().get('agrupacionficha');
 		var enConcurrencia = me.lookupController().getViewModel().getData().agrupacionficha.get('enConcurrencia');
+		var userPefSuper = $AU.userIsRol(CONST.PERFILES['HAYASUPER']);
         
         me.topBar = $AU.userHasFunction(['EDITAR_TAB_COMERCIAL_AGRUPACION']);
         
@@ -70,7 +71,13 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 		            dataIndex: 'importeOferta',
 		            text: HreRem.i18n('header.oferta.importeOferta'),
 		            flex: 1,
-			        hidden: enConcurrencia
+		            renderer: function(value, metadata, record) {
+			        	if (!userPefSuper && enConcurrencia && record.get("ofertaEnConcurrenciaActiva")) {
+			        		return "*****";
+			        	} else {
+			        		return  value;
+			        	}
+			        }
 		        },
 		        {
 		            dataIndex: 'estadoOferta',
@@ -95,17 +102,35 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 			        		store, record;
 			        		
 			        		if(!Ext.isEmpty(comboEditor)) {
-				        		store = comboEditor.getStore(),							        		
-				        		record = store.findRecord("codigo", value);
-			        		
-				        		if(!Ext.isEmpty(record)) {								        			
-				        			return record.get("descripcion");								        		
+				        		store = comboEditor.getStore();
+				        		if(!Ext.isEmpty(store) && store.data.length > 0) {
+				        			record = store.findRecord("descripcion", value);				        		
+					        		if(!Ext.isEmpty(record)) {								        			
+					        			return record.get("descripcion");								        		
+					        		} else {
+					        			comboEditor.setValue(value);								        			
+					        		}
 				        		} else {
-				        			comboEditor.setValue(value);								        			
+				        			return record.data.estadoOferta;
 				        		}
 			        		}
 			        },
 		            flex: 1
+		        },
+		        {   
+		    		text: HreRem.i18n('header.oferta.ofertaCreadaConcurrencia'),
+			    	dataIndex: 'ofertaCreadaConcurrencia',
+			    	align	 : 'center',
+			    	renderer : function(value) {
+			    		if(value == true){
+			    			return "Si";
+			    		}else if(value == false){
+			    			return "No";
+			    		}else {
+			    			return "";
+			    		}
+			    	},
+			    	flex: 1
 		        },
 		        {
 	    			xtype: 'actioncolumn',
@@ -167,18 +192,23 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
          	
          	if(this.editOnSelect) {
 	            var estado = context.record.get("codigoEstadoOferta");  
-	            var allowEdit = estado != '01' && estado != '02' && estado != '05' && estado != '06' && estado != '08';	            
-	            if ($AU.userIsRol(CONST.PERFILES['HAYASUPER']) && estado == '08') {
-	            	allowEdit = true;
+	            var allowEdit = estado != '01' && estado != '02' && estado != '05' && estado != '06' && estado != '08';
+	            var enConcurrencia = me.lookupController().getViewModel().getData().agrupacionficha.get('enConcurrencia');
+
+	            if(!enConcurrencia) {
+	            	var bloqueoEditarOferta = me.lookupController().getViewModel().get('agrupacionficha').get("bloquearEdicionEstadoOfertas"); 
+					if(bloqueoEditarOferta){
+						allowEdit = false;
+					}else{
+						allowEdit = true;
+					}
+	            } else {
+	            	allowEdit = false;
 	            }
 	            
-		        var bloqueoEditarOferta = me.lookupController().getViewModel().get('activo').get("bloquearEdicionEstadoOfertas"); 
-				if(bloqueoEditarOferta){
-					allowEdit = false;
-				}else{
-					allowEdit = true;
-				}
-	            
+	            if ($AU.userIsRol(CONST.PERFILES['HAYASUPER'])) {
+	            	allowEdit = true;
+	            }
 	            this.editOnSelect = allowEdit;
          	}
             return this.editOnSelect;
@@ -329,12 +359,13 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 	editFuncion: function(editor, context){
 
 		var me= this;
-		var estado = context.record.get("codigoEstadoOferta");
-		var	estadoAnterior = context.record.modified.codigoEstadoOferta;
+		var estado = context.record.get("estadoOferta");
+		var	estadoAnterior = context.record.get("codigoEstadoOferta");
 		var gencat = context.record.get("gencat");
 		var msg = HreRem.i18n('msg.desea.aceptar.oferta');
 		var agrupacion = me.lookupController().getViewModel().get('agrupacionficha');
 		var enConcurrencia = me.lookupController().getViewModel().getData().agrupacionficha.get('enConcurrencia');
+		var agrConOfertasConcurrencia = me.lookupController().getViewModel().getData().agrupacionficha.get('agrConOfertasConcurrencia');
         var codigoTipoOferta = context.record.get('codigoTipoOferta');
 
 		if(CONST.ESTADOS_OFERTA['PENDIENTE'] != estado){
@@ -361,7 +392,7 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 						return false;
 					}
 				}
-				if(agrupacion.get('cambioEstadoPrecio')){
+				if(agrupacion.get('cambioEstadoPrecio') && !enConcurrencia && !agrConOfertasConcurrencia){
 					if($AU.userHasFunction(['CAMBIAR_ESTADO_OFERTA_BANKIA'])){
 						me.fireEvent("warnToast", HreRem.i18n("msg.cambio.valor.precio"));
 					}else{
@@ -370,7 +401,7 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 						return false;
 					}
 				}
-				if(agrupacion.get('cambioEstadoPublicacion') && !enConcurrencia){
+				if(agrupacion.get('cambioEstadoPublicacion') && !enConcurrencia && !agrConOfertasConcurrencia){
 					if($AU.userHasFunction(['CAMBIAR_ESTADO_OFERTA_BANKIA']) || activo.get('estadoVentaCodigo') == '03'){
 						me.fireEvent("warnToast", HreRem.i18n("msg.cambio.estado.publicacion"));
 					}else{
@@ -391,19 +422,32 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 		
 		if(CONST.ESTADOS_OFERTA['ACEPTADA'] == estado) {
 			
-			if(enConcurrencia && context.rowIdx != 0) {
-				Ext.Msg.show({
-				   title: HreRem.i18n('title.confirmar.oferta.aceptacion'),
-				   msg: HreRem.i18n('msg.desea.aceptar.oferta.concurrencia'),
-				   buttons: Ext.MessageBox.YESNO,
-				   fn: function(buttonId) {
-				        if (buttonId == 'yes') {
-				        	me.decisionTramitarOferta(editor, context);
-				        } else {
-							me.getStore().load(); 	
-						}
+			if(agrConOfertasConcurrencia) {
+				var items = this.store.data.items;
+				var ordenGanador = context.record.data.ordenGanador;
+				var esganadora = true;
+				for( var i = 0; i < items.length; i++){
+					if(ordenGanador > items[i].data.ordenGanador){
+						esganadora = false;
+						break;
 					}
-				});	
+				}
+				if(!esganadora){
+					Ext.Msg.show({
+					   title: HreRem.i18n('title.confirmar.oferta.aceptacion'),
+					   msg: HreRem.i18n('msg.desea.aceptar.oferta.concurrencia'),
+					   buttons: Ext.MessageBox.YESNO,
+					   fn: function(buttonId) {
+					        if (buttonId == 'yes') {
+					        	me.decisionTramitarOferta(editor, context);
+					        } else {
+								me.getStore().load(); 	
+							}
+						}
+					});	
+				}else {
+					me.decisionTramitarOferta(editor, context);
+				}
 			} else {
 				me.decisionTramitarOferta(editor, context);
 			}
@@ -503,7 +547,7 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 		for (i=0; !hayOfertaAceptada && i<me.getStore().getData().items.length;i++){
 			
 			if(me.getStore().getData().items[i].data.idOferta != record.data.idOferta){
-				var codigoEstadoOferta=  me.getStore().getData().items[i].data.codigoEstadoOferta;
+				var codigoEstadoOferta=  me.getStore().getData().items[i].data.estadoOferta;
 				hayOfertaAceptada = CONST.ESTADOS_OFERTA['ACEPTADA'] == codigoEstadoOferta;
 				var codigoEstadoExpediente=  me.getStore().getData().items[i].data.codigoEstadoExpediente;
 				var expedienteBlocked = CONST.ESTADOS_EXPEDIENTE['APROBADO'] == codigoEstadoExpediente || CONST.ESTADOS_EXPEDIENTE['RESERVADO'] == codigoEstadoExpediente 
@@ -516,7 +560,7 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 			}
 		}
 
-		var codigoEstadoNuevo = record.data.codigoEstadoOferta;
+		var codigoEstadoNuevo = record.data.estadoOferta;
 
 		if(codigoEstadoAnterior != null && CONST.ESTADOS_OFERTA['PDTE_DEPOSITO'] == codigoEstadoAnterior 
 				&& CONST.ESTADOS_OFERTA['RECHAZADA'] != codigoEstadoNuevo && CONST.ESTADO_DEPOSITO['COD_INGRESADO'] != record.get('codigoEstadoDeposito')){
@@ -599,7 +643,7 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 	
 	saveSuccessFn: function (oferta, operation, c) {
    		var me = this;
-		if(oferta.get('codigoEstadoOferta') == CONST.ESTADOS_OFERTA['ACEPTADA']){
+		if(oferta.get('estadoOferta') == CONST.ESTADOS_OFERTA['ACEPTADA']){
 			me.mask(HreRem.i18n("msg.mask.espere"));			
 			Ext.Ajax.request({
 				url : $AC.getRemoteUrl('tramitacionofertas/doTramitacionOferta'),

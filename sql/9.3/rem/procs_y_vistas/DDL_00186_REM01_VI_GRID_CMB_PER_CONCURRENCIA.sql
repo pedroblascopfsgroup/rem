@@ -1,0 +1,80 @@
+--/*
+--##########################################
+--## AUTOR=Ivan Rubio
+--## FECHA_CREACION=20220701
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=HREOS-18257
+--## PRODUCTO=NO
+--## Finalidad: V_CPC_CMB_PER_CONCURRENCIA
+--##           
+--## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
+--## VERSIONES:
+--##         0.1 Versión inicial
+--##########################################
+--*/
+
+--Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
+
+DECLARE
+    seq_count number(3); -- Vble. para validar la existencia de las Secuencias.
+    table_count number(3); -- Vble. para validar la existencia de las Tablas.
+    v_column_count number(3); -- Vble. para validar la existencia de las Columnas.    
+    v_constraint_count number(3); -- Vble. para validar la existencia de las Constraints.
+    err_num NUMBER; -- N?mero de errores
+    err_msg VARCHAR2(2048); -- Mensaje de error
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquemas
+    V_MSQL VARCHAR2(32000 CHAR); 
+    CUENTA NUMBER;
+    
+BEGIN
+
+  SELECT COUNT(*) INTO CUENTA FROM ALL_OBJECTS WHERE OBJECT_NAME = 'V_CPC_CMB_PER_CONCURRENCIA' AND OWNER=V_ESQUEMA AND OBJECT_TYPE='MATERIALIZED VIEW';  
+  IF CUENTA>0 THEN
+    DBMS_OUTPUT.PUT_LINE('DROP MATERIALIZED VIEW '|| V_ESQUEMA ||'.V_CPC_CMB_PER_CONCURRENCIA...');
+    EXECUTE IMMEDIATE 'DROP MATERIALIZED VIEW ' || V_ESQUEMA || '.V_CPC_CMB_PER_CONCURRENCIA';  
+    DBMS_OUTPUT.PUT_LINE('DROP MATERIALIZED VIEW '|| V_ESQUEMA ||'.V_CPC_CMB_PER_CONCURRENCIA... borrada OK');
+  END IF;
+
+  SELECT COUNT(*) INTO CUENTA FROM ALL_OBJECTS WHERE OBJECT_NAME = 'V_CPC_CMB_PER_CONCURRENCIA' AND OWNER=V_ESQUEMA AND OBJECT_TYPE='VIEW';  
+  IF CUENTA>0 THEN
+    DBMS_OUTPUT.PUT_LINE('DROP VIEW '|| V_ESQUEMA ||'.V_CPC_CMB_PER_CONCURRENCIA...');
+    EXECUTE IMMEDIATE 'DROP VIEW ' || V_ESQUEMA || '.V_CPC_CMB_PER_CONCURRENCIA';  
+    DBMS_OUTPUT.PUT_LINE('DROP VIEW '|| V_ESQUEMA ||'.V_CPC_CMB_PER_CONCURRENCIA... borrada OK');
+  END IF;
+
+  DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_CPC_CMB_PER_CONCURRENCIA...');
+  V_MSQL := 'CREATE VIEW ' || V_ESQUEMA || '.V_CPC_CMB_PER_CONCURRENCIA
+	AS
+		SELECT dbms_random.value(1,1000000) AS ID, CON.CON_ID, ACO.DD_ACO_DESCRIPCION AS ACCION 
+		, CON.CON_FECHA_INI AS FECHAINICIO
+		, CPC.CPC_FECHA_FIN AS FECHAFIN 
+		FROM ' || V_ESQUEMA || '.CPC_CMB_PERIODO_CONCURRENCIA CPC
+		LEFT JOIN ' || V_ESQUEMA || '.DD_ACO_ACCIONES_CONCURRENCIA ACO ON ACO.DD_ACO_ID = CPC.DD_ACO_ID 
+		LEFT JOIN ' || V_ESQUEMA || '.CON_CONCURRENCIA CON ON CON.CON_ID = CPC.CON_ID  ';
+
+  EXECUTE IMMEDIATE	V_MSQL;
+    
+  DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_CPC_CMB_PER_CONCURRENCIA...Creada OK');
+  EXECUTE IMMEDIATE 'COMMENT ON TABLE ' || V_ESQUEMA || '.V_CPC_CMB_PER_CONCURRENCIA IS ''VISTA PARA RECOGER LOS CAMBIOS DE PERIODO DE CONCURRENCIA DE ACTIVOS''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.V_CPC_CMB_PER_CONCURRENCIA.CON_ID IS ''Identificador de la concurrencia''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.V_CPC_CMB_PER_CONCURRENCIA.FECHAINICIO IS ''Fecha inicio''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.V_CPC_CMB_PER_CONCURRENCIA.FECHAFIN IS ''Fecha fin''';
+
+  DBMS_OUTPUT.PUT_LINE('Creados los comentarios en CREATE VIEW '|| V_ESQUEMA ||'.V_CPC_CMB_PER_CONCURRENCIA...Creada OK');
+  EXCEPTION
+  WHEN OTHERS THEN
+    ERR_NUM := SQLCODE;
+    ERR_MSG := SQLERRM;
+    DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
+    DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+    DBMS_OUTPUT.put_line(ERR_MSG);
+    ROLLBACK;
+    RAISE; 
+END;
+/
+
+EXIT;

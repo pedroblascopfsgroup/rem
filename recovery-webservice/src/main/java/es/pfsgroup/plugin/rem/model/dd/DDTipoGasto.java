@@ -33,6 +33,7 @@ public class DDTipoGasto implements Auditable, Dictionary {
 	public static final String CODIGO_ALQUILER = "19";
 	public static final String CODIGO_IMPUESTO = "01";
 	public static final String CODIGO_TASA = "02";
+	public static final String CODIGO_SUMINISTRO = "09";
 
 	/**
 	 * 

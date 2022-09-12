@@ -969,7 +969,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			filtroConcurrencia = genericDao.createFilter(FilterType.EQUALS, "agrupacion.id", agr.getId());
 		}
 		
-		if(activo != null) {
+		if(activo != null && concurrenciaApi.isActivoEnConcurrencia(activo)) {
 			Double precioVentaActivo = activoApi.getImporteValoracionActivoByCodigo(activo, DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA);
 			Double precioDescuentoVentaActivo = activoApi.getImporteValoracionActivoByCodigo(activo, DDTipoPrecio.CODIGO_TPC_DESC_APROBADO);
 			if((precioDescuentoVentaActivo != null && ofertaDto.getImporte() < precioDescuentoVentaActivo) 
@@ -2298,7 +2298,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						.expedienteComercialPorOferta(oferta.getId());
 				if (!Checks.esNulo(expedienteComercial)) {
 					// Actualizamos la participación de los activos en la oferta;
-					if (ofertaDto.getCreadaConcurrencia()) {
+					if (ofertaDto.getCreadaConcurrencia() != null && ofertaDto.getCreadaConcurrencia()) {
 						expedienteComercialApi.updateParticipacionActivosOferta(oferta);
 					}
 					expedienteComercialApi.actualizarImporteReservaPorExpediente(expedienteComercial);
@@ -2648,7 +2648,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 			if (expedienteComercial != null) {
 				if (((JSONObject) jsonFields).containsKey("importeContraoferta")) {
-					if (ofertaDto.getCreadaConcurrencia()) {
+					if (ofertaDto.getCreadaConcurrencia()!= null && ofertaDto.getCreadaConcurrencia()) {
 						expedienteComercialApi.updateParticipacionActivosOferta(oferta);
 					}
 					expedienteComercialApi.actualizarImporteReservaPorExpediente(expedienteComercial);

@@ -22,6 +22,7 @@ import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ComunicacionGencatApi;
+import es.pfsgroup.plugin.rem.api.ConcurrenciaApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
@@ -96,6 +97,7 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
 			Activo activo = ofertaAceptada.getActivoPrincipal();
 			if (!Checks.esNulo(expediente)) {
+				Boolean esOfertaAceptada = false;
 						
 				for (TareaExternaValor valor : valores) {
 	
@@ -179,7 +181,8 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 							// Se comprueba si cada activo tiene KO de admisión o de gestión
 							// y se envía una notificación
 							notificacionApi.enviarNotificacionPorActivosAdmisionGestion(expediente);
-														
+								
+							esOfertaAceptada = true;
 						} else {
 							if (DDResolucionComite.CODIGO_RECHAZA.equals(valor.getValor())) {
 								rechazar = true;
@@ -226,6 +229,7 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 						
 					}
 				}
+				
 				genericDao.save(ExpedienteComercial.class, expediente);
 				
 				if(rechazar) {

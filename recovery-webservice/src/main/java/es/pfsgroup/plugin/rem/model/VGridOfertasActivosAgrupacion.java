@@ -90,6 +90,15 @@ public class VGridOfertasActivosAgrupacion implements Serializable {
     
     @Column(name="ESTADODEPOSITO")
     private String estadoDeposito;
+    
+	@Column(name = "FECHA_ENT_CRM_SF")
+    private Date fechaEntradaCRMSF;	
+	
+	@Column(name="OFERTA_CONCURRENCIA")
+	private Boolean ofertaCreadaConcurrencia;
+	
+	@Column(name="OFERTA_CONCURRENCIA_ACTIVA")
+	private Boolean ofertaEnConcurrenciaActiva;
 
 	public Long getId() {
 		return id;
@@ -289,7 +298,30 @@ public class VGridOfertasActivosAgrupacion implements Serializable {
 
 	public void setEstadoDeposito(String estadoDeposito) {
 		this.estadoDeposito = estadoDeposito;
-	}	
-	
+	}
+
+	public Date getFechaEntradaCRMSF() {
+		return fechaEntradaCRMSF;
+	}
+
+	public void setFechaEntradaCRMSF(Date fechaEntradaCRMSF) {
+		this.fechaEntradaCRMSF = fechaEntradaCRMSF;
+	}
+
+	public Boolean getOfertaCreadaConcurrencia() {
+		return ofertaCreadaConcurrencia;
+	}
+
+	public void setOfertaCreadaConcurrencia(Boolean ofertaCreadaConcurrencia) {
+		this.ofertaCreadaConcurrencia = ofertaCreadaConcurrencia;
+	}
+
+	public Boolean getOfertaEnConcurrenciaActiva() {
+		return ofertaEnConcurrenciaActiva;
+	}
+
+	public void setOfertaEnConcurrenciaActiva(Boolean ofertaEnConcurrenciaActiva) {
+		this.ofertaEnConcurrenciaActiva = ofertaEnConcurrenciaActiva;
+	}
 	
 }

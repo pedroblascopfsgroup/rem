@@ -61,6 +61,9 @@ public class Deposito implements Serializable, Auditable {
 	@Column(name="DEP_IBAN_DEVOLUCION")
 	private String ibanDevolucion;
 	
+	@Column(name="DEP_FECHA_INICIO")
+	private Date fechaInicio;
+	
     @Version
     private Integer version;
 
@@ -114,6 +117,14 @@ public class Deposito implements Serializable, Auditable {
 
 	public void setIbanDevolucion(String ibanDevolucion) {
 		this.ibanDevolucion = ibanDevolucion;
+	}
+	
+	public Date getFechaInicio() {
+		return fechaInicio;
+	}
+
+	public void setFechaInicio(Date fechaInicio) {
+		this.fechaInicio = fechaInicio;
 	}
 
 	public Integer getVersion() {

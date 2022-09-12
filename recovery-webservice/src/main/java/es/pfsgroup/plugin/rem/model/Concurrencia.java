@@ -44,14 +44,12 @@ public class Concurrencia implements Serializable, Auditable {
     @JoinColumn(name = "ACT_ID")
     private Activo activo;
 
-	@Column(name = "AGR_ID")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "AGR_ID")
 	private ActivoAgrupacion agrupacion;
 
 	@Column(name = "CON_IMPORTE_MIN_OFR")
 	private Double importeMinOferta;
-
-	@Column(name = "CON_IMPORTE_DEPOSITO")
-	private Double importeDeposito;
 
 	@Column(name = "CON_FECHA_INI")
 	private Date fechaInicio;
@@ -95,14 +93,6 @@ public class Concurrencia implements Serializable, Auditable {
 
 	public void setImporteMinOferta(Double importeMinOferta) {
 		this.importeMinOferta = importeMinOferta;
-	}
-
-	public Double getImporteDeposito() {
-		return importeDeposito;
-	}
-
-	public void setImporteDeposito(Double importeDeposito) {
-		this.importeDeposito = importeDeposito;
 	}
 
 	public Date getFechaInicio() {

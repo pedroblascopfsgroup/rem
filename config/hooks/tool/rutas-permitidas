@@ -345,4 +345,5 @@ func-rem-onboardingCIBE|version-2.48.2-rem
 func-rem-proveedoresNoHomologables|R-Nagami
 func-rem-datosProveedores|R-Nagami
 rem_mirror|func-rem-contabilizarDepositoOtrosEstados
-
+func-rem-identificacionIBIsTasasDomiciliadosInterfazGastosSAPBC|R-Buu
+func-rem-nuevosValoresParaCriterioCajaIndicadoresImpuestos|R-Buu

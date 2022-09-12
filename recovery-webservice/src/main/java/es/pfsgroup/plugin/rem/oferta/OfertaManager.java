@@ -739,13 +739,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				errorsList.putAll(validateIdRepresentanteAndIdContacto(ofertaDto.getIdOfertaHayaHome(), ofertaDto.getIdOfertaRem(),
 						ofertaDto.getIdClienteRem(), ofertaDto.getIdClienteRemRepresentante(), ofertaDto.getIdClienteContacto(), true));
 			}
-
-			if(ofertaDto.getIbanDevolucion() == null){
-				Long idActivo = ofertaDto.getIdActivoHaya() != null ? ofertaDto.getIdActivoHaya() : ofertaDto.getActivosLote().get(0).getIdActivoHaya();
-				errorsList.putAll(validateIbanDevolucionNecesario(idActivo));
-			} else if (!Checks.esNulo(ofertaDto.getIbanDevolucion()) && !depositoApi.validarIban(ofertaDto.getIbanDevolucion())) {
-				errorsList.put("ibanDevolucion", RestApi.REST_MSG_UNKNOWN_KEY);
-			}
 			//CONCURRENCIA
 			checkIsConcurrencia(ofertaDto, errorsList, activoConcurrencia, agrupacionConcurrencia);
 

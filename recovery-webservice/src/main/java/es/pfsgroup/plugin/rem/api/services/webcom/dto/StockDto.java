@@ -382,6 +382,10 @@ public class StockDto implements WebcomRESTDto{
 	private BooleanDataType disponible;
 	
 	private StringDataType codMotivoIndisponibilidad;
+
+	private DateDataType desdePeriodoConcurrencia;
+	private DateDataType hastaPeriodoConcurrencia;
+	private LongDataType idPeriodoConcurrencia;
 	
 	public LongDataType getIdActivoHaya() {
 		return idActivoHaya;
@@ -1250,5 +1254,29 @@ public class StockDto implements WebcomRESTDto{
 	}
 	public void setEmailGestorComercialAlquiler(StringDataType emailGestorComercialAlquiler) {
 		this.emailGestorComercialAlquiler = emailGestorComercialAlquiler;
+	}
+
+	public DateDataType getDesdePeriodoConcurrencia() {
+		return desdePeriodoConcurrencia;
+	}
+
+	public void setDesdePeriodoConcurrencia(DateDataType desdePeriodoConcurrencia) {
+		this.desdePeriodoConcurrencia = desdePeriodoConcurrencia;
+	}
+
+	public DateDataType getHastaPeriodoConcurrencia() {
+		return hastaPeriodoConcurrencia;
+	}
+
+	public void setHastaPeriodoConcurrencia(DateDataType hastaPeriodoConcurrencia) {
+		this.hastaPeriodoConcurrencia = hastaPeriodoConcurrencia;
+	}
+
+	public LongDataType getIdPeriodoConcurrencia() {
+		return idPeriodoConcurrencia;
+	}
+
+	public void setIdPeriodoConcurrencia(LongDataType idPeriodoConcurrencia) {
+		this.idPeriodoConcurrencia = idPeriodoConcurrencia;
 	}
 }

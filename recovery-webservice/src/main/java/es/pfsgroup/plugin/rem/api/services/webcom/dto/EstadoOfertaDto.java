@@ -1,12 +1,8 @@
 package es.pfsgroup.plugin.rem.api.services.webcom.dto;
 
-import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.BooleanDataType;
-import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.DateDataType;
-import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.DoubleDataType;
-import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.LongDataType;
-import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.StringDataType;
-import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.WebcomRequired;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.*;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.MappedColumn;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.WebcomRequired;
 
 public class EstadoOfertaDto implements WebcomRESTDto{
 	
@@ -65,6 +61,8 @@ public class EstadoOfertaDto implements WebcomRESTDto{
 	private StringDataType codSubestadoExpediente;
 	private StringDataType codOfertaSalesforce;
 	private StringDataType cuentaVirtual;
+
+	private LongDataType idPeriodoConcurrencia;
 
 
 	public LongDataType getIdUsuarioRemAccion() {
@@ -332,5 +330,13 @@ public class EstadoOfertaDto implements WebcomRESTDto{
 
 	public void setCuentaVirtual(StringDataType cuentaVirtual) {
 		this.cuentaVirtual = cuentaVirtual;
+	}
+
+	public LongDataType getIdPeriodoConcurrencia() {
+		return idPeriodoConcurrencia;
+	}
+
+	public void setIdPeriodoConcurrencia(LongDataType idPeriodoConcurrencia) {
+		this.idPeriodoConcurrencia = idPeriodoConcurrencia;
 	}
 }

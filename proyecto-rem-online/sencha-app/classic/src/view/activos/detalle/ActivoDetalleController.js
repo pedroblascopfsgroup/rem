@@ -12,7 +12,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		'HreRem.view.common.adjuntos.formularioTipoDocumento.WizardAdjuntarDocumentoModel','HreRem.view.common.WizardBase',
     		'HreRem.view.common.adjuntos.formularioTipoDocumento.AdjuntarDocumentoWizard1','HreRem.view.common.adjuntos.formularioTipoDocumento.AdjuntarDocumentoWizard2',
     		'HreRem.view.trabajos.detalle.CrearPeticionTrabajo','HreRem.view.activos.detalle.SaneamientoActivoDetalle', 'HreRem.view.activos.detalle.TramitarOfertaActivoWindow',
-			'HreRem.view.activos.detalle.OpcionesPropagacionCambiosDq'],
+			'HreRem.view.activos.detalle.OpcionesPropagacionCambiosDq','HreRem.model.CambioPeriodoConcurrenciaActivoModel'],
 
     control: {
          'documentosactivosimple gridBase': {
@@ -3721,7 +3721,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		idActivo = activo.get('id');
 
 		if (!Ext.isEmpty(grid.selection)) {
-			idOferta = record.get("idOferta");
+			idOferta = record.get("idOferta") ? record.get("idOferta") : record.get("id");
+			//idOferta = record.get("idOferta");
 		}
 
 		var fieldset = me.lookupReference('detalleOfertaFieldsetref');
@@ -7534,8 +7535,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 	onSelectedRow : function(grid, record, index) {
 		me = this;
+
 		if (!Ext.isEmpty(record)) {
-			idOferta = record.data.idOferta;
+			idOferta = record.data.idOferta ? record.data.idOferta: record.data.id;
 			if (idOferta && !Ext.isEmpty(me.view.down('[reference=cloneExpedienteButton]'))) {
 				var hideButton = record.data.codigoEstadoOferta != CONST.ESTADOS_OFERTA['RECHAZADA'] && record.data.codigoEstadoOferta != CONST.ESTADOS_OFERTA['CADUCADA'];
 	    		me.view.down('[reference=cloneExpedienteButton]').setDisabled(hideButton); 
@@ -9036,6 +9038,69 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	}else{
     		return true;
     	}
+    },
+	
+    onPujasListDobleClick: function(grid,record,tr,rowIndex) {        	       
+    	var me = this,
+    	record = grid.getStore().getAt(rowIndex),
+    	activo = me.getViewModel().get('activo'),
+    	idOferta = null;
+    	
+    	if (!Ext.isEmpty(grid.selection)) {
+			idOferta = record.get("id");
+		}
+    	
+    	Ext.create('HreRem.view.activos.detalle.PujasComercialDetalle',{detallepuja: record, detallehistoricoconcurrencia: record}).show();
+    },
+    
+   	onClickBotonCerrarDetallePujas: function(btn) {
+		var me = this,
+		window = btn.up('window');
+    	window.close();
+	},
+	
+	onConcurrenciaListClick: function(grid,record,tr,rowIndex) {        	       
+    	var me = this, idConcurrencia = null;
+		var activo = me.getViewModel().get('activo');
+		var idActivo = activo.get('id');
+		if (!Ext.isEmpty(grid.selection)) {
+			idConcurrencia = record.get("id");
+		}
+		var storeListaOfertasConcurrencia = Ext.create('Ext.data.Store',{
+			model: 'HreRem.model.PujasActivo',
+		     proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'activo/getListConcurrenciasActivoById'
+	    	 }
+    	});
+		me.lookupReference('pujascomercialactivolistref').setStore(storeListaOfertasConcurrencia);
+		storeListaOfertasConcurrencia.getProxy().getExtraParams().idActivo = idActivo;
+		storeListaOfertasConcurrencia.getProxy().getExtraParams().idConcurrencia = idConcurrencia;
+		storeListaOfertasConcurrencia.load({
+			success : function(record) {
+				me.lookupReference('pujascomercialactivolistref').refresh();
+			}
+		});
+		
+		if (!Ext.isEmpty(idConcurrencia)){
+		
+			var storeCambiosPeriodoConcurrencia = Ext.create('Ext.data.Store',{
+				model: 'HreRem.model.CambioPeriodoConcurrenciaActivoModel',
+			     proxy: {
+			        type: 'uxproxy',
+			        remoteUrl: 'activo/getListCambiosPeriodoConcurenciaByIdConcurrencia'
+		    	 }
+	    	});
+			me.lookupReference('cambiosconcurrenciacomercialactivolistref').setStore(storeCambiosPeriodoConcurrencia);
+			storeCambiosPeriodoConcurrencia.getProxy().getExtraParams().idConcurrencia = idConcurrencia;
+			storeCambiosPeriodoConcurrencia.load({
+				success : function(record) {
+					me.lookupReference('cambiosconcurrenciacomercialactivolistref').refresh();
+				}
+			});
+		
+		}
+		
     }
 
 });

@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Adrián Molina
---## FECHA_CREACION=20220509
+--## AUTOR=Vicente Martinez
+--## FECHA_CREACION=20220713
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-17809
+--## INCIDENCIA_LINK=HREOS-18353
 --## PRODUCTO=NO
 --## Finalidad: Tabla para almacentar el historico de las ofertas enviadas a webcom
 --##           
@@ -22,6 +22,7 @@
 --##		0.7 Corrección nombres de campos HAYA HOME - Pedro Blasco - HREOS-15266
 --##		0.8 Añadir campo TIPO_RECHAZO_SANCION - Juan Jose Sanjuan - [REMVIP-11028]
 --##		0.9 Quitar campo IBAN_DEVOLUCION - Adrián Molina - [HREOS-17809]
+--##        0.10 Añadir campos concurrencia - Vicente Martinez - [HREOS-18353]
 --##########################################
 --*/
 
@@ -173,7 +174,8 @@ BEGIN
 			THEN CAST(1 AS NUMBER(1,0))
 			ELSE CAST(0 AS NUMBER(1,0))
 		END																					AS EXCLUSION_IF,
-		CVC.CVC_CUENTA_VIRTUAL                                                              AS CUENTA_VIRTUAL
+		CVC.CVC_CUENTA_VIRTUAL                                                              AS CUENTA_VIRTUAL,
+		OFR.CON_ID                                                                          AS ID_PERIODO_CONCURRENCIA
 
 
 		FROM '||V_ESQUEMA||'.OFR_OFERTAS OFR
@@ -278,7 +280,8 @@ BEGIN
 			THEN CAST(1 AS NUMBER(1,0))
 			ELSE CAST(0 AS NUMBER(1,0))
 		END																					AS EXCLUSION_IF,
-		CVC.CVC_CUENTA_VIRTUAL                                                              AS CUENTA_VIRTUAL
+		CVC.CVC_CUENTA_VIRTUAL                                                              AS CUENTA_VIRTUAL,
+		OFR.CON_ID                                                                          AS ID_PERIODO_CONCURRENCIA
 
 		FROM '||V_ESQUEMA||'.OFR_OFERTAS OFR
 		INNER JOIN '||V_ESQUEMA||'.ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = OFR.AGR_ID

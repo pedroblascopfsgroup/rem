@@ -44,6 +44,10 @@ public class TramitacionOfertasController extends ParadiseJsonController {
 			if (result.isReplicateToBc()){
 				ofertaApi.replicateOfertaFlushASYNC(result.getNumOferta());
 			}
+			
+			if (!result.isSuccess() && result.getMessage() != null && !result.getMessage().isEmpty()) {
+				model.put(RESPONSE_MESSAGE_KEY, result.getMessage());
+			}
 
 		} catch (JsonViewerException jvex) {
 			model.put(RESPONSE_SUCCESS_KEY, false);

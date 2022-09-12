@@ -155,6 +155,9 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	
 	@Autowired
 	private DepositoApi depositoApi;
+
+	@Autowired
+	private ConcurrenciaApi concurrenciaApi;
 	
 	protected static final Log logger = LogFactory.getLog(TabActivoDatosBasicos.class);	
 
@@ -1271,6 +1274,19 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				activoDto.setIdentificadorTrastero(activoInfoComercial.getIdentificadorTrastero());
 			}
 		}
+		
+		activoDto.setEnConcurrencia(concurrenciaApi.isActivoEnConcurrencia(activo));
+		Boolean activoTieneConcurrencia = false;
+		Concurrencia concurrencia = concurrenciaApi.getUltimaConcurrenciaByActivo(activo);
+		if(concurrencia != null) {
+			activoTieneConcurrencia = true;
+		}
+		activoDto.setActivoOfertasConcurrencia(activoTieneConcurrencia);
+		
+		activoDto.setVistaDeConcurrencia(concurrenciaApi.isActivoEnConcurrencia(activo) || concurrenciaApi.tieneActivoOfertasDeConcurrencia(activo));
+		activoDto.setHistoricoDeConcurrencia(concurrenciaApi.getTabConcurrenciaByActivo(activo));
+		
+		activoDto.setBloquearEdicionEstadoOfertas(concurrenciaApi.bloquearEditarOfertasPorConcurrenciaActivo(activo));
 		
 		return activoDto;
 	}

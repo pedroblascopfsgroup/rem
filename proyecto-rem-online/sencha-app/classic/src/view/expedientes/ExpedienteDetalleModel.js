@@ -1852,6 +1852,14 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
   				extraParams: {diccionario: 'estadoComunicacionC4C'}
   			}
   	    },
+  	  comboEstadoOferta: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'estadosOfertas'}
+			}
+  	},
   	  storeTipoGastoRepercutido:{
 			model: 'HreRem.model.ComboBase',
 	    	proxy: {

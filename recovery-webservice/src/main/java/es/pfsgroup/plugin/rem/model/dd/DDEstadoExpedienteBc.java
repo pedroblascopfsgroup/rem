@@ -89,7 +89,7 @@ public class DDEstadoExpedienteBc implements Auditable, Dictionary {
 	public static final String CODIGO_GESTION_ADECUCIONES_CERTIFICACIONES_CLIENTE = "058";
 	public static final String CODIGO_RECESION_CONTRATO = "059";
 	public static final String CODIGO_RECESION_AGENDADA = "060";
-
+	public static final String CODIGO_OFERTA_TRAMITE_CONCURRENCIA_TRAMITACION = "051";
 	
 	private static final long serialVersionUID = 1L;
 

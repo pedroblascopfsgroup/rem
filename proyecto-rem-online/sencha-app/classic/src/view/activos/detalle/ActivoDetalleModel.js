@@ -15,7 +15,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	'HreRem.model.HistoricoTramitacionTituloAdicionalModel', 'HreRem.model.CalidadDatoFasesGridModel','HreRem.model.SituacionOcupacionalGridModel',
 	'HreRem.model.DetalleOfertaModel', 'HreRem.model.ActivoInformacionAdministrativa', 'HreRem.view.activos.detalle.CatastroGrid',
 	'HreRem.model.ComparativaReferenciaCatastralGridModel', 'HreRem.model.ReferenciaCatastralGridModel','HreRem.model.ReferenciaCatastralComboModel',
-	'HreRem.model.TestigosOpcionales'],
+	'HreRem.model.TestigosOpcionales','HreRem.model.DetalleOfertaModel', 'HreRem.model.ActivoInformacionAdministrativa', 'HreRem.model.Pujas',
+	'HreRem.model.PujasActivo', 'HreRem.model.HistoricoConcurrenciaGridModel'],
 
     data: {
     	activo: null,
@@ -740,7 +741,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			var chkPerimetroAlquiler = get('patrimonio.chkPerimetroAlquiler');
 			var situacionActivo = get('patrimonio.estadoAlquiler');
 			var isDivarian = get('patrimonio.isCarteraCerberusDivarian');
-			var isCaixa = get('isCarteraBankia');	
+			var isCaixa = get('isCarteraBankia');
 
 			if((chkPerimetroAlquiler == true || chkPerimetroAlquiler == "true" ) && CONST.COMBO_ESTADO_ALQUILER['ALQUILADO'] == situacionActivo && !isDivarian  && !isCaixa){
 				return false;
@@ -2042,7 +2043,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	    	}
 	    	return false;
 	    },
-	    
+
 	    isVisbleIndicadorPlazaParking: function(get){
 	    	var me = this;
 	    	var anejoGarajeCodRef = me.get('activo.anejoGarajeCodigo');
@@ -2053,7 +2054,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				return true
 			}
 	    },
-	    
+
 	    isVisbleIndicadorTrastero: function(get){
 	    	var me = this;
 	    	var anejoTrasteroCodRef = me.get('activo.anejoTrasteroCodigo');
@@ -2064,7 +2065,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				return true;
 			}
 	    },
-	    
+
 	    isEditableAnejo: function(get){
 	    	var me = this;
 	    	var editable = false;
@@ -2073,20 +2074,20 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			var situacionComercialCodigo = get('activo.situacionComercialCodigo');
 			var aplicaComercializar = get('activo.aplicaComercializar');
 			var tieneFuncion = $AU.userHasFunction('EDITAR_TAB_INFO_COMERCIAL_PUBLICACION');
-			
+
 	    	if (isCarteraBankia && ($AU.userIsRol(CONST.PERFILES['HAYAGESTPUBL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']))
 	    			&& tieneFuncion) {
 	    		if (situacionComercialCodigo != '05' && aplicaComercializar) {
 	    			editable = tieneFuncion;
 	    		}
 	    	}else if(claseActivo =='01'){
-	    		editable = (($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYAGESTPREC']) || $AU.userIsRol(CONST.PERFILES['HAYAGESTPUBL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['HAYACAL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPCAL'])) 
+	    		editable = (($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYAGESTPREC']) || $AU.userIsRol(CONST.PERFILES['HAYAGESTPUBL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['HAYACAL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPCAL']))
 						 && tieneFuncion);
 			}else{
 				editable = tieneFuncion;
 			}
 	    },
-	    
+
 	    isEditableIdentificador: function(get){
 	    	var me = this;
 	    	var editable = false;
@@ -2096,13 +2097,13 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			var aplicaComercializar = get('activo.aplicaComercializar');
 			var tieneFuncion = $AU.userHasFunction('EDITAR_TAB_INFO_COMERCIAL_PUBLICACION');
 
-	    	if (isCarteraBankia && ($AU.userIsRol(CONST.PERFILES['HAYAGESTPUBL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER'])) 
+	    	if (isCarteraBankia && ($AU.userIsRol(CONST.PERFILES['HAYAGESTPUBL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']))
 	    			&& tieneFuncion) {
 	    		if (situacionComercialCodigo != '05' && aplicaComercializar) {
 	    			editable = tieneFuncion;
 	    		}
 	    	}else if(claseActivo =='01'){
-	    		editable = (($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYAGESTPREC']) || $AU.userIsRol(CONST.PERFILES['HAYAGESTPUBL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['HAYACAL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPCAL'])) 
+	    		editable = (($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYAGESTPREC']) || $AU.userIsRol(CONST.PERFILES['HAYAGESTPUBL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['HAYACAL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPCAL']))
 						 && tieneFuncion);
 			}else{
 				editable = tieneFuncion;
@@ -2329,6 +2330,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	       		 pageSize: $AC.getDefaultPageSize(),
 	       		 model: 'HreRem.model.OfertaActivo',
 	       		 sorters: [
+			       			{
+					 			property: 'ordenGanador',
+				        		direction: 'ASC'
+					 		},
 				 			{
 				        		property: 'fechaCreacion',
 				        		direction: 'DESC'	
@@ -3297,7 +3302,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			model: 'HreRem.model.OfertantesOfertaDetalleModel',
 			proxy: {
 				type: 'uxproxy',
-				remoteUrl: 'ofertas/getOfertantesByOfertaId'
+				remoteUrl: 'ofertas/getOfertantesByOfertaId'/*,
+				extraParams: {
+					ofertaID: '{ofertaRecord.idOferta}'
+						, idOferta: '{ofertaRecord.idOferta}'
+						}*/
 			}
 		},
 
@@ -4641,6 +4650,19 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			}
 		},
 		
+      	storePuja: {
+     		 model: 'HreRem.model.Pujas',
+ 		     proxy: {
+ 		        type: 'uxproxy',
+ 		        remoteUrl: 'activo/getPujasDetalleByIdOferta',
+ 		        extraParams: {
+		        	idOferta: '{detallepuja.id}',
+		        	idActivo: '{detallepuja.idActivo}'
+		        }
+ 	    	 },
+ 			autoLoad: true
+     	},
+
 		comboSegmentacionCartera: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
@@ -4649,7 +4671,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {diccionario: 'segmentacionCartera'}
 			}
 		},
-
 		storeComparativaRefCatastral:{
 			model: 'HreRem.model.ComparativaReferenciaCatastralGridModel',
 			proxy: {
@@ -4681,12 +4702,22 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			}
         },
 
-		storeTextosComercialActivo: {    
+		storeTextosComercialActivo: {
     		 pageSize: $AC.getDefaultPageSize(),
     		 model: 'HreRem.model.TextosOferta',
 		     proxy: {
 		        type: 'uxproxy',
 		        remoteUrl: 'ofertas/getListTextosOfertaByActivoOferta'
+	    	 }
+    	},
+    	storeConcurrenciaHistorico: {
+    		 model: 'HreRem.model.HistoricoConcurrenciaGridModel',
+		     proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'activo/getHistoricoConcurrencia',
+		        extraParams: {
+		        	id: '{activo.id}'
+		        }
 	    	 }
     	}
 	 }

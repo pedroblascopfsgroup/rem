@@ -495,17 +495,18 @@ public class Oferta implements Serializable, Auditable {
     private OfertaCaixa ofertaCaixa;
     
     @Column(name = "OFR_CONCURRENCIA")
-	private Boolean concurrencia;
+	private Boolean isEnConcurrencia;
+	
     @Column(name = "CHECK_FORM_CAJAMAR")
     private Boolean checkFormCajamar;
-    
+
     @Column(name = "CHECK_FORZADO_CAJAMAR")
     private Boolean checkForzadoCajamar;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USUARIO_FORZADO_CAJAMAR")
     private Usuario usuarioForzadoCajamar;
-    
+
     @Column(name="FECHA_FORZADO_CAJAMAR")
 	private Date fechaForzadoCajamar;
 
@@ -533,6 +534,11 @@ public class Oferta implements Serializable, Auditable {
 	
 	@Column(name = "AUTO_FIRME")
     private Boolean autoFirme;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "CON_ID")
+	private Concurrencia concurrencia;
+
 
 	public Date getFechaAlta() {
 		return fechaAlta;
@@ -1198,7 +1204,7 @@ public class Oferta implements Serializable, Auditable {
 	public void setFechaCreacionOpSf(Date fechaCreacionOpSf) {
 		this.fechaCreacionOpSf = fechaCreacionOpSf;
 	}
-		
+
 	public Date getFechaEntradaCRMSF() {
 		return fechaEntradaCRMSF;
 	}
@@ -1603,12 +1609,20 @@ public class Oferta implements Serializable, Auditable {
 		this.cuentaVirtual = cuentaVirtual;
 	}
 
-	public Boolean getConcurrencia() {
-		return concurrencia;
+	public Boolean getIsEnConcurrencia() {
+		return isEnConcurrencia;
 	}
 
-	public void setConcurrencia(Boolean concurrencia) {
-		this.concurrencia = concurrencia;
+	public void setIsEnConcurrencia(Boolean concurrencia) {
+		this.isEnConcurrencia = concurrencia;
+	}
+
+	public boolean esOfertaAnulada(){
+		return DDEstadoOferta.isRechazada(this.estadoOferta);
+	}
+	
+	public boolean esOfertaCaducada(){
+		return DDEstadoOferta.isCaducada(this.estadoOferta);
 	}
 
 	public Boolean getCheckFormCajamar() {
@@ -1681,6 +1695,14 @@ public class Oferta implements Serializable, Auditable {
 
 	public void setAutoFirme(Boolean autoFirme) {
 		this.autoFirme = autoFirme;
+	}
+	
+	public Concurrencia getConcurrencia() {
+		return concurrencia;
+	}
+
+	public void setConcurrencia(Concurrencia concurrencia) {
+		this.concurrencia = concurrencia;
 	}
 	
 }

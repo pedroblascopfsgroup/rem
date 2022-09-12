@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.expedienteComercial;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
@@ -35,6 +36,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.ui.ModelMap;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
 import es.capgemini.devon.dto.WebDto;
@@ -91,6 +93,7 @@ import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.BoardingComunicacionApi;
+import es.pfsgroup.plugin.rem.api.ConcurrenciaApi;
 import es.pfsgroup.plugin.rem.api.DepositoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteAvisadorApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
@@ -501,6 +504,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Autowired
 	private NotificationOfertaManager notificationOfertaManager;
 
+	@Autowired
+	private ConcurrenciaApi concurrenciaApi;
+
 	@Override
 	public ExpedienteComercial findOneTransactional(Long id) {
 		TransactionStatus transaction = null;
@@ -841,6 +847,25 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				ofertaApi.darDebajaAgrSiOfertaEsLote(oferta);
 
 			}
+			
+			if(oferta.getIsEnConcurrencia() != null && oferta.getIsEnConcurrencia() &&
+					(DDEstadoOferta.CODIGO_RECHAZADA.equals(oferta.getEstadoOferta().getCodigo()) || DDEstadoOferta.CODIGO_CADUCADA.equals(oferta.getEstadoOferta().getCodigo()))) {
+					
+				List<Long> idOfertaList = new ArrayList<Long>();
+				idOfertaList.add(oferta.getId());
+				
+				try {
+					concurrenciaApi.comunicacionSFMC(idOfertaList, ConcurrenciaApi.COD_OFERTA_ANULADA_FORMA_MANUAL, ConcurrenciaApi.TIPO_ENVIO_UNICO, new ModelMap());		
+				} catch (IOException ioex) {
+					logger.error(ioex.getMessage());
+					ioex.printStackTrace();
+				} catch (Exception exc) {
+					logger.error(exc.getMessage());
+					exc.printStackTrace();
+				}
+
+			}
+			
 			ofertaApi.setEstadoOfertaBC(oferta, null);
 			cambioEstadoOferta = true;
 			
@@ -11631,6 +11656,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					avisosFormateados.setDescripcion(avisosFormateados.getDescripcion()
 							+ "<div class='div-aviso red'> Oferta incluida dentro de Bulk AN </div>");
 				}
+			}
+
+			if (concurrenciaApi.isOfertaEnConcurrencia(expediente.getOferta())) {
+				avisosFormateados.setDescripcion(avisosFormateados.getDescripcion()
+						+ "<div class='div-aviso red'> Oferta de concurrencia </div>");
 			}
 		}
 		return avisosFormateados;

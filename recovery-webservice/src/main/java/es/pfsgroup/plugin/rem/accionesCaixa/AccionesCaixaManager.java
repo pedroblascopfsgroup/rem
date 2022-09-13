@@ -63,6 +63,9 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
 
     @Autowired
     private DepositoApi depositoApi;
+    
+    @Autowired
+	private ConcurrenciaApi concurrenciaApi;
 
     @Override
     public String managerName() {
@@ -124,8 +127,11 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
                 return false;
             }
         }
+        if (ofr != null){
+            ofr.setEstadoOferta(genericDao.get(DDEstadoOferta.class,genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_RECHAZADA)));
+        }
         ofertaApi.setEstadoOfertaBC(ofr, null);
-        return false;
+        return true;
     }
 
     @Override
@@ -690,10 +696,6 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
         dataHolder.setPreviousStateExpedienteBcCod(expedienteComercialApi.getEstadoExpedienteBcFromIdTarea(dataHolder.getIdTarea()));
         boolean success = adapter.save(createRequestAvanzarTareaGenerico(dto));
 
-        if(success){
-            replicacionOfertasApi.callReplicateOferta(dataHolder, success);
-        }
-
         return success;
     }
 
@@ -835,10 +837,18 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
     @Transactional
     public void accionIngresoDeposito(Long numOferta){
     	Oferta oferta = ofertaApi.getOfertaByNumOfertaRem(numOferta);
-    	ofertaApi.actualizaEstadoOfertaRemAndBC(oferta);
-		
-        Deposito deposito = depositoApi.getDepositoByNumOferta(numOferta);
-        depositoApi.ingresarDeposito(deposito);
+    	boolean principalCaducada = false;
+		if(oferta.getIsEnConcurrencia() != null && oferta.getIsEnConcurrencia()) {
+			principalCaducada = concurrenciaApi.caducaOfertaConcurrencia(oferta.getActivoPrincipal().getId(),oferta.getId());
+	    }
+    	
+		if(!principalCaducada) {
+			Deposito deposito = depositoApi.getDepositoByNumOferta(numOferta);
+	        depositoApi.ingresarDeposito(deposito);
+			
+			ofertaApi.actualizaEstadoOfertaRemAndBC(oferta);
+		}
+      
     }
 
     @Override
@@ -847,10 +857,16 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
         Deposito dep = depositoApi.getDepositoByNumOferta(numOferta);
         depositoApi.incautaODevuelveDeposito(dep, codEstado);
         Oferta ofr = ofertaApi.getOfertaByNumOfertaRem(numOferta);
-        if(ofr != null && ofr.getExpedienteComercial() == null && ofr.getOfertaCaixa() != null) {
+        if(ofr != null && ofr.getOfertaCaixa() != null) {
         	ofr.getOfertaCaixa().setEstadoOfertaBc(genericDao.get(DDEstadoOfertaBC.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOfertaBC.CODIGO_CANCELADA)));
+        	
+        	if (ofr.getExpedienteComercial() != null) {            	
+            	ofr.getExpedienteComercial().setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, 
+            			genericDao.createFilter(FilterType.EQUALS,"codigo", expedienteComercialApi.devolverEstadoCancelacionBCEco(ofr, ofr.getExpedienteComercial()))));
+            }
         	genericDao.save(Oferta.class, ofr);
-        }
+        } 
+        
         return true;
         
     }

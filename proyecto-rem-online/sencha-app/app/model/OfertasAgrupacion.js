@@ -79,6 +79,17 @@ Ext.define('HreRem.model.OfertasAgrupacion', {
     	},
     	{
     		name: 'codRiesgoOperacion'
+    	},
+    	{
+    		name: 'ordenGanador'
+    	},
+		{
+    		name: 'ofertaCreadaConcurrencia',
+			type: 'boolean'
+    	},
+		{
+    		name: 'ofertaEnConcurrenciaActiva',
+			type: 'boolean'
     	}
     		
     ],

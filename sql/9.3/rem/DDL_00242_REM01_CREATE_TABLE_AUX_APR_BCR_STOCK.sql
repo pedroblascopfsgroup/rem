@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20220901
+--## FECHA_CREACION=20220903
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-18617
+--## INCIDENCIA_LINK=HREOS-18634
 --## PRODUCTO=NO
 --## Finalidad: Interfax Stock REM 
 --##           
@@ -30,6 +30,7 @@
 --##        0.17  HREOS-17497 -  Daniel Algaba - Se quita campo NUM_CARTILLA
 --##        0.18  HREOS-17515 -  Daniel Algaba - Se añade campo NUM_CARTILLA
 --##        0.19  HREOS-18617 -  Alejandra García - Se añade campo FLAG_SUP_INMOBILIARIA a la AUX_APR_RBC_STOCK
+--##        0.20  HREOS-18634 -  Alejandra García - Se añade flag CONCURRENCIA_ENVIADA
 --##########################################
 --*/
 
@@ -62,7 +63,8 @@ DECLARE
   TYPE T_COL IS TABLE OF VARCHAR2(500 CHAR);
   TYPE T_ARRAY_COL IS TABLE OF T_COL;
   V_COL T_ARRAY_COL := T_ARRAY_COL(
-      T_COL('AUX_APR_BCR_STOCK',',FLAG_EN_REM NUMBER (1)',',FLAG_FICHEROS VARCHAR2(1 CHAR)',',FLAG_OFERTA_VIVA NUMBER (1)', ',SUP_ALQUILABLE NUMBER(16,2)'),
+
+      T_COL('AUX_APR_BCR_STOCK',',FLAG_EN_REM NUMBER (1)',',FLAG_FICHEROS VARCHAR2(1 CHAR)',',FLAG_OFERTA_VIVA NUMBER (1)', ',SUP_ALQUILABLE NUMBER(16,2)',',CONCURRENCIA_ENVIADA NUMBER (1)'),
       T_COL('AUX_APR_RBC_STOCK',',SUP_ALQUILABLE NUMBER(16,2)',',TIPO_SUP_INMOBILIARIA NUMBER(16,0)','',''),
       T_COL('AUX_APR_BCR_DELTA',',FLAG_EN_REM NUMBER (1)',',SUP_ALQUILABLE NUMBER(16,2)','',''),
       T_COL('AUX_APR_RBC_DELTA',',SUP_ALQUILABLE NUMBER(16,2)','','','')
@@ -327,6 +329,8 @@ BEGIN
         '||V_TMP_COL(4)||'
         
         '||V_TMP_COL(5)||'
+
+        '||V_TMP_COL(6)||'
 
 
         

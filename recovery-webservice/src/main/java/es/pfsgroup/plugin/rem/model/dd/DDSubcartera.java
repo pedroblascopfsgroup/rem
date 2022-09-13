@@ -71,9 +71,7 @@ public class DDSubcartera implements Auditable, Dictionary {
 	public static final String CODIGO_TITULIZADA_EDT = "162";
 	public static final String CODIGO_TITULIZADA_TDA = "163";
 	public static final String CODIGO_MACC_MARINA = "71";
-	
-	
-	
+	public static final String CODIGO_CIBE = "164";
 
 	@Id
 	@Column(name = "DD_SCR_ID")

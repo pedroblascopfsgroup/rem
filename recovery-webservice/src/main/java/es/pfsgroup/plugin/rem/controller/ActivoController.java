@@ -4526,7 +4526,6 @@ public class ActivoController extends ParadiseJsonController {
 			model.put(RESPONSE_ERROR_MESSAGE_KEY, e.getMessage());
 			logger.error("error en createActivoBbvaUic", e);
 		}
-
 		return createModelAndViewJson(model);
 	}
 	

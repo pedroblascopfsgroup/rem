@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Ivan Rubio
---## FECHA_CREACION=20220627
+--## AUTOR=Alejandro Valverde
+--## FECHA_CREACION=20220831
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-17697
+--## INCIDENCIA_LINK=HREOS-18638
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -15,6 +15,9 @@
 --##        HREOS-14789 - 0.3 Se añaden nuevos estado (08) cartera Caixa Lara Pablo 20210828
 --##        HREOS-17697 - 0.4 Se añade nuevo estado depósito
 --##        REMVIP-11950 - 0.5 Cambio al mostrar datos ofertante
+--##        HREOS-18445 - 0.6 Alejandro Valverde - Añadir campo FECHA_ENT_CRM_SF
+--##        HREOS-18511 - 0.7 Javier Esbri - Añadir campo OFR_CONCURRENCIA
+--##        HREOS-18638 - 0.8 Alejandro Valverde - Añadir campo OFERTA_CONCURRENCIA_ACTIVA
 --##########################################
 --*/
 
@@ -81,7 +84,13 @@ BEGIN
 				DECODE(GEN.ACT_ID,NULL,0,1)  AS GENCAT,
 			C4C.DD_ECC_CODIGO AS EST_CODIGO_C4C,
 			EDP.DD_EDP_CODIGO AS ESTADODEPOSITOCODIGO,
-			EDP.DD_EDP_DESCRIPCION AS ESTADODEPOSITO
+			EDP.DD_EDP_DESCRIPCION AS ESTADODEPOSITO,
+			OFR.FECHA_ENT_CRM_SF,
+      		OFR.OFR_CONCURRENCIA AS OFERTA_CONCURRENCIA,
+			CASE WHEN OFR.CON_ID IS NOT NULL AND CON.CON_FECHA_INI <= SYSDATE AND CON.CON_FECHA_FIN >= SYSDATE
+	            THEN 1
+	            ELSE 0
+	        END OFERTA_CONCURRENCIA_ACTIVA
 		FROM '|| V_ESQUEMA ||'.OFR_OFERTAS OFR
         	INNER JOIN '|| V_ESQUEMA ||'.ACT_OFR AOF 					ON OFR.OFR_ID = AOF.OFR_ID
 		INNER JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT 					ON ACT.ACT_ID = AOF.ACT_ID and act.borrado = 0
@@ -98,6 +107,7 @@ BEGIN
 		LEFT JOIN '|| V_ESQUEMA ||'.DD_ECC_ESTADO_COMUNICACION_C4C C4C	ON CBX.DD_ECC_ID = C4C.DD_ECC_ID
 		LEFT JOIN '|| V_ESQUEMA ||'.DEP_DEPOSITO DEP ON DEP.OFR_ID = OFR.OFR_ID
 		LEFT JOIN '|| V_ESQUEMA ||'.DD_EDP_EST_DEPOSITO EDP	ON EDP.DD_EDP_ID = DEP.DD_EDP_ID
+		LEFT JOIN ' || V_ESQUEMA || '.CON_CONCURRENCIA CON 				ON CON.CON_ID = OFR.CON_ID AND CON.BORRADO = 0
 		WHERE OFR.BORRADO  = 0 AND EOF.DD_EOF_CODIGO IN (''01'',''03'',''04'',''05'',''07'',''05'',''08'',''09'')';
 
   EXECUTE IMMEDIATE	V_MSQL;

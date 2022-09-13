@@ -52,6 +52,7 @@ import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.DepositoApi;
+import es.pfsgroup.plugin.rem.api.ConcurrenciaApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
@@ -72,6 +73,7 @@ import es.pfsgroup.plugin.rem.model.ActivoPatrimonioContrato;
 import es.pfsgroup.plugin.rem.model.ActivoPrinexActivos;
 import es.pfsgroup.plugin.rem.model.ActivoSareb;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
+import es.pfsgroup.plugin.rem.model.Concurrencia;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.DtoListadoGestores;
@@ -247,6 +249,9 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	
 	@Autowired
 	private DepositoApi depositoApi;
+
+	@Autowired
+	private ConcurrenciaApi concurrenciaApi;
 	
 	protected static final Log logger = LogFactory.getLog(TabActivoDatosBasicos.class);	
 
@@ -1360,6 +1365,19 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				activoDto.setIdentificadorTrastero(activoInfoComercial.getIdentificadorTrastero());
 			}
 		}
+		
+		activoDto.setEnConcurrencia(concurrenciaApi.isActivoEnConcurrencia(activo));
+		Boolean activoTieneConcurrencia = false;
+		Concurrencia concurrencia = concurrenciaApi.getUltimaConcurrenciaByActivo(activo);
+		if(concurrencia != null) {
+			activoTieneConcurrencia = true;
+		}
+		activoDto.setActivoOfertasConcurrencia(activoTieneConcurrencia);
+		
+		activoDto.setVistaDeConcurrencia(concurrenciaApi.isActivoEnConcurrencia(activo) || concurrenciaApi.tieneActivoOfertasDeConcurrencia(activo));
+		activoDto.setHistoricoDeConcurrencia(concurrenciaApi.getTabConcurrenciaByActivo(activo));
+		
+		activoDto.setBloquearEdicionEstadoOfertas(concurrenciaApi.bloquearEditarOfertasPorConcurrenciaActivo(activo));
 		
 		return activoDto;
 	}

@@ -303,19 +303,20 @@ public class RecoveryToGestorExpAssembler {
 		doc.setTipoClase(tipo);
 		doc.setUsuarioOperacional(userLogin);
 		doc.setDescripcionConductasInapropiadas(descripcionConductasInapropiadas);
-		doc.setOperacionMetadatos(rellenarConductasInapropiadasdMetadatos(id, nifProveedor));
+		doc.setOperacionMetadatos(rellenarConductasInapropiadasdMetadatos(id, nifProveedor, "Haya"));
 
 
 		
 		return doc;
 	}
 	
-	private static String rellenarConductasInapropiadasdMetadatos (Long id, String idExterno) {
+	private static String rellenarConductasInapropiadasdMetadatos (Long id, String idExterno, String cliente) {
         StringBuilder sb = new StringBuilder();
         sb.append("{");
                 sb.append(GestorDocumentalConstants.OPERACION).append("{");
                         sb.append(GestorDocumentalConstants.metadataCrearContenedor[0]).append("\"").append(id).append("\"").append(",");
                         sb.append(GestorDocumentalConstants.metadataCrearContenedor[1]).append("\"").append(idExterno).append("\"");
+                        sb.append(GestorDocumentalConstants.metadataCrearContenedor[3]).append("\"").append(cliente).append("\"");
                 sb.append("}");
         sb.append("}");
         return sb.toString();

@@ -447,7 +447,8 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			if(!Checks.esNulo(dto.getIdAgrupacion()) && agrupacion != null && activo.getSubcartera() != null ) {
 				Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "numActivo", activo.getNumActivo());
 				Activo ActivoCuentaVirtual = genericDao.get(Activo.class, filtroActivo);
-				if(depositoApi.esNecesarioDepositoNuevaOferta(ActivoCuentaVirtual) && DDTipoOferta.isTipoVenta(oferta.getTipoOferta())){
+				if(depositoApi.esNecesarioDepositoNuevaOferta(ActivoCuentaVirtual) && DDTipoOferta.isTipoVenta(oferta.getTipoOferta())
+						&& !depositoApi.esOfertaConDeposito(oferta)){
 					necesitaDeposito = true;
 					CuentasVirtuales cuentaVirtual = depositoApi.vincularCuentaVirtual(activo.getSubcartera().getCodigo());
 					oferta.setCuentaVirtual(cuentaVirtual);

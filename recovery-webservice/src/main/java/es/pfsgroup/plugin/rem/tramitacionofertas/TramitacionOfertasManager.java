@@ -442,7 +442,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			concurrenciaApi.comunicacionSFMC(idOfertaList, ConcurrenciaApi.COD_OFERTAS_PERDEDORAS, ConcurrenciaApi.TIPO_ENVIO_UNICO, new ModelMap());
 		}
 		
-		if(DDEstadoOferta.CODIGO_PDTE_DEPOSITO.equals(dto.getCodigoEstadoOferta())) {
+		if(DDEstadoOferta.CODIGO_PDTE_DEPOSITO.equals(estadoOferta.getCodigo())) {
 			boolean necesitaDeposito = false;
 			if(!Checks.esNulo(dto.getIdAgrupacion()) && agrupacion != null && activo.getSubcartera() != null ) {
 				Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "numActivo", activo.getNumActivo());

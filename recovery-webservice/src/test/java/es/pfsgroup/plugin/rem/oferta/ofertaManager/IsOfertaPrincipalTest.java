@@ -1,4 +1,4 @@
-package es.pfsgroup.plugin.rem.oferta;
+package es.pfsgroup.plugin.rem.oferta.ofertaManager;
 
 import static org.junit.Assert.assertEquals;
 
@@ -16,8 +16,9 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
+import es.pfsgroup.plugin.rem.oferta.OfertaManager;
 
-public class OfertaManagerTest {
+public class IsOfertaPrincipalTest {
 
 	@InjectMocks
     private OfertaManager ofertaManager;

@@ -26,7 +26,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.ModelMap;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
@@ -347,6 +346,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				COD_ABOGADO_ASUNTOS_GENERALES, COD_ABOGADO_ASISTENCIA_JURIDiCA };
 		List<String> codigosSubtipoGasto = new ArrayList<String>(Arrays.asList(subtiposGasto));
 		Boolean filtroGastosB = false;
+		boolean esIBI = false;
 		if (!Checks.esNulo(gasto)) {
 			
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", gasto.getId());
@@ -644,12 +644,21 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			if (!Checks.esNulo(gasto.getFechaDomiciliado())) {
 				dto.setFechaDomiciliado(gasto.getFechaDomiciliado());
 			}
+			
+			if (gasto.getGastoLineaDetalleList() != null && !gasto.getGastoLineaDetalleList().isEmpty()) {
+				for (GastoLineaDetalle linea : gasto.getGastoLineaDetalleList()) {
+					if (DDSubtipoGasto.IBI_RUSTICA.equals(linea.getSubtipoGasto().getCodigo()) 
+							|| DDSubtipoGasto.IBI_URBANA.equals(linea.getSubtipoGasto().getCodigo())) {
+						esIBI = true;
+					}
+				}
+			}
+			
 			if (
 					DDCartera.CODIGO_CARTERA_BANKIA.equals(gasto.getCartera().getCodigo()) && 
 					(DDTipoGasto.CODIGO_SUMINISTRO.equals(gasto.getTipoGasto().getCodigo()) ||
 						DDTipoGasto.CODIGO_TASA.equals(gasto.getTipoGasto().getCodigo()) ||
-						DDSubtipoGasto.IBI_URBANA.equals(gasto.getTipoGasto().getCodigo()) ||
-						DDSubtipoGasto.IBI_RUSTICA.equals(gasto.getTipoGasto().getCodigo()) )
+						esIBI)
 					&& !Checks.esNulo(gasto.getGestoria())
 					) {
 				dto.setIsFechaDomiciliado(true);
@@ -4769,18 +4778,27 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	@Override
 	public List<DDTipoOperacionGasto> getComboTipoOperacionByGasto(Long idGasto) {
 		List <DDTipoOperacionGasto> listaDDTipoOperacionGasto = genericDao.getList(DDTipoOperacionGasto.class);
+		boolean esIBI = false;
 		
 		try {
 			
 			GastoProveedor gastoProveedor = genericDao.get(GastoProveedor.class,
 			genericDao.createFilter(FilterType.EQUALS, "id", idGasto));
 			//si es diferente a caixa/bankia ... quitamos domiciliación, sino enviamos la lista completa
+			if (gastoProveedor.getGastoLineaDetalleList() != null && !gastoProveedor.getGastoLineaDetalleList().isEmpty()) {
+				for (GastoLineaDetalle linea : gastoProveedor.getGastoLineaDetalleList()) {
+					if (DDSubtipoGasto.IBI_RUSTICA.equals(linea.getSubtipoGasto().getCodigo()) 
+							|| DDSubtipoGasto.IBI_URBANA.equals(linea.getSubtipoGasto().getCodigo())) {
+						esIBI = true;
+					}
+				}
+			}
+
 			if (
 				!(DDCartera.CODIGO_CARTERA_BANKIA.equals(gastoProveedor.getCartera().getCodigo()) && 
 				(DDTipoGasto.CODIGO_SUMINISTRO.equals(gastoProveedor.getTipoGasto().getCodigo()) ||
 						DDTipoGasto.CODIGO_TASA.equals(gastoProveedor.getTipoGasto().getCodigo()) ||
-						DDSubtipoGasto.IBI_URBANA.equals(gastoProveedor.getTipoGasto().getCodigo()) ||
-						DDSubtipoGasto.IBI_RUSTICA.equals(gastoProveedor.getTipoGasto().getCodigo()) )
+						esIBI)
 				&& !Checks.esNulo(gastoProveedor.getGestoria()))
 				) {
 					DDTipoOperacionGasto operacionGastoDomiciliacion = genericDao.get(DDTipoOperacionGasto.class,

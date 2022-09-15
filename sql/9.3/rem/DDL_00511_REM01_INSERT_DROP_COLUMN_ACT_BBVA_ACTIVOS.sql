@@ -61,7 +61,7 @@ BEGIN
                         USING (
                             select act_id, bbva_activo_epa, BBVA_CEXPER, BBVA_CONTRAPARTIDA, BBVA_FOLIO, BBVA_CDPEN, BBVA_OFICINA, bbva_empresa
                                 from act_bbva_activos 
-                                where USUARIOMODIFICAR = ''HREOS-17771''
+                                where USUARIOMODIFICAR = ''HREOS-17050''
                                 and borrado = 0
                         ) T2
                         ON (

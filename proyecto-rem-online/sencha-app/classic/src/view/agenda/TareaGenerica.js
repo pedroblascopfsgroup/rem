@@ -5323,7 +5323,7 @@
 		
 		Ext.Ajax.request({
 			url: $AC.getRemoteUrl('expedientecomercial/esOfertaSubrogacion'),
-			params: {idExpediente : idExp},
+			params: {idExpediente : idExpediente},
 		    success: function(response, opts) {
 		    	var data = Ext.decode(response.responseText);
 		    	var dto = data.data;

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20220128
+--## FECHA_CREACION=20220915
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-17050
@@ -78,7 +78,7 @@ BEGIN
 		DBMS_OUTPUT.PUT_LINE('[LA TABLA '||V_TEXT_TABLA||' NO EXISTE]');
     END IF;
 
-    DBMS_OUTPUT.PUT_LINE('[INFO] Borrar campo');
+    /*DBMS_OUTPUT.PUT_LINE('[INFO] Borrar campo');
     
     FOR I IN V_COL.FIRST .. V_COL.LAST
     LOOP
@@ -104,7 +104,7 @@ BEGIN
                 DBMS_OUTPUT.PUT_LINE('  [INFO] '||V_ESQUEMA||'.'||V_TMP_COL(1)||'... No existe.');  
             END IF;
     
-    END LOOP;
+    END LOOP;*/
     
     DBMS_OUTPUT.PUT_LINE('[FIN]');
   

@@ -4869,7 +4869,7 @@
 		}
 	},
 	
-	T018_AprobacionContratoValidacion: function(){
+	T018_AprobacionOfertaValidacion: function(){
 		var me = this;
 		var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
 		var idExpediente = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
@@ -5296,7 +5296,7 @@
 		}
 	},
 	
-	T018_AprobacionAlquilerSocialValidacion: function(){
+	T018_AprobacionOfertaValidacion: function(){
 		var me = this;
 		var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
 		var idExpediente = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
@@ -5307,6 +5307,8 @@
 		var comboClienteAcepBorr = me.down('[name=comboClienteAcepBorr]');
 		var fecha = me.down('[name=fecha]');
 		var justificacion = me.down('[name=justificacion]');
+		var fechaAprobacion = me.down('[name=fechaAprobacion]');
+		var comboTipoAdenda = me.down('[name=comboTipoAdenda]');
 		
 		if (CONST.CARTERA['BANKIA'] == codigoCartera) {
 			me.habilitarCampo(comboResultado);
@@ -5319,6 +5321,11 @@
 			me.campoObligatorio(comboClienteAcepBorr);
 			me.habilitarCampo(fecha);
 			me.campoObligatorio(fecha);
+			me.editableyNoObligatorio(justificacion);
+			me.habilitarCampo(fechaAprobacion);
+			me.campoObligatorio(fechaAprobacion);
+			me.habilitarCampo(comboTipoAdenda);
+			me.campoObligatorio(comboTipoAdenda);
 			me.editableyNoObligatorio(justificacion);
 			
 		} else {
@@ -5334,6 +5341,10 @@
 			me.ocultarCampo(fecha);
 			me.deshabilitarCampo(justificacion);
 			me.ocultarCampo(justificacion);
+			me.deshabilitarCampo(fechaAprobacion);
+			me.ocultarCampo(fechaAprobacion);
+			me.deshabilitarCampo(comboTipoAdenda);
+			me.ocultarCampo(comboTipoAdenda);
 		}
 	},
     

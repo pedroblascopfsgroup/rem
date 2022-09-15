@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Javier Esbri
---## FECHA_CREACION=20220718
+--## FECHA_CREACION=20220914
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-18270
@@ -33,22 +33,8 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO...'); 
 
     /*Decision para T018_CalculoRiesgo*/
-	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_DECISION = ''valores[''''T018_CalculoRiesgo''''][''''comboRiesgo''''] == DDRiesgoOperacion.CODIGO_ROP_ALTO ? ''''aceptaConRiesgo''''  : esAlquilerSocial() ? ''''aceptaSinRiesgoAlquilerSocial'''' : esSubrogacionHipoteca() ? ''''aceptaSinRiesgoSubrogacionHipoteca'''' : esSubrogacionCompraVenta() ? ''''aceptaSinRiesgoSubrogacionCompraVenta'''' : esRenovacion() ? ''''aceptaSinRiesgoRenovacion'''' : ''''null'''''' 
+	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_DECISION = ''valores[''''T018_CalculoRiesgo''''][''''comboRiesgo''''] == DDRiesgoOperacion.CODIGO_ROP_ALTO ? ''''aceptaConRiesgo''''  : ''''aceptaSinRiesgo'''''' 
 	WHERE TAP_CODIGO = ''T018_CalculoRiesgo''';
-	DBMS_OUTPUT.PUT_LINE(V_MSQL);
-	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO] Registro actualizado en '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO');
-	
-	/*Decision para T018_AprobacionAlquilerSocial*/
-	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_DECISION = ''valores[''''T018_AprobacionAlquilerSocial''''][''''comboClienteAcepBorr''''] == DDSiNo.NO ? ''''rechazar'''' : ''''aceptar'''''' 
-	WHERE TAP_CODIGO = ''T018_AprobacionAlquilerSocial''';
-	DBMS_OUTPUT.PUT_LINE(V_MSQL);
-	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO] Registro actualizado en '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO');
-
-	/*Validacion JPBM para T018_AprobacionAlquilerSocial*/
-	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_VALIDACION_JBPM = ''checkBankia() ? valores[''''T018_AprobacionAlquilerSocial''''][''''comboResultado''''] == DDSiNo.SI && valores[''''T018_AprobacionAlquilerSocial''''][''''comboAprobadoApi''''] == DDSiNo.SI && valores[''''T018_AprobacionAlquilerSocial''''][''''comboBorradorContratoApi''''] == DDSiNo.SI? null  : ''''Se deben rellenar los campos Condiciones pactadas aprobadas, Aprobaci&oacute;n comunicada a API y Borrador de contrato enviado a API de la tarea a Si para poder avanzar'''' : null'' 
-	WHERE TAP_CODIGO = ''T018_AprobacionAlquilerSocial''';
 	DBMS_OUTPUT.PUT_LINE(V_MSQL);
 	EXECUTE IMMEDIATE V_MSQL;
 	DBMS_OUTPUT.PUT_LINE('[INFO] Registro actualizado en '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO');
@@ -68,7 +54,7 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('[INFO] Registro actualizado en '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO');
 	
 	/*Decision para T018_AprobacionOferta*/
-	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_DECISION = ''valores[''''T018_AprobacionOferta''''][''''comboClienteAcepBorr''''] == DDSiNo.SI ?  esRenovacion() ? ''''aceptaRenovacion'''' : ''''aceptaSubrogacionDacion'''' : esRenovacion() ? ''''rechazaRenovacion'''' : ''''rechazaSubrogacionDacion'''''' 
+	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_DECISION = ''valores[''''T018_AprobacionOferta''''][''''comboClienteAcepBorr''''] == DDSiNo.SI ? esSubrogacionHipoteca() ? conAdenda() ? ''''aceptaSubrogacionHipotecariaConAdenda'''' : ''''aceptaSubrogacionHipotecariaSinAdenda'''' : noEsSubrogacion() ? ''''aceptaNoSubrogacion'''' : ''''aceptaSubrogacion'''' : esSubrogacionHipoteca() ? ''''rechazaSubrogacionHipotecaria'''' : noEsSubrogacion() ? ''''rechazaRenovacionAlquilerSocial'''' : ''''rechazaSubrogacionDacion'''''' 
 	WHERE TAP_CODIGO = ''T018_AprobacionOferta''';
 	DBMS_OUTPUT.PUT_LINE(V_MSQL);
 	EXECUTE IMMEDIATE V_MSQL;
@@ -105,20 +91,6 @@ BEGIN
 	/*Validacion JPBM para T018_AltaContratoAlquiler*/
 	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_VALIDACION_JBPM = ''checkBankia() ? valores[''''T018_AltaContratoAlquiler''''][''''comboResultado''''] == DDSiNo.SI ? null  : ''''Se debe rellenar el campo Dado de alta de la tarea a Si para poder avanzar'''' : null'' 
 	WHERE TAP_CODIGO = ''T018_AltaContratoAlquiler''';
-	DBMS_OUTPUT.PUT_LINE(V_MSQL);
-	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO] Registro actualizado en '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO');
-	
-	/*Decision para T018_AprobacionContrato*/
-	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_DECISION = ''valores[''''T018_AprobacionContrato''''][''''comboResultado''''] == DDSiNo.SI ?  conAdenda(valores[''''T018_AprobacionContrato''''][''''comboTipoAdenda'''']) ? ''''aceptaSinAdenda'''' : ''''aceptaConAdenda'''' : ''''rechaza'''''' 
-	WHERE TAP_CODIGO = ''T018_AprobacionContrato''';
-	DBMS_OUTPUT.PUT_LINE(V_MSQL);
-	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO] Registro actualizado en '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO');
-
-	/*Validacion JPBM para T018_AprobacionContrato*/
-	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_VALIDACION_JBPM = ''checkBankia() ? valores[''''T018_AprobacionContrato''''][''''comboResultado''''] == DDSiNo.SI ? null  : ''''Se debe rellenar el campo Contrato aprobado de la tarea a Si para poder avanzar'''' : null'' 
-	WHERE TAP_CODIGO = ''T018_AprobacionContrato''';
 	DBMS_OUTPUT.PUT_LINE(V_MSQL);
 	EXECUTE IMMEDIATE V_MSQL;
 	DBMS_OUTPUT.PUT_LINE('[INFO] Registro actualizado en '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO');
@@ -194,7 +166,7 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('[INFO] Registro actualizado en '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO');
 	
 	/*Decision para T018_PbcAlquiler*/
-	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_DECISION = ''valores[''''T018_PbcAlquiler''''][''''comboRiesgo''''] == DDSiNo.NO ? ''''rechaza''''  : esAlquilerSocial() ? ''''aceptaAlquilerSocial'''' : esSubrogacionHipoteca() ? ''''aceptaSubrogacionHipoteca'''' : esSubrogacionCompraVenta() ? ''''aceptaSubrogacionCompraVenta'''' : esRenovacion() ? ''''aceptaRenovacion'''' : ''''null'''''' 
+	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_DECISION = ''valores[''''T018_PbcAlquiler''''][''''comboRiesgo''''] == DDSiNo.NO ? ''''rechaza''''  : ''''acepta'''''' 
 	WHERE TAP_CODIGO = ''T018_PbcAlquiler''';
 	DBMS_OUTPUT.PUT_LINE(V_MSQL);
 	EXECUTE IMMEDIATE V_MSQL;

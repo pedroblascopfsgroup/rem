@@ -848,17 +848,9 @@
             	def funcionesTramitesManager = ctx.getBean("funcionesTramitesManager");
 				return funcionesTramitesManager.checkCuentasVirtualesAlquilerLibres(tareaExterna);
 			}
-            def esAlquilerSocial = {
+            def noEsSubrogacion = {
             	def tramiteAlquilerNoComercialManager = ctx.getBean("tramiteAlquilerNoComercialManager");
-            	return tramiteAlquilerNoComercialManager.esAlquilerSocial(tareaExterna);
-            }
-            def esSubrogacionCompraVenta = {
-            	def tramiteAlquilerNoComercialManager = ctx.getBean("tramiteAlquilerNoComercialManager");
-            	return tramiteAlquilerNoComercialManager.esSubrogacionCompraVenta(tareaExterna);
-            }
-            def esRenovacion = {
-            	def tramiteAlquilerNoComercialManager = ctx.getBean("tramiteAlquilerNoComercialManager");
-            	return tramiteAlquilerNoComercialManager.esRenovacion(tareaExterna);
+            	return tramiteAlquilerNoComercialManager.noEsSubrogacion(tareaExterna);
             }
             def esSubrogacionHipoteca = {
             	def tramiteAlquilerNoComercialManager = ctx.getBean("tramiteAlquilerNoComercialManager");

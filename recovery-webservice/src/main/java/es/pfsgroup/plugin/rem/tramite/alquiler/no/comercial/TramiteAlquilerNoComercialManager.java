@@ -236,6 +236,17 @@ public class TramiteAlquilerNoComercialManager implements TramiteAlquilerNoComer
 		}
 		return false;
 	}
+	
+	@Override
+	public boolean noEsSubrogacion(TareaExterna tareaExterna) {
+		ExpedienteComercial eco = expedienteComercialApi.tareaExternaToExpedienteComercial(tareaExterna);
+		Oferta ofr = eco.getOferta();
+		if(!DDSubtipoOfertaAlquiler.CODIGO_SUBROGACION_DACION.equals(ofr.getSubtipoOfertaAlquiler().getCodigo())
+				&& !DDSubtipoOfertaAlquiler.CODIGO_SUBROGACION_EJECUCION.equals(ofr.getSubtipoOfertaAlquiler().getCodigo())) {
+			return true;
+		}
+		return false;
+	}
 
 	@Override
 	public boolean esSubrogacionHipoteca(TareaExterna tareaExterna) {

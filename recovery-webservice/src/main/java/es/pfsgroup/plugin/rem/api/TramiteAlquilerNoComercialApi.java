@@ -34,6 +34,8 @@ public interface TramiteAlquilerNoComercialApi {
 	
 	boolean esSubrogacionCompraVenta (TareaExterna tareaExterna);
 	
+	boolean noEsSubrogacion (TareaExterna tareaExterna);
+	
 	boolean esRenovacion (TareaExterna tareaExterna);
 	
 	boolean esSubrogacionHipoteca (TareaExterna tareaExterna);

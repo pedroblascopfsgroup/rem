@@ -60,8 +60,8 @@ BEGIN
 		V_SQL:= 'MERGE INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' T1
                         USING (
                             select act_id, bbva_activo_epa, BBVA_CEXPER, BBVA_CONTRAPARTIDA, BBVA_FOLIO, BBVA_CDPEN, BBVA_OFICINA, bbva_empresa
-                                from act_bbva_activos 
-                                where USUARIOMODIFICAR = ''HREOS-17050''
+                                from '||V_ESQUEMA||'.act_bbva_activos 
+                                where bbva_uic is not null
                                 and borrado = 0
                         ) T2
                         ON (

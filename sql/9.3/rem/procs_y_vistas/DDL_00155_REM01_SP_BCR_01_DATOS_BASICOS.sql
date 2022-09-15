@@ -175,6 +175,7 @@ BEGIN
                                                          WHEN us.DD_SAC_ID IS NOT NULL THEN us.DD_SAC_ID 
                                                          WHEN us.DD_TPA_ID IS NULL THEN act.DD_SAC_ID 
                                                          WHEN us.DD_TPA_ID IS NOT NULL AND us.DD_SAC_ID IS NULL AND us.DD_TPA_ID = act.DD_TPA_ID THEN act.DD_SAC_ID 
+                                                         ELSE NULL
                                                       END
                                     ,act.DD_TTA_ID = NVL(us.DD_TTA_ID,act.DD_TTA_ID)
                                     ,act.DD_STA_ID = NVL(us.DD_STA_ID,act.DD_STA_ID)

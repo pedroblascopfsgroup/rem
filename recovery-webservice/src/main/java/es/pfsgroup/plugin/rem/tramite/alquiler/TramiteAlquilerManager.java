@@ -44,6 +44,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDRespuestaComprador;
 import es.pfsgroup.plugin.rem.model.dd.DDRiesgoOperacion;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoOfertaAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOfertaAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTratamiento;
 
 @Service("tramiteAlquilerManager")
@@ -356,5 +358,27 @@ public class TramiteAlquilerManager implements TramiteAlquilerApi {
 		}
 		
 		return resultado;
+	}
+	
+	@Override
+	public boolean esOfertaSubrogacion(Long idExpediente){
+		boolean esOfertaSubrogacion = false;
+		ExpedienteComercial eco = expedienteComercialDao.get(idExpediente);
+		Oferta oferta = eco.getOferta();
+		if(DDTipoOfertaAlquiler.CODIGO_SUBROGACION.equals(oferta.getTipoOfertaAlquiler().getCodigo())) {
+			esOfertaSubrogacion = true;
+		}
+		return esOfertaSubrogacion;
+	}
+	
+	@Override
+	public boolean esOfertaSubrogacionEjecHip(Long idExpediente){
+		boolean esOfertaSubrogacionEjecHip = false;
+		ExpedienteComercial eco = expedienteComercialDao.get(idExpediente);
+		Oferta oferta = eco.getOferta();
+		if(DDSubtipoOfertaAlquiler.CODIGO_SUBROGACION_EJECUCION.equals(oferta.getSubtipoOfertaAlquiler().getCodigo())) {
+			esOfertaSubrogacionEjecHip = true;
+		}
+		return esOfertaSubrogacionEjecHip;
 	}
 }

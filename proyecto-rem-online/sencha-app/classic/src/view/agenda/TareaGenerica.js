@@ -5301,51 +5301,60 @@
 		var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
 		var idExpediente = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
 		
-		var comboResultado = me.down('[name=comboResultado]');
-		var comboAprobadoApi = me.down('[name=comboAprobadoApi]');
-		var comboBorradorContratoApi = me.down('[name=comboBorradorContratoApi]');
-		var comboClienteAcepBorr = me.down('[name=comboClienteAcepBorr]');
+		var clienteAcepta = me.down('[name=comboClienteAcepBorr]');
 		var fecha = me.down('[name=fecha]');
-		var justificacion = me.down('[name=justificacion]');
-		var fechaAprobacion = me.down('[name=fechaAprobacion]');
-		var comboTipoAdenda = me.down('[name=comboTipoAdenda]');
+		var contraoferta = me.down('[name=contraoferta]');
+		var motivo = me.down('[name=motivo]');
+		var tipoAdenda = me.down('[name=tipoAdenda]');
+		var tituloObtenido = me.down('[name=tituloObtenido]');
+		var fechaTitulo = me.down('[name=fechaTitulo]');
 		
-		if (CONST.CARTERA['BANKIA'] == codigoCartera) {
-			me.habilitarCampo(comboResultado);
-			me.campoObligatorio(comboResultado);
-			me.habilitarCampo(comboAprobadoApi);
-			me.campoObligatorio(comboAprobadoApi);
-			me.habilitarCampo(comboBorradorContratoApi);
-			me.campoObligatorio(comboBorradorContratoApi);
-			me.habilitarCampo(comboClienteAcepBorr);
-			me.campoObligatorio(comboClienteAcepBorr);
-			me.habilitarCampo(fecha);
-			me.campoObligatorio(fecha);
-			me.editableyNoObligatorio(justificacion);
-			me.habilitarCampo(fechaAprobacion);
-			me.campoObligatorio(fechaAprobacion);
-			me.habilitarCampo(comboTipoAdenda);
-			me.campoObligatorio(comboTipoAdenda);
-			me.editableyNoObligatorio(justificacion);
-			
-		} else {
-			me.deshabilitarCampo(comboResultado);
-			me.ocultarCampo(comboResultado);
-			me.deshabilitarCampo(comboAprobadoApi);
-			me.ocultarCampo(comboAprobadoApi);
-			me.deshabilitarCampo(comboBorradorContratoApi);
-			me.ocultarCampo(comboBorradorContratoApi);
-			me.deshabilitarCampo(comboClienteAcepBorr);
-			me.ocultarCampo(comboClienteAcepBorr);
-			me.deshabilitarCampo(fecha);
-			me.ocultarCampo(fecha);
-			me.deshabilitarCampo(justificacion);
-			me.ocultarCampo(justificacion);
-			me.deshabilitarCampo(fechaAprobacion);
-			me.ocultarCampo(fechaAprobacion);
-			me.deshabilitarCampo(comboTipoAdenda);
-			me.ocultarCampo(comboTipoAdenda);
-		}
+		tituloObtenido.addListener('change', function(combo) {
+            if (combo.value == '01') {
+            	fechaTitulo.reset();
+            	me.habilitarCampo(fechaTitulo);
+                me.campoObligatorio(fechaTitulo);
+            } else {
+            	fechaTitulo.reset();
+                me.deshabilitarCampo(fechaTitulo);
+                me.campoNoObligatorio(fechaTitulo);
+            }
+        })
+		
+		Ext.Ajax.request({
+			url: $AC.getRemoteUrl('expedientecomercial/esOfertaSubrogacion'),
+			params: {idExpediente : idExp},
+		    success: function(response, opts) {
+		    	var data = Ext.decode(response.responseText);
+		    	var dto = data.data;
+		    	if(!Ext.isEmpty(dto) && dto === "true"){
+					me.ocultarCampo(clienteAcepta);
+					me.deshabilitarCampo(clienteAcepta);
+					me.ocultarCampo(fecha);
+					me.deshabilitarCampo(fecha);
+					me.ocultarCampo(contraoferta);
+					me.deshabilitarCampo(contraoferta);
+					me.ocultarCampo(motivo);
+					me.deshabilitarCampo(motivo);
+		    	}
+		    }
+		});
+		
+		Ext.Ajax.request({
+			url: $AC.getRemoteUrl('expedientecomercial/esOfertaSubrogacionEjecHip'),
+			params: {idExpediente : idExp},
+		    success: function(response, opts) {
+		    	var data = Ext.decode(response.responseText);
+		    	var dto = data.data;
+		    	if(!Ext.isEmpty(dto) && dto === "true"){
+		    		me.habilitarCampo(tipoAdenda);
+					me.campoObligatorio(tipoAdenda);
+		    	}else{
+		    		me.deshabilitarCampo(tipoAdenda);
+		    	}
+		    }
+		});
+		
 	},
     
     habilitarCampo: function(campo) {

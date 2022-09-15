@@ -3353,4 +3353,40 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		}
 		return createModelAndViewJson(model);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView esOfertaSubrogacion(Long idExpediente, ModelMap model) {
+		try{
+			model.put(RESPONSE_DATA_KEY, tramiteAlquilerApi.esOfertaSubrogacion(idExpediente));
+		} catch (JsonViewerException e) {
+			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.warn("Error controlado en ExpedienteComercialController", e);
+		} catch (Exception e) {
+			logger.error("error en ExpedienteComercialController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView esOfertaSubrogacionEjecHip(Long idExpediente, ModelMap model) {
+		try{
+			model.put(RESPONSE_DATA_KEY, tramiteAlquilerApi.esOfertaSubrogacionEjecHip(idExpediente));
+		} catch (JsonViewerException e) {
+			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.warn("Error controlado en ExpedienteComercialController", e);
+		} catch (Exception e) {
+			logger.error("error en ExpedienteComercialController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+		}
+
+		return createModelAndViewJson(model);
+	}
 }

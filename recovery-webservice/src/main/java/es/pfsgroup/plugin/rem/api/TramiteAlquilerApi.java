@@ -46,5 +46,9 @@ public interface TramiteAlquilerApi {
 	
 	boolean getRespuestaHistReagendacionMayor(TareaExterna tareaExterna);
 	
+	boolean esOfertaSubrogacion(Long idExpediente);
+	
+	boolean esOfertaSubrogacionEjecHip(Long idExpediente);
+	
 }
 

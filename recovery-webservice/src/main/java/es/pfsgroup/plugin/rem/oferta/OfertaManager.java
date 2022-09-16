@@ -1,6 +1,5 @@
 package es.pfsgroup.plugin.rem.oferta;
 
-
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
@@ -77,6 +76,7 @@ import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
 import es.pfsgroup.plugin.rem.adapter.AgrupacionAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.api.*;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
@@ -109,20 +109,9 @@ import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.gasto.dao.GastoDao;
 import es.pfsgroup.plugin.rem.gestor.GestorExpedienteComercialManager;
 import es.pfsgroup.plugin.rem.gestorDocumental.manager.GestorDocumentalAdapterManager;
-import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionJudicial;
-import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionNoJudicial;
-import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
-import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
-import es.pfsgroup.plugin.rem.model.ActivoBancario;
-import es.pfsgroup.plugin.rem.model.ActivoBbvaActivos;
-import es.pfsgroup.plugin.rem.model.ActivoCaixa;
-import es.pfsgroup.plugin.rem.model.ActivoCatastro;
-import es.pfsgroup.plugin.rem.model.ActivoDistribucion;
-import es.pfsgroup.plugin.rem.model.ActivoHistoricoValoraciones;
-import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
-import es.pfsgroup.plugin.rem.model.ActivoOferta;
+import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.model.ActivoOferta.ActivoOfertaPk;
+import es.pfsgroup.plugin.rem.model.dd.*;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
@@ -261,14 +250,7 @@ import es.pfsgroup.plugin.rem.oferta.dao.VOfertaActivoDao;
 import es.pfsgroup.plugin.rem.proveedores.dao.ProveedoresDao;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
-import es.pfsgroup.plugin.rem.rest.dto.ActivosLoteOfertaDto;
-import es.pfsgroup.plugin.rem.rest.dto.ComunicacionBoardingResponse;
-import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
-import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
-import es.pfsgroup.plugin.rem.rest.dto.OfertaTitularAdicionalDto;
-import es.pfsgroup.plugin.rem.rest.dto.ReportGeneratorResponse;
-import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
-import es.pfsgroup.plugin.rem.rest.dto.TestigosOfertaDto;
+import es.pfsgroup.plugin.rem.rest.dto.*;
 import es.pfsgroup.plugin.rem.restclient.caixabc.CaixaBcRestClient;
 import es.pfsgroup.plugin.rem.restclient.caixabc.ReplicarOfertaDto;
 import es.pfsgroup.plugin.rem.service.InterlocutorCaixaService;
@@ -280,6 +262,26 @@ import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
 import es.pfsgroup.plugin.rem.tramitacionofertas.TramitacionOfertasManager;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 import net.sf.json.JSONObject;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.servlet.ModelAndView;
+
+import javax.annotation.Resource;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service("ofertaManager")
 public class OfertaManager extends BusinessOperationOverrider<OfertaApi> implements OfertaApi {
@@ -739,13 +741,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				errorsList.putAll(validateIdRepresentanteAndIdContacto(ofertaDto.getIdOfertaHayaHome(), ofertaDto.getIdOfertaRem(),
 						ofertaDto.getIdClienteRem(), ofertaDto.getIdClienteRemRepresentante(), ofertaDto.getIdClienteContacto(), true));
 			}
-
-			if(ofertaDto.getIbanDevolucion() == null){
-				Long idActivo = ofertaDto.getIdActivoHaya() != null ? ofertaDto.getIdActivoHaya() : ofertaDto.getActivosLote().get(0).getIdActivoHaya();
-				errorsList.putAll(validateIbanDevolucionNecesario(idActivo));
-			} else if (!Checks.esNulo(ofertaDto.getIbanDevolucion()) && !depositoApi.validarIban(ofertaDto.getIbanDevolucion())) {
-				errorsList.put("ibanDevolucion", RestApi.REST_MSG_UNKNOWN_KEY);
-			}
 			//CONCURRENCIA
 			checkIsConcurrencia(ofertaDto, errorsList, activoConcurrencia, agrupacionConcurrencia);
 
@@ -1117,7 +1112,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			filtroConcurrencia = genericDao.createFilter(FilterType.EQUALS, "agrupacion.id", agr.getId());
 		}
 		
-		if(activo != null) {
+		if(activo != null && concurrenciaApi.isActivoEnConcurrencia(activo)) {
 			Double precioVentaActivo = activoApi.getImporteValoracionActivoByCodigo(activo, DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA);
 			Double precioDescuentoVentaActivo = activoApi.getImporteValoracionActivoByCodigo(activo, DDTipoPrecio.CODIGO_TPC_DESC_APROBADO);
 			if((precioDescuentoVentaActivo != null && ofertaDto.getImporte() < precioDescuentoVentaActivo) 
@@ -2446,7 +2441,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						.expedienteComercialPorOferta(oferta.getId());
 				if (!Checks.esNulo(expedienteComercial)) {
 					// Actualizamos la participación de los activos en la oferta;
-					if (ofertaDto.getCreadaConcurrencia()) {
+					if (ofertaDto.getCreadaConcurrencia() != null && ofertaDto.getCreadaConcurrencia()) {
 						expedienteComercialApi.updateParticipacionActivosOferta(oferta);
 					}
 					expedienteComercialApi.actualizarImporteReservaPorExpediente(expedienteComercial);
@@ -2796,7 +2791,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 			if (expedienteComercial != null) {
 				if (((JSONObject) jsonFields).containsKey("importeContraoferta")) {
-					if (ofertaDto.getCreadaConcurrencia()) {
+					if (ofertaDto.getCreadaConcurrencia()!= null && ofertaDto.getCreadaConcurrencia()) {
 						expedienteComercialApi.updateParticipacionActivosOferta(oferta);
 					}
 					expedienteComercialApi.actualizarImporteReservaPorExpediente(expedienteComercial);
@@ -6795,17 +6790,24 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				Activo activo = activoAgrupacionActivo.getActivo();
 				if(activoAgrupacionActivo.getActivo() != null) {
 					Filter filtroactivo = genericDao.createFilter(FilterType.EQUALS ,"activo.id", activoAgrupacionActivo.getActivo().getId());
-					ActivoBbvaActivos activoBbva = genericDao.get(ActivoBbvaActivos.class, filtroactivo);
-					if(activo.getSituacionPosesoria().getOcupado() == 1 && DDTipoTituloActivoTPA.tipoTituloSi.contentEquals(activo.getSituacionPosesoria().getConTitulo().getCodigo()) && DDSinSiNo.CODIGO_SI.equals(activoBbva.getActivoEpa().getCodigo())) {
-						return 3;
+					List <ActivoBbvaUic> activoBbvaUic = genericDao.getList(ActivoBbvaUic.class, filtroactivo);
+					if(activo.getSituacionPosesoria().getOcupado() == 1 && DDTipoTituloActivoTPA.tipoTituloSi.contentEquals(activo.getSituacionPosesoria().getConTitulo().getCodigo())) {
+						for (ActivoBbvaUic activoBbvaUic2 : activoBbvaUic) {
+							if (DDSinSiNo.CODIGO_SI.equals(activoBbvaUic2.getActivoEpa().getCodigo())) {
+								return 3;
+							}
+							break;
+						}
 					}
 					if(activo.getSituacionPosesoria().getOcupado() == 1 && DDTipoTituloActivoTPA.tipoTituloSi.contentEquals(activo.getSituacionPosesoria().getConTitulo().getCodigo())){
 						return 2;
 					}
-					if(DDSinSiNo.CODIGO_SI.equals(activoBbva.getActivoEpa().getCodigo())) {
-						return 1;
+					for (ActivoBbvaUic activoBbvaUic3 : activoBbvaUic) {
+						if(DDSinSiNo.CODIGO_SI.equals(activoBbvaUic3.getActivoEpa().getCodigo())) {
+							return 1;
+						}
+						break;
 					}
-					
 				}
 			}
 		}
@@ -7318,10 +7320,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					
 					
 					ActivoBbvaActivos actBbva = genericDao.get(ActivoBbvaActivos.class,filtroAct_id_Agr);
+					ActivoBbvaUic actBbvaUic = genericDao.get(ActivoBbvaUic.class,filtroAct_id_Agr);
 					if(!Checks.esNulo(actBbva)) {
 						activosFichaComercial.setActivoBbva(actBbva.getNumActivoBbva());
-						if(actBbva.getActivoEpa() != null) {
-							activosFichaComercial.setEpa(actBbva.getActivoEpa().getDescripcion());
+						if(actBbvaUic != null && actBbvaUic.getActivoEpa() != null) {
+							activosFichaComercial.setEpa(actBbvaUic.getActivoEpa().getDescripcion());
 						}
 					}
 					
@@ -7612,10 +7615,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				
 	
 				ActivoBbvaActivos actBbva = genericDao.get(ActivoBbvaActivos.class,filtroAct_id);
+				ActivoBbvaUic actBbvaUic = genericDao.get(ActivoBbvaUic.class,filtroAct_id);
 				if(!Checks.esNulo(actBbva)) {
 					activosFichaComercial.setActivoBbva(actBbva.getNumActivoBbva());
-					if(!Checks.esNulo(actBbva.getActivoEpa())) {
-						activosFichaComercial.setEpa(actBbva.getActivoEpa().getDescripcion());
+					if(actBbvaUic != null && !Checks.esNulo(actBbvaUic.getActivoEpa())) {
+						activosFichaComercial.setEpa(actBbvaUic.getActivoEpa().getDescripcion());
 					}
 				}
 	

@@ -51,6 +51,13 @@ public class DtoActivoPatrimonio extends DtoTabActivo {
 	private String acuerdoPago;
 	private String moroso;
 	private String activoPromoEstrategico;	
+	private Boolean isCarteraBBVA;
+	private String aplicaAlquilerSocial;
+	private Double precioCompra;
+	private Boolean altaPrimaOpcionCompra;
+	private Boolean renunciaDerechoTanteo;
+	private Boolean isCarteraCajamar;
+	private Boolean isCarteraLiberbank;
 	
 	public Boolean getChkSubrogado() {
 		return chkSubrogado;
@@ -243,6 +250,49 @@ public class DtoActivoPatrimonio extends DtoTabActivo {
 	}
 	public void setActivoPromoEstrategico(String activoPromoEstrategico) {
 		this.activoPromoEstrategico = activoPromoEstrategico;
+	}
+	public Boolean getIsCarteraBBVA() {
+		return isCarteraBBVA;
+	}
+	public void setIsCarteraBBVA(Boolean isCarteraBBVA) {
+		this.isCarteraBBVA = isCarteraBBVA;
+	}
+	public String getAplicaAlquilerSocial() {
+		return aplicaAlquilerSocial;
+	}
+	public void setAplicaAlquilerSocial(String aplicaAlquilerSocial) {
+		this.aplicaAlquilerSocial = aplicaAlquilerSocial;
+	}
+	
+	public Double getPrecioCompra() {
+		return precioCompra;
+	}
+	public void setPrecioCompra(Double precioCompra) {
+		this.precioCompra = precioCompra;
+	}
+	public Boolean getAltaPrimaOpcionCompra() {
+		return altaPrimaOpcionCompra;
+	}
+	public void setAltaPrimaOpcionCompra(Boolean altaPrimaOpcionCompra) {
+		this.altaPrimaOpcionCompra = altaPrimaOpcionCompra;
+	}
+	public Boolean getRenunciaDerechoTanteo() {
+		return renunciaDerechoTanteo;
+	}
+	public void setRenunciaDerechoTanteo(Boolean renunciaDerechoTanteo) {
+		this.renunciaDerechoTanteo = renunciaDerechoTanteo;
+	}
+	public Boolean getIsCarteraCajamar() {
+		return isCarteraCajamar;
+	}
+	public void setIsCarteraCajamar(Boolean isCarteraCajamar) {
+		this.isCarteraCajamar = isCarteraCajamar;
+	}
+	public Boolean getIsCarteraLiberbank() {
+		return isCarteraLiberbank;
+	}
+	public void setIsCarteraLiberbank(Boolean isCarteraLiberbank) {
+		this.isCarteraLiberbank = isCarteraLiberbank;
 	}
     
 }

@@ -9412,6 +9412,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		listadoTextos.add(DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_MOT_RECHAZO_RCDC);
 		listadoTextos.add(DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_OBSERVACIONES);
 		listadoTextos.add(DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_JUSTIFICACION);
+		listadoTextos.add(DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_IMPORTE_INICIAL);
+		listadoTextos.add(DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_IMPORTE_CONTRAOFERTA_RCDC);
+		listadoTextos.add(DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_IMPORTE_CONTRAOFERTA_PRESCRIPTOR);
 
 		if (Checks.esNulo(idOferta)) {
 			return textos;

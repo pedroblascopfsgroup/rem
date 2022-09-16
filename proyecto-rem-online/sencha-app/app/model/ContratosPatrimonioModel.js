@@ -81,7 +81,40 @@ Ext.define('HreRem.model.ContratosPatrimonioModel', {
 				name:'fechaCreacion',
     			type:'date',
     			dateFormat: 'c'
-			}
+			},
+			{
+				name: 'suborigenContrato'
+			},
+			{
+				name: 'suborigenContratoDescripcion'
+			},
+			{
+				name: 'fechaObligadoCumplimiento',
+				type:'date',
+				dateFormat: 'c'
+			},
+			{
+				name: 'fianzaObligatoria'
+			},
+			{
+				name: 'fechaAvalBancario',
+				type:'date',
+				dateFormat: 'c'
+			},
+			{
+				name: 'importeAvalBancario'
+			},
+			{
+				name: 'importeDepositoBancario'
+			},
+			{
+    			name: 'isCarteraCajamar',
+    			type: 'boolean'
+    		},
+    		{
+    			name: 'isCarteraLiberbank',
+    			type: 'boolean'
+    		}
     		
     ],
     

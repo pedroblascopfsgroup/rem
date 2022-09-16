@@ -65,7 +65,7 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
     private DepositoApi depositoApi;
     
     @Autowired
-	private TramiteVentaApi tramiteVentaApi;
+	private ConcurrenciaApi concurrenciaApi;
 
     @Override
     public String managerName() {
@@ -127,8 +127,11 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
                 return false;
             }
         }
+        if (ofr != null){
+            ofr.setEstadoOferta(genericDao.get(DDEstadoOferta.class,genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_RECHAZADA)));
+        }
         ofertaApi.setEstadoOfertaBC(ofr, null);
-        return false;
+        return true;
     }
 
     @Override
@@ -693,10 +696,6 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
         dataHolder.setPreviousStateExpedienteBcCod(expedienteComercialApi.getEstadoExpedienteBcFromIdTarea(dataHolder.getIdTarea()));
         boolean success = adapter.save(createRequestAvanzarTareaGenerico(dto));
 
-        if(success){
-            replicacionOfertasApi.callReplicateOferta(dataHolder, success);
-        }
-
         return success;
     }
 
@@ -838,10 +837,18 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
     @Transactional
     public void accionIngresoDeposito(Long numOferta){
     	Oferta oferta = ofertaApi.getOfertaByNumOfertaRem(numOferta);
-    	ofertaApi.actualizaEstadoOfertaRemAndBC(oferta);
-		
-        Deposito deposito = depositoApi.getDepositoByNumOferta(numOferta);
-        depositoApi.ingresarDeposito(deposito);
+    	boolean principalCaducada = false;
+		if(oferta.getIsEnConcurrencia() != null && oferta.getIsEnConcurrencia()) {
+			principalCaducada = concurrenciaApi.caducaOfertaConcurrencia(oferta.getActivoPrincipal().getId(),oferta.getId());
+	    }
+    	
+		if(!principalCaducada) {
+			Deposito deposito = depositoApi.getDepositoByNumOferta(numOferta);
+	        depositoApi.ingresarDeposito(deposito);
+			
+			ofertaApi.actualizaEstadoOfertaRemAndBC(oferta);
+		}
+      
     }
 
     @Override

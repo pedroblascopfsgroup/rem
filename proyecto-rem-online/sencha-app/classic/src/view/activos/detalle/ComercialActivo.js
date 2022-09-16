@@ -418,30 +418,14 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 									   }						   
 									},
 									{
-							        	xtype: 'datefieldbase',
-							        	fieldLabel: HreRem.i18n('fieldlabel.fecha.inicio.concurrencia'),
-							        	reference: 'fechaInicioConcurrenciaRef',
-							        	bind : {
-							        		readOnly: true,
-							        		value: '{comercial.fechaInicioConcurrencia}'
-							        	}
-									},
-									{
-							        	xtype: 'datefieldbase',
-							        	fieldLabel: HreRem.i18n('fieldlabel.fecha.fin.concurrencia'),
-							        	reference: 'fechaFinConcurrenciaRef',
-							        	bind : {
-							        		readOnly: true,
-							        		value: '{comercial.fechaFinConcurrencia}'
-							        	}
-									},{
 							        	xtype: 'displayfieldbase',
 							        	fieldLabel: HreRem.i18n('fieldlabel.campanya.venta'),
 							        	reference: 'campanyaVentaRef',
 							        	bind : {
 							        		value: '{comercial.campanyaVenta}'
 							        	}
-									},{
+									},
+									{
 							        	xtype: 'displayfieldbase',
 							        	fieldLabel: HreRem.i18n('fieldlabel.campanya.alquiler'),
 							        	reference: 'campanyaAlquilerRef',

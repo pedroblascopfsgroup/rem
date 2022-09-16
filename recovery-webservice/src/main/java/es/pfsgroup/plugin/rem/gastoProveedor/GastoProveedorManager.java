@@ -1,38 +1,12 @@
 package es.pfsgroup.plugin.rem.gastoProveedor;
 
-import java.beans.PropertyDescriptor;
-import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
-import java.math.MathContext;
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Pattern;
-
-import javax.annotation.Resource;
-
-import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import edu.emory.mathcs.backport.java.util.Arrays;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.message.MessageService;
+import es.capgemini.devon.security.SecurityUtils;
 //import es.capgemini.devon.utils.PropertyUtils;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
@@ -54,101 +28,36 @@ import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
-import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
-import es.pfsgroup.plugin.rem.api.ActivoApi;
-import es.pfsgroup.plugin.rem.api.GastoLineaDetalleApi;
-import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
-import es.pfsgroup.plugin.rem.api.ProveedoresApi;
-import es.pfsgroup.plugin.rem.api.TrabajoApi;
+import es.pfsgroup.plugin.rem.api.*;
 import es.pfsgroup.plugin.rem.gasto.dao.GastoDao;
 import es.pfsgroup.plugin.rem.gasto.linea.detalle.GastoLineaDetalleManager;
 import es.pfsgroup.plugin.rem.gestor.dao.GestorActivoDao;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
-import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
-import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
-import es.pfsgroup.plugin.rem.model.ActivoCatastro;
-import es.pfsgroup.plugin.rem.model.ActivoGenerico;
-import es.pfsgroup.plugin.rem.model.ActivoPropietario;
-import es.pfsgroup.plugin.rem.model.ActivoProveedor;
-import es.pfsgroup.plugin.rem.model.ActivoProveedorDireccion;
-import es.pfsgroup.plugin.rem.model.ActivoSareb;
-import es.pfsgroup.plugin.rem.model.ActivoSubtipoGastoProveedorTrabajo;
-import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
-import es.pfsgroup.plugin.rem.model.AdjuntoGasto;
-import es.pfsgroup.plugin.rem.model.ConfiguracionSubpartidasPresupuestarias;
-import es.pfsgroup.plugin.rem.model.ConfiguracionSuplidos;
-import es.pfsgroup.plugin.rem.model.DtoActivoGasto;
-import es.pfsgroup.plugin.rem.model.DtoActivoProveedor;
-import es.pfsgroup.plugin.rem.model.DtoAdjunto;
-import es.pfsgroup.plugin.rem.model.DtoDetalleEconomicoGasto;
-import es.pfsgroup.plugin.rem.model.DtoFichaGastoProveedor;
-import es.pfsgroup.plugin.rem.model.DtoGastosFilter;
-import es.pfsgroup.plugin.rem.model.DtoGestionGasto;
-import es.pfsgroup.plugin.rem.model.DtoImpugnacionGasto;
-import es.pfsgroup.plugin.rem.model.DtoInfoContabilidadGasto;
-import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
-import es.pfsgroup.plugin.rem.model.DtoVImporteGastoLbk;
-import es.pfsgroup.plugin.rem.model.Ejercicio;
-import es.pfsgroup.plugin.rem.model.ErrorDiariosLbk;
-import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.GastoDetalleEconomico;
-import es.pfsgroup.plugin.rem.model.GastoGestion;
-import es.pfsgroup.plugin.rem.model.GastoImpugnacion;
-import es.pfsgroup.plugin.rem.model.GastoInfoContabilidad;
-import es.pfsgroup.plugin.rem.model.GastoLineaDetalle;
-import es.pfsgroup.plugin.rem.model.GastoLineaDetalleEntidad;
-import es.pfsgroup.plugin.rem.model.GastoLineaDetalleTrabajo;
-import es.pfsgroup.plugin.rem.model.GastoPrinex;
-import es.pfsgroup.plugin.rem.model.GastoProveedor;
-import es.pfsgroup.plugin.rem.model.GastoRefacturable;
-import es.pfsgroup.plugin.rem.model.GastoSuplido;
-import es.pfsgroup.plugin.rem.model.GastoTasacionActivo;
-import es.pfsgroup.plugin.rem.model.GastosDiariosLBK;
-import es.pfsgroup.plugin.rem.model.GastosImportesLBK;
-import es.pfsgroup.plugin.rem.model.HistoricoEnvioPedidos;
-import es.pfsgroup.plugin.rem.model.Oferta;
-import es.pfsgroup.plugin.rem.model.ProvisionGastos;
-import es.pfsgroup.plugin.rem.model.SubTipoGpvTrabajo;
-import es.pfsgroup.plugin.rem.model.Trabajo;
-import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
-import es.pfsgroup.plugin.rem.model.VBusquedaGastoTrabajos;
-import es.pfsgroup.plugin.rem.model.VDiarioCalculoLbk;
-import es.pfsgroup.plugin.rem.model.VFacturasProveedores;
-import es.pfsgroup.plugin.rem.model.VGastosProveedor;
-import es.pfsgroup.plugin.rem.model.VGastosRefacturados;
-import es.pfsgroup.plugin.rem.model.VGridMotivosRechazoGastoCaixa;
-import es.pfsgroup.plugin.rem.model.VImporteBrutoGastoLBK;
-import es.pfsgroup.plugin.rem.model.VTasacionesGastos;
-import es.pfsgroup.plugin.rem.model.VTasasImpuestos;
-import es.pfsgroup.plugin.rem.model.dd.DDCartera;
-import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioGasto;
-import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioPago;
-import es.pfsgroup.plugin.rem.model.dd.DDEntidadGasto;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoAutorizacionHaya;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoAutorizacionPropietario;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoGasto;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoProvisionGastos;
-import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionGasto;
-import es.pfsgroup.plugin.rem.model.dd.DDMotivoAutorizacionPropietario;
-import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoAutorizacionHaya;
-import es.pfsgroup.plugin.rem.model.dd.DDMotivoRetencionPago;
-import es.pfsgroup.plugin.rem.model.dd.DDResultadoImpugnacionGasto;
-import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
-import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
-import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
-import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoComisionado;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoGasto;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoGasto;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoOperacionGasto;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoPagador;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoRetencion;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
+import es.pfsgroup.plugin.rem.model.*;
+import es.pfsgroup.plugin.rem.model.dd.*;
 import es.pfsgroup.plugin.rem.provisiongastos.dao.ProvisionGastosDao;
 import es.pfsgroup.plugin.rem.thread.ActualizaSuplidosAsync;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateGastoApi;
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.regex.Pattern;
 
 @Service("gastoProveedorManager")
 public class GastoProveedorManager implements GastoProveedorApi {
@@ -2213,6 +2122,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 			GastoProveedor gasto = findOne(idGasto);
 			GastoInfoContabilidad contabilidadGasto = gasto.getGastoInfoContabilidad();
+			GastoGestion gestionGasto = gasto.getGastoGestion();
 
 			DtoInfoContabilidadGasto dtoIni = infoContabilidadToDtoInfoContabilidad(gasto);
 
@@ -2273,7 +2183,17 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					DDTipoComisionado tipoComision = genericDao.get(DDTipoComisionado.class, filtro);
 					contabilidadGasto.setTipoComisionadoHre(tipoComision);
 				}
-
+				
+				if (dtoContabilidadGasto.getFechaDevengoEspecial() != null && gestionGasto != null) {
+					gestionGasto.setGestionGastoClientePagador(null);
+					gestionGasto.setGestionGastoClienteInformador(null);
+					
+					gestionGasto.getAuditoria().setFechaModificar(new Date());
+					gestionGasto.getAuditoria().setUsuarioModificar(SecurityUtils.getCurrentUser().getUsername());
+					gasto.setGastoGestion(gestionGasto);
+				}
+				contabilidadGasto.getAuditoria().setFechaModificar(new Date());
+				contabilidadGasto.getAuditoria().setUsuarioModificar(SecurityUtils.getCurrentUser().getUsername());
 				gasto.setGastoInfoContabilidad(contabilidadGasto);
 			}
 
@@ -2290,7 +2210,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				updaterStateApi.updaterStates(gasto, null);
 			}
 
-			genericDao.update(GastoProveedor.class, gasto);
+			genericDao.save(GastoProveedor.class, gasto);
 
 			return true;
 

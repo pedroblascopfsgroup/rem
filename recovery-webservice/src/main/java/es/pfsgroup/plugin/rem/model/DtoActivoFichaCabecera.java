@@ -313,18 +313,10 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	
 	private Boolean pazSocial;
 	private String numActivoDivarian;
-	private Boolean activoEpa;
-    private String empresa;
-    private String oficina;
-    private String contrapartida;
-    private String folio;
-    private String cdpen;
     
 	private String numActivoBbva;
     private Long lineaFactura;
     private Long idOrigenHre;
-    private String uicBbva;
-    private String cexperBbva;
     private String tipoTransmisionCodigo;
     private String tipoAltaCodigo;
     private String tipoTransmisionDescripcion;
@@ -411,8 +403,12 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String discrepanciasLocalizacionObservaciones;
 	private Boolean esNecesarioDeposito;
 	
+	private Boolean enConcurrencia;
+
+	private Boolean activoOfertasConcurrencia;
+
 	private String numeroInmuebleAnterior;
-	
+
 	private String anejoGarajeCodigo;
 	private String anejoGarajeDescripcion;
 	private String anejoTrasteroCodigo;
@@ -420,6 +416,10 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private Long identificadorPlazaParking;
 	private Long identificadorTrastero;
 
+	private Boolean vistaDeConcurrencia;
+	private Boolean historicoDeConcurrencia;
+	private Boolean bloquearEdicionEstadoOfertas;
+	
 	public Boolean getTieneOfertaAlquilerViva() {
 		return tieneOfertaAlquilerViva;
 	}
@@ -2275,46 +2275,6 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	public void setNumActivoDivarian(String numActivoDivarian) {
 		this.numActivoDivarian = numActivoDivarian;
 	}
-	
-	public Boolean getActivoEpa() {
-		return activoEpa;
-	}
-
-	public void setActivoEpa(Boolean activoEpa) {
-		this.activoEpa = activoEpa;
-	}
-
-	public String getEmpresa() {
-		return empresa;
-	}
-
-	public void setEmpresa(String empresa) {
-		this.empresa = empresa;
-	}
-
-	public String getOficina() {
-		return oficina;
-	}
-
-	public void setOficina(String oficina) {
-		this.oficina = oficina;
-	}
-
-	public String getContrapartida() {
-		return contrapartida;
-	}
-
-	public void setContrapartida(String contrapartida) {
-		this.contrapartida = contrapartida;
-	}
-
-	public String getFolio() {
-		return folio;
-	}
-
-	public void setFolio(String folio) {
-		this.folio = folio;
-	}
 
 	public String getNumActivoBbva() {
 		return numActivoBbva;
@@ -2338,22 +2298,6 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setIdOrigenHre(Long idOrigenHre) {
 		this.idOrigenHre = idOrigenHre;
-	}
-
-	public String getUicBbva() {
-		return uicBbva;
-	}
-
-	public void setUicBbva(String uicBbva) {
-		this.uicBbva = uicBbva;
-	}
-
-	public String getCexperBbva() {
-		return cexperBbva;
-	}
-
-	public void setCexperBbva(String cexperBbva) {
-		this.cexperBbva = cexperBbva;
 	}
 
 	public String getTipoTransmisionCodigo() {
@@ -2806,14 +2750,6 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 		this.codPromocionBbva = codPromocionBbva;
 	}
 
-	public String getCdpen() {
-		return cdpen;
-	}
-
-	public void setCdpen(String cdpen) {
-		this.cdpen = cdpen;
-	}
-
 	public Boolean getEsActivoPrincipalAgrupacionRestringida() {
 		return esActivoPrincipalAgrupacionRestringida;
 	}
@@ -3068,7 +3004,7 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	public void setNumeroInmuebleAnterior(String numeroInmuebleAnterior) {
 		this.numeroInmuebleAnterior = numeroInmuebleAnterior;
 	}
-				
+
 	public Boolean getDiscrepanciasLocalizacion() {
 		return discrepanciasLocalizacion;
 	}
@@ -3091,6 +3027,22 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setEsNecesarioDeposito(Boolean esNecesarioDeposito) {
 		this.esNecesarioDeposito = esNecesarioDeposito;
+	}
+	
+	public Boolean getEnConcurrencia() {
+		return enConcurrencia;
+	}
+
+	public void setEnConcurrencia(Boolean enConcurrencia) {
+		this.enConcurrencia = enConcurrencia;
+	}
+
+	public Boolean getActivoOfertasConcurrencia() {
+		return activoOfertasConcurrencia;
+	}
+
+	public void setActivoOfertasConcurrencia(Boolean activoOfertasConcurrencia) {
+		this.activoOfertasConcurrencia = activoOfertasConcurrencia;
 	}
 
 	public String getAnejoGarajeCodigo() {
@@ -3139,6 +3091,30 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setIdentificadorTrastero(Long identificadorTrastero) {
 		this.identificadorTrastero = identificadorTrastero;
+	}
+
+	public Boolean getVistaDeConcurrencia() {
+		return vistaDeConcurrencia;
+	}
+
+	public void setVistaDeConcurrencia(Boolean isConcurrencia) {
+		this.vistaDeConcurrencia = isConcurrencia;
+	}
+
+	public Boolean getBloquearEdicionEstadoOfertas() {
+		return bloquearEdicionEstadoOfertas;
+	}
+
+	public void setBloquearEdicionEstadoOfertas(Boolean bloquearEdicionEstadoOfertas) {
+		this.bloquearEdicionEstadoOfertas = bloquearEdicionEstadoOfertas;
+	}
+
+	public Boolean getHistoricoDeConcurrencia() {
+		return historicoDeConcurrencia;
+	}
+
+	public void setHistoricoDeConcurrencia(Boolean historicoDeConcurrencia) {
+		this.historicoDeConcurrencia = historicoDeConcurrencia;
 	}
 	
 }

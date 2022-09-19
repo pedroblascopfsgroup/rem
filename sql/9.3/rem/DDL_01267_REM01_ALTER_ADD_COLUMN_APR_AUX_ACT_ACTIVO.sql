@@ -1,12 +1,12 @@
 --/*
 --##########################################
---## AUTOR=Juan Bautista Alfonso
---## FECHA_CREACION=20210131
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20220607
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=REMVIP-10741
+--## INCIDENCIA_LINK=HREOS-16973
 --## PRODUCTO=NO
---## Finalidad: Añadir columnas a la APR_AUX_ACT_ACTIVO
+--## Finalidad: Añadir columnas a la AUX_ACT_DCA_DTS_CNT_ALQ
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -35,14 +35,26 @@ DECLARE
 
  
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar 
-    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'APR_AUX_ACT_ACTIVO'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'AUX_ACT_DCA_DTS_CNT_ALQ'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
     
     /* -- ARRAY CON NUEVAS COLUMNAS */
     TYPE T_ALTER IS TABLE OF VARCHAR2(4000);
     TYPE T_ARRAY_ALTER IS TABLE OF T_ALTER;
     V_ALTER T_ARRAY_ALTER := T_ARRAY_ALTER(
     			-- NOMBRE CAMPO			    TIPO CAMPO		
-    	T_ALTER(  'REG_SUPERFICIE_PARCELA',   'NUMBER(16,2)')
+    	T_ALTER(  'TIPO_CONTRATO',   'VARCHAR2(100 CHAR)'),
+        T_ALTER(  'TIPO_CONTRATO_BANKIA',   'VARCHAR2(100 CHAR)'),
+        T_ALTER(  'RENUNCIA_TANTEO',   'NUMBER(1,0)'),
+        T_ALTER(  'PRECIO_COMPRA',   'NUMBER(16,2)'),
+        T_ALTER(  'ALTA_PRIMA_COMPRA',   'NUMBER(1,0)'),
+        T_ALTER(  'TIPO_ALTA_ARRENDAMIENTO',   'VARCHAR2(100 CHAR)'),
+        T_ALTER(  'OBLIGADO_CUMPLIMIENTO',   'DATE'),
+        T_ALTER(  'FIANZA_OBLIGATORIA',   'NUMBER(16,2)'),
+        T_ALTER(  'FECHA_REGISTRO',   'DATE'),
+        T_ALTER(  'IMPORTE_GARANTIA',   'NUMBER(16,2)'),
+        T_ALTER(  'FECHA_AVAL',   'DATE'),
+        T_ALTER(  'IMPORTE_AVAL',   'NUMBER(16,2)'),
+        T_ALTER(  'TIPO_INQUILINO',   'VARCHAR2(100 CHAR)')
 
 	);
     V_T_ALTER T_ALTER;
@@ -82,6 +94,7 @@ BEGIN
 	END LOOP;
 
 	COMMIT;
+	DBMS_OUTPUT.PUT_LINE('[INFO] COMMIT');
 	DBMS_OUTPUT.PUT_LINE('[INFO] Columnas añadidas correctamente');
 	
 

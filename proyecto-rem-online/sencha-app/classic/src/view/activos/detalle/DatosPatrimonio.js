@@ -166,7 +166,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPatrimonio', {
 								value: '{patrimonio.pazSocial}',
 								hidden: '{!patrimonio.isCarteraCerberusDivarian}'	
 							}
-						},		
+						},
 						{
 							xtype: 'comboboxfieldbasedd',
 							fieldLabel: HreRem.i18n('combolabel.patrimonio.combo.cesion.de.uso'),
@@ -212,7 +212,50 @@ Ext.define('HreRem.view.activos.detalle.DatosPatrimonio', {
 								value: '{patrimonio.activoPromoEstrategico}',
 								hidden: true	
 							}
-						},	
+						},
+						{
+							xtype : 'currencyfieldbase',
+							fieldLabel: HreRem.i18n('fieldlabel.precio.compra'),
+							colspan: 1,
+							bind: {
+								value: '{patrimonio.precioCompra}',
+								readOnly: true,
+								hidden: '{!isCamposEnabledByTipoAlquiler}'
+							}
+						},
+						{
+							xtype : 'comboboxfieldbase',
+							fieldLabel: HreRem.i18n('fieldlabel.alta.prima.opcion.compra'),
+							colspan: 1,
+							bind: {
+								store: '{comboSiNoBoolean}',
+								value: '{patrimonio.altaPrimaOpcionCompra}',
+								readOnly: true,
+								hidden: '{!isCamposEnabledByTipoAlquiler}'
+							}
+						},
+						{
+							xtype : 'comboboxfieldbase',
+							fieldLabel: HreRem.i18n('fieldlabel.renucia.derecho.tanteo'),
+							colspan: 3,
+							bind: {
+								store: '{comboSiNoBoolean}',
+								value: '{patrimonio.renunciaDerechoTanteo}',
+								readOnly: true
+							}
+						},
+						{
+							xtype: 'comboboxfieldbase',
+							fieldLabel: HreRem.i18n('combolabel.patrimonio.combo.aplica.ofrecimiento.aqluiler.social'),
+							reference: 'aplicaAlquilerSocialRef',
+							colspan: 1,
+							bind: {
+								readOnly: '{patrimonio.isCarteraBBVA}',
+								hidden: '{!patrimonio.isCarteraBBVA}',
+								store: '{comboSinSino}',
+								value: '{patrimonio.aplicaAlquilerSocial}'
+							}
+						},
 						{
 							xtype: 'displayfieldbase',
 							colspan: 3,
@@ -220,7 +263,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPatrimonio', {
 							bind: {
 								hidden: '{patrimonio.isCarteraCerberusDivarian}'
 							}
-						},			
+						},
 						{
 							xtype:'fieldsettable',
 							title:HreRem.i18n('title.grid.historico.adecuaciones'),

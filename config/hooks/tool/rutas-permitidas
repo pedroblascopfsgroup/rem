@@ -307,6 +307,7 @@ rem_mirror|func-rem-bloqueoScoring
 rem_mirror|func-rem-hydra-modificacionesEnero
 func-rem-hydra-modificacionesEnero|R-Ellendale
 func-rem-bloqueoScoring|R-Ellendale
+rem_mirror|func-rem-variosUICsPorEntidad
 rem_mirror|func-rem-reposicionamientoCalculoRiesgo
 func-rem-automatizacionBajasContablesBBVA|R-Navelate
 rem_mirror|func-rem-onuFase2
@@ -336,6 +337,14 @@ rem_mirror|version-@-rem
 func-rem-HREOS-16365|R-Caracara
 func-rem-reposicionamientoCalculoRiesgo|R-Caracara
 func-rem-deposito|R-Baal
+func-rem-proveedoresNoHomologables|R-Nagami
+func-rem-datosProveedores|R-Nagami
+remvip-11238-rem|R-Caracara
+rem_mirror|func-rem-ofrecimientosAlquilerSocialBBVA
+rem_mirror|version-@-rem
+remvip-11238-rem|R-Caracara
+func-rem-gestionAPIs|R-Ashe
+rem_mirror|@
 remvip-11238-rem|R-Caracara
 func-rem-gestionAPIs|R-Ashe
 rem_mirror|R-Tyrael
@@ -350,4 +359,6 @@ func-rem-onboardingCIBE|version-2.48.2-rem
 func-rem-proveedoresNoHomologables|R-Nagami
 func-rem-datosProveedores|R-Nagami
 rem_mirror|func-rem-contabilizarDepositoOtrosEstados
-
+func-rem-sincronizacionPrinexREM|R-Jax
+func-rem-variosUICsPorEntidad|R-Jax
+func-rem-ofrecimientosAlquilerSocialBBVA|R-Jax

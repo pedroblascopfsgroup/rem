@@ -14,15 +14,11 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
-import es.pfsgroup.plugin.rem.api.OfertaApi;
-import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 
 @Component
 public class UpdaterServiceSancionOfertaAlquilerEnvioContrato implements UpdaterService {
@@ -32,15 +28,11 @@ public class UpdaterServiceSancionOfertaAlquilerEnvioContrato implements Updater
 
     @Autowired
     private ExpedienteComercialApi expedienteComercialApi;
-    
-	@Autowired
-	private OfertaApi ofertaApi;
 
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaAlquilerEnvioContrato.class);
     
-	
-	private static final String COMBO_RESULTADO = "comboResultado";
-	private static final String FECHA_ENVIO = "fechaEnvio";
+	private static final String COMBO_LLAMADA = "comboLlamada";
+	private static final String COMBO_BUROFAX = "comboBurofax";
 
 	private static final String CODIGO_T015_ENVIO_CONTRATO = "T015_EnvioContrato";
 
@@ -49,37 +41,26 @@ public class UpdaterServiceSancionOfertaAlquilerEnvioContrato implements Updater
 	@Override
 	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
 
-		boolean estadoBcModificado = false;
+		boolean modificarEstadoBC = false;
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
-		
-		DDEstadosExpedienteComercial estadoExp = null;
 		DDEstadoExpedienteBc estadoBc = null;
-		String fechaEnvio = null;
 		
-		for(TareaExternaValor valor :  valores){
+		for(TareaExternaValor valor :  valores) {
 			
-			if(COMBO_RESULTADO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-				if (DDSiNo.SI.equals(valor.getValor())) {					
-					estadoExp = genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PTE_AGENDAR));
-					estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_IMPORTE_FINAL_APROBADO));
-					estadoBcModificado = true;
-				}else if (DDSiNo.NO.equals(valor.getValor())) {				
-					estadoExp = genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PTE_ENVIO));
-					estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_PTE_SANCION_PATRIMONIO));
-					estadoBcModificado = true;
-
-				}
-				if(estadoBcModificado) {
-					expedienteComercial.setEstadoBc(estadoBc);	
-				}
-				expedienteComercial.setEstado(estadoExp);
+			if(COMBO_LLAMADA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor()) && DDSiNo.SI.equals(valor.getValor())) {					
+				modificarEstadoBC = true;
 			}
-			if(FECHA_ENVIO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-				fechaEnvio = valor.getValor();
+			if(COMBO_BUROFAX.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor()) && DDSiNo.SI.equals(valor.getValor())) {					
+				modificarEstadoBC = true;
 			}
 		}
+		
+		if(modificarEstadoBC) {
+			estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_BORRADOR_ENVIADO));
+			expedienteComercial.setEstadoBc(estadoBc);	
+		}
 
-		expedienteComercialApi.update(expedienteComercial,false);
+		expedienteComercialApi.update(expedienteComercial, false);
 
 	}
 

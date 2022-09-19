@@ -876,7 +876,11 @@
 				def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
             	return expedienteComercialManager.saltaPBCReserva(tareaExterna);
 			}
-           
+			def checkEstadoBcClausuladoNoComerciable = {
+            	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
+            	return expedienteComercialManager.checkEstadoBcClausuladoNoComerciable(tareaExterna);
+            }
+                       
   			 ]]></value>
   		</list>
   	</property>

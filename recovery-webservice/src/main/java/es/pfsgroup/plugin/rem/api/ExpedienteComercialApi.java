@@ -3,8 +3,10 @@ package es.pfsgroup.plugin.rem.api;
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+
+import org.springframework.transaction.annotation.Transactional;
+
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.files.FileItem;
@@ -33,6 +35,7 @@ import es.pfsgroup.plugin.rem.model.DtoDatosBasicosOferta;
 import es.pfsgroup.plugin.rem.model.DtoDiccionario;
 import es.pfsgroup.plugin.rem.model.DtoEntregaReserva;
 import es.pfsgroup.plugin.rem.model.DtoExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.DtoExpedienteComercialGestionEconomica;
 import es.pfsgroup.plugin.rem.model.DtoExpedienteHistScoring;
 import es.pfsgroup.plugin.rem.model.DtoExpedienteScoring;
 import es.pfsgroup.plugin.rem.model.DtoFichaExpediente;
@@ -85,7 +88,6 @@ import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
 import es.pfsgroup.plugin.rem.model.VListadoOfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.VReportAdvisoryNotes;
-import es.pfsgroup.plugin.rem.model.DtoExpedienteComercialGestionEconomica;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadFinanciera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
@@ -100,16 +102,7 @@ import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaUVEMDto;
 import es.pfsgroup.plugin.rem.rest.dto.ResolucionComiteDto;
 import es.pfsgroup.plugin.rem.rest.dto.TitularUVEMDto;
-import es.pfsgroup.plugin.rem.model.*;
-import es.pfsgroup.plugin.rem.model.dd.*;
-import es.pfsgroup.plugin.rem.rest.dto.*;
 import es.pfsgroup.plugin.rem.restclient.caixabc.ReplicarOfertaDto;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.lang.reflect.InvocationTargetException;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
 
 public interface ExpedienteComercialApi {
 	/**
@@ -1541,4 +1534,6 @@ public interface ExpedienteComercialApi {
 	Boolean saveTabFianza(DtoTabFianza dto, Long id);
 
 	void desbloquearExpediente(Long idOferta) throws Exception;
+
+	boolean checkEstadoBcClausuladoNoComerciable(TareaExterna tareaExterna);
 }

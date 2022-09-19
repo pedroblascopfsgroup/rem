@@ -22,7 +22,6 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 
 @Component
@@ -39,11 +38,10 @@ public class UpdaterServiceSancionOfertaAlquilerAprobacionClienteClausulas imple
 	
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaAlquilerAprobacionClienteClausulas.class);
     	
-	private static final String COMBO_CLIENTE_ACEPTA_BORRADOR = "comboClienteAceptaBor";
-	private static final String FECHA_ACEPTACION = "fechaFirma";
-	private static final String COMBO_BC_RENEGOCIA = "comboBcRenegocia";
-	private static final String CAMPO_JUSTIFICACION = "justificacion";
+	private static final String COMBO_CLIENTE_ACEPTA = "comboAcepta";
+	private static final String COMBO_CONTRAOFERTA = "comboContraoferta";
 	private static final String CAMPO_OBSERVACIONES = "observaciones";
+	private static final String COMBO_MOTIVO = "comboMotivo";
 
 	private static final String CODIGO_T015_APROBACION_CLIENTE_CLAUSULAS = "T015_AprobacionClienteClausulas";
 
@@ -52,77 +50,58 @@ public class UpdaterServiceSancionOfertaAlquilerAprobacionClienteClausulas imple
 	@Override
 	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
 
-		boolean estadoBcModificado = false;
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
-		boolean aprueba = false;
-		boolean apruebaBcReneg = false;
-		String estadoExp = null;
-		String estadoBc = null;
-		String comboClienteAceptaBor = null;
-		String fechaFirma = null;
-		String comboBcRenegocia = null;
-		String justificacion = null;
+		
+		boolean clienteAceptaClausulas = false;
+		boolean contraoferta = false;
+		DDEstadoExpedienteBc estadoBc = null;
+		String codigoMotivo = null;
 		String observaciones = null;
 		
-		for(TareaExternaValor valor :  valores){
+		for(TareaExternaValor valor :  valores) {
 			
-			if(COMBO_CLIENTE_ACEPTA_BORRADOR.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-				if (DDSiNo.SI.equals(valor.getValor())) {					
-					aprueba = true;
-					comboClienteAceptaBor = valor.getValor();
+			if(COMBO_CLIENTE_ACEPTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor()) && DDSiNo.SI.equals(valor.getValor())) {
+				clienteAceptaClausulas = true;
+				estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_BORRADOR_ACEPTADO));
+			}
+			
+			if(!clienteAceptaClausulas) {
+				if(COMBO_CONTRAOFERTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+					if(DDSiNo.NO.equals(valor.getValor()) 
+							|| expedienteComercial.getEstadoBc() != null && DDEstadoExpedienteBc.CODIGO_CLAUSULADO_NO_COMERCIABLE.equals(expedienteComercial.getEstadoBc().getCodigo())) {
+						contraoferta = false;
+						estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO));
+					} else if (DDSiNo.SI.equals(valor.getValor()) 
+							&& expedienteComercial.getEstadoBc() != null && !DDEstadoExpedienteBc.CODIGO_CLAUSULADO_NO_COMERCIABLE.equals(expedienteComercial.getEstadoBc().getCodigo())) {
+						contraoferta = true;
+						estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_PTE_VALIDACION_CAMBIOS_CLAUSURADO));
+					}
 				}
 			}
-			if(FECHA_ACEPTACION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-				fechaFirma = valor.getValor();
-			}
-			if(COMBO_BC_RENEGOCIA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-				if (DDSiNo.SI.equals(valor.getValor())) {					
-					apruebaBcReneg = true;
-					comboClienteAceptaBor = valor.getValor();
-				}
-			}
+			
 			if(CAMPO_OBSERVACIONES.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 				observaciones = valor.getValor();
 			}
 			
+			if(COMBO_MOTIVO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+				codigoMotivo = valor.getValor();
+			}
 		}
 		
-		if (aprueba) {
-			/*estadoExp =  DDEstadosExpedienteComercial.PTE_ENVIO;*/
-			estadoBc =  DDEstadoExpedienteBc.CODIGO_BORRADOR_ACEPTADO;
-		} else if(!aprueba && !apruebaBcReneg) {
-			estadoExp =  DDEstadosExpedienteComercial.DENEGADO;
-			estadoBc =  DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA;
+		if(!clienteAceptaClausulas && !contraoferta) {
 			Oferta oferta = expedienteComercial.getOferta();
 			expedienteComercial.setFechaAnulacion(new Date());
-			expedienteComercial.setMotivoAnulacion(genericDao.get(DDMotivoAnulacionExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoAnulacionExpediente.COD_CAIXA_RECHAZADO_PBC)));
+			expedienteComercial.setMotivoAnulacion(genericDao.get(DDMotivoAnulacionExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoMotivo)));
 			expedienteComercial.setDetalleAnulacionCntAlquiler(observaciones);
 			
 			if(oferta != null) {
 				ofertaApi.finalizarOferta(oferta);
 			}
 			
-			expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoExp)));
-			estadoBcModificado = true;
-			genericDao.save(ExpedienteComercial.class, expedienteComercial);
-		} else if(!aprueba && apruebaBcReneg) {
-//			estadoExp =  DDEstadosExpedienteComercial.DENEGADO;
-			estadoBc =  DDEstadoExpedienteBc.CODIGO_PTE_SANCION_PATRIMONIO;
-			/*Oferta oferta = expedienteComercial.getOferta();
-			expedienteComercial.setFechaAnulacion(new Date());
-			expedienteComercial.setMotivoAnulacion(genericDao.get(DDMotivoAnulacionExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoAnulacionExpediente.COD_CAIXA_RECHAZADO_PBC)));
-			expedienteComercial.setDetalleAnulacionCntAlquiler(observaciones);
-			
-			if(oferta != null) {
-				ofertaApi.finalizarOferta(oferta);
-			}*/
 		}
-		expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoBc)));
 		
-		/*expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoExp)));
 		expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoBc)));
-		estadoBcModificado = true;
-		genericDao.save(ExpedienteComercial.class, expedienteComercial);*/
+		genericDao.save(ExpedienteComercial.class, expedienteComercial);
 	}
 
 	public String[] getCodigoTarea() {

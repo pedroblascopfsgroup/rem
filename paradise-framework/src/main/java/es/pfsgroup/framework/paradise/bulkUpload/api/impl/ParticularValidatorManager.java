@@ -18,14 +18,13 @@ import java.util.zip.Checksum;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-
 import es.capgemini.devon.beans.Service;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
-import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVMasivaAltaBBVAValidator.COL_NUM;
+import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVMasivaAltaBBVAValidator;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;

@@ -442,12 +442,13 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			concurrenciaApi.comunicacionSFMC(idOfertaList, ConcurrenciaApi.COD_OFERTAS_PERDEDORAS, ConcurrenciaApi.TIPO_ENVIO_UNICO, new ModelMap());
 		}
 		
-		if(DDEstadoOferta.CODIGO_PDTE_DEPOSITO.equals(dto.getCodigoEstadoOferta())) {
+		if(DDEstadoOferta.CODIGO_PDTE_DEPOSITO.equals(estadoOferta.getCodigo())) {
 			boolean necesitaDeposito = false;
 			if(!Checks.esNulo(dto.getIdAgrupacion()) && agrupacion != null && activo.getSubcartera() != null ) {
 				Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "numActivo", activo.getNumActivo());
 				Activo ActivoCuentaVirtual = genericDao.get(Activo.class, filtroActivo);
-				if(depositoApi.esNecesarioDepositoNuevaOferta(ActivoCuentaVirtual) && DDTipoOferta.isTipoVenta(oferta.getTipoOferta())){
+				if(depositoApi.esNecesarioDepositoNuevaOferta(ActivoCuentaVirtual) && DDTipoOferta.isTipoVenta(oferta.getTipoOferta())
+						&& !depositoApi.esOfertaConDeposito(oferta)){
 					necesitaDeposito = true;
 					CuentasVirtuales cuentaVirtual = depositoApi.vincularCuentaVirtual(activo.getSubcartera().getCodigo());
 					oferta.setCuentaVirtual(cuentaVirtual);

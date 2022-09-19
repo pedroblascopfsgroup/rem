@@ -38,6 +38,7 @@ import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.AdjuntoComprador;
+import es.pfsgroup.plugin.rem.model.DtoActivoBbvaUic;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargas;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargasTab;
 import es.pfsgroup.plugin.rem.model.DtoActivoComplementoTitulo;
@@ -1500,6 +1501,12 @@ public interface ActivoApi {
     void anyadirCanalDistribucionOfertaCaixa(Long idActivo, OfertaCaixa ofertaCaixa, String tipoOferta);
 
 	boolean isPermiteOfertaNoComercialActivoAlquilado(Activo activo, String codTipoOferta);
+		
+	Boolean destroyActivoBbvaUic(Long idActivo, String uicBbva) throws Exception;
+
+	Boolean createOrUpdateActivoBbvaUic(DtoActivoBbvaUic dto)throws Exception;
+	
+	Boolean updateActivoBbvaUicProp(DtoActivoBbvaUic dto)throws Exception;
 
 	List<DtoOrganismos> getOrganismosByActivo(Long idActivo);
 

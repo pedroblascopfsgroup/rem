@@ -1604,28 +1604,42 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 									rawValue: '{activo.entradaActivoBankiaDescripcion}'
 								}
 							},
-							{
-								xtype:'textfieldbase',
-								fieldLabel: HreRem.i18n('fieldlabel.activobbva.iucBbva'),
-								bind: {
-									readOnly : '{!isGestorAdmisionAndSuper}',
-									hidden: '{!activo.isCarteraBbva}',
-									value: '{activo.uicBbva}'
-								}
-							},
-							{
+							/*{
 								xtype:'textfieldbase',
 								fieldLabel: HreRem.i18n('fieldlabel.activobbva.cexperBbva'),
+								colspan: 3,
 								bind: {
 									readOnly : '{!isGestorAdmisionAndSuper}',
 									hidden: '{!activo.isCarteraBbva}',
 									value: '{activo.cexperBbva}'
 								}
+							},*/
+							{	
+								xtype:'fieldsettable',
+								defaultType: 'textfieldbase',
+								title: HreRem.i18n('fieldlabel.datos.uic'),
+								colspan: 3,
+								bind: {
+									hidden: '{!activo.isCarteraBbva}'
+								},
+								items :
+									[
+									{
+										xtype: 'activobbvauicgrid',
+										idPrincipal : 'activo.id',
+										propagationButton: true,
+										reference: 'activobbvauicgridref',
+										targetGrid	: 'activobbvauic',
+										bind: {
+									        store: '{storeActivoBbvaUic}'
+									    }
+									}
+									]
 							}
 						]
 						
 					}, //Fin activo bancario
-					//Activo EPA
+					/*//Activo EPA
 		            {
 						xtype:'fieldsettable',
 						defaultType: 'textfieldbase',
@@ -1723,7 +1737,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 									}
 								]
 						}]
-					}, //Fin activo EPA
+					}, //Fin activo EPA*/
 					
 		            {//Per�metro e    
 		                
@@ -1834,6 +1848,8 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
     },
     funcionRecargar: function() {
     	var me = this; 
+		var listadoUic = me.down("[reference=activobbvauicgridref]");
+		listadoUic.getStore().load();
 		me.recargar = false;
 		me.lookupController().cargarTabData(me);
     },

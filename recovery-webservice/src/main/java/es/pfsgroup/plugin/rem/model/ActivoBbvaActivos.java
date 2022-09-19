@@ -67,34 +67,9 @@ public class ActivoBbvaActivos implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TAL_ID")
 	private DDTipoAlta tipoAlta;
-
-	@Column(name = "BBVA_UIC")
-  	private String uicBbva;
-    
-	@Column(name = "BBVA_CEXPER")
-  	private String cexperBbva;
     
 	@Column(name = "BBVA_ID_PROCESO_ORIGEN")
   	private String idProcesoOrigen;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "BBVA_ACTIVO_EPA")
-  	private DDSinSiNo activoEpa;
-    
-	@Column(name = "BBVA_EMPRESA")
-  	private String empresa;
-    
-	@Column(name = "BBVA_OFICINA")
-  	private String oficina;
-    
-	@Column(name = "BBVA_CONTRAPARTIDA")
-  	private String contrapartida;
-    
-	@Column(name = "BBVA_FOLIO")
-  	private String folio;
-    
-	@Column(name = "BBVA_CDPEN")
-  	private String cdpen;
     
 	@Version   
 	private Long version;
@@ -174,62 +149,6 @@ public class ActivoBbvaActivos implements Serializable, Auditable {
 		this.tipoAlta = tipoAlta;
 	}
 
-	public String getUicBbva() {
-		return uicBbva;
-	}
-
-	public void setUicBbva(String uicBbva) {
-		this.uicBbva = uicBbva;
-	}
-
-	public String getCexperBbva() {
-		return cexperBbva;
-	}
-
-	public void setCexperBbva(String cexperBbva) {
-		this.cexperBbva = cexperBbva;
-	}
-
-	public DDSinSiNo getActivoEpa() {
-		return activoEpa;
-	}
-
-	public void setActivoEpa(DDSinSiNo activoEpa) {
-		this.activoEpa = activoEpa;
-	}
-
-	public String getEmpresa() {
-		return empresa;
-	}
-
-	public void setEmpresa(String empresa) {
-		this.empresa = empresa;
-	}
-
-	public String getOficina() {
-		return oficina;
-	}
-
-	public void setOficina(String oficina) {
-		this.oficina = oficina;
-	}
-
-	public String getContrapartida() {
-		return contrapartida;
-	}
-
-	public void setContrapartida(String contrapartida) {
-		this.contrapartida = contrapartida;
-	}
-
-	public String getFolio() {
-		return folio;
-	}
-
-	public void setFolio(String folio) {
-		this.folio = folio;
-	}
-
 	public Long getVersion() {
 		return version;
 	}
@@ -252,14 +171,6 @@ public class ActivoBbvaActivos implements Serializable, Auditable {
 
 	public void setIdProcesoOrigen(String idProcesoOrigen) {
 		this.idProcesoOrigen = idProcesoOrigen;
-	}
-
-	public String getCdpen() {
-		return cdpen;
-	}
-
-	public void setCdpen(String cdpen) {
-		this.cdpen = cdpen;
 	}
 
 	public ActivoPropietario getSociedadPagoAnterior() {

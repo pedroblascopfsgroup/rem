@@ -307,6 +307,7 @@ rem_mirror|func-rem-bloqueoScoring
 rem_mirror|func-rem-hydra-modificacionesEnero
 func-rem-hydra-modificacionesEnero|R-Ellendale
 func-rem-bloqueoScoring|R-Ellendale
+rem_mirror|func-rem-variosUICsPorEntidad
 rem_mirror|func-rem-reposicionamientoCalculoRiesgo
 func-rem-automatizacionBajasContablesBBVA|R-Navelate
 rem_mirror|func-rem-onuFase2
@@ -340,8 +341,8 @@ func-rem-proveedoresNoHomologables|R-Nagami
 func-rem-datosProveedores|R-Nagami
 remvip-11238-rem|R-Caracara
 rem_mirror|func-rem-nuevaNomenclaturaFicherosGastos
-rem_mirror|version-@-rem
-remvip-11238-rem|R-Caracara
+rem_mirror|func-rem-ofrecimientosAlquilerSocialBBVA
+rem_mirror|@
 func-rem-gestionAPIs|R-Ashe
 rem_mirror|func-rem-identificacionIBIsTasasDomiciliadosInterfazGastosSAPBC
 rem_mirror|version-@-rem
@@ -358,3 +359,6 @@ rem_mirror|func-rem-contabilizarDepositoOtrosEstados
 func-rem-identificacionIBIsTasasDomiciliadosInterfazGastosSAPBC|R-Buu
 func-rem-nuevosValoresParaCriterioCajaIndicadoresImpuestos|R-Buu
 func-rem-nuevaNomenclaturaFicherosGastos|R-Buu
+func-rem-sincronizacionPrinexREM|R-Jax
+func-rem-variosUICsPorEntidad|R-Jax
+func-rem-ofrecimientosAlquilerSocialBBVA|R-Jax

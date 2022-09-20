@@ -48,13 +48,13 @@ public class ComunicarFormalizacionApi implements Serializable, Auditable {
     private Oferta oferta;
 
 	@Column(name = "CFA_LLAMADA_REALIZADA")
-	private Integer llamadaRealizada;
+	private Boolean llamadaRealizada;
 	
 	@Column(name = "CFA_FECHA_LLAMADA")
 	private Date fechaLlamada;
 
 	@Column(name = "CFA_BUROFAX_ENVIADO")
-	private Integer burofaxEnviado;
+	private Boolean burofaxEnviado;
 	
 	@Column(name = "CFA_FECHA_BUROFAX")
 	private Date fechaBurofax;
@@ -81,11 +81,11 @@ public class ComunicarFormalizacionApi implements Serializable, Auditable {
 		this.oferta = oferta;
 	}
 
-	public Integer getLlamadaRealizada() {
+	public Boolean getLlamadaRealizada() {
 		return llamadaRealizada;
 	}
 
-	public void setLlamadaRealizada(Integer llamadaRealizada) {
+	public void setLlamadaRealizada(Boolean llamadaRealizada) {
 		this.llamadaRealizada = llamadaRealizada;
 	}
 
@@ -97,11 +97,11 @@ public class ComunicarFormalizacionApi implements Serializable, Auditable {
 		this.fechaLlamada = fechaLlamada;
 	}
 
-	public Integer getBurofaxEnviado() {
+	public Boolean getBurofaxEnviado() {
 		return burofaxEnviado;
 	}
 
-	public void setBurofaxEnviado(Integer burofaxEnviado) {
+	public void setBurofaxEnviado(Boolean burofaxEnviado) {
 		this.burofaxEnviado = burofaxEnviado;
 	}
 
@@ -111,14 +111,6 @@ public class ComunicarFormalizacionApi implements Serializable, Auditable {
 
 	public void setFechaBurofax(Date fechaBurofax) {
 		this.fechaBurofax = fechaBurofax;
-	}
-
-	public Long getVersion() {
-		return version;
-	}
-
-	public void setVersion(Long version) {
-		this.version = version;
 	}
 
 	public Auditoria getAuditoria() {

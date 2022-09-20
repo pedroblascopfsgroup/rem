@@ -4432,46 +4432,28 @@
     
     T015_EnvioContratoValidacion: function() {
     	var me = this;
-		var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
 		
-    	var comboLlamada = me.down('[name=comboLlamada]');
-		var fechaLlamada = me.down('[name=fechaLlamada]');
-		var comboBurofax = me.down('[name=comboBurofax]');
-		var fechaBurofax = me.down('[name=fechaBurofax]');
-		var comboTitulo = me.down('[name=comboTitulo]');
-		var fechaTitulo = me.down('[name=fechaTitulo]');
-		
-		if (CONST.CARTERA['BANKIA'] == codigoCartera) {
-			
-			me.habilitarCampo(comboLlamada);
-			me.campoObligatorio(comboLlamada);
-			me.habilitarCampo(fechaLlamada);
-			me.habilitarCampo(comboBurofax);
-			me.campoObligatorio(comboBurofax);
-			me.habilitarCampo(fechaBurofax);
-			me.habilitarCampo(comboTitulo);
-			
-			comboTitulo.addListener('change', function(combo) {
-	            if (combo.value == '01') {
-	            	fechaTitulo.reset();
-	            	me.habilitarCampo(fechaTitulo);
-	                me.campoObligatorio(fechaTitulo);
-	            } else {
-	            	fechaTitulo.reset();
-	                me.deshabilitarCampo(fechaTitulo);
-	                me.campoNoObligatorio(fechaTitulo);
-	            }
-	        });
-		} else {
-			me.deshabilitarCampo(comboLlamada);
-			me.campoNoObligatorio(comboLlamada);
-			me.deshabilitarCampo(fechaLlamada);
-			me.deshabilitarCampo(comboBurofax);
-			me.campoNoObligatorio(comboBurofax);
-			me.deshabilitarCampo(fechaBurofax);
-			me.deshabilitarCampo(comboTitulo);
-		}
-		
+//    	var comboLlamada = me.down('[name=comboLlamada]');
+//		var fechaLlamada = me.down('[name=fechaLlamada]');
+//		var comboBurofax = me.down('[name=comboBurofax]');
+//		var fechaBurofax = me.down('[name=fechaBurofax]');
+//		var comboTitulo = me.down('[name=comboTitulo]');
+//		var fechaTitulo = me.down('[name=fechaTitulo]');
+//		
+//			
+//			comboTitulo.addListener('change', function(combo) {
+//	            if (combo.value == '01') {
+//	            	fechaTitulo.reset();
+//	            	me.habilitarCampo(fechaTitulo);
+//	                me.campoObligatorio(fechaTitulo);
+//	            } else {
+//	            	fechaTitulo.reset();
+//	                me.deshabilitarCampo(fechaTitulo);
+//	                me.campoNoObligatorio(fechaTitulo);
+//	            }
+//	        });
+//		}
+//		
     },
 	
 	T018_AgendarYFirmarValidacion: function(){

@@ -669,7 +669,7 @@
     
     <decision name ="T015_NegociacionClausulasAlquilerDecision" expression="#{T015_NegociacionClausulasAlquilerDecision}">
         <transition to="T015_EnvioContrato" name="Acepta"></transition>
-        <transition to="T015_AprobacionOfertaAlquilerComercial" name="NoAcepta"></transition>
+        <transition to="T015_AprobacionClienteClausulas" name="NoAcepta"></transition>
     </decision>
     
     <state name="T015_RespuestaBcReagendacion">

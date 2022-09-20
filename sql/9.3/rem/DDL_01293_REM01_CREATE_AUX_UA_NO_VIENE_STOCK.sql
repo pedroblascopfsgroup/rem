@@ -1,12 +1,12 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20220908
+--## FECHA_CREACION=20220920
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-18616
 --## PRODUCTO=NO
---## Finalidad: Creación tabla auxiliar AUX_AM_NO_VIENE_STOCK
+--## Finalidad: Creación tabla auxiliar AUX_UA_NO_VIENE_STOCK
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -35,7 +35,7 @@ DECLARE
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
-    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'AUX_AM_NO_VIENE_STOCK'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'AUX_UA_NO_VIENE_STOCK'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
 
 BEGIN
 

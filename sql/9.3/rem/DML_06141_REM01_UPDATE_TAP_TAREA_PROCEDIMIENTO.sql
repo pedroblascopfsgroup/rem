@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alejandro Valverde
---## FECHA_CREACION=20220919
+--## FECHA_CREACION=20220921
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-18727
@@ -43,7 +43,7 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(800);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-    	T_TIPO_DATA('T015_EnvioContrato', 'valores[''''T015_EnvioContrato''''][''''comboLlamada''''] == DDSiNo.SI && valores[''''T015_EnvioContrato''''][''''comboBurofax''''] == DDSiNo.SI ? null  : ''''Solo se puede avanzar la tarea cuando la llamada este realizada y el burofax enviado''''', 'valores[''''T015_EnvioContrato''''][''''comboLlamada''''] == DDSiNo.SI && valores[''''T015_EnvioContrato''''][''''comboBurofax''''] == DDSiNo.SI ? ''''OK''''  : null'),
+    	T_TIPO_DATA('T015_EnvioContrato', 'valores[''''T015_EnvioContrato''''][''''comboLlamada''''] == DDSiNo.SI && valores[''''T015_EnvioContrato''''][''''comboBurofax''''] == DDSiNo.SI ? null  : ''''Solo se puede avanzar la tarea cuando la llamada este realizada y el burofax enviado''''', null),
         T_TIPO_DATA('T015_AprobacionClienteClausulas', null, 'checkBankia() ? valores[''''T015_AprobacionClienteClausulas''''][''''comboAcepta''''] == DDSiNo.SI ? ''''Acepta'''' : valores[''''T015_AprobacionClienteClausulas''''][''''comboAcepta''''] == DDSiNo.NO ? valores[''''T015_AprobacionClienteClausulas''''][''''comboContraoferta''''] == DDSiNo.NO || checkEstadoBcClausuladoNoComerciable() ? ''''NoAceptaSinContraoferta'''' : valores[''''T015_AprobacionClienteClausulas''''][''''comboContraoferta''''] == DDSiNo.SI && checkEstadoBcClausuladoNoComerciable() == false ? ''''NoAceptaConContraoferta'''' : null : null : null'),
         T_TIPO_DATA('T015_NegociacionClausulasAlquiler', null, 'checkBankia() ? valores[''''T015_NegociacionClausulasAlquiler''''][''''comboAcepta''''] == DDSiNo.SI ? ''''Acepta''''  : ''''NoAcepta''''  : null')
     ); 

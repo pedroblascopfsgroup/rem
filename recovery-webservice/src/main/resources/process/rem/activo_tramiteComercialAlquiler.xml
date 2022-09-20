@@ -488,15 +488,10 @@
 				</targetBean>
 			</action>
 		</event>
-		<transition to="T015_EnvioContratoDecision" name="avanzaBPM"></transition>
+		<transition to="T015_AprobacionClienteClausulas" name="avanzaBPM"></transition>
 		<transition to="Fin" name="Fin"></transition>
     </state>
-    
-    <decision name ="T015_EnvioContratoDecision" expression="#{T015_EnvioContratoDecision}">
-		<transition to="T015_AprobacionClienteClausulas" name="OK"></transition>
-    </decision>
-    
-
+     
     <state name="T015_SancionPatrimonio">
 		<event type="node-enter">
 			<action name="miTarea"

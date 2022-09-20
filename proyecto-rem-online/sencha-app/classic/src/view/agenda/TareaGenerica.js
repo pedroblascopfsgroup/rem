@@ -4431,29 +4431,7 @@
     },
     
     T015_EnvioContratoValidacion: function() {
-    	var me = this;
-		
-//    	var comboLlamada = me.down('[name=comboLlamada]');
-//		var fechaLlamada = me.down('[name=fechaLlamada]');
-//		var comboBurofax = me.down('[name=comboBurofax]');
-//		var fechaBurofax = me.down('[name=fechaBurofax]');
-//		var comboTitulo = me.down('[name=comboTitulo]');
-//		var fechaTitulo = me.down('[name=fechaTitulo]');
-//		
-//			
-//			comboTitulo.addListener('change', function(combo) {
-//	            if (combo.value == '01') {
-//	            	fechaTitulo.reset();
-//	            	me.habilitarCampo(fechaTitulo);
-//	                me.campoObligatorio(fechaTitulo);
-//	            } else {
-//	            	fechaTitulo.reset();
-//	                me.deshabilitarCampo(fechaTitulo);
-//	                me.campoNoObligatorio(fechaTitulo);
-//	            }
-//	        });
-//		}
-//		
+    	var me = this;	
     },
 	
 	T018_AgendarYFirmarValidacion: function(){

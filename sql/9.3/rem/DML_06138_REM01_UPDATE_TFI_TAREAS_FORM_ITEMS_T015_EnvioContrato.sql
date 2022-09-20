@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alejandro Valverde
---## FECHA_CREACION=20220925
+--## FECHA_CREACION=20220926
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-18727
@@ -57,7 +57,7 @@ DECLARE
     	T_TIPO_DATA2('T015_EnvioContrato','datefield','2','fechaLlamada',null,'false',null,'Fecha de llamada'),
       	T_TIPO_DATA2('T015_EnvioContrato','combobox','3','comboBurofax','Debe indicar si el burofax ha sido enviado','false','DDSiNo','Burofax enviado'),
     	T_TIPO_DATA2('T015_EnvioContrato','datefield','4','fechaBurofax',null,'false',null,'Fecha de burofax'),
-    	T_TIPO_DATA2('T015_EnvioContrato','combobox','5','comboTitulo',null,null,'DDSiNo','Titulo obtenido'),
+    	T_TIPO_DATA2('T015_EnvioContrato','combobox','5','comboTitulo',null,'false','DDSiNo','Titulo obtenido'),
     	T_TIPO_DATA2('T015_EnvioContrato','datefield','6','fechaTitulo',null,null,null,'Fecha obtención'),
     	T_TIPO_DATA2('T015_EnvioContrato','textarea','7','observaciones',null,null,null,'Observaciones')
     ); 

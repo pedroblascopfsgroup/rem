@@ -41,7 +41,7 @@ public class UpdaterServiceSancionOfertaAlquilerAprobacionClienteClausulas imple
 	private static final String COMBO_CLIENTE_ACEPTA = "comboAcepta";
 	private static final String COMBO_CONTRAOFERTA = "comboContraoferta";
 	private static final String CAMPO_OBSERVACIONES = "observaciones";
-	private static final String COMBO_MOTIVO = "comboMotivo";
+	private static final String CAMPO_JUSTIFICACION = "justificacion";
 
 	private static final String CODIGO_T015_APROBACION_CLIENTE_CLAUSULAS = "T015_AprobacionClienteClausulas";
 
@@ -52,46 +52,43 @@ public class UpdaterServiceSancionOfertaAlquilerAprobacionClienteClausulas imple
 
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
 		
-		boolean clienteAceptaClausulas = false;
-		boolean contraoferta = false;
-		DDEstadoExpedienteBc estadoBc = null;
+		boolean anulacion = false;
+		String estadoBc = null;
 		String codigoMotivo = null;
 		String observaciones = null;
 		
 		for(TareaExternaValor valor :  valores) {
 			
 			if(COMBO_CLIENTE_ACEPTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor()) && DDSiNo.SI.equals(valor.getValor())) {
-				clienteAceptaClausulas = true;
-				estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_BORRADOR_ACEPTADO));
+				estadoBc =  DDEstadoExpedienteBc.CODIGO_BORRADOR_ACEPTADO;
 			}
 			
-			if(!clienteAceptaClausulas) {
-				if(COMBO_CONTRAOFERTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-					if(DDSiNo.NO.equals(valor.getValor()) 
-							|| expedienteComercial.getEstadoBc() != null && DDEstadoExpedienteBc.CODIGO_CLAUSULADO_NO_COMERCIABLE.equals(expedienteComercial.getEstadoBc().getCodigo())) {
-						contraoferta = false;
-						estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO));
-					} else if (DDSiNo.SI.equals(valor.getValor()) 
-							&& expedienteComercial.getEstadoBc() != null && !DDEstadoExpedienteBc.CODIGO_CLAUSULADO_NO_COMERCIABLE.equals(expedienteComercial.getEstadoBc().getCodigo())) {
-						contraoferta = true;
-						estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_PTE_VALIDACION_CAMBIOS_CLAUSURADO));
-					}
+		
+			if(COMBO_CONTRAOFERTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+				if(DDSiNo.NO.equals(valor.getValor())) {
+					anulacion = true;
+					estadoBc =  DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO;
+				} else if (DDSiNo.SI.equals(valor.getValor())) {
+					estadoBc = DDEstadoExpedienteBc.CODIGO_PTE_VALIDACION_CAMBIOS_CLAUSURADO;
 				}
 			}
+			
 			
 			if(CAMPO_OBSERVACIONES.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 				observaciones = valor.getValor();
 			}
 			
-			if(COMBO_MOTIVO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+			if(CAMPO_JUSTIFICACION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 				codigoMotivo = valor.getValor();
 			}
 		}
 		
-		if(!clienteAceptaClausulas && !contraoferta) {
+
+		
+		if(anulacion) {
 			Oferta oferta = expedienteComercial.getOferta();
 			expedienteComercial.setFechaAnulacion(new Date());
-			expedienteComercial.setMotivoAnulacion(genericDao.get(DDMotivoAnulacionExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoMotivo)));
+			//expedienteComercial.setMotivoAnulacion(genericDao.get(DDMotivoAnulacionExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoMotivo)));
 			expedienteComercial.setDetalleAnulacionCntAlquiler(observaciones);
 			
 			if(oferta != null) {

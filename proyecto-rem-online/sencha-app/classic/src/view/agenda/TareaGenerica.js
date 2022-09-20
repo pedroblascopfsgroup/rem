@@ -4631,47 +4631,27 @@
 		var comboAcepta = me.down('[name=comboAcepta]');
 		var fechaFirma = me.down('[name=fecha]');
 		var comboContraoferta = me.down('[name=comboContraoferta]');
-		var comboMotivo = me.down('[name=comboMotivo]');
+		var comboMotivo = me.down('[name=justificacion]');
 
-		if (CONST.CARTERA['BANKIA'] == codigoCartera) {
-			me.habilitarCampo(comboAcepta);
-			me.campoObligatorio(comboAcepta);
-			me.habilitarCampo(fechaFirma);
-			me.campoObligatorio(fechaFirma);
+		comboAcepta.addListener('change', function(combo) {
+            if (combo.value == CONST.COMBO_SIN_SINO['SI']) {
+            	comboContraoferta.reset();
+                me.deshabilitarCampo(comboContraoferta);
+                me.campoNoObligatorio(comboContraoferta);
+                comboMotivo.reset();
+                me.deshabilitarCampo(comboMotivo);
+                me.campoNoObligatorio(comboMotivo);
+            } else {
+            	comboContraoferta.reset();
+            	me.habilitarCampo(comboContraoferta);
+                me.campoObligatorio(comboContraoferta);
+                comboMotivo.reset();
+            	me.habilitarCampo(comboMotivo);
+                me.campoObligatorio(comboMotivo);
+            }
+        });
 			
-			comboAcepta.addListener('change', function(combo) {
-	            if (combo.value == '01') {
-	            	comboContraoferta.reset();
-	                me.deshabilitarCampo(comboContraoferta);
-	                me.campoNoObligatorio(comboContraoferta);
-	                comboMotivo.reset();
-	                me.deshabilitarCampo(comboMotivo);
-	                me.campoNoObligatorio(comboMotivo);
-	            } else {
-	            	comboContraoferta.reset();
-	            	me.habilitarCampo(comboContraoferta);
-	                me.campoObligatorio(comboContraoferta);
-	                comboMotivo.reset();
-	            	me.habilitarCampo(comboMotivo);
-	                me.campoObligatorio(comboMotivo);
-	            }
-	        });
-			
-			if($AU.userHasFunction('FUNC_AVANZA_FORMALIZACION_ALQUILER_BC')){
-				me.desbloquearCampo(comboContraoferta);
-			} else {
-				me.bloquearCampo(comboContraoferta);
-			}
-		} else {
-			me.deshabilitarCampo(comboAcepta);
-			me.ocultarCampo(comboAcepta);
-			me.deshabilitarCampo(fechaFirma);
-			me.ocultarCampo(fechaFirma);
-			me.deshabilitarCampo(comboContraoferta);
-			me.ocultarCampo(comboContraoferta);
-			me.deshabilitarCampo(comboMotivo);
-			me.ocultarCampo(comboMotivo);
-		}
+		
 	},
 	
 	T015_NegociacionClausulasAlquilerValidacion: function(){

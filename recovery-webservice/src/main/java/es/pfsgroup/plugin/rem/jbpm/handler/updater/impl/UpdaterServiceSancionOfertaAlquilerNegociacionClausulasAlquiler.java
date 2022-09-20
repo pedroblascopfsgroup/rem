@@ -41,15 +41,15 @@ public class UpdaterServiceSancionOfertaAlquilerNegociacionClausulasAlquiler imp
 	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
 
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
-		DDEstadoExpedienteBc estadoBc = null;
+		String estadoBc = null;
 		
 		for(TareaExternaValor valor :  valores) {
 			
 			if(COMBO_ACEPTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 				if (DDSiNo.SI.equals(valor.getValor())) {	
-					estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_FIRMA_APROBADA));
+					estadoBc =  DDEstadoExpedienteBc.CODIGO_FIRMA_APROBADA;
 				} else if (DDSiNo.NO.equals(valor.getValor())) {					
-					estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_CLAUSULADO_NO_COMERCIABLE));
+					estadoBc = DDEstadoExpedienteBc.CODIGO_CLAUSULADO_NO_COMERCIABLE;
 				}
 			}
 		}

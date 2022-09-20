@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alejandro Valverde
---## FECHA_CREACION=20220919
+--## FECHA_CREACION=20220920
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-18727
@@ -45,10 +45,9 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
     	-- Registros a borrar
-	T_TIPO_DATA('T015_NegociacionClausulasAlquiler','combobox','1','comboResultado','Debe indicar si se Acepta o No','false','DDSiNo','Acepta negociación'),
+		T_TIPO_DATA('T015_NegociacionClausulasAlquiler','combobox','1','comboResultado','Debe indicar si se Acepta o No','false','DDSiNo','Acepta negociación'),
     	T_TIPO_DATA('T015_NegociacionClausulasAlquiler','datefield','2','fecha',null,'false',null,'Fecha'),
-    	T_TIPO_DATA('T015_NegociacionClausulasAlquiler','textarea','3','justificacion',null,null,null,'Justificación'),
-    	T_TIPO_DATA('T015_NegociacionClausulasAlquiler','textarea','4','observaciones',null,null,null,'Observaciones')      	
+    	T_TIPO_DATA('T015_NegociacionClausulasAlquiler','textarea','3','justificacion',null,null,null,'Justificación')  	
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     
@@ -56,7 +55,8 @@ DECLARE
     V_TIPO_DATA2 T_ARRAY_DATA2 := T_ARRAY_DATA2(
       	-- Registros a insertar
       	T_TIPO_DATA2('T015_NegociacionClausulasAlquiler','combobox','1','comboAcepta','Debe indicar si se aceptan las clausulas','false','DDSiNo','Acepta Clausulas'),
-    	T_TIPO_DATA2('T015_NegociacionClausulasAlquiler','datefield','2','fechaAcepta','Debe indicar la fecha','false',null,'Fecha')
+    	T_TIPO_DATA2('T015_NegociacionClausulasAlquiler','datefield','2','fechaAcepta','Debe indicar la fecha','false',null,'Fecha'),
+    	T_TIPO_DATA2('T015_NegociacionClausulasAlquiler','textarea','3','observaciones',null,null,null,'Observaciones')  
     ); 
     V_TMP_TIPO_DATA2 T_TIPO_DATA2;
 BEGIN
@@ -108,7 +108,23 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
         EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
         IF V_NUM_TABLAS > 0 THEN				
           -- Si existe no se hace nada.         
-          DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO EXISTENTE');
+          DBMS_OUTPUT.PUT_LINE('[INFO]: MODIFICAR EL CAMPO '''|| TRIM(V_TMP_TIPO_DATA2(3)) ||''' DE '''|| TRIM(V_TMP_TIPO_DATA2(1)) ||'''');
+          
+       	  V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.'||V_TEXT_TABLA||' '||
+                    'SET '||V_TEXT_CHARS||'_TIPO = '''||TRIM(V_TMP_TIPO_DATA2(2))||''''|| 
+					', '||V_TEXT_CHARS||'_NOMBRE = '''||TRIM(V_TMP_TIPO_DATA2(4))||''''||
+					', '||V_TEXT_CHARS||'_LABEL = '''||TRIM(V_TMP_TIPO_DATA2(8))||''''||
+					', '||V_TEXT_CHARS||'_ORDEN = '''||TRIM(V_TMP_TIPO_DATA2(3))||''''||
+					', '||V_TEXT_CHARS||'_VALIDACION = '''||TRIM(V_TMP_TIPO_DATA2(6))||''''||
+					', '||V_TEXT_CHARS||'_BUSINESS_OPERATION = '''||TRIM(V_TMP_TIPO_DATA2(7))||''''||
+					', '||V_TEXT_CHARS||'_ERROR_VALIDACION = '''||TRIM(V_TMP_TIPO_DATA2(5))||''''||
+					', USUARIOMODIFICAR = '''||V_USUARIO||''' , FECHAMODIFICAR = SYSDATE, BORRADO = 0 '||
+					'WHERE '||V_TEXT_CHARS||'_NOMBRE = '''||TRIM(V_TMP_TIPO_DATA2(4))||''' AND TAP_ID = '||V_TAP_ID||'';
+					
+	
+          EXECUTE IMMEDIATE V_MSQL;
+         
+          DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO MODIFICADO CORRECTAMENTE');
 
        ELSE
        	-- Si no existe se inserta.

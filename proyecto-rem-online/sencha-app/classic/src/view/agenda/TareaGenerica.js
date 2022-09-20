@@ -4626,7 +4626,6 @@
 	
 	T015_AprobacionClienteClausulasValidacion: function(){
 		var me = this;
-		var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
 		
 		var comboAcepta = me.down('[name=comboAcepta]');
 		var fechaFirma = me.down('[name=fecha]');
@@ -4656,16 +4655,9 @@
 	
 	T015_NegociacionClausulasAlquilerValidacion: function(){
 		var me = this;
-		var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
 		
 		var comboAcepta = me.down('[name=comboAcepta]');
 		var fechaAcepta = me.down('[name=fechaAcepta]');
-		
-		if (CONST.CARTERA['BANKIA'] == codigoCartera) {
-			me.habilitarCampo(comboAcepta);
-			me.campoObligatorio(comboAcepta);
-			me.habilitarCampo(fechaAcepta);
-			me.campoObligatorio(fechaAcepta);
 			
 			if($AU.userHasFunction('FUNC_AVANZA_FORMALIZACION_ALQUILER_BC')){
 				me.desbloquearCampo(comboAcepta);
@@ -4674,13 +4666,6 @@
 				me.bloquearCampo(comboAcepta);
 				me.bloquearCampo(fechaAcepta);
 			}
-			
-		} else {
-			me.deshabilitarCampo(comboAcepta);
-			me.ocultarCampo(comboAcepta);
-			me.deshabilitarCampo(fechaAcepta);
-			me.ocultarCampo(fechaAcepta);
-		}
 	},
 	
 	T015_EntregaFianzasValidacion: function(){

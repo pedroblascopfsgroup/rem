@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20220921
+--## FECHA_CREACION=20220922
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-18692
@@ -12,6 +12,7 @@
 --## VERSIONES:
 --##        0.1 Versión inicial - [HREOS-18692] - Alejandra García
 --##        0.2 Eliminar campo AGA_FECHA_ESCRITURACION al insertar en la ACT_AGA_AGRUPACION_ACTIVO - [HREOS-18692] - Alejandra García
+--##        0.3 Modificar el ROW_NUMBER del 7.2 y las consultas de cuando no viene el AM o la UA - [HREOS-18692] - Alejandra García
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -216,9 +217,9 @@ SALIDA := SALIDA ||'[INFO] 2.1 SE RELLLENA LA TABLA AUX_AM_NO_VIENE_STOCK'||CHR(
                      JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_ID = PROM.ACT_ID 
                            AND ACT.BORRADO = 0 
                      LEFT JOIN '||V_ESQUEMA||'.AUX_APR_BCR_STOCK AUX ON AUX.NUM_IDENTIFICATIVO = ACT.ACT_NUM_ACTIVO_CAIXA 
-                     JOIN '||V_ESQUEMA||'.AUX_STOCK_REGISTRO REGISTRO ON REGISTRO.ACT_ID = PROM.ACT_ID
+                     LEFT JOIN '||V_ESQUEMA||'.AUX_STOCK_REGISTRO REGISTRO ON REGISTRO.ACT_ID = PROM.ACT_ID
                      WHERE (STOCK.AGR_ID IS NULL AND TRUNC(REGISTRO.ULT_FECHA) + 5 <= TRUNC(SYSDATE))
-                     OR (TO_DATE(AUX.FEC_VALIDO_A, ''yyyyMMdd'') IS NOT NULL AND AUX.NUM_UNIDAD IS NOT NULL AND STOCK.AGR_ID IS NOT NULL)
+                     OR (TO_DATE(AUX.FEC_VALIDO_A, ''yyyyMMdd'') IS NOT NULL AND STOCK.AGR_ID IS NOT NULL)
                ) T2 ON(T1.ACT_ID = T2.ACT_ID)
                WHEN NOT MATCHED THEN 
                   INSERT(
@@ -375,7 +376,7 @@ SALIDA := SALIDA ||'[INFO] 4.1  RELLENAR TABLA AUX_UA_NO_VIENE_STOCK'||CHR(10);
                      JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_ID = PROM.ACT_ID 
                            AND ACT.BORRADO = 0 
                      LEFT JOIN '||V_ESQUEMA||'.AUX_APR_BCR_STOCK AUX ON AUX.NUM_IDENTIFICATIVO = ACT.ACT_NUM_ACTIVO_CAIXA 
-                     JOIN '||V_ESQUEMA||'.AUX_STOCK_REGISTRO REGISTRO ON REGISTRO.ACT_ID = PROM.ACT_ID
+                     LEFT JOIN '||V_ESQUEMA||'.AUX_STOCK_REGISTRO REGISTRO ON REGISTRO.ACT_ID = PROM.ACT_ID
                      WHERE (STOCK.ACT_ID IS NULL AND TRUNC(REGISTRO.ULT_FECHA) + 5 <= TRUNC(SYSDATE))
                      OR (TO_DATE(AUX.FEC_VALIDO_A, ''yyyyMMdd'') IS NOT NULL AND AUX.NUM_UNIDAD IS NOT NULL AND STOCK.AGR_ID IS NOT NULL)
                ) T2 ON(T1.ACT_ID = T2.ACT_ID)
@@ -867,7 +868,7 @@ SALIDA := SALIDA ||'[INFO] 7.2 CALCULAR LAS PARTICIPACIONES DE LA UAs QUE SE HAN
                            ,CANT.TOTAL
                            ,ROUND(100 / CANT.TOTAL, 2) TODOS_EXCEPTO_ULTIMO
                            ,100 - ((ROUND(100/ CANT.TOTAL, 2)) * (CANT.TOTAL - 1)) ULTIMO
-                           ,ROW_NUMBER() OVER(PARTITION BY AGA.AGA_ID ORDER BY ACT.ACT_ID DESC NULLS LAST) RN
+                           ,ROW_NUMBER() OVER(PARTITION BY AGA.AGR_ID ORDER BY ACT.ACT_ID DESC NULLS LAST) RN
                      FROM CANTIDAD_UAS_STOCK CANT
                      JOIN '||V_ESQUEMA||'.ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.AGR_ID = CANT.AGR_ID 
                            AND AGA.BORRADO = 0

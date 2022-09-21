@@ -57,10 +57,10 @@ DECLARE
     TYPE T_ARRAY_DATA2 IS TABLE OF T_TIPO_DATA2;
     V_TIPO_DATA2 T_ARRAY_DATA2 := T_ARRAY_DATA2(
       	-- Registros a insertar
-      	T_TIPO_DATA2('T015_AgendarFechaFirma','datefield','2','fechaAgendacionIngreso','Debe indicar si el cliente acepta','false','DDSiNo','Agendación de ingreso'),
+      	T_TIPO_DATA2('T015_AgendarFechaFirma','datefield','2','fechaAgendacionIngreso','Debe indicar si el cliente acepta','false',null,'Agendación de ingreso'),
       	T_TIPO_DATA2('T015_AgendarFechaFirma','textfield','3','lugarFirma','Lugar donde se va a firmar','false',null,'Lugar de la firma'),
-      	T_TIPO_DATA2('T015_AgendarFechaFirma','combobox','4','comboFianza','Fianza exonerada','false',null,'Fianza exonerada'),
-		T_TIPO_DATA2('T015_AgendarFechaFirma','numberfield','5','importe','Importe fianza','false',null,'Importe fianza'),
+      	T_TIPO_DATA2('T015_AgendarFechaFirma','combobox','4','comboFianza','Fianza exonerada','false','DDSiNo','Fianza exonerada'),
+		T_TIPO_DATA2('T015_AgendarFechaFirma','numberfield','5','importe','Importe fianza','false',null,'Importe fianza'),	
 		T_TIPO_DATA2('T015_AgendarFechaFirma','textfield','6','ibanDev','IBAN de devolución','false',null,'IBAN de devolución'),
 		T_TIPO_DATA2('T015_AgendarFechaFirma','datefield','7','fechaReagendarIngreso',null,null,null,'Reagendación de ingreso'),
 		T_TIPO_DATA2('T015_AgendarFechaFirma','datefield','8','fechaReagendarIngreso',null,null,null,'Reagendación de ingreso'),

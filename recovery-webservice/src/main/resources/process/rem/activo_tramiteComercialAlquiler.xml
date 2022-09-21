@@ -546,7 +546,6 @@
     <decision name ="T015_AgendarFechaFirmaDecision" expression="#{T015_AgendarFechaFirmaDecision}">
         <transition to="T015_Firma" name="AceptaFirma"></transition>
         <transition to="T015_EntregaFianzas" name="AceptaFianza"></transition>
-        <transition to="T015_CierreContrato" name="OK"></transition>
     </decision>
     
     <state name="T015_BloqueoScreening">

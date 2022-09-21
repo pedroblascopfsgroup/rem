@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20220920
+--## FECHA_CREACION=20220921
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-18692
@@ -11,6 +11,7 @@
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial - [HREOS-18692] - Alejandra García
+--##        0.2 Eliminar campo AGA_FECHA_ESCRITURACION al insertar en la ACT_AGA_AGRUPACION_ACTIVO - [HREOS-18692] - Alejandra García
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -594,7 +595,6 @@ SALIDA := SALIDA ||'[INFO] 6.2 DAR DE ALTA LAS NUEVAS AGRUPACIONES CON LOS AM NU
                      ,ACT_AGA_PARTICIPACION_UA
                      ,ACT_AGA_ID_PRINEX_HPM
                      ,PISO_PILOTO
-                     ,AGA_FECHA_ESCRITURACION
                   )VALUES(
                         S_ACT_AGA_AGRUPACION_ACTIVO.NEXTVAL
                         ,T2.AGR_ID
@@ -608,7 +608,6 @@ SALIDA := SALIDA ||'[INFO] 6.2 DAR DE ALTA LAS NUEVAS AGRUPACIONES CON LOS AM NU
                         ,0 
                         ,NULL
                         ,0
-                        ,NULL
                   )';
    EXECUTE IMMEDIATE V_MSQL;
 
@@ -646,7 +645,6 @@ SALIDA := SALIDA ||'[INFO] 6.3 DAR DE ALTA LAS NUEVAS AGRUPACIONES CON LAS UAs N
                      ,ACT_AGA_PARTICIPACION_UA
                      ,ACT_AGA_ID_PRINEX_HPM
                      ,PISO_PILOTO
-                     ,AGA_FECHA_ESCRITURACION
                   )VALUES(
                         S_ACT_AGA_AGRUPACION_ACTIVO.NEXTVAL
                         ,T2.AGR_ID
@@ -660,7 +658,6 @@ SALIDA := SALIDA ||'[INFO] 6.3 DAR DE ALTA LAS NUEVAS AGRUPACIONES CON LAS UAs N
                         ,NULL 
                         ,NULL
                         ,0
-                        ,NULL
                   )';
    EXECUTE IMMEDIATE V_MSQL;
 
@@ -817,7 +814,6 @@ SALIDA := SALIDA ||'[INFO] 7.1 AÑADIR UAs A UNA PROMOCIÓN ALQUILER EXISTENTE E
                      ,ACT_AGA_PARTICIPACION_UA
                      ,ACT_AGA_ID_PRINEX_HPM
                      ,PISO_PILOTO
-                     ,AGA_FECHA_ESCRITURACION
                   )VALUES(
                         S_ACT_AGA_AGRUPACION_ACTIVO.NEXTVAL
                         ,T2.AGR_ID
@@ -831,7 +827,6 @@ SALIDA := SALIDA ||'[INFO] 7.1 AÑADIR UAs A UNA PROMOCIÓN ALQUILER EXISTENTE E
                         ,NULL 
                         ,NULL
                         ,0
-                        ,NULL
                   )';
    EXECUTE IMMEDIATE V_MSQL;
 

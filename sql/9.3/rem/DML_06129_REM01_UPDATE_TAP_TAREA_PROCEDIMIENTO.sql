@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Javier Esbri
---## FECHA_CREACION=20220914
+--## AUTOR=Adrián Molina
+--## FECHA_CREACION=20220920
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-18270
@@ -110,7 +110,7 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('[INFO] Registro actualizado en '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO');
 	
 	/*Decision para T018_FirmaAdenda*/
-	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_DECISION = ''valores[''''T018_FirmaAdenda''''][''''comboResultado''''] == DDSiNo.SI ?  ''''acepta'''' : ''''rechaza'''''' 
+	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_DECISION = ''valores[''''T018_FirmaAdenda''''][''''comboResultado''''] == DDSiNo.SI ?  ''''acepta'''' : noFirmaMenosTresVeces() ? ''''rechazaMenosTresVeces'''' : ''''rechazaMasDosVeces'''''' 
 	WHERE TAP_CODIGO = ''T018_FirmaAdenda''';
 	DBMS_OUTPUT.PUT_LINE(V_MSQL);
 	EXECUTE IMMEDIATE V_MSQL;
@@ -196,6 +196,13 @@ BEGIN
 	/*Validacion JPBM para T018_DefinicionOferta*/
 	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_VALIDACION_JBPM = ''(valores[''''T018_DefinicionOferta''''][''''tipoOfertaAlquiler''''] == DDSubtipoOfertaAlquiler.CODIGO_SUBROGACION_DACION || valores[''''T018_DefinicionOferta''''][''''tipoOfertaAlquiler''''] == DDSubtipoOfertaAlquiler.CODIGO_SUBROGACION_EJECUCION) ? null : valores[''''T018_DefinicionOferta''''][''''expedienteAnterior''''] != null ? existeExpedienteComercialByNumExpediente(valores[''''T018_DefinicionOferta''''][''''expedienteAnterior'''']) ? isExpedienteDelMismoActivo(valores[''''T018_DefinicionOferta''''][''''expedienteAnterior''''])	? isExpedienteFirmado(valores[''''T018_DefinicionOferta''''][''''expedienteAnterior'''']) ? null : ''''El expediente anterior no tiene un contrato firmado'''' : ''''El expediente anterior no existe para este activo.''''	: ''''El expediente anterior no existe'''' : null'' 
 	WHERE TAP_CODIGO = ''T018_DefinicionOferta''';
+	DBMS_OUTPUT.PUT_LINE(V_MSQL);
+	EXECUTE IMMEDIATE V_MSQL;
+	DBMS_OUTPUT.PUT_LINE('[INFO] Registro actualizado en '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO');
+	
+	/*Validacion JPBM para T018_DecisionContinuidadOferta*/
+	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_VALIDACION_JBPM = ''checkExpedienteBloqueadoPorFuncion() ? ''''El expediente est&aacute; bloqueado'''' : null'' 
+	WHERE TAP_CODIGO = ''T018_DecisionContinuidadOferta''';
 	DBMS_OUTPUT.PUT_LINE(V_MSQL);
 	EXECUTE IMMEDIATE V_MSQL;
 	DBMS_OUTPUT.PUT_LINE('[INFO] Registro actualizado en '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO');

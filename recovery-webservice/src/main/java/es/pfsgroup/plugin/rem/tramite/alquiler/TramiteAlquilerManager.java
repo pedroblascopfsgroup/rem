@@ -1,6 +1,5 @@
 package es.pfsgroup.plugin.rem.tramite.alquiler;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -8,8 +7,6 @@ import javax.annotation.Resource;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.commons.validator.routines.IBANValidator;
-import org.apache.commons.validator.routines.checkdigit.IBANCheckDigit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +16,6 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.capgemini.pfs.users.domain.Usuario;
-import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -32,10 +28,6 @@ import es.pfsgroup.plugin.rem.api.TramiteAlquilerApi;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
-import es.pfsgroup.plugin.rem.model.CuentasVirtualesAlquiler;
-import es.pfsgroup.plugin.rem.model.DtoCondicionantesExpediente;
-import es.pfsgroup.plugin.rem.model.DtoDocPostVenta;
-import es.pfsgroup.plugin.rem.model.DtoTabFianza;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Fianzas;
 import es.pfsgroup.plugin.rem.model.HistoricoReagendacion;
@@ -61,6 +53,7 @@ public class TramiteAlquilerManager implements TramiteAlquilerApi {
 	
 	private static final String CAMPO_DEF_OFERTA_TIPOTRATAMIENTO = "tipoTratamiento";
 	private static final String FUNCION_FUN_AVANZAR_PBC = "FUN_AVANZAR_PBC";
+	private static final String FUNC_AVANZA_FORMALIZACION_ALQUILER_NC_BC = "FUNC_AVANZA_FORMALIZACION_ALQUILER_NC_BC";
 	
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
@@ -380,5 +373,15 @@ public class TramiteAlquilerManager implements TramiteAlquilerApi {
 			esOfertaSubrogacionEjecHip = true;
 		}
 		return esOfertaSubrogacionEjecHip;
+	}
+	
+	@Override
+	public boolean usuarioTieneFuncionAvanzarFormalizacionAlquilerNoComercialBC() {
+		boolean resultado = false;
+		Usuario usuario = genericAdapter.getUsuarioLogado();
+		if(funcionApi.elUsuarioTieneFuncion(FUNC_AVANZA_FORMALIZACION_ALQUILER_NC_BC, usuario)) {
+			resultado = true;
+		}
+		return resultado;
 	}
 }

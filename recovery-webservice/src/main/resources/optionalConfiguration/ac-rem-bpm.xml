@@ -858,7 +858,7 @@
             }
             def rechazaMenosDosVeces = {
             	def tramiteAlquilerNoComercialManager = ctx.getBean("tramiteAlquilerNoComercialManager");
-            	return tramiteAlquilerNoComercialManager.rechazaMenosDosVeces(tareaExterna);
+            	return tramiteAlquilerNoComercialManager.(tareaExterna);
             }
             def conAdenda (String tipoAdenda) {
             	def tramiteAlquilerNoComercialManager = ctx.getBean("tramiteAlquilerNoComercialManager");
@@ -880,7 +880,15 @@
             	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
             	return expedienteComercialManager.checkEstadoBcClausuladoNoComerciable(tareaExterna);
             }
-                       
+			def isTipoAdendaVacio = {
+				def tramiteAlquilerNoComercialManager = ctx.getBean("tramiteAlquilerNoComercialManager");
+            	return tramiteAlquilerNoComercialManager.isTipoAdendaVacio(tareaExterna);
+			}
+			def noFirmaMenosTresVeces = {
+				def tramiteAlquilerNoComercialManager = ctx.getBean("tramiteAlquilerNoComercialManager");
+            	return tramiteAlquilerNoComercialManager.noFirmaMenosTresVeces(tareaExterna);
+			}
+           
   			 ]]></value>
   		</list>
   	</property>

@@ -404,10 +404,10 @@
 		<transition to="T018_AprobacionOfertaDecision" name="avanzaBPM"></transition>
 	</state> 
 	<decision name ="T018_AprobacionOfertaDecision" expression="#{T018_AprobacionOfertaDecision}">
-		<transition to="T018_ComunicarSubrogacion" name="aceptaSubrogacion"></transition>
 		<transition to="T018_AgendarFirma" name="aceptaNoSubrogacion"></transition>
 		<transition to="T018_RespuestaContraofertaBC" name="rechazaRenovacionAlquilerSocial"></transition>
-		<transition to="T018_ComunicarSubrogacion" name="rechazaSubrogacionDacion"></transition>
+		<transition to="Fin" name="aceptaSubrogacion"></transition>
+		<transition to="Fin" name="rechazaSubrogacionDacion"></transition>
 		<transition to="T018_AltaContratoAlquilerAdenda" name="aceptaSubrogacionHipotecariaSinAdenda"></transition>
 		<transition to="T018_AgendarFirmaAdenda" name="aceptaSubrogacionHipotecariaConAdenda"></transition>
 		<transition to="Fin" name="rechazaSubrogacionHipotecaria"></transition>
@@ -542,8 +542,36 @@
 		<transition to="Fin" name="Fin"></transition>
 	</state> 
 	<decision name ="T018_FirmaAdendaDecision" expression="#{T018_FirmaAdendaDecision}">
-		<transition to="T018_AltaContratoAlquilerAdenda" name="acepta"></transition>
-		<transition to="T018_AgendarFirmaAdenda" name="rechaza"></transition>
+		<transition to="Fin" name="acepta"></transition>
+		<transition to="T018_AgendarFirmaAdenda" name="rechazaMenosTresVeces"></transition>
+		<transition to="T018_DecisionContinuidadOferta" name="rechazaMasDosVeces"></transition>
+	</decision>
+	
+	<state name="T018_DecisionContinuidadOferta">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="T018_DecisionContinuidadOfertaDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state> 
+	<decision name ="T018_DecisionContinuidadOfertaDecision" expression="#{T018_DecisionContinuidadOfertaDecision}">
+		<transition to="Fin" name="acepta"></transition>
+		<transition to="Fin" name="rechaza"></transition>
 	</decision>
 	
 	<state name="T018_AltaContratoAlquilerAdenda">

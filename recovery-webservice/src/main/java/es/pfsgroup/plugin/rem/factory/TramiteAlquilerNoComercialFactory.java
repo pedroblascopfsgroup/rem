@@ -6,5 +6,5 @@ import es.pfsgroup.plugin.rem.tramite.alquiler.no.comercial.TramiteAlquilerNoCom
 public interface TramiteAlquilerNoComercialFactory {
 	
 	TramiteAlquilerNoComercial getTramiteAlquilerNoComercial(TareaExterna tareaExterna);
-
+	
 }

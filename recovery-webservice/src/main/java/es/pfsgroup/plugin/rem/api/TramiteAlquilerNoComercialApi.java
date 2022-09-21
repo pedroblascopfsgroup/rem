@@ -46,5 +46,9 @@ public interface TramiteAlquilerNoComercialApi {
 	
 	boolean esCarteraConcentrada(TareaExterna tareaExterna);
 	
+	boolean isAdendaVacio(TareaExterna tareaExterna);
+	
+	boolean noFirmaMenosTresVeces(TareaExterna tareaExterna);
+	
 }
 

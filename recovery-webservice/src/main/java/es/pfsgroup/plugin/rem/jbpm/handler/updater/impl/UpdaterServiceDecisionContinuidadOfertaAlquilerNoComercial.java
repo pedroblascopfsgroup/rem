@@ -22,9 +22,10 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.HistoricoFirmaAdenda;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 
 @Component
-public class UpdaterServiceFirmaAdendaAlquilerNoComercial implements UpdaterService {
+public class UpdaterServiceDecisionContinuidadOfertaAlquilerNoComercial implements UpdaterService {
 	
 	@Autowired
     private ExpedienteComercialApi expedienteComercialApi;
@@ -32,56 +33,42 @@ public class UpdaterServiceFirmaAdendaAlquilerNoComercial implements UpdaterServ
 	@Autowired
 	private GenericABMDao genericDao;
 	
-    protected static final Log logger = LogFactory.getLog(UpdaterServiceFirmaAdendaAlquilerNoComercial.class);
+    protected static final Log logger = LogFactory.getLog(UpdaterServiceDecisionContinuidadOfertaAlquilerNoComercial.class);
     
-	private static final String CODIGO_T018_FIRMA_ADENDA = "T018_FirmaAdenda";
-	private static final String COMBO_ACEPTA_FIRMA = "comboResultado";
+	private static final String CODIGO_T018_DECISION_CONTINUIDAD_OFERTA = "T018_DecisionContinuidadOferta";
+	private static final String COMBO_SEGUIR_OFERTA = "seguirOferta";
 	
 	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
 
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
 		Oferta oferta = expedienteComercial.getOferta();
 		DDEstadoExpedienteBc estadoExpBC = null;
-		
-		Filter filtroOferta = genericDao.createFilter(FilterType.EQUALS, "oferta", oferta);
-		List<HistoricoFirmaAdenda> historicosFirmasAdendas = genericDao.getList(HistoricoFirmaAdenda.class, filtroOferta);
-		HistoricoFirmaAdenda historicoFirmaAdenda = new HistoricoFirmaAdenda();
-		
+		DDMotivoAnulacionExpediente motivoAnulacion = null;
+				
 		for(TareaExternaValor valor :  valores){
-			if(COMBO_ACEPTA_FIRMA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+			if(COMBO_SEGUIR_OFERTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 				if(DDSiNo.SI.equals(valor.getValor())) { 
-					historicoFirmaAdenda.setFirmadoAdenda(1);
 					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigoC4C", "130");
 					estadoExpBC = genericDao.get(DDEstadoExpedienteBc.class,filtro);
 				}else {
-					historicoFirmaAdenda.setFirmadoAdenda(0);
-					if(historicosFirmasAdendas != null && !historicosFirmasAdendas.isEmpty()) {
-						if(historicosFirmasAdendas.size() > 2) {
-							Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigoC4C", "870");
-							estadoExpBC = genericDao.get(DDEstadoExpedienteBc.class,filtro);
-						}
-					}else {
-						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigoC4C", "870");
-						estadoExpBC = genericDao.get(DDEstadoExpedienteBc.class,filtro);
-					}
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigoC4C", "150");
+					estadoExpBC = genericDao.get(DDEstadoExpedienteBc.class,filtro);
+					
+					Filter filtroAnulacion = genericDao.createFilter(FilterType.EQUALS, "codigoC4C", "400");
+					motivoAnulacion = genericDao.get(DDMotivoAnulacionExpediente.class,filtroAnulacion);
 				}
 			}
 		}
-		
-		historicoFirmaAdenda.setFechaAdenda(new Date());
-		historicoFirmaAdenda.setOferta(oferta);
+
 		expedienteComercial.setEstadoBc(estadoExpBC);
-				
-		if(historicoFirmaAdenda != null) {
-			genericDao.save(HistoricoFirmaAdenda.class, historicoFirmaAdenda);
-		}
-		
+		expedienteComercial.setMotivoAnulacion(motivoAnulacion);
+
 		genericDao.save(ExpedienteComercial.class, expedienteComercial);
 		
 	}
 
 	public String[] getCodigoTarea() {
-		return new String[]{CODIGO_T018_FIRMA_ADENDA};
+		return new String[]{CODIGO_T018_DECISION_CONTINUIDAD_OFERTA};
 	}
 
 	public String[] getKeys() {

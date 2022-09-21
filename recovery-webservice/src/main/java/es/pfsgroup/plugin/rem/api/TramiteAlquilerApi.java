@@ -1,11 +1,8 @@
 package es.pfsgroup.plugin.rem.api;
 
-import java.util.Date;
 import java.util.List;
 
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
-import es.pfsgroup.plugin.rem.model.DtoCondicionantesExpediente;
-import es.pfsgroup.plugin.rem.model.DtoTabFianza;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 
 public interface TramiteAlquilerApi {
@@ -49,6 +46,8 @@ public interface TramiteAlquilerApi {
 	boolean esOfertaSubrogacion(Long idExpediente);
 	
 	boolean esOfertaSubrogacionEjecHip(Long idExpediente);
+	
+	boolean usuarioTieneFuncionAvanzarFormalizacionAlquilerNoComercialBC();
 	
 }
 

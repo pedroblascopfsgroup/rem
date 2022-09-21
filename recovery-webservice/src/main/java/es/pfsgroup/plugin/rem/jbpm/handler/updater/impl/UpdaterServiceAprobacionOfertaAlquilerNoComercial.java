@@ -22,7 +22,7 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDSubtipoOfertaAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAdenda;
 
 @Component
 public class UpdaterServiceAprobacionOfertaAlquilerNoComercial implements UpdaterService {
@@ -50,6 +50,7 @@ public class UpdaterServiceAprobacionOfertaAlquilerNoComercial implements Update
 		boolean estadoModificado = false;
 		boolean subrogacionDacion = tramiteAlquilerNoComercialApi.esSubrogacionCompraVenta(tareaExternaActual);
 		boolean novacionRenovacion = tramiteAlquilerNoComercialApi.esRenovacion(tareaExternaActual);
+		boolean subrogacionHipotecaria = tramiteAlquilerNoComercialApi.esSubrogacionHipoteca(tareaExternaActual);
  		DDEstadoExpedienteBc estadoExpBC = null;
  		DDEstadosExpedienteComercial estadoExpComercial = null;
  		
@@ -63,13 +64,21 @@ public class UpdaterServiceAprobacionOfertaAlquilerNoComercial implements Update
 		
 		if (clienteAceptaBorrador) {
 			if (subrogacionDacion) {
-				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigoC4C", "770");
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigoC4C", "130");
 				estadoExpBC = genericDao.get(DDEstadoExpedienteBc.class,filtro);
-				Filter filtroEstadoExpComer = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PTE_COMUNICAR_SUBROGACION);
-				estadoExpComercial = genericDao.get(DDEstadosExpedienteComercial.class,filtroEstadoExpComer);
+				/*Filter filtroEstadoExpComer = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PTE_COMUNICAR_SUBROGACION);
+				estadoExpComercial = genericDao.get(DDEstadosExpedienteComercial.class,filtroEstadoExpComer);*/
 			} else if (novacionRenovacion) {
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigoC4C", "730");
 				estadoExpBC = genericDao.get(DDEstadoExpedienteBc.class,filtro);
+			}else if (subrogacionHipotecaria) {
+				if(DDTipoAdenda.CODIGO_NO_APLICA_ADENDA.equals(oferta.getTipoAdenda().getCodigo())) {
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigoC4C", "130");
+					estadoExpBC = genericDao.get(DDEstadoExpedienteBc.class,filtro);
+				}else {
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigoC4C", "550");
+					estadoExpBC = genericDao.get(DDEstadoExpedienteBc.class,filtro);
+				}
 			}
 		} else {
 			if (subrogacionDacion) {

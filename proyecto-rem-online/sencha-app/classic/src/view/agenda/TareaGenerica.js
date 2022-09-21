@@ -5312,6 +5312,26 @@
 		});
 		
 	},
+	
+	T018_DecisionContinuidadOfertaValidacion: function(){
+		var me = this;
+		var idExpediente = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
+		var seguirOferta = me.down('[name=seguirOferta]');
+		var justificacion = me.down('[name=justificacion]');
+		
+		Ext.Ajax.request({
+			url: $AC.getRemoteUrl('expedientecomercial/usuarioTieneFuncionAvanzarPBC'),
+			params: {idExpediente : idExpediente},
+		    success: function(response, opts) {
+		    	var data = Ext.decode(response.responseText);
+		    	var dto = data.data;
+		    	if(!Ext.isEmpty(dto) && dto === "false"){
+			    	me.deshabilitarCampo(seguirOferta);
+			    	me.deshabilitarCampo(justificacion);
+		    	}
+		    }
+		});
+	},
     
     habilitarCampo: function(campo) {
         var me = this;

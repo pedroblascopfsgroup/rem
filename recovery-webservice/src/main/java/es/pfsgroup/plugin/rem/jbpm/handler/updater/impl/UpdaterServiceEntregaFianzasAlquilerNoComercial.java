@@ -34,9 +34,6 @@ public class UpdaterServiceEntregaFianzasAlquilerNoComercial implements UpdaterS
     private ExpedienteComercialApi expedienteComercialApi;
     
 	@Autowired
-	private OfertaApi ofertaApi;
-	
-	@Autowired
 	private TramiteAlquilerNoComercialApi tramiteAlquilerNoComercialApi;
 
     protected static final Log logger = LogFactory.getLog(UpdaterServiceEntregaFianzasAlquilerNoComercial.class);
@@ -48,13 +45,7 @@ public class UpdaterServiceEntregaFianzasAlquilerNoComercial implements UpdaterS
 		
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
 		boolean fianzaAbonada = false;
-		boolean estadoBcModificado = false;
-		boolean estadoModificado = false;
-		boolean novacionRenovacion = tramiteAlquilerNoComercialApi.esRenovacion(tareaExternaActual);
-		boolean alquilerSocial = tramiteAlquilerNoComercialApi.esAlquilerSocial(tareaExternaActual);
-		boolean reagendaMenos2veces = tramiteAlquilerNoComercialApi.rechazaMenosDosVeces(tareaExternaActual);
- 		DDEstadoExpedienteBc estadoExpBC = null;
- 		DDEstadosExpedienteComercial estadoExpComercial = null;
+		String estadoBC;
  		
  		for(TareaExternaValor valor :  valores){
 			
@@ -66,35 +57,17 @@ public class UpdaterServiceEntregaFianzasAlquilerNoComercial implements UpdaterS
 		}
  		
  		if (fianzaAbonada) {
- 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigoC4C", "740");
-			estadoExpBC = genericDao.get(DDEstadoExpedienteBc.class,filtro);
-//			Filter filtroEstadoExpComer = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.FIRMADO);
-//			estadoExpComercial = genericDao.get(DDEstadosExpedienteComercial.class,filtroEstadoExpComer);
+ 			estadoBC = DDEstadoExpedienteBc.CODIGO_FIRMA_DE_CONTRATO_AGENDADO;
 		} else {
-			if (novacionRenovacion) {
-				if(reagendaMenos2veces) {
-					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigoC4C", "100");
-					estadoExpBC = genericDao.get(DDEstadoExpedienteBc.class,filtro);
-				}else {
-					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigoC4C", "120");
-					estadoExpBC = genericDao.get(DDEstadoExpedienteBc.class,filtro);
-				}
-			} else if (alquilerSocial) {
-				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigoC4C", "100");
-				estadoExpBC = genericDao.get(DDEstadoExpedienteBc.class,filtro);
+			if(tramiteAlquilerNoComercialApi.rechazaMenosDosVeces(tareaExternaActual)) {
+				estadoBC = DDEstadoExpedienteBc.CODIGO_BORRADOR_ACEPTADO;
+			}else {
+				estadoBC = DDEstadoExpedienteBc.CODIGO_VALIDACION_DE_FIRMA_DE_CONTRATO_POR_BC;
 			}
-			
-//			Filter filtroEstadoExpComer = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.FIRMADO);
-//			estadoExpComercial = genericDao.get(DDEstadosExpedienteComercial.class,filtroEstadoExpComer);
 		}
  		
- 		expedienteComercial.setEstadoBc(estadoExpBC);
-		estadoBcModificado = true;
-		expedienteComercial.setEstado(estadoExpComercial);
-		estadoModificado = true;
-		genericDao.save(ExpedienteComercial.class, expedienteComercial);
-
-			
+ 		expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class,genericDao.createFilter(FilterType.EQUALS, "codigo", estadoBC)));
+		genericDao.save(ExpedienteComercial.class, expedienteComercial);			
 	}
 
 	public String[] getCodigoTarea() {

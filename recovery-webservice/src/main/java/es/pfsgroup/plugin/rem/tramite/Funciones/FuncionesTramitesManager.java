@@ -223,14 +223,10 @@ public class FuncionesTramitesManager implements FuncionesTramitesApi {
 			Oferta ofr = eco.getOferta();
 			if (ofr != null) {
 				Filter filterCva =  genericDao.createFilter(FilterType.EQUALS, "subcartera", ofr.getActivoPrincipal().getSubcartera());
-				List <CuentasVirtualesAlquiler> cva = genericDao.getList(CuentasVirtualesAlquiler.class, filterCva);
-				if (cva != null && cva.size() >= 1 && !cva.isEmpty()) {
-					for (CuentasVirtualesAlquiler cuentasVirtualesAlquiler : cva) {
-						if (Checks.isFechaNula(cuentasVirtualesAlquiler.getFechaInicio())) {
-							resultado = true;
-							break;
-						}
-					}
+				Filter cuentaLibre = genericDao.createFilter(FilterType.NULL, "fechaInicio");
+				List <CuentasVirtualesAlquiler> cvaList = genericDao.getList(CuentasVirtualesAlquiler.class, filterCva, cuentaLibre);
+				if(cvaList != null && !cvaList.isEmpty()) {
+					resultado = true;
 				}
 			}
 		}
@@ -307,4 +303,18 @@ public class FuncionesTramitesManager implements FuncionesTramitesApi {
 		return dto;
 	}
 
+	@Override
+	public boolean seNecesitaCuentaVirtualAlquiler(TareaExterna tareaExterna) {
+		boolean resultado = false;
+		ExpedienteComercial eco = expedienteComercialApi.tareaExternaToExpedienteComercial(tareaExterna);
+		CondicionanteExpediente coe = eco.getCondicionante();
+		
+		Fianzas fia = genericDao.get(Fianzas.class, genericDao.createFilter(FilterType.EQUALS, "oferta.id", eco.getOferta().getId()));
+		
+		if(fia != null && fia.getCuentaVirtualAlquiler() == null && (coe.getFianzaExonerada() == null || !coe.getFianzaExonerada())) {
+			resultado = true;
+		} 
+			
+		return resultado;
+	}
 }

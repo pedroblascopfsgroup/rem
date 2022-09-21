@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR= Lara Pablo
---## FECHA_CREACION=20220921
+--## FECHA_CREACION=20220922
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-18727
@@ -43,7 +43,7 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(800);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-    	T_TIPO_DATA('T015_AgendarFechaFirma', 'checkCuentasVirtualesAlquilerLibres() ? checkIBANValido(valores[''''T015_AgendarFechaFirma''''][''''ibanDev''''])  ? null : ''''El formato del IBAN no es v&aacute;lido'''' : ''''No existen cuentas virtuales libres''''','checkBankia() ? valores[''''T015_AgendarFechaFirma''''][''''comboFianza''''] == DDSiNo.SI ? ''''AceptaFirma'''' : ''''AceptaFianza'''' ')
+    	T_TIPO_DATA('T015_AgendarFechaFirma', 'seNecesitaCuentaVirtualAlquiler() && checkCuentasVirtualesAlquilerLibres() ? checkIBANValido(valores[''''T015_AgendarFechaFirma''''][''''ibanDev''''])  ? null : ''''El formato del IBAN no es v&aacute;lido'''' : ''''No existen cuentas virtuales libres''''','valores[''''T015_AgendarFechaFirma''''][''''comboFianza''''] == DDSiNo.SI ? ''''AceptaFirma'''' : ''''AceptaFianza'''' ')
        ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 BEGIN

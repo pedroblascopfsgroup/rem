@@ -39,5 +39,7 @@ public interface FuncionesTramitesApi {
 	DtoTabFianza getDtoFianza(Long idExpediente);
 	
 	DtoTipoAlquiler getDtoTipoAlquiler(Long idExpediente);
+
+	boolean seNecesitaCuentaVirtualAlquiler(TareaExterna tareaExterna);
 }
 

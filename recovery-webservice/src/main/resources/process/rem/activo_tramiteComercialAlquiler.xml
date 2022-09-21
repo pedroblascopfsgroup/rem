@@ -541,11 +541,13 @@
 			</action>
 		</event>
 		<transition to="T015_AgendarFechaFirmaDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
     </state>
     
     <decision name ="T015_AgendarFechaFirmaDecision" expression="#{T015_AgendarFechaFirmaDecision}">
         <transition to="T015_Firma" name="AceptaFirma"></transition>
         <transition to="T015_EntregaFianzas" name="AceptaFianza"></transition>
+        <transition to="Fin" name="Fin"></transition>
     </decision>
     
     <state name="T015_BloqueoScreening">

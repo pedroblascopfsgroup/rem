@@ -4562,57 +4562,26 @@
 	
 	T015_EntregaFianzasValidacion: function(){
 		var me = this;
-		var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
-		var idExpediente = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
-		
 		var comboFianza = me.down('[name=comboFianza]');
 		var fechaAbono = me.down('[name=fechaAbono]');
-		var justificacion = me.down('[name=justificacion]');
-		
-		if (CONST.CARTERA['BANKIA'] == codigoCartera) {
-			me.habilitarCampo(comboFianza);
-			me.campoObligatorio(comboFianza);
-			fechaAbono.setDisabled(false);
-			me.down('[name=comboFianza]').addListener('change', function(combo) {
-				if (combo.value == '01') { //SI
-					me.campoObligatorio(fechaAbono);
-				} else { //NO
-					me.campoNoObligatorio(fechaAbono);
-				}
-			});
-			
-			me.editableyNoObligatorio(justificacion);
-			
-		} else {
-			me.deshabilitarCampo(comboFianza);
-			me.ocultarCampo(comboFianza);
-			me.deshabilitarCampo(fechaAbono);
-			me.ocultarCampo(fechaAbono);
-			me.deshabilitarCampo(justificacion);
-			me.ocultarCampo(justificacion);
-		}
+
+		comboFianza.addListener('change', function(comboFianza) {
+			if (comboFianza.value == CONST.COMBO_SIN_SINO['SI']) { 
+				me.campoObligatorio(fechaAbono);
+			} else { 
+				me.campoNoObligatorio(fechaAbono);
+			}
+		});
 	},
 	
 	T015_RespuestaBcReagendacionValidacion: function(){
 		var me = this;
-		var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
-		var idExpediente = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
-		
 		var comboReagendacion = me.down('[name=comboReagendacion]');
 		
-		if (CONST.CARTERA['BANKIA'] == codigoCartera) {
-			me.habilitarCampo(comboReagendacion);
-			me.campoObligatorio(comboReagendacion);
-			
-			if($AU.userHasFunction('FUNC_AVANZA_FORMALIZACION_ALQUILER_BC')){
-				me.desbloquearCampo(comboReagendacion);
-			} else {
-				me.bloquearCampo(comboReagendacion);
-			}
-			
+		if($AU.userHasFunction('FUNC_AVANZA_FORMALIZACION_ALQUILER_BC')){
+			me.desbloquearCampo(comboReagendacion);
 		} else {
-			me.deshabilitarCampo(comboReagendacion);
-			me.ocultarCampo(comboReagendacion);
+			me.bloquearCampo(comboReagendacion);
 		}
 	},
 	
@@ -4841,35 +4810,17 @@
 	
 	T018_EntregaFianzasValidacion: function(){
 		var me = this;
-		var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
-		var idExpediente = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
-		
 		var comboResultado = me.down('[name=comboResultado]');
 		var fechaAbono = me.down('[name=fechaAbono]');
-		var justificacion = me.down('[name=justificacion]');
 		
-		if (CONST.CARTERA['BANKIA'] == codigoCartera) {
-			me.habilitarCampo(comboResultado);
-			me.campoObligatorio(comboResultado);
-			fechaAbono.setDisabled(false);
-			me.down('[name=comboResultado]').addListener('change', function(combo) {
-				if (combo.value == '01') { //SI
-					me.campoObligatorio(fechaAbono);
-				} else { //NO
-					me.campoNoObligatorio(fechaAbono);
-				}
-			});
-			
-			me.editableyNoObligatorio(justificacion);
-			
-		} else {
-			me.deshabilitarCampo(comboResultado);
-			me.ocultarCampo(comboResultado);
-			me.deshabilitarCampo(fechaAbono);
-			me.ocultarCampo(fechaAbono);
-			me.deshabilitarCampo(justificacion);
-			me.ocultarCampo(justificacion);
-		}
+
+		comboResultado.addListener('change', function(comboResultado) {
+			if (combo.value == CONST.COMBO_SIN_SINO['SI']) { 
+				me.campoObligatorio(fechaAbono);
+			} else {
+				me.campoNoObligatorio(fechaAbono);
+			}
+		});	
 	},
 	
 	T018_RespuestaReagendacionBCValidacion: function(){
@@ -5010,6 +4961,7 @@
 		    		if(CONST.COMBO_SIN_SINO['NO'] == comboFianza.getValue()){
 			    		if (!Ext.isEmpty(dto.agendacionIngreso)) {
 			    			me.bloquearObligatorio(fechaAgendacionIngreso);
+			    			fechaAgendacionIngreso.setReadOnly(true);
 			    			me.bloquearObligatorio(comboFianza);
 			    			me.desbloquearCampo(fechaReagendarIngreso);
 			    			me.editableyNoObligatorio(justificacion);

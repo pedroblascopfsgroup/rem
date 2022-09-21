@@ -50,56 +50,34 @@ public class UpdaterServiceSancionOfertaAlquilerRespuestaBcReagendacion implemen
 	@Override
 	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
 
-		boolean estadoBcModificado = false;
+
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
 		boolean aprueba = false;
-		String estadoExp = null;
 		String estadoBc = null;
-		String comboReagendacion = null;
-		String observaciones = null;
-		DDEstadoExpedienteBc estadoExpBC = null;
 		
 		for(TareaExternaValor valor :  valores){
 			
 			if(COMBO_RESULTADO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 				if (DDSiNo.SI.equals(valor.getValor())) {					
 					aprueba = true;
-					comboReagendacion = valor.getValor();
+					estadoBc = DDEstadoExpedienteBc.CODIGO_BORRADOR_ACEPTADO;
 				}
-			}
-			if(CAMPO_OBSERVACIONES.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-				observaciones = valor.getValor();
-			}
-			
+			}			
 		}
 		
-		if (aprueba) {
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigoC4C", "120");
-			estadoExpBC = genericDao.get(DDEstadoExpedienteBc.class,filtro);
-			/*estadoExp =  DDEstadosExpedienteComercial.PTE_ENVIO;
-			estadoBc =  DDEstadoExpedienteBc.CODIGO_IMPORTE_FINAL_APROBADO;*/
-		} else{
-			estadoExp =  DDEstadosExpedienteComercial.DENEGADO;
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigoC4C", "20");
-			estadoExpBC = genericDao.get(DDEstadoExpedienteBc.class,filtro);
+		if (!aprueba) {
+			//estadoExp =  DDEstadosExpedienteComercial.DENEGADO;
+			estadoBc = DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO;
 			Oferta oferta = expedienteComercial.getOferta();
 			expedienteComercial.setFechaAnulacion(new Date());
-			expedienteComercial.setMotivoAnulacion(genericDao.get(DDMotivoAnulacionExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoAnulacionExpediente.COD_CAIXA_RECHAZADO_PBC)));
-			expedienteComercial.setDetalleAnulacionCntAlquiler(observaciones);
-			
+			//expedienteComercial.setMotivoAnulacion(genericDao.get(DDMotivoAnulacionExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoAnulacionExpediente.COD_CAIXA_RECHAZADO_PBC)));
+
 			if(oferta != null) {
 				ofertaApi.finalizarOferta(oferta);
 			}
-			
-			expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoExp)));
-			expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoBc)));
-			estadoBcModificado = true;
-			genericDao.save(ExpedienteComercial.class, expedienteComercial);
 		}
 		
-		/*expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoExp)));*/
-		expedienteComercial.setEstadoBc(estadoExpBC);
-		estadoBcModificado = true;
+		expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoBc)));
 		genericDao.save(ExpedienteComercial.class, expedienteComercial);
 	}
 

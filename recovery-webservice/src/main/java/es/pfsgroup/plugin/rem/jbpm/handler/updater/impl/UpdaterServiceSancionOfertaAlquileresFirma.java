@@ -12,14 +12,10 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
-import org.springframework.ui.ModelMap;
 
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
-import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
@@ -30,10 +26,7 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
-import es.pfsgroup.plugin.rem.alaskaComunicacion.AlaskaComunicacionManager;
-import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
-import es.pfsgroup.plugin.rem.api.GenericApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
@@ -44,11 +37,8 @@ import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
-import es.pfsgroup.plugin.rem.model.CuentasVirtualesAlquiler;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.Fianzas;
 import es.pfsgroup.plugin.rem.model.HistoricoOcupadoTitulo;
-import es.pfsgroup.plugin.rem.model.HistoricoReagendacion;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
@@ -58,7 +48,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
-import es.pfsgroup.plugin.rem.thread.ConvivenciaAlaska;
 
 @Component
 public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterService {
@@ -90,15 +79,6 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
 	@Autowired
 	private OfertaApi ofertaApi;
 	
-	@Autowired
-	private GenericApi genericApi;
-
-	@Autowired
-	private AlaskaComunicacionManager alaskaComunicacionManager;
-	
-	@Autowired
-	private UsuarioManager usuarioManager;
-
 	@Resource(name = "entityTransactionManager")
 	private PlatformTransactionManager transactionManager;
 
@@ -108,33 +88,14 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
 	private static final String COMBO_RESULTADO= "comboResultado";
 	private static final String FECHA_INICIO = "fechaInicio";
 	private static final String FECHA_FIN = "fechaFin";
-	private static final String COMBO_FIRMA = "comboFirma";
-	
-	private static final String COMBO_FIANZA_EXONERADA = "comboFianza";
-	private static final String FECHA_AGENDACION= "fechaAgendacionIngreso";
-	private static final String FECHA_REAGENDAR_INGRESO = "fechaReagendarIngreso";
-	private static final String IMPORTE = "importe";
-	private static final String IBAN_DEVOLUCION = "ibanDev";
 	
 	private static final String CODIGO_T015_FIRMA = "T015_Firma";
-	private static final String CODIGO_T015_AGENDAR_FIRMA = "T015_AgendarFechaFirma";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 	
 	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
 		boolean anular = false;
-		boolean modificadoEstadoBC = false;
-		String fechaFirma = null;
 		boolean fechaOfertaModificada = false;
-		boolean fianzaExonerada = false;
-		boolean fechaReagendacionRelleno = false;
-		boolean tareaAgendar = false;
-		String fechaAgendacionValor = null;
-		String fechaReagendarIngresoValor = null;
-		String importe = null;
-		String ibanDevolucion = null;
-		String codigoTarea = tareaExternaActual.getTareaProcedimiento().getCodigo();
-		Fianzas fianza = null;
 		
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
 		DDEstadosExpedienteComercial estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.PTE_CIERRE));
@@ -142,8 +103,6 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
 		Oferta oferta = expedienteComercial.getOferta();
 		ActivoSituacionPosesoria sitpos = tramite.getActivo().getSituacionPosesoria();
 		Usuario usu = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
-		Filter filterOfr =  genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId());
-		Fianzas fia = genericDao.get(Fianzas.class, filterOfr);
 		List<ActivoAgrupacionActivo> agrupacionesActivo = activo.getAgrupaciones();
 		for(ActivoAgrupacionActivo activoAgrupacionActivo : agrupacionesActivo){
 			if(!Checks.esNulo(activoAgrupacionActivo.getAgrupacion()) && !Checks.esNulo(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion())){
@@ -173,7 +132,6 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
 				} catch (ParseException e) {
 					logger.error("Error insertando Fecha anulación.", e);
 				}
-				fechaFirma = valor.getValor();
 			}
 			if(COMBO_RESULTADO.equals(valor.getNombre()) && !Checks.esNulo(DDSinSiNo.cambioStringtoBooleano(valor.getValor())) && !DDSinSiNo.cambioStringtoBooleano(valor.getValor())) {
 				anular = true;
@@ -197,31 +155,6 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
 				}
 			}
 			
-			if (DDCartera.CODIGO_CAIXA.equals(activo.getCartera().getCodigo()) && CODIGO_T015_AGENDAR_FIRMA.equalsIgnoreCase(codigoTarea)) {
-				tareaAgendar = true;
-				if (COMBO_FIANZA_EXONERADA.equals(valor.getNombre()) && !Checks.esNulo(DDSinSiNo.cambioStringtoBooleano(valor.getValor())) && DDSinSiNo.cambioStringtoBooleano(valor.getValor())) {
-					fianzaExonerada = true;
-				}
-				if (FECHA_AGENDACION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-					fechaAgendacionValor = valor.getValor();
-				}
-				if (FECHA_REAGENDAR_INGRESO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-					fechaReagendacionRelleno = true;
-					fechaReagendarIngresoValor = valor.getValor();
-				}
-				if (IMPORTE.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-					importe = valor.getValor();
-				}
-				if (IBAN_DEVOLUCION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-					ibanDevolucion = valor.getValor();
-				}
-			}
-			
-			if (DDCartera.CODIGO_CAIXA.equals(activo.getCartera().getCodigo()) && CODIGO_T015_FIRMA.equalsIgnoreCase(codigoTarea)) {
-				if(COMBO_FIRMA.equals(valor.getNombre()) && !Checks.esNulo(DDSinSiNo.cambioStringtoBooleano(valor.getValor())) && !DDSinSiNo.cambioStringtoBooleano(valor.getValor())) {
-					anular = true;
-				}
-			}
 
 		}
 		if(!anular) {
@@ -274,87 +207,17 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
 					activoAdapter.actualizarEstadoPublicacionActivo(activoAgrupacionActivo.getActivo().getId());
 				}
 			}
-			
-			if (DDCartera.isCarteraBk(activo.getCartera()) && tareaAgendar) {
-				if (fianzaExonerada) {
-					if (fia != null) {
-						fia.getAuditoria().setUsuarioBorrar(usu.getUsername());
-						fia.getAuditoria().setFechaBorrar(new Date());
-						fia.getAuditoria().setBorrado(true);
-						genericDao.save(Fianzas.class, fia);
-					}
-				} else {
-					if (fia != null) {
-						if (oferta != null) {
-							fia.setOferta(oferta);
-						}
-						if (fechaAgendacionValor != null) {
-							try {
-								fia.setFechaAgendacionIngreso(ft.parse(fechaAgendacionValor));
-							} catch (ParseException e) {
-								logger.error("error en UpdaterServiceSancionOfertaAlquileresFirma", e);
-								e.printStackTrace();
-							}
-						}
-						if (importe != null) {
-							fia.setImporte(Double.parseDouble(importe));
-						}		
-						if (ibanDevolucion != null) {
-							fia.setIbanDevolucion(ibanDevolucion);
-						}
-						fianza = fia;
-						genericDao.save(Fianzas.class, fia);
-					} else {
-						Fianzas fiaN = new Fianzas();
-						if (oferta != null) {
-							fiaN.setOferta(oferta);
-						}
-						if (fechaAgendacionValor != null) {
-							try {
-								fiaN.setFechaAgendacionIngreso(ft.parse(fechaAgendacionValor));
-							} catch (ParseException e) {
-								logger.error("error en UpdaterServiceSancionOfertaAlquileresFirma", e);
-								e.printStackTrace();
-							}
-						}
-						if (importe != null) {
-							fiaN.setImporte(Double.parseDouble(importe));
-						}		
-						if (ibanDevolucion != null) {
-							fiaN.setIbanDevolucion(ibanDevolucion);
-						}
-						genericDao.save(Fianzas.class, fiaN);
-						fianza = fiaN;
-						genericApi.saveCuentaVirtualAlquiler(activo, fiaN);
-					}
-					
-					if (fechaReagendacionRelleno) {
-						HistoricoReagendacion histReagendacion = new HistoricoReagendacion();
-						histReagendacion.setFianza(fianza);
-						if (fechaReagendarIngresoValor != null) {
-							try {
-								histReagendacion.setFechaReagendacionIngreso(ft.parse(fechaReagendarIngresoValor));
-							} catch (ParseException e) {
-								logger.error("error en UpdaterServiceSancionOfertaAlquileresFirma", e);
-								e.printStackTrace();
-							}
-						}
-						genericDao.save(HistoricoReagendacion.class, histReagendacion);
-					}
-				}
-			}
+
 			
 			if(DDCartera.isCarteraBk(activo.getCartera())) {
 				estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.FIRMADO));	
 				expedienteComercial.setEstado(estadoExpedienteComercial);
 			}
 			DDEstadoExpedienteBc estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_FIRMA_DE_CONTRATO_AGENDADO));
-			modificadoEstadoBC = true;
 			expedienteComercial.setEstadoBc(estadoBc);
 		}else {
 			estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.DENEGADO));
 			DDEstadoExpedienteBc estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_PTE_GARANTIAS_ADICIONALES));
-			modificadoEstadoBC = true;
 			expedienteComercial.setEstado(estadoExpedienteComercial);
 			expedienteComercial.setEstadoBc(estadoBc);	
 			ofertaApi.finalizarOferta(oferta);
@@ -369,7 +232,7 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
 	}
 
 	public String[] getCodigoTarea() {
-		return new String[]{CODIGO_T015_FIRMA, CODIGO_T015_AGENDAR_FIRMA};
+		return new String[]{CODIGO_T015_FIRMA};
 	}
 
 	public String[] getKeys() {

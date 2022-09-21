@@ -22,6 +22,18 @@ public class DtoTareasFormalizacion {
 	private Date fechaLlamadaRealizada;
 	private Date fechaBurofaxEnviado;
 	
+
+	private Boolean fianzaExonerada;
+	private	Date fechaAgendacion;
+	private Date fechaReagendarIngreso;
+	private	Double importe;
+	private	String ibanDevolucion;
+
+		
+		
+
+	
+	
 	public Boolean getLlamadaRealizada() {
 		return llamadaRealizada;
 	}
@@ -46,6 +58,40 @@ public class DtoTareasFormalizacion {
 	public void setFechaBurofaxEnviado(Date fechaBurofaxEnviado) {
 		this.fechaBurofaxEnviado = fechaBurofaxEnviado;
 	}
+	
+	
+	public Boolean getFianzaExonerada() {
+		return fianzaExonerada;
+	}
+	public void setFianzaExonerada(Boolean fianzaExonerada) {
+		this.fianzaExonerada = fianzaExonerada;
+	}
+	public Date getFechaAgendacion() {
+		return fechaAgendacion;
+	}
+	public void setFechaAgendacion(Date fechaAgendacion) {
+		this.fechaAgendacion = fechaAgendacion;
+	}
+	public Date getFechaReagendarIngreso() {
+		return fechaReagendarIngreso;
+	}
+	public void setFechaReagendarIngreso(Date fechaReagendarIngreso) {
+		this.fechaReagendarIngreso = fechaReagendarIngreso;
+	}
+	public Double getImporte() {
+		return importe;
+	}
+	public void setImporte(Double importe) {
+		this.importe = importe;
+	}
+	public String getIbanDevolucion() {
+		return ibanDevolucion;
+	}
+	public void setIbanDevolucion(String ibanDevolucion) {
+		this.ibanDevolucion = ibanDevolucion;
+	}
+	
+	
 	
 	
 }

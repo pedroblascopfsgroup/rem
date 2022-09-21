@@ -3908,12 +3908,6 @@
 	
 	T015_AgendarFechaFirmaValidacion: function(){
 		var me = this;
-		var comboRespuesta = me.down('[name=comboResultado]');
-		var fechaFirma = me.down('[name=fechaFirma]');
-		var lugarFirma = me.down('[name=lugarFirma]');
-		var fechaInicio = me.down('[name=fechaInicio]');
-		var fechaFin = me.down('[name=fechaFin]');
-		var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
 		var idExpediente = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
 		
 		var comboFianza = me.down('[name=comboFianza]');
@@ -3923,167 +3917,65 @@
 		var ibanDevolucion = me.down('[name=ibanDev]');
 		var justificacion = me.down('[name=justificacion]');
 		
-		if (CONST.CARTERA['BANKIA'] == codigoCartera) {
-			me.habilitarCampo(fechaFirma);
-			me.campoObligatorio(fechaFirma);
-			me.habilitarCampo(lugarFirma);
-			me.campoObligatorio(lugarFirma);
-			me.habilitarCampo(comboFianza);
-			me.campoObligatorio(comboFianza);
-			me.editableyNoObligatorio(justificacion);
-			
-			Ext.Ajax.request({
-				url: $AC.getRemoteUrl('expedientecomercial/getFianzaExonerada'),
-				params: {idExpediente : idExpediente},
-			    success: function(response, opts) {
-			    	var data = Ext.decode(response.responseText);
-			    	var dto = data.data;
-			    	if(!Ext.isEmpty(dto)){	
-			    		if (dto.fianzaExonerada === "true") {
-			    			comboFianza.setValue(CONST.COMBO_SIN_SINO['SI']);
-						} else {
-							comboFianza.setValue(CONST.COMBO_SIN_SINO['NO']);
-						}
-			    	}
-			    }
-			});
-			
-			Ext.Ajax.request({
-				url: $AC.getRemoteUrl('expedientecomercial/tieneFechaAgendacionRelleno'),
-				params: {idExpediente : idExpediente},
-			    success: function(response, opts) {
-			    	var data = Ext.decode(response.responseText);
-			    	var dto = data.data;
-			    	if(!Ext.isEmpty(dto) && dto === "true"){
-						me.bloquearCampo(comboFianza);   		
-			    	}else{
-			    		me.desbloquearCampo(comboFianza);
-			    	}
-			    }
-			});
-			
-			me.down('[name=comboFianza]').addListener('change', function(combo) {
-				if (combo.value == '01') { //SI
-					Ext.Ajax.request({
-						url: $AC.getRemoteUrl('expedientecomercial/getDtoFianza'),
-						params: {idExpediente : idExpediente},
-					    success: function(response, opts) {
-					    	var data = Ext.decode(response.responseText);
-					    	var dto = data.data;
-					    	if(!Ext.isEmpty(dto)){
-					    		if (!Ext.isEmpty(dto.agendacionIngreso)) {
-					    			fechaAgendacionIngreso.setValue(Ext.Date.format(new Date(dto.agendacionIngreso), 'd/m/Y'));
-								}
-								if (!Ext.isEmpty(dto.importeFianza)) {
-									importe.setValue(dto.importeFianza);								
-								}
-								if (!Ext.isEmpty(dto.ibanDevolucion)) {
-									ibanDevolucion.setValue(dto.ibanDevolucion);
-								}
-					    	}
-					    	if (!Ext.isEmpty(dto.agendacionIngreso)) {
-					    		me.bloquearCampo(fechaAgendacionIngreso);
-					    		me.desbloquearCampo(fechaReagendarIngreso);
-					    		fechaReagendarIngreso.allowBlank = false;
-							} else {
-								me.desbloquearCampo(fechaAgendacionIngreso);
-								fechaAgendacionIngreso.allowBlank = false;
-								me.bloquearCampo(fechaReagendarIngreso);
-							}
-					    }
-					});
-					
-					me.habilitarCampo(importe);
-					me.desbloquearCampo(importe);
-					importe.allowBlank = false;
-					me.habilitarCampo(ibanDevolucion);
-					me.desbloquearCampo(ibanDevolucion);
-					ibanDevolucion.allowBlank = false;
-					
-				} else { //NO
-					
-					Ext.Ajax.request({
-						url: $AC.getRemoteUrl('expedientecomercial/getDtoFianza'),
-						params: {idExpediente : idExpediente},
-					    success: function(response, opts) {
-					    	var data = Ext.decode(response.responseText);
-					    	var dto = data.data;
-					    	if(!Ext.isEmpty(dto)){
-					    		if (!Ext.isEmpty(dto.agendacionIngreso)) {
-					    			fechaAgendacionIngreso.setValue(Ext.Date.format(new Date(dto.agendacionIngreso), 'd/m/Y'));
-								}
-								if (!Ext.isEmpty(dto.importeFianza)) {
-									importe.setValue(dto.importeFianza);								
-								}
-								if (!Ext.isEmpty(dto.ibanDevolucion)) {
-									ibanDevolucion.setValue(dto.ibanDevolucion);
-								}
-					    	}
-					    }
-					});
-					
-					me.bloquearCampo(fechaAgendacionIngreso);
-					me.bloquearCampo(fechaReagendarIngreso);
-					me.bloquearCampo(importe);
-					me.bloquearCampo(ibanDevolucion);
-				}
-			});
-			
-			me.down('[name=fechaAgendacionIngreso]').addListener('change', function(combo) {
-			       if (combo.value != '' && combo.value != null) {
-			    	   me.desbloquearCampo(fechaReagendarIngreso);
-			    	   fechaReagendarIngreso.allowBlank = false;
-			       } else {
-			    	   me.bloquearCampo(fechaReagendarIngreso);
-			    	   fechaAgendacionIngreso.allowBlank = true;
-			       }
-			});
-			
-			me.deshabilitarCampo(comboRespuesta);
-			me.ocultarCampo(comboRespuesta);
-			
-			me.deshabilitarCampo(fechaInicio);
-			me.ocultarCampo(fechaInicio);
-			
-			me.deshabilitarCampo(fechaFin);
-			me.ocultarCampo(fechaFin);
-			
-		} else {
-			me.deshabilitarCampo(comboFianza);
-			me.ocultarCampo(comboFianza);
-			
-			me.deshabilitarCampo(fechaAgendacionIngreso);
-			me.ocultarCampo(fechaAgendacionIngreso);
-			
-			me.deshabilitarCampo(fechaReagendarIngreso);
-			me.ocultarCampo(fechaReagendarIngreso);
-			
-			me.deshabilitarCampo(importe);
-			me.ocultarCampo(importe);
-			
-			me.deshabilitarCampo(ibanDevolucion);
-			me.ocultarCampo(ibanDevolucion);
-			
-			me.deshabilitarCampo(fechaFirma);
-			me.deshabilitarCampo(lugarFirma);
-			me.campoObligatorio(fechaInicio);
-			me.campoObligatorio(fechaFin);
-			comboRespuesta.addListener('change', function(combo) {
-				if(CONST.COMBO_SIN_SINO['SI'] === comboRespuesta.getValue()){
-					me.habilitarCampo(fechaFirma);
-					me.habilitarCampo(lugarFirma);
-					me.campoObligatorio(fechaFirma);
-					me.campoObligatorio(lugarFirma);
-				}else{
-					me.deshabilitarCampo(fechaFirma);
-					me.deshabilitarCampo(lugarFirma);
-					fechaFirma.setValue('');
-					lugarFirma.setValue('');
-				}
+		me.bloquearCampo(fechaAgendacionIngreso);
+    	me.bloquearCampo(importe);
+    	me.bloquearCampo(ibanDevolucion);
+    	me.bloquearCampo(fechaReagendarIngreso);
+    	me.bloquearCampo(justificacion);
+		
+		comboFianza.addListener('change', function(comboFianza) {
+            if (combo.value ==  CONST.COMBO_SIN_SINO['SI']) {
+            	fechaAgendacionIngreso.reset();
+            	importe.reset();
+            	ibanDevolucion.reset();
+            	me.bloquearCampo(fechaAgendacionIngreso);
+            	me.bloquearCampo(importe);
+            	me.bloquearCampo(ibanDevolucion);
 
-	        });
-			
-		}
+            } else {
+            	me.desbloquearCampo(fechaAgendacionIngreso);
+	    		me.desbloquearCampo(importe);
+	    		me.desbloquearCampo(ibanDevolucion);
+
+            }
+        });
+		
+		Ext.Ajax.request({
+			url: $AC.getRemoteUrl('expedientecomercial/getDtoFianza'),
+			params: {idExpediente : idExpediente},
+		    success: function(response, opts) {
+		    	var data = Ext.decode(response.responseText);
+		    	var dto = data.data;
+		    	if(!Ext.isEmpty(dto)){
+		    		if(Ext.isEmpty(dto.fianzaExonerada) || dto.fianzaExonerada == false){
+		    			comboFianza.setValue(CONST.COMBO_SIN_SINO['NO']);
+		    		}else{
+		    			comboFianza.setValue(CONST.COMBO_SIN_SINO['SI']);
+		    		}
+		    		
+		    		if(CONST.COMBO_SIN_SINO['NO'] == comboFianza.getValue()){
+			    		if (!Ext.isEmpty(dto.agendacionIngreso)) {
+			    			me.bloquearObligatorio(fechaAgendacionIngreso);
+			    			me.bloquearObligatorio(comboFianza);
+			    			me.desbloquearCampo(fechaReagendarIngreso);
+			    			me.editableyNoObligatorio(justificacion);
+			    			fechaAgendacionIngreso.setValue(Ext.Date.format(new Date(dto.agendacionIngreso), 'd/m/Y'));
+						}else{
+							me.desbloquearCampo(fechaAgendacionIngreso);
+						}
+			    		me.desbloquearCampo(importe);
+			    		me.desbloquearCampo(ibanDevolucion);
+			    		
+						if (!Ext.isEmpty(dto.importeFianza)) {
+							importe.setValue(dto.importeFianza);								
+						}
+						if (!Ext.isEmpty(dto.ibanDevolucion)) {
+							ibanDevolucion.setValue(dto.ibanDevolucion);
+						}
+		    		}
+		    	}
+		    }
+		});
 	},
 	
 	
@@ -5078,11 +4970,8 @@
 	
 	T018_AgendarFirmaValidacion: function(){
 		var me = this;
-		var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
 		var idExpediente = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
 		
-		var fechaFirma = me.down('[name=fechaFirma]');
-		var lugarFirma = me.down('[name=lugarFirma]');
 		var comboFianza = me.down('[name=comboResultado]');
 		var fechaAgendacionIngreso = me.down('[name=fechaAgendacionIngreso]');
 		var fechaReagendarIngreso = me.down('[name=fechaReagendarIngreso]');
@@ -5090,136 +4979,68 @@
 		var ibanDevolucion = me.down('[name=ibanDev]');
 		var justificacion = me.down('[name=justificacion]');
 		
-		if (CONST.CARTERA['BANKIA'] == codigoCartera) {
-			me.habilitarCampo(fechaFirma);
-			me.campoObligatorio(fechaFirma);
-			me.habilitarCampo(lugarFirma);
-			me.campoObligatorio(lugarFirma);
-			me.habilitarCampo(comboFianza);
-			me.campoObligatorio(comboFianza);
-			me.editableyNoObligatorio(justificacion);
-			
-			Ext.Ajax.request({
-				url: $AC.getRemoteUrl('expedientecomercial/getFianzaExonerada'),
-				params: {idExpediente : idExpediente},
-			    success: function(response, opts) {
-			    	var data = Ext.decode(response.responseText);
-			    	var dto = data.data;
-			    	if(!Ext.isEmpty(dto)){	
-			    		if (dto.fianzaExonerada === "true") {
-			    			comboFianza.setValue(CONST.COMBO_SIN_SINO['SI']);
-						} else {
-							comboFianza.setValue(CONST.COMBO_SIN_SINO['NO']);
+		me.bloquearCampo(fechaAgendacionIngreso);
+    	me.bloquearCampo(importe);
+    	me.bloquearCampo(ibanDevolucion);
+    	me.bloquearCampo(fechaReagendarIngreso);
+    	me.bloquearCampo(justificacion);
+    	
+		comboFianza.addListener('change', function(comboFianza) {
+            if (combo.value ==  CONST.COMBO_SIN_SINO['SI']) {
+            	fechaAgendacionIngreso.reset();
+            	importe.reset();
+            	ibanDevolucion.reset();
+            	me.bloquearCampo(fechaAgendacionIngreso);
+            	me.bloquearCampo(importe);
+            	me.bloquearCampo(ibanDevolucion);
+
+            } else {
+            	me.desbloquearCampo(fechaAgendacionIngreso);
+	    		me.desbloquearCampo(importe);
+	    		me.desbloquearCampo(ibanDevolucion);
+
+            }
+        });
+		
+		Ext.Ajax.request({
+			url: $AC.getRemoteUrl('expedientecomercial/getDtoFianza'),
+			params: {idExpediente : idExpediente},
+		    success: function(response, opts) {
+		    	var data = Ext.decode(response.responseText);
+		    	var dto = data.data;
+		    	if(!Ext.isEmpty(dto)){
+		    		if(Ext.isEmpty(dto.fianzaExonerada) || dto.fianzaExonerada == false){
+		    			comboFianza.setValue(CONST.COMBO_SIN_SINO['NO']);
+		    		}else{
+		    			comboFianza.setValue(CONST.COMBO_SIN_SINO['SI']);
+		    		}
+		    		
+		    		if(CONST.COMBO_SIN_SINO['NO'] == comboFianza.getValue()){
+			    		if (!Ext.isEmpty(dto.agendacionIngreso)) {
+			    			me.bloquearObligatorio(fechaAgendacionIngreso);
+			    			me.bloquearObligatorio(comboFianza);
+			    			me.desbloquearCampo(fechaReagendarIngreso);
+			    			me.editableyNoObligatorio(justificacion);
+			    			fechaAgendacionIngreso.setValue(Ext.Date.format(new Date(dto.agendacionIngreso), 'd/m/Y'));
+						}else{
+							me.desbloquearCampo(fechaAgendacionIngreso);
+							me.bloquearCampo(fechaReagendarIngreso);
+							me.bloquearCampo(justificacion);
 						}
-			    	}
-			    }
-			});
-			
-			Ext.Ajax.request({
-				url: $AC.getRemoteUrl('expedientecomercial/tieneFechaAgendacionRelleno'),
-				params: {idExpediente : idExpediente},
-			    success: function(response, opts) {
-			    	var data = Ext.decode(response.responseText);
-			    	var dto = data.data;
-			    	if(!Ext.isEmpty(dto) && dto === "true"){
-						me.bloquearCampo(comboFianza);   		
-			    	}else{
-			    		me.desbloquearCampo(comboFianza);
-			    	}
-			    }
-			});
-			
-			me.down('[name=comboResultado]').addListener('change', function(combo) {
-				if (combo.value == '01') { //SI
-					Ext.Ajax.request({
-						url: $AC.getRemoteUrl('expedientecomercial/getDtoFianza'),
-						params: {idExpediente : idExpediente},
-					    success: function(response, opts) {
-					    	var data = Ext.decode(response.responseText);
-					    	var dto = data.data;
-					    	if(!Ext.isEmpty(dto)){
-					    		if (!Ext.isEmpty(dto.agendacionIngreso)) {
-					    			fechaAgendacionIngreso.setValue(Ext.Date.format(new Date(dto.agendacionIngreso), 'd/m/Y'));
-								}
-								if (!Ext.isEmpty(dto.importeFianza)) {
-									importe.setValue(dto.importeFianza);								
-								}
-								if (!Ext.isEmpty(dto.ibanDevolucion)) {
-									ibanDevolucion.setValue(dto.ibanDevolucion);
-								}
-					    	}
-					    	if (!Ext.isEmpty(dto.agendacionIngreso)) {
-					    		me.bloquearCampo(fechaAgendacionIngreso);
-					    		me.desbloquearCampo(fechaReagendarIngreso);
-					    		fechaReagendarIngreso.allowBlank = false;
-							} else {
-								me.desbloquearCampo(fechaAgendacionIngreso);
-								fechaAgendacionIngreso.allowBlank = false;
-								me.bloquearCampo(fechaReagendarIngreso);
-							}
-					    }
-					});
-					
-					me.habilitarCampo(importe);
-					me.desbloquearCampo(importe);
-					importe.allowBlank = false;
-					me.habilitarCampo(ibanDevolucion);
-					me.desbloquearCampo(ibanDevolucion);
-					ibanDevolucion.allowBlank = false;
-					
-				} else { //NO
-					
-					Ext.Ajax.request({
-						url: $AC.getRemoteUrl('expedientecomercial/getDtoFianza'),
-						params: {idExpediente : idExpediente},
-					    success: function(response, opts) {
-					    	var data = Ext.decode(response.responseText);
-					    	var dto = data.data;
-					    	if(!Ext.isEmpty(dto)){
-					    		if (!Ext.isEmpty(dto.agendacionIngreso)) {
-					    			fechaAgendacionIngreso.setValue(Ext.Date.format(new Date(dto.agendacionIngreso), 'd/m/Y'));
-								}
-								if (!Ext.isEmpty(dto.importeFianza)) {
-									importe.setValue(dto.importeFianza);								
-								}
-								if (!Ext.isEmpty(dto.ibanDevolucion)) {
-									ibanDevolucion.setValue(dto.ibanDevolucion);
-								}
-					    	}
-					    }
-					});
-					
-					me.bloquearCampo(fechaAgendacionIngreso);
-					me.bloquearCampo(fechaReagendarIngreso);
-					me.bloquearCampo(importe);
-					me.bloquearCampo(ibanDevolucion);
-				}
-			});
-			
-			me.down('[name=fechaAgendacionIngreso]').addListener('change', function(combo) {
-			       if (combo.value != '' && combo.value != null) {
-			    	   me.desbloquearCampo(fechaReagendarIngreso);
-			    	   fechaReagendarIngreso.allowBlank = false;
-			       } else {
-			    	   me.bloquearCampo(fechaReagendarIngreso);
-			    	   fechaAgendacionIngreso.allowBlank = true;
-			       }
-			});
-			
-		} else {
-			me.deshabilitarCampo(comboFianza);
-			me.ocultarCampo(comboFianza);
-			me.deshabilitarCampo(fechaAgendacionIngreso);
-			me.ocultarCampo(fechaAgendacionIngreso);
-			me.deshabilitarCampo(fechaReagendarIngreso);
-			me.ocultarCampo(fechaReagendarIngreso);
-			me.deshabilitarCampo(importe);
-			me.ocultarCampo(importe);
-			me.deshabilitarCampo(ibanDevolucion);
-			me.ocultarCampo(ibanDevolucion);
-			me.deshabilitarCampo(fechaFirma);
-			me.deshabilitarCampo(lugarFirma);
-		}
+			    		me.desbloquearCampo(importe);
+			    		me.desbloquearCampo(ibanDevolucion);
+			    		
+						if (!Ext.isEmpty(dto.importeFianza)) {
+							importe.setValue(dto.importeFianza);								
+						}
+						if (!Ext.isEmpty(dto.ibanDevolucion)) {
+							ibanDevolucion.setValue(dto.ibanDevolucion);
+						}
+		    		}
+		    	}
+		    }
+		});
+
 	},
 	
 	T018_RespuestaOfertaBCValidacion: function(){

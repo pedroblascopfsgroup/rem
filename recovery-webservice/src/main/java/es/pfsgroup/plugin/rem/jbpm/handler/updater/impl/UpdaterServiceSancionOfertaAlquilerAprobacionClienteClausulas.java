@@ -53,6 +53,7 @@ public class UpdaterServiceSancionOfertaAlquilerAprobacionClienteClausulas imple
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
 		
 		boolean anulacion = false;
+		boolean acepta = false;
 		String estadoBc = null;
 		String codigoMotivo = null;
 		String observaciones = null;
@@ -60,6 +61,7 @@ public class UpdaterServiceSancionOfertaAlquilerAprobacionClienteClausulas imple
 		for(TareaExternaValor valor :  valores) {
 			
 			if(COMBO_CLIENTE_ACEPTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor()) && DDSiNo.SI.equals(valor.getValor())) {
+				acepta = true;
 				estadoBc =  DDEstadoExpedienteBc.CODIGO_BORRADOR_ACEPTADO;
 			}
 			
@@ -85,7 +87,7 @@ public class UpdaterServiceSancionOfertaAlquilerAprobacionClienteClausulas imple
 		
 
 		
-		if(anulacion) {
+		if(anulacion || (!acepta && DDEstadoExpedienteBc.CODIGO_CLAUSULADO_NO_COMERCIABLE.equals(expedienteComercial.getEstadoBc().getCodigo()))) {
 			Oferta oferta = expedienteComercial.getOferta();
 			expedienteComercial.setFechaAnulacion(new Date());
 			//expedienteComercial.setMotivoAnulacion(genericDao.get(DDMotivoAnulacionExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoMotivo)));

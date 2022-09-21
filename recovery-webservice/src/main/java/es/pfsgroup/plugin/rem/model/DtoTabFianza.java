@@ -20,6 +20,10 @@ public class DtoTabFianza extends WebDto {
 	private String ibanDevolucion;
 	private Boolean entregaFianzaAapp;
 	
+
+	private Boolean fianzaExonerada;
+	private Date agendacionFechaIngreso;
+	
 	public Long getId() {
 		return id;
 	}
@@ -69,5 +73,19 @@ public class DtoTabFianza extends WebDto {
 	public void setEntregaFianzaAapp(Boolean entregaFianzaAapp) {
 		this.entregaFianzaAapp = entregaFianzaAapp;
 	}
+	public Boolean getFianzaExonerada() {
+		return fianzaExonerada;
+	}
+	public void setFianzaExonerada(Boolean fianzaExonerada) {
+		this.fianzaExonerada = fianzaExonerada;
+	}
+	public Date getAgendacionFechaIngreso() {
+		return agendacionFechaIngreso;
+	}
+	public void setAgendacionFechaIngreso(Date agendacionFechaIngreso) {
+		this.agendacionFechaIngreso = agendacionFechaIngreso;
+	}
+	
+	
 	
 }

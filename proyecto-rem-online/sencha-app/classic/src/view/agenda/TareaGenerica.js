@@ -3923,8 +3923,8 @@
     	me.bloquearCampo(fechaReagendarIngreso);
     	me.bloquearCampo(justificacion);
 		
-		comboFianza.addListener('change', function(combo) {
-            if (combo.value ==  CONST.COMBO_SIN_SINO['SI']) {
+		comboFianza.addListener('change', function(comboFianza) {
+            if (comboFianza.value ==  CONST.COMBO_SIN_SINO['SI']) {
             	fechaAgendacionIngreso.reset();
             	importe.reset();
             	ibanDevolucion.reset();
@@ -4985,8 +4985,8 @@
     	me.bloquearCampo(fechaReagendarIngreso);
     	me.bloquearCampo(justificacion);
     	
-		comboFianza.addListener('change', function(combo) {
-            if (combo.value ==  CONST.COMBO_SIN_SINO['SI']) {
+		comboFianza.addListener('change', function(comboFianza) {
+            if (comboFianza.value ==  CONST.COMBO_SIN_SINO['SI']) {
             	fechaAgendacionIngreso.reset();
             	importe.reset();
             	ibanDevolucion.reset();

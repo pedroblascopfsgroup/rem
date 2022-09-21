@@ -15,6 +15,7 @@ import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.CuentasVirtualesAlquiler;
 import es.pfsgroup.plugin.rem.model.DtoCondicionantesExpediente;
 import es.pfsgroup.plugin.rem.model.DtoTabFianza;
+import es.pfsgroup.plugin.rem.model.DtoTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Fianzas;
 import es.pfsgroup.plugin.rem.model.HistoricoTareaPbc;
@@ -293,6 +294,17 @@ public class FuncionesTramitesManager implements FuncionesTramitesApi {
 		return historicoReagendaciones;
 	}
 	
-	
+	@Override
+	public DtoTipoAlquiler getDtoTipoAlquiler(Long idExpediente) {
+		DtoTipoAlquiler dto = new DtoTipoAlquiler();
+		ExpedienteComercial eco = expedienteComercialApi.findOne(idExpediente);
+		Oferta ofr = eco.getOferta();
+		if (ofr != null) {
+			dto.setCodTipoAlquiler(ofr.getTipoOfertaAlquiler().getCodigo());
+			dto.setCodSubtipoAlquiler(ofr.getSubtipoOfertaAlquiler().getCodigo());
+		}
+		
+		return dto;
+	}
 
 }

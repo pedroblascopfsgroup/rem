@@ -5,6 +5,7 @@ import java.util.List;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.pfsgroup.plugin.rem.model.DtoCondicionantesExpediente;
 import es.pfsgroup.plugin.rem.model.DtoTabFianza;
+import es.pfsgroup.plugin.rem.model.DtoTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.HistoricoTareaPbc;
 import es.pfsgroup.plugin.rem.model.VGridHistoricoReagendaciones;
@@ -36,5 +37,7 @@ public interface FuncionesTramitesApi {
 	DtoCondicionantesExpediente getFianzaExonerada(Long idExpediente);
 
 	DtoTabFianza getDtoFianza(Long idExpediente);
+	
+	DtoTipoAlquiler getDtoTipoAlquiler(Long idExpediente);
 }
 

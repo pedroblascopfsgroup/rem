@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Adrian Molina
---## FECHA_CREACION=20220915
+--## FECHA_CREACION=20220921
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-18717
@@ -56,7 +56,7 @@ BEGIN
           	USUARIOMODIFICAR = ''HREOS-18717'', 
 		  	FECHAMODIFICAR = SYSDATE 
           	WHERE TAP_ID = (SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''T018_AprobacionOferta'') 
-          	AND TFI_NOMBRE = ''comboAprobadoApi	''';
+          	AND TFI_NOMBRE = ''comboAprobadoApi''';
 
   	EXECUTE IMMEDIATE V_MSQL;
 

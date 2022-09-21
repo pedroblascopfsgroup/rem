@@ -4621,40 +4621,63 @@
 		var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
 		var idExpediente = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
 		
-		var comboResultado = me.down('[name=comboResultado]');
-		var comboAprobadoApi = me.down('[name=comboAprobadoApi]');
-		var comboBorradorContratoApi = me.down('[name=comboBorradorContratoApi]');
-		var comboClienteAcepBorr = me.down('[name=comboClienteAcepBorr]');
+		var clienteAcepta = me.down('[name=comboAprobadoApi]');
 		var fecha = me.down('[name=fecha]');
-		var justificacion = me.down('[name=justificacion]');
+		var motivo = me.down('[name=motivo]');
+		var contraOferta = me.down('[name=contraoferta]');
+		var tipoAdenda = me.down('[name=tipoAdenda]');
+		var tituloObtenido = me.down('[name=tituloObtenido]');
+		var fechaTitulo = me.down('[name=fechaTitulo]');
 		
-		if (CONST.CARTERA['BANKIA'] == codigoCartera) {
-			me.habilitarCampo(comboResultado);
-			me.campoObligatorio(comboResultado);
-			me.habilitarCampo(comboAprobadoApi);
-			me.campoObligatorio(comboAprobadoApi);
-			me.habilitarCampo(comboBorradorContratoApi);
-			me.campoObligatorio(comboBorradorContratoApi);
-			me.habilitarCampo(comboClienteAcepBorr);
-			me.campoObligatorio(comboClienteAcepBorr);
-			me.habilitarCampo(fecha);
-			me.campoObligatorio(fecha);
-			me.editableyNoObligatorio(justificacion);
-			
-		} else {
-			me.deshabilitarCampo(comboResultado);
-			me.ocultarCampo(comboResultado);
-			me.deshabilitarCampo(comboAprobadoApi);
-			me.ocultarCampo(comboAprobadoApi);
-			me.deshabilitarCampo(comboBorradorContratoApi);
-			me.ocultarCampo(comboBorradorContratoApi);
-			me.deshabilitarCampo(comboClienteAcepBorr);
-			me.ocultarCampo(comboClienteAcepBorr);
-			me.deshabilitarCampo(fecha);
-			me.ocultarCampo(fecha);
-			me.deshabilitarCampo(justificacion);
-			me.ocultarCampo(justificacion);
-		}
+		me.down('[name=tituloObtenido]').addListener('change', function(combo) {
+			if (combo.value == '01') { //SI
+				me.habilitarCampo(fechaTitulo);
+				me.campoObligatorio(fechaTitulo);
+			} else { //NO
+				me.campoNoObligatorio(fechaTitulo);
+				me.deshabilitarCampo(fechaTitulo);
+			}
+		});
+		
+		me.down('[name=clienteAcepta]').addListener('change', function(combo) {
+			if (combo.value == '01') { //SI
+				me.campoNoObligatorio(contraOferta);
+				me.campoNoObligatorio(motivo);
+				me.deshabilitarCampo(contraOferta);
+				me.deshabilitarCampo(motivo);
+			} else { //NO
+				me.habilitarCampo(contraOferta);
+				me.habilitarCampo(motivo);
+				me.campoObligatorio(contraOferta);
+				me.campoObligatorio(motivo);
+			}
+		});
+
+		Ext.Ajax.request({
+			url: $AC.getRemoteUrl('expedientecomercial/getDtoTipoAlquiler'),
+			params: {idExpediente : idExpediente},
+		    success: function(response, opts) {
+		    	var data = Ext.decode(response.responseText);
+		    	var dto = data.data;
+		    	if(!Ext.isEmpty(dto)){
+		    		if (!Ext.isEmpty(dto.codTipoAlquiler)) {
+		    			if(CONST.TIPO_OFERTA_ALQUILER_NO_COMERCIAL['CODIGO_SUBROGACION'] === dto.codTipoAlquiler){
+		    				me.campoNoObligatorio(clienteAcepta);
+		    				me.campoNoObligatorio(fecha);
+		    				me.ocultarCampo(clienteAcepta);
+		    				me.ocultarCampo(fecha);
+		    				me.ocultarCampo(motivo);
+		    				me.ocultarCampo(contraOferta);
+		    			}
+		    			if(CONST.SUBTIPO_OFERTA_ALQUILER_NO_COMERCIAL['CODIGO_SUBROGACION_EJECUCION'] === dto.codSubtipoAlquiler){
+		    				me.campoObligatorio(tipoAdenda);
+		    			}else{
+		    				me.deshabilitarCampo(tipoAdenda);
+		    			}
+					}
+		    	}
+		    }
+		});
 	},
 	
 	T018_ComunicarSubrogacionValidacion: function(){
@@ -4712,37 +4735,6 @@
 			me.ocultarCampo(comboResultado);
 			me.deshabilitarCampo(fecha);
 			me.ocultarCampo(fecha);
-			me.deshabilitarCampo(justificacion);
-			me.ocultarCampo(justificacion);
-		}
-	},
-	
-	T018_AprobacionOfertaValidacion: function(){
-		var me = this;
-		var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
-		var idExpediente = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
-		
-		var comboResultado = me.down('[name=comboResultado]');
-		var fechaAprobacion = me.down('[name=fechaAprobacion]');
-		var comboTipoAdenda = me.down('[name=comboTipoAdenda]');
-		var justificacion = me.down('[name=justificacion]');
-		
-		if (CONST.CARTERA['BANKIA'] == codigoCartera) {
-			me.habilitarCampo(comboResultado);
-			me.campoObligatorio(comboResultado);
-			me.habilitarCampo(fechaAprobacion);
-			me.campoObligatorio(fechaAprobacion);
-			me.habilitarCampo(comboTipoAdenda);
-			me.campoObligatorio(comboTipoAdenda);
-			me.editableyNoObligatorio(justificacion);
-			
-		} else {
-			me.deshabilitarCampo(comboResultado);
-			me.ocultarCampo(comboResultado);
-			me.deshabilitarCampo(fechaAprobacion);
-			me.ocultarCampo(fechaAprobacion);
-			me.deshabilitarCampo(comboTipoAdenda);
-			me.ocultarCampo(comboTipoAdenda);
 			me.deshabilitarCampo(justificacion);
 			me.ocultarCampo(justificacion);
 		}
@@ -5071,67 +5063,6 @@
 			me.deshabilitarCampo(fecha);
 			me.ocultarCampo(fecha);
 		}
-	},
-	
-	T018_AprobacionOfertaValidacion: function(){
-		var me = this;
-		var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
-		var idExpediente = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
-		
-		var clienteAcepta = me.down('[name=comboClienteAcepBorr]');
-		var fecha = me.down('[name=fecha]');
-		var contraoferta = me.down('[name=contraoferta]');
-		var motivo = me.down('[name=motivo]');
-		var tipoAdenda = me.down('[name=tipoAdenda]');
-		var tituloObtenido = me.down('[name=tituloObtenido]');
-		var fechaTitulo = me.down('[name=fechaTitulo]');
-		
-		tituloObtenido.addListener('change', function(combo) {
-            if (combo.value == '01') {
-            	fechaTitulo.reset();
-            	me.habilitarCampo(fechaTitulo);
-                me.campoObligatorio(fechaTitulo);
-            } else {
-            	fechaTitulo.reset();
-                me.deshabilitarCampo(fechaTitulo);
-                me.campoNoObligatorio(fechaTitulo);
-            }
-        })
-		
-		Ext.Ajax.request({
-			url: $AC.getRemoteUrl('expedientecomercial/esOfertaSubrogacion'),
-			params: {idExpediente : idExpediente},
-		    success: function(response, opts) {
-		    	var data = Ext.decode(response.responseText);
-		    	var dto = data.data;
-		    	if(!Ext.isEmpty(dto) && dto === "true"){
-					me.ocultarCampo(clienteAcepta);
-					me.deshabilitarCampo(clienteAcepta);
-					me.ocultarCampo(fecha);
-					me.deshabilitarCampo(fecha);
-					me.ocultarCampo(contraoferta);
-					me.deshabilitarCampo(contraoferta);
-					me.ocultarCampo(motivo);
-					me.deshabilitarCampo(motivo);
-		    	}
-		    }
-		});
-		
-		Ext.Ajax.request({
-			url: $AC.getRemoteUrl('expedientecomercial/esOfertaSubrogacionEjecHip'),
-			params: {idExpediente : idExpediente},
-		    success: function(response, opts) {
-		    	var data = Ext.decode(response.responseText);
-		    	var dto = data.data;
-		    	if(!Ext.isEmpty(dto) && dto === "true"){
-		    		me.habilitarCampo(tipoAdenda);
-					me.campoObligatorio(tipoAdenda);
-		    	}else{
-		    		me.deshabilitarCampo(tipoAdenda);
-		    	}
-		    }
-		});
-		
 	},
 	
 	T018_DecisionContinuidadOfertaValidacion: function(){

@@ -4629,7 +4629,7 @@
 		var tituloObtenido = me.down('[name=tituloObtenido]');
 		var fechaTitulo = me.down('[name=fechaTitulo]');
 		
-		me.down('[name=tituloObtenido]').addListener('change', function(combo) {
+		tituloObtenido.addListener('change', function(combo) {
 			if (combo.value == '01') { //SI
 				me.habilitarCampo(fechaTitulo);
 				me.campoObligatorio(fechaTitulo);
@@ -4639,7 +4639,7 @@
 			}
 		});
 		
-		me.down('[name=clienteAcepta]').addListener('change', function(combo) {
+		clienteAcepta.addListener('change', function(combo) {
 			if (combo.value == '01') { //SI
 				me.campoNoObligatorio(contraOferta);
 				me.campoNoObligatorio(motivo);

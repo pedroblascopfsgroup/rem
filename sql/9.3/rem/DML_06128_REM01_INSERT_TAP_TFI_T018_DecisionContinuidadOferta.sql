@@ -133,7 +133,7 @@ BEGIN
 	            VALUES (
 	                '||V_ESQUEMA||'.S_TFI_TAREAS_FORM_ITEMS.NEXTVAL
 	                ,(SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = '''||V_TMP_TIPO_DATA(1)||''')
-	                ,  1, ''combobox'', ''comboResultado'' , ''Resultado negativo'' , ''Debe indicar si el resultado es Negativo o No'' , ''false'' 
+	                ,  1, ''combobox'', ''seguirOferta'' , ''Seguir con la oferta'' , ''Debe indicar si se sigue con la oferta o No'' , ''false'' 
 	                , null , ''DDSiNo''  , 0, ''HREOS-18268'', SYSDATE , null, null, null , null  , 0
 	            )';
 			EXECUTE IMMEDIATE V_MSQL;
@@ -142,7 +142,7 @@ BEGIN
 	                VALUES (
 	                    '||V_ESQUEMA||'.S_TFI_TAREAS_FORM_ITEMS.NEXTVAL
 	                    ,(SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = '''||V_TMP_TIPO_DATA(1)||''')
-	                    ,  2, ''textarea'', ''observaciones'' , ''Observaciones'' , null , null 
+	                    ,  2, ''textarea'', ''justificacion'' , ''Justificacion'' , null , null 
 	                    , null , null  , 0, ''HREOS-18268'', SYSDATE , null, null, null , null  , 0
 	                )';
 		

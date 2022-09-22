@@ -408,7 +408,7 @@
 		<transition to="T018_RespuestaContraofertaBC" name="rechazaRenovacionAlquilerSocial"></transition>
 		<transition to="Fin" name="aceptaSubrogacion"></transition>
 		<transition to="Fin" name="rechazaSubrogacionDacion"></transition>
-		<transition to="Fin" name="aceptaSubrogacionHipotecariaSinAdenda"></transition>
+		<transition to="T018_AltaContratoAlquilerAdenda" name="aceptaSubrogacionHipotecariaSinAdenda"></transition>
 		<transition to="T018_AgendarFirmaAdenda" name="aceptaSubrogacionHipotecariaConAdenda"></transition>
 		<transition to="Fin" name="rechazaSubrogacionHipotecaria"></transition>
 	</decision>

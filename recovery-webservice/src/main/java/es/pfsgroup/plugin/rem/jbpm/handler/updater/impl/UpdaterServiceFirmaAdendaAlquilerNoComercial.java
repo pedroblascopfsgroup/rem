@@ -51,15 +51,18 @@ public class UpdaterServiceFirmaAdendaAlquilerNoComercial implements UpdaterServ
 			if(COMBO_ACEPTA_FIRMA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 				if(DDSiNo.SI.equals(valor.getValor())) { 
 					historicoFirmaAdenda.setFirmadoAdenda(1);
-					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigoC4C", DDEstadoExpedienteBc.CODIGO_C4C_CONTRATO_FIRMADO);
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigoC4C", "130");
 					estadoExpBC = genericDao.get(DDEstadoExpedienteBc.class,filtro);
 				}else {
 					historicoFirmaAdenda.setFirmadoAdenda(0);
 					if(historicosFirmasAdendas != null && !historicosFirmasAdendas.isEmpty()) {
 						if(historicosFirmasAdendas.size() > 2) {
-							Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigoC4C", DDEstadoExpedienteBc.CODIGO_C4C_IMPOSIBILIDAD_FIRMA);
+							Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigoC4C", "870");
 							estadoExpBC = genericDao.get(DDEstadoExpedienteBc.class,filtro);
 						}
+					}else {
+						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigoC4C", "870");
+						estadoExpBC = genericDao.get(DDEstadoExpedienteBc.class,filtro);
 					}
 				}
 			}

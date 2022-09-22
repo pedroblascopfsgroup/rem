@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -18,6 +19,7 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.HistoricoFirmaAdenda;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
@@ -46,13 +48,13 @@ public class UpdaterServiceDecisionContinuidadOfertaAlquilerNoComercial implemen
 		for(TareaExternaValor valor :  valores){
 			if(COMBO_SEGUIR_OFERTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 				if(DDSiNo.SI.equals(valor.getValor())) { 
-					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigoC4C", DDEstadoExpedienteBc.CODIGO_C4C_CONTRATO_FIRMADO);
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigoC4C", "130");
 					estadoExpBC = genericDao.get(DDEstadoExpedienteBc.class,filtro);
 				}else {
-					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigoC4C", DDEstadoExpedienteBc.CODIGO_C4C_COMPROMISO_CANCELADO);
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigoC4C", "150");
 					estadoExpBC = genericDao.get(DDEstadoExpedienteBc.class,filtro);
 					
-					Filter filtroAnulacion = genericDao.createFilter(FilterType.EQUALS, "codigoC4C", DDMotivoAnulacionExpediente.COD_C4C_JUDICIALIZADO);
+					Filter filtroAnulacion = genericDao.createFilter(FilterType.EQUALS, "codigoC4C", "400");
 					motivoAnulacion = genericDao.get(DDMotivoAnulacionExpediente.class,filtroAnulacion);
 				}
 			}

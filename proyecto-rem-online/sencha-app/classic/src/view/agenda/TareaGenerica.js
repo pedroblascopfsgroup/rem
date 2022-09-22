@@ -3924,20 +3924,22 @@
     	me.bloquearCampo(justificacion);
 		
 		comboFianza.addListener('change', function(comboFianza) {
-            if (comboFianza.value ==  CONST.COMBO_SIN_SINO['SI']) {
-            	fechaAgendacionIngreso.reset();
-            	importe.reset();
-            	ibanDevolucion.reset();
-            	me.bloquearCampo(fechaAgendacionIngreso);
-            	me.bloquearCampo(importe);
-            	me.bloquearCampo(ibanDevolucion);
-
-            } else {
-            	me.desbloquearCampo(fechaAgendacionIngreso);
-	    		me.desbloquearCampo(importe);
-	    		me.desbloquearCampo(ibanDevolucion);
-
-            }
+			if(!fechaAgendacionIngreso.readOnly){
+	            if (comboFianza.value ==  CONST.COMBO_SIN_SINO['SI']) {
+	            	fechaAgendacionIngreso.reset();
+	            	importe.reset();
+	            	ibanDevolucion.reset();
+	            	me.bloquearCampo(fechaAgendacionIngreso);
+	            	me.bloquearCampo(importe);
+	            	me.bloquearCampo(ibanDevolucion);
+	
+	            } else {
+	            	me.desbloquearCampo(fechaAgendacionIngreso);
+		    		me.desbloquearCampo(importe);
+		    		me.desbloquearCampo(ibanDevolucion);
+	
+	            }
+			}
         });
 		
 		Ext.Ajax.request({
@@ -3955,11 +3957,12 @@
 		    		
 		    		if(CONST.COMBO_SIN_SINO['NO'] == comboFianza.getValue()){
 			    		if (!Ext.isEmpty(dto.agendacionIngreso)) {
-			    			me.bloquearObligatorio(fechaAgendacionIngreso);
+			    			fechaAgendacionIngreso.setValue(Ext.Date.format(new Date(dto.agendacionIngreso), 'd/m/Y'));
+			    			fechaAgendacionIngreso.setReadOnly(true);
 			    			me.bloquearObligatorio(comboFianza);
 			    			me.desbloquearCampo(fechaReagendarIngreso);
+			    			me.hacercampoObligatorio(fechaReagendarIngreso);
 			    			me.editableyNoObligatorio(justificacion);
-			    			fechaAgendacionIngreso.setValue(Ext.Date.format(new Date(dto.agendacionIngreso), 'd/m/Y'));
 						}else{
 							me.desbloquearCampo(fechaAgendacionIngreso);
 						}
@@ -5103,5 +5106,9 @@
     	var me = this;
         campo.setReadOnly(false);
         campo.allowBlank = true;
+    },
+    hacercampoObligatorio:function(campo){
+    	var me = this;
+    	 campo.allowBlank = false;
     }
 });

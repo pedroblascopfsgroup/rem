@@ -730,52 +730,6 @@ Ext.define('HreRem.view.agenda.TareaHistorico',{
 								me.ocultarCampo(comboVentaSupensiva);
 							}
 						},
-						
-						T015_AgendarFechaFirmaValidacion: function(){
-							var me = this;
-							var comboRespuesta = me.down('[name=comboResultado]');
-							var fechaFirma = me.down('[name=fechaFirma]');
-							var lugarFirma = me.down('[name=lugarFirma]');
-							var fechaInicio = me.down('[name=fechaInicio]');
-							var fechaFin = me.down('[name=fechaFin]');
-							var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
-							var idExpediente = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
-							
-							var comboFianza = me.down('[name=comboFianza]');
-							var fechaAgendacionIngreso = me.down('[name=fechaAgendacionIngreso]');
-							var fechaReagendarIngreso = me.down('[name=fechaReagendarIngreso]');
-							var importe = me.down('[name=importe]');
-							var ibanDevolucion = me.down('[name=ibanDev]');
-							var justificacion = me.down('[name=justificacion]');
-							
-							if(CONST.CARTERA['BANKIA'] == codigoCartera) {
-								me.ocultarCampo(comboRespuesta);
-								me.ocultarCampo(fechaInicio);
-								me.ocultarCampo(fechaFin);
-								
-								me.desocultarCampo(fechaFirma);
-								me.desocultarCampo(lugarFirma);
-								me.desocultarCampo(comboFianza);
-								me.desocultarCampo(fechaAgendacionIngreso);
-								me.desocultarCampo(fechaReagendarIngreso);
-								me.desocultarCampo(importe);
-								me.desocultarCampo(ibanDevolucion);
-								me.desocultarCampo(justificacion);
-							}else{
-								me.desocultarCampo(comboRespuesta);
-								me.desocultarCampo(fechaInicio);
-								me.desocultarCampo(fechaFin);
-								me.desocultarCampo(fechaFirma);
-								me.desocultarCampo(lugarFirma);
-								
-								me.ocultarCampo(comboFianza);
-								me.ocultarCampo(fechaAgendacionIngreso);
-								me.ocultarCampo(fechaReagendarIngreso);
-								me.ocultarCampo(importe);
-								me.ocultarCampo(ibanDevolucion);
-								me.ocultarCampo(justificacion);
-							}
-						},
 
 					ocultarCampo: function(campo) {
 				        var me = this;

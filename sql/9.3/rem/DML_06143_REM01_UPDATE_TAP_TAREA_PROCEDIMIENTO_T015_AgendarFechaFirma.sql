@@ -43,7 +43,7 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(800);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-    	T_TIPO_DATA('T015_AgendarFechaFirma', 'seNecesitaCuentaVirtualAlquiler() && checkCuentasVirtualesAlquilerLibres() ? checkIBANValido(valores[''''T015_AgendarFechaFirma''''][''''ibanDev''''])  ? null : ''''El formato del IBAN no es v&aacute;lido'''' : ''''No existen cuentas virtuales libres''''','valores[''''T015_AgendarFechaFirma''''][''''comboFianza''''] == DDSiNo.SI ? ''''AceptaFirma'''' : ''''AceptaFianza'''' ')
+    	T_TIPO_DATA('T015_AgendarFechaFirma', 'checkIBANValido(valores[''''T015_AgendarFechaFirma''''][''''ibanDev'''']) ? seNecesitaCuentaVirtualAlquiler() ? checkCuentasVirtualesAlquilerLibres() ? null : ''''No existen cuentas virtuales libres'''' : null : ''''El formato del IBAN no es v&aacute;lido'''' ')
        ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 BEGIN

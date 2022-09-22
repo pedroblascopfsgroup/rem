@@ -126,8 +126,6 @@ public class DDMotivoAnulacionExpediente implements Auditable, Dictionary {
 	public static final String COD_CAIXA_CLI_ALQ_OTRO_INM = "36000";
 	public static final String COD_CAIXA_CLI_DES_ZONA = "37000";
 	public static final String COD_CAIXA_CLI_DES_PRECIO = "38000";
-	
-	public static final String COD_C4C_JUDICIALIZADO = "400";
 
 	@Id
 	@Column(name = "DD_MAN_ID")

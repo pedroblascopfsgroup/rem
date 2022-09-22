@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20220615
+--## FECHA_CREACION=20220922
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-11860
@@ -23,6 +23,7 @@
 --##        0.11 Valores Balcón, Tipo vivienda y tipología edificio - [HREOS-17614] - Daniel Algaba
 --##	     0.12 Nuevos motivos no comercializacion - [REMVIP-11574] - Juan Bautista Alfonso
 --##	     0.13 Añadir valores CLASE_USO - [REMVIP-11860] - Juan Bautista Alfonso
+--##	     0.14 Modificar mapeo EST_CONSERVACION - [REMVIP-12391] - IVAN REPISO
 --##########################################
 --*/
 
@@ -1319,11 +1320,11 @@ DECLARE
         T_TIPO_DATA('SEGMENTACION_CARTERA','02','Cartera alquiler','DD_CBC_CARTERA_BC','03','0'),
         T_TIPO_DATA('SEGMENTACION_CARTERA','03','Cartera venta','DD_CBC_CARTERA_BC','01','0'),
         --- Estado conservación
-        T_TIPO_DATA('EST_CONSERVACION','001901','Buen estado','DD_ECV_ESTADO_CONSERVACION','07','0'),
-        T_TIPO_DATA('EST_CONSERVACION','001902','A reformar','DD_ECV_ESTADO_CONSERVACION','08','0'),
-        T_TIPO_DATA('EST_CONSERVACION','001904','Malo','DD_ECV_ESTADO_CONSERVACION','04','0'),
-        T_TIPO_DATA('EST_CONSERVACION','001905','Ruinoso','DD_ECV_ESTADO_CONSERVACION','05','0'),
-        T_TIPO_DATA('EST_CONSERVACION','001907','Actualizar','DD_ECV_ESTADO_CONSERVACION','03','0'),
+        T_TIPO_DATA('EST_CONSERVACION','001901','Buen estado','DD_ECV_ESTADO_CONSERVACION','06','0'),
+        T_TIPO_DATA('EST_CONSERVACION','001902','A reformar','DD_ECV_ESTADO_CONSERVACION','07','0'),
+        T_TIPO_DATA('EST_CONSERVACION','001904','Malo','DD_ECV_ESTADO_CONSERVACION','07','0'),
+        T_TIPO_DATA('EST_CONSERVACION','001905','Ruinoso','DD_ECV_ESTADO_CONSERVACION','07','0'),
+        T_TIPO_DATA('EST_CONSERVACION','001907','Actualizar','DD_ECV_ESTADO_CONSERVACION','07','0'),
         --- Balcón
         T_TIPO_DATA('BALCON','015201','Sí','DD_SIN_SINO','01','0'),
         T_TIPO_DATA('BALCON','015202','No','DD_SIN_SINO','02','0'),

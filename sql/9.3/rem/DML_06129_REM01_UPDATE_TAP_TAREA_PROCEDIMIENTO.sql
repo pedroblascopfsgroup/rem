@@ -54,7 +54,7 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('[INFO] Registro actualizado en '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO');
 	
 	/*Decision para T018_AprobacionOferta*/
-	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_DECISION = ''valores[''''T018_AprobacionOferta''''][''''comboClienteAcepBorr''''] == DDSiNo.SI ? esSubrogacionHipoteca() ? conAdenda() ? ''''aceptaSubrogacionHipotecariaConAdenda'''' : ''''aceptaSubrogacionHipotecariaSinAdenda'''' : noEsSubrogacion() ? ''''aceptaNoSubrogacion'''' : ''''aceptaSubrogacion'''' : esSubrogacionHipoteca() ? ''''rechazaSubrogacionHipotecaria'''' : noEsSubrogacion() ? ''''rechazaRenovacionAlquilerSocial'''' : ''''rechazaSubrogacionDacion'''''' 
+	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_DECISION = ''valores[''''T018_AprobacionOferta''''][''''comboAprobadoApi''''] == DDSiNo.SI ? esSubrogacionHipoteca() ? conAdenda() ? ''''aceptaSubrogacionHipotecariaConAdenda'''' : ''''aceptaSubrogacionHipotecariaSinAdenda'''' : noEsSubrogacion() ? ''''aceptaNoSubrogacion'''' : ''''aceptaSubrogacion'''' : esSubrogacionHipoteca() ? ''''rechazaSubrogacionHipotecaria'''' : noEsSubrogacion() ? ''''rechazaRenovacionAlquilerSocial'''' : ''''rechazaSubrogacionDacion'''''' 
 	WHERE TAP_CODIGO = ''T018_AprobacionOferta''';
 	DBMS_OUTPUT.PUT_LINE(V_MSQL);
 	EXECUTE IMMEDIATE V_MSQL;

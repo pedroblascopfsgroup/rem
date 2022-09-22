@@ -4633,6 +4633,8 @@
 		    			if(CONST.TIPO_OFERTA_ALQUILER_NO_COMERCIAL['CODIGO_SUBROGACION'] === dto.codTipoAlquiler){
 		    				me.campoNoObligatorio(clienteAcepta);
 		    				me.campoNoObligatorio(fecha);
+		    				me.campoNoObligatorio(motivo);
+		    				me.campoNoObligatorio(contraOferta);
 		    				me.ocultarCampo(clienteAcepta);
 		    				me.ocultarCampo(fecha);
 		    				me.ocultarCampo(motivo);

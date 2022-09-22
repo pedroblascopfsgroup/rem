@@ -56,7 +56,7 @@ BEGIN
           	USUARIOMODIFICAR = ''HREOS-18717'', 
 		  	FECHAMODIFICAR = SYSDATE 
           	WHERE TAP_ID = (SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''T018_AprobacionOferta'') 
-          	AND TFI_NOMBRE = ''comboAprobadoApi''';
+          	AND TFI_NOMBRE = ''comboClienteAcepBorr''';
 
   	EXECUTE IMMEDIATE V_MSQL;
 
@@ -80,7 +80,7 @@ BEGIN
           	USUARIOMODIFICAR = ''HREOS-18717'', 
 		  	FECHAMODIFICAR = SYSDATE 
           	WHERE TAP_ID = (SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''T018_AprobacionOferta'') 
-          	AND TFI_NOMBRE = ''comboClienteAcepBorr''';
+          	AND TFI_NOMBRE = ''comboAprobadoApi''';
 
   	EXECUTE IMMEDIATE V_MSQL;
 

@@ -70,7 +70,7 @@ public class TramiteAlquilerNoComercialFactoryImpl implements TramiteAlquilerNoC
 			return tncRenovaciones;
 		else if (DDSubtipoOfertaAlquiler.CODIGO_SUBROGACION_DACION.equals(ofr.getSubtipoOfertaAlquiler().getCodigo()))
 			return tncSubrogacionDacion;
-		else if (DDSubtipoOfertaAlquiler.CODIGO_SUBROGACION_DACION.equals(ofr.getSubtipoOfertaAlquiler().getCodigo()))
+		else if (DDSubtipoOfertaAlquiler.CODIGO_SUBROGACION_EJECUCION.equals(ofr.getSubtipoOfertaAlquiler().getCodigo()))
 			return tncSubrogacionEjecucionHipotecaria;
 		
 		return null;

@@ -91,6 +91,13 @@ public class DDEstadoExpedienteBc implements Auditable, Dictionary {
 	public static final String CODIGO_RECESION_AGENDADA = "060";
 	public static final String CODIGO_OFERTA_TRAMITE_CONCURRENCIA_TRAMITACION = "051";
 	
+	public static final String CODIGO_C4C_BORRADOR_ACEPTADO = "730";
+	public static final String CODIGO_C4C_GESTION_ADECUCIONES_CERTIFICACIONES_CLIENTE = "750";
+	public static final String CODIGO_C4C_CONTRATO_FIRMADO = "130";
+	public static final String CODIGO_C4C_ADENDA_NECESARIA = "550";
+	public static final String CODIGO_C4C_IMPOSIBILIDAD_FIRMA = "870";
+	public static final String CODIGO_C4C_COMPROMISO_CANCELADO = "150";
+	
 	private static final long serialVersionUID = 1L;
 
 	@Id

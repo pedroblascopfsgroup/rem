@@ -282,8 +282,10 @@ public class TramiteAlquilerNoComercialManager implements TramiteAlquilerNoComer
 
 	@Override
 	public boolean conAdenda(TareaExterna tareaExterna, String tipoAdenda) {
-		boolean resultado = false;
+		boolean resultado;
 		if(DDTipoAdenda.CODIGO_NO_APLICA_ADENDA.equals(tipoAdenda)) {
+			resultado = false;
+		}else {
 			resultado = true;
 		}
 		return resultado;

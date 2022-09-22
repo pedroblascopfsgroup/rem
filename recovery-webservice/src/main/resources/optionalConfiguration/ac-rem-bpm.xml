@@ -858,7 +858,7 @@
             }
             def rechazaMenosDosVeces = {
             	def tramiteAlquilerNoComercialManager = ctx.getBean("tramiteAlquilerNoComercialManager");
-            	return tramiteAlquilerNoComercialManager.(tareaExterna);
+            	return tramiteAlquilerNoComercialManager.rechazaMenosDosVeces(tareaExterna);
             }
             def conAdenda (String tipoAdenda) {
             	def tramiteAlquilerNoComercialManager = ctx.getBean("tramiteAlquilerNoComercialManager");

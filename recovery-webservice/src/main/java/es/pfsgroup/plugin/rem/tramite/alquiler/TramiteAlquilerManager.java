@@ -333,34 +333,23 @@ public class TramiteAlquilerManager implements TramiteAlquilerApi {
 	}
 	
 	@Override
-	public boolean esOfertaSubrogacion(Long idExpediente){
-		boolean esOfertaSubrogacion = false;
-		ExpedienteComercial eco = expedienteComercialDao.get(idExpediente);
-		Oferta oferta = eco.getOferta();
-		if(DDTipoOfertaAlquiler.CODIGO_SUBROGACION.equals(oferta.getTipoOfertaAlquiler().getCodigo())) {
-			esOfertaSubrogacion = true;
-		}
-		return esOfertaSubrogacion;
-	}
-	
-	@Override
-	public boolean esOfertaSubrogacionEjecHip(Long idExpediente){
-		boolean esOfertaSubrogacionEjecHip = false;
-		ExpedienteComercial eco = expedienteComercialDao.get(idExpediente);
-		Oferta oferta = eco.getOferta();
-		if(DDSubtipoOfertaAlquiler.CODIGO_SUBROGACION_EJECUCION.equals(oferta.getSubtipoOfertaAlquiler().getCodigo())) {
-			esOfertaSubrogacionEjecHip = true;
-		}
-		return esOfertaSubrogacionEjecHip;
-	}
-	
-	@Override
-	public boolean usuarioTieneFuncionAvanzarFormalizacionAlquilerNoComercialBC() {
+	public boolean getRespuestaHistReagendacionMayor(TareaExterna tareaExterna){
 		boolean resultado = false;
-		Usuario usuario = genericAdapter.getUsuarioLogado();
-		if(funcionApi.elUsuarioTieneFuncion(FUNC_AVANZA_FORMALIZACION_ALQUILER_NC_BC, usuario)) {
-			resultado = true;
+		ExpedienteComercial eco = expedienteComercialApi.tareaExternaToExpedienteComercial(tareaExterna);
+		if (eco != null && eco.getOferta() != null) {
+			Filter filterEco =  genericDao.createFilter(FilterType.EQUALS, "oferta.id", eco.getOferta().getId());
+			Fianzas fia = genericDao.get(Fianzas.class, filterEco);
+			if(fia != null) {
+				Filter filterFia =  genericDao.createFilter(FilterType.EQUALS, "fianza.id", fia.getId());
+				List <HistoricoReagendacion> histReag = genericDao.getList(HistoricoReagendacion.class, filterFia);
+				if (histReag != null && !histReag.isEmpty()) {
+					if (histReag.size() >= 3) {
+						resultado = true;
+					}
+				}
+			}
 		}
+		
 		return resultado;
 	}
 }

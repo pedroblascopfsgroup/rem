@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Adrián Molina
---## FECHA_CREACION=20220921
+--## FECHA_CREACION=20220922
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-18270
@@ -54,7 +54,7 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('[INFO] Registro actualizado en '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO');
 	
 	/*Decision para T018_AprobacionOferta*/
-	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_DECISION = ''valores[''''T018_AprobacionOferta''''][''''comboAprobadoApi''''] == DDSiNo.SI ? esSubrogacionHipoteca() ? conAdenda() ? ''''aceptaSubrogacionHipotecariaConAdenda'''' : ''''aceptaSubrogacionHipotecariaSinAdenda'''' : noEsSubrogacion() ? ''''aceptaNoSubrogacion'''' : ''''aceptaSubrogacion'''' : esSubrogacionHipoteca() ? ''''rechazaSubrogacionHipotecaria'''' : noEsSubrogacion() ? ''''rechazaRenovacionAlquilerSocial'''' : ''''rechazaSubrogacionDacion'''''' 
+	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_DECISION = ''noEsSubrogacion() ? valores[''''T018_AprobacionOferta''''][''''comboAprobadoApi''''] == DDSiNo.SI ? ''''aceptaNoSubrogacion'''' : ''''rechazaRenovacionAlquilerSocial'''' : conAdenda() ? ''''aceptaSubrogacionHipotecariaConAdenda'''' : ''''aceptaSubrogacionHipotecariaSinAdenda'''''' 
 	WHERE TAP_CODIGO = ''T018_AprobacionOferta''';
 	DBMS_OUTPUT.PUT_LINE(V_MSQL);
 	EXECUTE IMMEDIATE V_MSQL;

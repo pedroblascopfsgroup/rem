@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20220921
+--## FECHA_CREACION=20220922
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-18692
+--## INCIDENCIA_LINK=HREOS-18765
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Creación de tabla AUX_NUM_UNIDAD_AM
@@ -43,24 +43,27 @@ BEGIN
 	
 	
 	-- Verificar si la tabla ya existe
-	V_MSQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
-	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;	
+    V_MSQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+    EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS; 
+    IF V_NUM_TABLAS = 1 THEN
+        DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TEXT_TABLA||'... Ya existe. Se borrará.');
+        EXECUTE IMMEDIATE 'DROP TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' CASCADE CONSTRAINTS';
+        
+    END IF;
 
-	IF V_NUM_TABLAS = 0 THEN
 	-- Creamos la tabla
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA|| '.'||V_TEXT_TABLA||'...');
 		V_MSQL := 'CREATE TABLE ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'
 		(
 			NUM_UNIDAD           		VARCHAR2(8 CHAR),
 			ACT_ID        				NUMBER(16,0),
-			ACT_NUM_ACTIVO				NUMBER(16,0)
+			ACT_NUM_ACTIVO				NUMBER(16,0),
+			NOMBRE_FICHERO				VARCHAR2(50 CHAR)
 		)
 		';
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Tabla creada.');
 		
-	
-	END IF;
 	
 	COMMIT;
 

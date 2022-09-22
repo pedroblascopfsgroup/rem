@@ -7090,16 +7090,18 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean relacionEstadoSubestadoAdmisionValido(String codEstadoAdmision, String codSubestadoAdmision) {
-		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("codEstadoAdmision", codEstadoAdmision);
-		params.put("codSubestadoAdmision", codSubestadoAdmision);
-		rawDao.addParams(params);
 		
 		if(codEstadoAdmision == null) {
 			return false;
 		}
 		
 		if(estadoConSubestadosAdmisionValido(codEstadoAdmision)) {
+		
+			Map<String, Object> params = new HashMap<String, Object>();
+			params.put("codEstadoAdmision", codEstadoAdmision);
+			params.put("codSubestadoAdmision", codSubestadoAdmision);
+			rawDao.addParams(params);
+			
 			String resultado = rawDao.getExecuteSQL(
 					"SELECT COUNT(1) FROM DD_SAA_SUBESTADO_ACT_ADMISION SAA "
 					+ "JOIN DD_EAA_ESTADO_ACT_ADMISION EAA ON SAA.DD_EAA_ID = EAA.DD_EAA_ID " 

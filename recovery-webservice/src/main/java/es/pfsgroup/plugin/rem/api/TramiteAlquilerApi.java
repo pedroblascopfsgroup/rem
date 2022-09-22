@@ -40,9 +40,7 @@ public interface TramiteAlquilerApi {
 	boolean expedienteTieneRiesgo(Long idExpediente);
 
 	boolean siUsuarioTieneFuncionAvanzarPBC();
-	
-	boolean getRespuestaHistReagendacionMayor(TareaExterna tareaExterna);
-	
+		
 	boolean esOfertaSubrogacion(Long idExpediente);
 	
 	boolean esOfertaSubrogacionEjecHip(Long idExpediente);

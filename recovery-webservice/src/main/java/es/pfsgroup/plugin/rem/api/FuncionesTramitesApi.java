@@ -41,5 +41,7 @@ public interface FuncionesTramitesApi {
 	DtoTipoAlquiler getDtoTipoAlquiler(Long idExpediente);
 
 	boolean seNecesitaCuentaVirtualAlquiler(TareaExterna tareaExterna);
+
+	boolean seHaReagendado2VecesOMas(TareaExterna tareaExterna);
 }
 

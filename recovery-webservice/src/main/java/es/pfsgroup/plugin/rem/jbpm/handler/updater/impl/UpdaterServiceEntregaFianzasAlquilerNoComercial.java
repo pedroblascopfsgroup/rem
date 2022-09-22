@@ -12,17 +12,13 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
-import es.pfsgroup.plugin.rem.api.OfertaApi;
-import es.pfsgroup.plugin.rem.api.TramiteAlquilerApi;
-import es.pfsgroup.plugin.rem.api.TramiteAlquilerNoComercialApi;
+import es.pfsgroup.plugin.rem.api.FuncionesTramitesApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 
 @Component
 public class UpdaterServiceEntregaFianzasAlquilerNoComercial implements UpdaterService {
@@ -34,7 +30,7 @@ public class UpdaterServiceEntregaFianzasAlquilerNoComercial implements UpdaterS
     private ExpedienteComercialApi expedienteComercialApi;
     
 	@Autowired
-	private TramiteAlquilerNoComercialApi tramiteAlquilerNoComercialApi;
+	private FuncionesTramitesApi funcionesTramitesApi;
 
     protected static final Log logger = LogFactory.getLog(UpdaterServiceEntregaFianzasAlquilerNoComercial.class);
     
@@ -59,10 +55,10 @@ public class UpdaterServiceEntregaFianzasAlquilerNoComercial implements UpdaterS
  		if (fianzaAbonada) {
  			estadoBC = DDEstadoExpedienteBc.CODIGO_FIRMA_DE_CONTRATO_AGENDADO;
 		} else {
-			if(tramiteAlquilerNoComercialApi.rechazaMenosDosVeces(tareaExternaActual)) {
-				estadoBC = DDEstadoExpedienteBc.CODIGO_BORRADOR_ACEPTADO;
-			}else {
+			if(funcionesTramitesApi.seHaReagendado2VecesOMas(tareaExternaActual)) {
 				estadoBC = DDEstadoExpedienteBc.CODIGO_VALIDACION_DE_FIRMA_DE_CONTRATO_POR_BC;
+			}else {
+				estadoBC = DDEstadoExpedienteBc.CODIGO_BORRADOR_ACEPTADO;
 			}
 		}
  		

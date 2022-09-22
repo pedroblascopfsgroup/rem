@@ -261,26 +261,6 @@ public class TramiteAlquilerNoComercialManager implements TramiteAlquilerNoComer
 	}
 
 	@Override
-	public boolean rechazaMenosDosVeces(TareaExterna tareaExterna) {
-		boolean resultado = false;
-		ExpedienteComercial eco = expedienteComercialApi.tareaExternaToExpedienteComercial(tareaExterna);
-		if (eco != null && eco.getOferta() != null) {
-			Filter filterEco =  genericDao.createFilter(FilterType.EQUALS, "oferta.id", eco.getOferta().getId());
-			Fianzas fia = genericDao.get(Fianzas.class, filterEco);
-			if(fia != null) {
-				Filter filterFia =  genericDao.createFilter(FilterType.EQUALS, "fianza.id", fia.getId());
-				List <HistoricoReagendacion> histReag = genericDao.getList(HistoricoReagendacion.class, filterFia);
-				if (histReag != null && !histReag.isEmpty()) {
-					if (histReag.size() < 3) {
-						resultado = true;
-					}
-				}
-			}
-		}
-		return resultado;
-	}
-
-	@Override
 	public boolean conAdenda(TareaExterna tareaExterna, String tipoAdenda) {
 		boolean resultado = false;
 		if(DDTipoAdenda.CODIGO_NO_APLICA_ADENDA.equals(tipoAdenda)) {

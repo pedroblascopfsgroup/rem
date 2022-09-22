@@ -333,27 +333,6 @@ public class TramiteAlquilerManager implements TramiteAlquilerApi {
 	}
 	
 	@Override
-	public boolean getRespuestaHistReagendacionMayor(TareaExterna tareaExterna){
-		boolean resultado = false;
-		ExpedienteComercial eco = expedienteComercialApi.tareaExternaToExpedienteComercial(tareaExterna);
-		if (eco != null && eco.getOferta() != null) {
-			Filter filterEco =  genericDao.createFilter(FilterType.EQUALS, "oferta.id", eco.getOferta().getId());
-			Fianzas fia = genericDao.get(Fianzas.class, filterEco);
-			if(fia != null) {
-				Filter filterFia =  genericDao.createFilter(FilterType.EQUALS, "fianza.id", fia.getId());
-				List <HistoricoReagendacion> histReag = genericDao.getList(HistoricoReagendacion.class, filterFia);
-				if (histReag != null && !histReag.isEmpty()) {
-					if (histReag.size() >= 3) {
-						resultado = true;
-					}
-				}
-			}
-		}
-		
-		return resultado;
-	}
-	
-	@Override
 	public boolean esOfertaSubrogacion(Long idExpediente){
 		boolean esOfertaSubrogacion = false;
 		ExpedienteComercial eco = expedienteComercialDao.get(idExpediente);

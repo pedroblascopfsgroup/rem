@@ -18,6 +18,7 @@ import es.pfsgroup.plugin.rem.model.DtoTabFianza;
 import es.pfsgroup.plugin.rem.model.DtoTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Fianzas;
+import es.pfsgroup.plugin.rem.model.HistoricoReagendacion;
 import es.pfsgroup.plugin.rem.model.HistoricoTareaPbc;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.VGridDescuentoColectivos;
@@ -315,6 +316,32 @@ public class FuncionesTramitesManager implements FuncionesTramitesApi {
 			resultado = true;
 		} 
 			
+		return resultado;
+	}
+	
+	private Integer numeroReagendacionesFianza(Oferta ofr){
+		Integer numReagendaciones = 0;
+		
+		if(ofr != null) {
+			Fianzas fianza =  genericDao.get(Fianzas.class, genericDao.createFilter(FilterType.EQUALS, "oferta.id", ofr.getId()));
+			if(fianza != null) {
+				List <HistoricoReagendacion> histReag = genericDao.getList(HistoricoReagendacion.class, genericDao.createFilter(FilterType.EQUALS, "fianza.id", fianza.getId()));
+				if(!Checks.estaVacio(histReag)) {
+					numReagendaciones = histReag.size();
+				}
+			}
+		}
+		
+		return numReagendaciones;
+	}
+	@Override
+	public boolean seHaReagendado2VecesOMas(TareaExterna tareaExterna){
+		boolean resultado = false;
+		ExpedienteComercial eco = expedienteComercialApi.tareaExternaToExpedienteComercial(tareaExterna);
+		if(this.numeroReagendacionesFianza(eco.getOferta()) > 1) {
+			resultado = true;
+		}
+		
 		return resultado;
 	}
 }

@@ -5913,7 +5913,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 			listaAgrupaciones.add(numAgrup.longValue());
 		}
 		
-		return listaAgrupaciones.isEmpty() ? null: listaAgrupaciones;
+		return listaAgrupaciones;
 	}
 	
 	@Override

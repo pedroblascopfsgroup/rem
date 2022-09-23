@@ -106,6 +106,8 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
     private static final String CODIGO_T004_SOLICITUD_EXTRAORDINARIA = "T004_SolicitudExtraordinaria";
     private static final String CODIGO_GESTOR_FORMALIZACION = "GFORM";
     private static final String CODIGO_T011_ANALISIS_PETICION_CORRECCION = "T011_AnalisisPeticionCorreccion";
+	private static final String CODIGO_T011_REVISION_INFORME_COMERCIAL = "T011_RevisionInformeComercial";
+	private static final String USUARIO_GRUPO_PUBLICACIONES = "usugrupub";
     
     
     protected final Log logger = LogFactory.getLog(getClass());
@@ -786,10 +788,10 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
 			}
 			
 		}else if(!Checks.esNulo(tareaExterna) && !Checks.esNulo(tareaExterna.getTareaProcedimiento()) 
-				&& CODIGO_T011_ANALISIS_PETICION_CORRECCION.equals(tareaExterna.getTareaProcedimiento().getCodigo()) 
-				&& cartera.getCodigo().equals(DDCartera.CODIGO_CARTERA_SAREB)){
+				&& (CODIGO_T011_ANALISIS_PETICION_CORRECCION.equals(tareaExterna.getTareaProcedimiento().getCodigo()) 
+				|| CODIGO_T011_REVISION_INFORME_COMERCIAL.equals(tareaExterna.getTareaProcedimiento().getCodigo()))){
 			
-					tareaActivo.setUsuario(usuarioManager.getByUsername("rabad"));
+					tareaActivo.setUsuario(usuarioManager.getByUsername(USUARIO_GRUPO_PUBLICACIONES));
 			
 			 
 		}else if(!Checks.esNulo(tareaExterna) && !Checks.esNulo(tareaExterna.getTareaProcedimiento()) && 

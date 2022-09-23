@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20211201
+--## FECHA_CREACION=20220909
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-15634
@@ -21,6 +21,7 @@
 --##        0.9 Se modifica la creación de obra nueva porque no hacía nada - DAP
 --##	      0.10 Optimización - HREOS-15634 - Daniel Algaba
 --##	      0.10 Se corrige la creación de las ON - Daniel Algaba
+--##        0.11 Se añaden Analize a las tablas - REMVIP-12396 - Juan Bautista
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -78,6 +79,12 @@ BEGIN
       SALIDA := SALIDA || '   [INFO]      INSERTADOS '|| SQL%ROWCOUNT|| CHR(10);
       
       COMMIT;
+
+      SALIDA := SALIDA || ' [INFO]  ANALIZAMOS TABLAS CARGADAS... '|| CHR(10);
+      #ESQUEMA#.OPERACION_DDL.DDL_TABLE('ANALYZE','ACT_AGR_AGRUPACION');
+      #ESQUEMA#.OPERACION_DDL.DDL_TABLE('ANALYZE','ACT_AGA_AGRUPACION_ACTIVO');
+      #ESQUEMA#.OPERACION_DDL.DDL_TABLE('ANALYZE','ACT_ACTIVO');
+      #ESQUEMA#.OPERACION_DDL.DDL_TABLE('ANALYZE','AUX_BC_AGRUPACIONES');
 
       SALIDA := SALIDA || '   [INFO] 1 - VALIDAMOS LAS AGRUPACIONES'||CHR(10);
 

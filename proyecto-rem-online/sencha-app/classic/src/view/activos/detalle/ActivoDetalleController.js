@@ -3783,8 +3783,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			me.redirectTo('activos', true);
 			me.getView().fireEvent('abrirDetalleActivoOfertas', record);
 		} else {
-			var idAgrupacion = record.get("idAgrupacion");
-			me.getView().fireEvent('abrirDetalleActivoOfertas', record);
+			record.data.id = record.get("idAgrupacion");
+			record.data.numAgrupacionRem = record.get("numActivoAgrupacion");
+			me.getView().fireEvent('abrirDetalleAgrupacion', record);
 		}
 
 	},

@@ -111,12 +111,14 @@ BEGIN
                      WHEN aux.SUBTIPO_VIVIENDA IS NOT NULL THEN sac_viv.DD_TPA_ID
                      WHEN aux.SUBTIPO_SUELO IS NOT NULL THEN sac_suelo.DD_TPA_ID
                      WHEN sac_uso.DD_TPA_ID IS NOT NULL THEN sac_uso.DD_TPA_ID
+                     WHEN AUX.CLASE_USO_REGISTRAL IS NULL AND SAC_TASA.DD_TPA_ID IS NOT NULL THEN SAC_TASA.DD_TPA_ID
                      ELSE TPA.DD_TPA_ID
                   END DD_TPA_ID,
                   CASE 
                      WHEN aux.SUBTIPO_VIVIENDA IS NOT NULL THEN sac_viv.DD_SAC_ID
                      WHEN aux.SUBTIPO_SUELO IS NOT NULL THEN sac_suelo.DD_SAC_ID
                      WHEN sac_uso.DD_SAC_ID IS NOT NULL THEN sac_uso.DD_SAC_ID
+                     WHEN AUX.CLASE_USO_REGISTRAL IS NULL AND SAC_TASA.DD_SAC_ID IS NOT NULL THEN SAC_TASA.DD_SAC_ID
                      WHEN TPA.DD_TPA_ID IS NOT NULL AND SAC.DD_SAC_ID IS NOT NULL THEN ACT.DD_SAC_ID
                      ELSE NULL
                   END DD_SAC_ID,
@@ -124,8 +126,10 @@ BEGIN
                   COALESCE(STA_OR.DD_STA_ID, STA.DD_STA_ID) AS DD_STA_ID,
                   prp.DD_PRP_ID as DD_PRP_ID,
                   CASE
-                     WHEN AUX.CLASE_USO_REGISTRAL=''0001'' AND AUX.VIVIENDA_HABITUAL=''S'' THEN (SELECT DD_TUD_ID FROM '|| V_ESQUEMA ||'.DD_TUD_TIPO_USO_DESTINO WHERE DD_TUD_CODIGO=''01'')
-                     WHEN AUX.CLASE_USO_REGISTRAL=''0001'' AND AUX.VIVIENDA_HABITUAL=''N'' THEN (SELECT DD_TUD_ID FROM '|| V_ESQUEMA ||'.DD_TUD_TIPO_USO_DESTINO WHERE DD_TUD_CODIGO=''06'')
+                     WHEN (AUX.CLASE_USO_REGISTRAL=''0001'' OR (AUX.CLASE_USO_REGISTRAL IS NULL AND AUX.CLASE_USO=''0001'')) 
+                           AND AUX.VIVIENDA_HABITUAL=''S'' THEN (SELECT DD_TUD_ID FROM '|| V_ESQUEMA ||'.DD_TUD_TIPO_USO_DESTINO WHERE DD_TUD_CODIGO=''01'')
+                     WHEN (AUX.CLASE_USO_REGISTRAL=''0001'' OR (AUX.CLASE_USO_REGISTRAL IS NULL AND AUX.CLASE_USO=''0001'')) 
+                           AND AUX.VIVIENDA_HABITUAL=''N'' THEN (SELECT DD_TUD_ID FROM '|| V_ESQUEMA ||'.DD_TUD_TIPO_USO_DESTINO WHERE DD_TUD_CODIGO=''06'')
                      ELSE NULL
                   END AS DD_TUD_ID,
                   tcr.DD_TCR_ID as DD_TCR_ID,
@@ -158,9 +162,11 @@ BEGIN
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_PRP_PROCEDENCIA_PRODUCTO prp ON prp.DD_PRP_CODIGO = eqv5.DD_CODIGO_REM     
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv7 ON eqv7.DD_NOMBRE_CAIXA = ''CANAL_DISTRIBUCION_VENTA''  AND eqv7.DD_CODIGO_CAIXA = aux.CANAL_DISTRIBUCION_VENTA AND EQV7.BORRADO=0
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_TCR_TIPO_COMERCIALIZAR tcr ON tcr.DD_TCR_CODIGO = eqv7.DD_CODIGO_REM
-                  LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv11 ON eqv11.DD_NOMBRE_CAIXA = ''TIPO_ACTIVO'' AND eqv11.DD_CODIGO_CAIXA = aux.CLASE_USO_REGISTRAL AND eqv11.BORRADO = 0
+                  LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv11 ON eqv11.DD_NOMBRE_CAIXA = ''TIPO_ACTIVO'' AND eqv11.DD_CODIGO_CAIXA = NVL(aux.CLASE_USO_REGISTRAL,aux.CLASE_USO) AND eqv11.BORRADO = 0
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_TPA_TIPO_ACTIVO TPA ON TPA.DD_TPA_CODIGO = eqv11.DD_CODIGO_REM
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_SAC_SUBTIPO_ACTIVO SAC ON ACT.DD_SAC_ID = SAC.DD_SAC_ID AND TPA.DD_TPA_ID = SAC.DD_TPA_ID AND SAC.BORRADO = 0
+                  LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM EQV12 ON EQV12.DD_NOMBRE_CAIXA = ''CLASE_USO''  AND EQV12.DD_CODIGO_CAIXA = aux.CLASE_USO AND EQV12.BORRADO=0
+                  LEFT JOIN '|| V_ESQUEMA ||'.DD_SAC_SUBTIPO_ACTIVO SAC_TASA ON SAC_TASA.DD_SAC_CODIGO = EQV12.DD_CODIGO_REM
                   WHERE aux.FLAG_EN_REM = '|| FLAG_EN_REM ||'
                                        
                                  ) us ON (us.act_id = act.act_id)
@@ -170,6 +176,7 @@ BEGIN
                                                          WHEN us.DD_SAC_ID IS NOT NULL THEN us.DD_SAC_ID 
                                                          WHEN us.DD_TPA_ID IS NULL THEN act.DD_SAC_ID 
                                                          WHEN us.DD_TPA_ID IS NOT NULL AND us.DD_SAC_ID IS NULL AND us.DD_TPA_ID = act.DD_TPA_ID THEN act.DD_SAC_ID 
+                                                         ELSE NULL
                                                       END
                                     ,act.DD_TTA_ID = NVL(us.DD_TTA_ID,act.DD_TTA_ID)
                                     ,act.DD_STA_ID = NVL(us.DD_STA_ID,act.DD_STA_ID)

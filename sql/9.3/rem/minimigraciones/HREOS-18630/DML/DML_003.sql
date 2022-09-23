@@ -24,8 +24,8 @@ SET DEFINE OFF;
 
 DECLARE
 	V_MSQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
- 	V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
- 	V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+	V_ESQUEMA VARCHAR2(25 CHAR):= 'REM01';-- '#ESQUEMA#'; -- Configuracion Esquema
+	V_ESQUEMA_M VARCHAR2(25 CHAR):= 'REMMASTER';-- '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
 	V_USUARIO VARCHAR2(50 CHAR) := 'HREOS-18630'; -- USUARIO CREAR/MODIFICAR
 	V_COUNT NUMBER(16); -- Vble. para comprobar
 	err_num NUMBER; -- Numero de errores

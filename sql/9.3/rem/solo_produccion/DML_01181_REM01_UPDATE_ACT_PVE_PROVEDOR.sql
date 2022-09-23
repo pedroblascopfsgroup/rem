@@ -1,0 +1,170 @@
+--/*
+--##########################################
+--## AUTOR=Juan Bautista Alfonso
+--## FECHA_CREACION=20220905
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=REMVIP-12365
+--## PRODUCTO=NO
+--##
+--## Finalidad: Script actualiza codigo caixa provedores
+--## INSTRUCCIONES:
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
+SET DEFINE OFF;
+
+
+DECLARE
+
+    V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar.
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema.
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master.
+    ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+    ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+    V_TEXT_TABLA VARCHAR2(27 CHAR) := 'ACT_PVE_PROVEEDOR'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_USU VARCHAR2(30 CHAR) := 'REMVIP-12365'; -- Vble. auxiliar para almacenar el nombre de usuario que modifica los registros.
+	V_COUNT NUMBER(16);
+
+    V_COUNT_REG NUMBER(16):=0;
+    V_COUNT_REG_TOTAL NUMBER(16):=0;
+
+	TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
+    TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
+    V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
+		-- 			DOCIDENTIF  PVE_COD_UVEM
+T_TIPO_DATA('E78422318','1018309'),
+T_TIPO_DATA('E78679172','1018314'),
+T_TIPO_DATA('E78881794','1021745'),
+T_TIPO_DATA('E78915238','1018315'),
+T_TIPO_DATA('G13037809','1020624'),
+T_TIPO_DATA('H07280001','1021801'),
+T_TIPO_DATA('H13214697','1018345'),
+T_TIPO_DATA('H13441670','1018351'),
+T_TIPO_DATA('H17279134','1018379'),
+T_TIPO_DATA('H17504150','1021805'),
+T_TIPO_DATA('H17838137','1021804'),
+T_TIPO_DATA('H17871146','1020492'),
+T_TIPO_DATA('H17941469','1020312'),
+T_TIPO_DATA('H19209303','1018394'),
+T_TIPO_DATA('H26326611','1018408'),
+T_TIPO_DATA('H35228923','1020401'),
+T_TIPO_DATA('H38634929','1018432'),
+T_TIPO_DATA('H38921656','1007552'),
+T_TIPO_DATA('H43265172','1021744'),
+T_TIPO_DATA('H43283456','1008020'),
+T_TIPO_DATA('H43483486','1021786'),
+T_TIPO_DATA('H43819200','1021787'),
+T_TIPO_DATA('H43937275','1021797'),
+T_TIPO_DATA('H45637915','1018470'),
+T_TIPO_DATA('H45687274','1001717'),
+T_TIPO_DATA('H55540033','1020667'),
+T_TIPO_DATA('H59004689','1018499'),
+T_TIPO_DATA('H59429456','1021729'),
+T_TIPO_DATA('H59617290','1021799'),
+T_TIPO_DATA('H59657510','1018507'),
+T_TIPO_DATA('H59664680','1018508'),
+T_TIPO_DATA('H59756932','1018514'),
+T_TIPO_DATA('H59760876','1021746'),
+T_TIPO_DATA('H59769901','1018516'),
+T_TIPO_DATA('H60571809','1018525'),
+T_TIPO_DATA('H62099791','1018538'),
+T_TIPO_DATA('H63596217','1021798'),
+T_TIPO_DATA('H78305133','1001625'),
+T_TIPO_DATA('H79181269','1018596'),
+T_TIPO_DATA('H79723854','1001529'),
+T_TIPO_DATA('H79746657','1018653'),
+T_TIPO_DATA('H79921268','1021803'),
+T_TIPO_DATA('H80376056','1018693'),
+T_TIPO_DATA('H80545965','1018696'),
+T_TIPO_DATA('H80570795','1018698'),
+T_TIPO_DATA('H81597668','1018716'),
+T_TIPO_DATA('H81858334','1018723')
+
+        ); 
+    V_TMP_TIPO_DATA T_TIPO_DATA;
+
+    
+BEGIN		
+
+	DBMS_OUTPUT.PUT_LINE('[INICIO]');
+	
+	FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST
+    LOOP
+        V_TMP_TIPO_DATA := V_TIPO_DATA(I);
+        V_COUNT_REG_TOTAL :=V_COUNT_REG_TOTAL+1;
+
+		DBMS_OUTPUT.PUT_LINE('[INFO]: INFORMAR CODIGO_CAIXA EN CAMPO PVE_COD_UVEM, TABLA '||V_TEXT_TABLA);
+
+		V_MSQL:= 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' WHERE PVE_DOCIDENTIF = '''||V_TMP_TIPO_DATA(1)||''' AND BORRADO = 0 AND PVE_FECHA_BAJA IS NULL';
+		EXECUTE IMMEDIATE V_MSQL INTO V_COUNT;
+
+		IF V_COUNT > 0 THEN
+
+            V_MSQL:= 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' WHERE PVE_DOCIDENTIF = '''||V_TMP_TIPO_DATA(1)||''' 
+            AND (PVE_COD_UVEM!='||V_TMP_TIPO_DATA(2)||' OR PVE_COD_UVEM IS NULL) AND BORRADO = 0 AND PVE_FECHA_BAJA IS NULL';
+            EXECUTE IMMEDIATE V_MSQL INTO V_COUNT;
+
+			IF V_COUNT > 0 THEN
+
+                V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR T1
+                            USING (
+                                select PVE.PVE_ID from '||V_ESQUEMA||'.act_pve_proveedor pve
+                                where pve.pve_docidentif ='''||V_TMP_TIPO_DATA(1)||''' AND (PVE.PVE_COD_UVEM!='||V_TMP_TIPO_DATA(2)||' OR PVE.PVE_COD_UVEM IS NULL) 
+                                AND PVE.BORRADO = 0 AND PVE.PVE_FECHA_BAJA IS NULL
+                            ) T2
+                            ON (T1.PVE_ID = T2.PVE_ID)
+                            WHEN MATCHED THEN
+                            UPDATE SET 
+                                PVE_COD_UVEM = '||V_TMP_TIPO_DATA(2)||',
+                                FECHAMODIFICAR = SYSDATE,
+                                USUARIOMODIFICAR = '''||V_USU||'''	 		
+                            ';
+                    
+                EXECUTE IMMEDIATE V_MSQL;  
+
+                DBMS_OUTPUT.PUT_LINE('[INFO]: '|| SQL%ROWCOUNT ||' Proveedores actualizados  ');
+                V_COUNT_REG := V_COUNT_REG+1;
+
+			ELSE
+
+				DBMS_OUTPUT.PUT_LINE('[WARN]: EL PROVEEDOR '||V_TMP_TIPO_DATA(1)||' YA TIENE EL PVE_COD_REM = '||V_TMP_TIPO_DATA(2)||' ');
+
+			END IF;
+
+		ELSE
+
+			DBMS_OUTPUT.PUT_LINE('[ERROR]: NO EXISTE PROVEEDOR CON DOCIDENTIF '||V_TMP_TIPO_DATA(1)||' ');
+
+		END IF;
+
+	END LOOP;
+
+    DBMS_OUTPUT.PUT_LINE('[INFO]: SE HAN ACTUALIZADO '||V_COUNT_REG||' DE '||V_COUNT_REG_TOTAL||' ');
+
+	COMMIT;
+
+	DBMS_OUTPUT.PUT_LINE('[FIN]');
+
+
+EXCEPTION
+		WHEN OTHERS THEN
+			err_num := SQLCODE;
+			err_msg := SQLERRM;
+
+			DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(err_num));
+			DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+			DBMS_OUTPUT.put_line(err_msg);
+
+			ROLLBACK;
+			RAISE;          
+
+END;
+
+/
+
+EXIT

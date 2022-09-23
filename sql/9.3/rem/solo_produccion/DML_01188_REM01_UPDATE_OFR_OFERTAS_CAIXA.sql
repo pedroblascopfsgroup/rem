@@ -124,7 +124,7 @@ BEGIN
             IF V_DEP_ID != 0 THEN
 
                 EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.DEP_DEPOSITO SET           
-                DD_EDP_ID = (SELECT DD_EDP_ID FROM '||V_ESQUEMA||'.DD_EDP_EST_DEPOSITO WHERE DD_EOB_CODIGO = :1),   
+                DD_EDP_ID = (SELECT DD_EDP_ID FROM '||V_ESQUEMA||'.DD_EDP_EST_DEPOSITO WHERE DD_EDP_CODIGO = :1),   
                 USUARIOMODIFICAR = :2,
                 FECHAMODIFICAR = SYSDATE               
                 WHERE DEP_ID = :3'

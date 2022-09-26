@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.tramite.Funciones;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.pfsgroup.commons.utils.Checks;
@@ -11,10 +12,12 @@ import es.pfsgroup.plugin.rem.activo.ActivoManager;
 import es.pfsgroup.plugin.rem.api.*;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
+import es.pfsgroup.plugin.rem.model.ComunicarFormalizacionApi;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.CuentasVirtualesAlquiler;
 import es.pfsgroup.plugin.rem.model.DtoCondicionantesExpediente;
 import es.pfsgroup.plugin.rem.model.DtoTabFianza;
+import es.pfsgroup.plugin.rem.model.DtoTareasFormalizacion;
 import es.pfsgroup.plugin.rem.model.DtoTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Fianzas;
@@ -343,5 +346,23 @@ public class FuncionesTramitesManager implements FuncionesTramitesApi {
 		}
 		
 		return resultado;
+	}
+	
+	@Override
+	public void createOrUpdateComunicacionApi (ExpedienteComercial eco, DtoTareasFormalizacion dto) {
+		ComunicarFormalizacionApi comApi = genericDao.get(ComunicarFormalizacionApi.class, genericDao.createFilter(FilterType.EQUALS, "oferta.id", eco.getOferta().getId()));
+		
+		if(comApi == null) {
+			comApi = new ComunicarFormalizacionApi();
+			comApi.setOferta(eco.getOferta());
+			comApi.setAuditoria(Auditoria.getNewInstance());
+		}
+		
+		comApi.setBurofaxEnviado(dto.getBurofaxEnviado());
+		comApi.setFechaBurofax(dto.getFechaBurofaxEnviado());
+		comApi.setLlamadaRealizada(dto.getLlamadaRealizada());
+		comApi.setFechaLlamada(dto.getFechaLlamadaRealizada());
+		
+		genericDao.save(ComunicarFormalizacionApi.class, comApi);
 	}
 }

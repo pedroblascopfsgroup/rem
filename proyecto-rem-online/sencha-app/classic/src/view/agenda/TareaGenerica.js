@@ -4613,17 +4613,15 @@
 		
 		clienteAcepta.addListener('change', function(combo) {
 			if (combo.value == '01') { //SI
-				me.campoNoObligatorio(contraOferta);
 				me.campoNoObligatorio(motivo);
-				me.deshabilitarCampo(contraOferta);
 				me.deshabilitarCampo(motivo);
 			} else { //NO
-				me.habilitarCampo(contraOferta);
 				me.habilitarCampo(motivo);
-				me.campoObligatorio(contraOferta);
 				me.campoObligatorio(motivo);
 			}
 		});
+		
+		me.ocultarCampo(contraoferta);
 
 		Ext.Ajax.request({
 			url: $AC.getRemoteUrl('expedientecomercial/getDtoTipoAlquiler'),
@@ -4647,6 +4645,11 @@
 		    				me.campoObligatorio(tipoAdenda);
 		    			}else{
 		    				me.deshabilitarCampo(tipoAdenda);
+		    			}
+		    			if(CONST.TIPO_OFERTA_ALQUILER_NO_COMERCIAL['CODIGO_ALQUILER_SOCIAL'] === dto.codTipoAlquiler || 
+		    					CONST.TIPO_OFERTA_ALQUILER_NO_COMERCIAL['CODIGO_RENOVACION'] === dto.codTipoAlquiler){
+		    				me.campoNoObligatorio(contraOferta);
+		    				me.ocultarCampo(contraOferta);
 		    			}
 					}
 		    	}

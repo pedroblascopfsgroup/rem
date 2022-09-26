@@ -17,6 +17,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.FuncionesTramitesApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ComunicarFormalizacionApi;
@@ -34,6 +35,9 @@ public class UpdaterServiceSancionOfertaAlquilerEnvioContrato implements Updater
 
     @Autowired
     private ExpedienteComercialApi expedienteComercialApi;
+    
+    @Autowired
+    private FuncionesTramitesApi funcionesTramitesApi;
 
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaAlquilerEnvioContrato.class);
     
@@ -70,7 +74,7 @@ public class UpdaterServiceSancionOfertaAlquilerEnvioContrato implements Updater
 			}
 			
 				
-			this.createOrUpdateComunicacionApi(expedienteComercial, dto);
+			funcionesTramitesApi.createOrUpdateComunicacionApi(expedienteComercial, dto);
 			estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_BORRADOR_ENVIADO));
 			expedienteComercial.setEstadoBc(estadoBc);	
 	
@@ -90,21 +94,4 @@ public class UpdaterServiceSancionOfertaAlquilerEnvioContrato implements Updater
 		return this.getCodigoTarea();
 	}
 
-
-	private void createOrUpdateComunicacionApi (ExpedienteComercial eco, DtoTareasFormalizacion dto) {
-		ComunicarFormalizacionApi comApi = genericDao.get(ComunicarFormalizacionApi.class, genericDao.createFilter(FilterType.EQUALS, "oferta.id", eco.getOferta().getId()));
-		
-		if(comApi == null) {
-			comApi = new ComunicarFormalizacionApi();
-			comApi.setOferta(eco.getOferta());
-			comApi.setAuditoria(Auditoria.getNewInstance());
-		}
-		
-		comApi.setBurofaxEnviado(dto.getBurofaxEnviado());
-		comApi.setFechaBurofax(dto.getFechaBurofaxEnviado());
-		comApi.setLlamadaRealizada(dto.getLlamadaRealizada());
-		comApi.setFechaLlamada(dto.getFechaLlamadaRealizada());
-		
-		genericDao.save(ComunicarFormalizacionApi.class, comApi);
-	}
 }

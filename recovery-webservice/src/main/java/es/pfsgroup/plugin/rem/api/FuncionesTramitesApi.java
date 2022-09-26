@@ -5,6 +5,7 @@ import java.util.List;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.pfsgroup.plugin.rem.model.DtoCondicionantesExpediente;
 import es.pfsgroup.plugin.rem.model.DtoTabFianza;
+import es.pfsgroup.plugin.rem.model.DtoTareasFormalizacion;
 import es.pfsgroup.plugin.rem.model.DtoTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.HistoricoTareaPbc;
@@ -43,5 +44,7 @@ public interface FuncionesTramitesApi {
 	boolean seNecesitaCuentaVirtualAlquiler(TareaExterna tareaExterna);
 
 	boolean seHaReagendado2VecesOMas(TareaExterna tareaExterna);
+	
+	void createOrUpdateComunicacionApi(ExpedienteComercial eco, DtoTareasFormalizacion dto);
 }
 

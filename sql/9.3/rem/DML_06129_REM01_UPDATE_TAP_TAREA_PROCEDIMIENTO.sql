@@ -1,17 +1,18 @@
 --/*
 --##########################################
 --## AUTOR=Adrián Molina
---## FECHA_CREACION=20220922
+--## FECHA_CREACION=20220926
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-18270
+--## INCIDENCIA_LINK=HREOS-18734
 --## PRODUCTO=NO
 --## Finalidad: DML
---##           
+--##
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##        0.2 Cambio deiciones. validaciones jbmp tareas alquiler no comercial HREOS-18270 Javier Esbri
+--##        0.3 Cambio deiciones. validaciones jbmp tareas alquiler no comercial HREOS-18734 Adrian Molina
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -52,7 +53,7 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE(V_MSQL);
 	EXECUTE IMMEDIATE V_MSQL;
 	DBMS_OUTPUT.PUT_LINE('[INFO] Registro actualizado en '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO');
-				
+	
 	/*Decision para T018_AprobacionOferta*/
 	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_DECISION = ''noEsSubrogacion() ? valores[''''T018_AprobacionOferta''''][''''comboAprobadoApi''''] == DDSiNo.SI ? ''''aceptaNoSubrogacion'''' : ''''rechazaRenovacionAlquilerSocial'''' : conAdenda(valores[''''T018_AprobacionOferta''''][''''tipoAdenda'''']) ? ''''aceptaSubrogacionHipotecariaConAdenda'''' : ''''aceptaSubrogacionHipotecariaSinAdenda'''''' 
 	WHERE TAP_CODIGO = ''T018_AprobacionOferta''';
@@ -61,7 +62,7 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('[INFO] Registro actualizado en '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO');
 
 	/*Validacion JPBM para T018_AprobacionOferta*/
-	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_VALIDACION_JBPM = ''checkBankia() ? noEsSubrogacion() ? valores[''''T018_AprobacionOferta''''][''''comboResultado''''] == DDSiNo.SI && valores[''''T018_AprobacionOferta''''][''''comboAprobadoApi''''] == DDSiNo.SI && valores[''''T018_AprobacionOferta''''][''''comboBorradorContratoApi''''] == DDSiNo.SI ? null  : ''''Se deben rellenar los campos Condiciones pactadas aprobadas, Aprobaci&oacute;n comunicada a API y Borrador de contrato enviado a API de la tarea a Si para poder avanzar'''' : valores[''''T018_AprobacionOferta''''][''''llamadaRealizada''''] == DDSiNo.SI && valores[''''T018_AprobacionOferta''''][''''burofaxEnviado''''] == DDSiNo.SI ? null : ''''Solo se podrá avanzar con Llamada realizada y Burofax enviado a SI'''' : null'' 
+	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_VALIDACION_JBPM = ''valores[''''T018_AprobacionOferta''''][''''llamadaRealizada''''] == DDSiNo.SI && valores[''''T018_AprobacionOferta''''][''''burofaxEnviado''''] == DDSiNo.SI ? null : ''''Solo se podrá avanzar con Llamada realizada y Burofax enviado a SI'''''' 
 	WHERE TAP_CODIGO = ''T018_AprobacionOferta''';
 	DBMS_OUTPUT.PUT_LINE(V_MSQL);
 	EXECUTE IMMEDIATE V_MSQL;

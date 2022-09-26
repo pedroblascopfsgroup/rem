@@ -183,7 +183,7 @@
 				</targetBean>
 			</action>
 		</event>
-		<transition to="T018_TrasladarOfertaCliente" name="avanzaBPM"></transition>
+		<transition to="T018_DatosPBC" name="avanzaBPM"></transition>
 		<transition to="Fin" name="Fin"></transition>
 	</state> 
 	
@@ -211,7 +211,7 @@
 	</state> 
 	<decision name ="T018_PteClRodDecision" expression="#{T018_PteClRodDecision}">
 		<transition to="Fin" name="rechaza"></transition>
-        <transition to="T018_TrasladarOfertaCliente" name="aprueba"></transition>
+        <transition to="T018_DatosPBC" name="aprueba"></transition>
 	</decision>
 	
 	<state name="T018_TrasladarOfertaCliente">

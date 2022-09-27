@@ -878,6 +878,13 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             				item.setValue(ofertaAceptada.getImporteContraOferta().toString());
             			}
             		}
+					
+					if(item.getNombre().equals("importeOfertante")){
+            			Oferta oferta = ofertaApi.tareaExternaToOferta(tareaExterna);
+            			if(!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getImporteOferta())){
+            				item.setValue(oferta.getImporteOferta().toString());
+            			}
+            		}
             		
             	}
             }

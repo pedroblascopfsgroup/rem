@@ -10,6 +10,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
+import es.pfsgroup.plugin.rem.activo.valoracion.dao.ActivoValoracionDao;
 import es.pfsgroup.plugin.rem.api.*;
 import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDeposito;
@@ -45,6 +46,9 @@ public class DepositoManager extends BusinessOperationOverrider<DepositoApi> imp
 	
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
+
+	@Autowired
+	private ActivoValoracionDao activoValoracionDao;
 
 	@Autowired
 	private ConcurrenciaApi concurrenciaApi;
@@ -162,7 +166,7 @@ public class DepositoManager extends BusinessOperationOverrider<DepositoApi> imp
 	@Override
 	public Double getImporteDeposito(Oferta oferta) {
 		Double importeDeposito = null;
-		Double precioVentaActivo = activoApi.getImporteValoracionActivoByCodigo(oferta.getActivoPrincipal(), DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA);
+		Double precioVentaActivo = getPrecioVenta(oferta);
 
 		if(precioVentaActivo != null) {
 			Filter filterSubcartera = genericDao.createFilter(FilterType.EQUALS, "subcartera", oferta.getActivoPrincipal().getSubcartera());
@@ -172,13 +176,25 @@ public class DepositoManager extends BusinessOperationOverrider<DepositoApi> imp
 			if (parametrizacionDeposito != null) {
 				for (ParametrizacionDeposito paramDeposito: parametrizacionDeposito) {
 					if (paramDeposito.getPrecioVenta() != null && paramDeposito.getPrecioVenta() < precioVentaActivo) {
-						importeDeposito = paramDeposito.getImporteDeposito();
+						importeDeposito = precioVentaActivo > paramDeposito.getImporteDeposito() ? paramDeposito.getImporteDeposito() : paramDeposito.getImporteDeposito()/2;
 					}
 				}
 			}
 		}
 		
 		return importeDeposito;
+	}
+	
+	private Double getPrecioVenta(Oferta oferta) {
+		Double precioVenta = null;
+		
+		if (!Checks.esNulo(oferta.getAgrupacion())) {
+			precioVenta = activoValoracionDao.getImporteValoracionVentaWebPorIdAgrupacion(oferta.getAgrupacion().getId());
+		} else {
+			precioVenta = activoValoracionDao.getImporteValoracionVentaWebPorIdActivo(oferta.getActivoPrincipal().getId());
+		}
+		
+		return precioVenta;
 	}
 
 	@Override

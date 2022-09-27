@@ -386,7 +386,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		Oferta oferta = genericDao.get(Oferta.class, filtro);
 		Boolean esAlquiler = DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo());
 		
-		if(ofertaApi.debeCongelarOfertaCaixa(oferta)) {
+		if(ofertaApi.debeCongelarOfertaCaixa(oferta) && !DDEstadoOferta.CODIGO_RECHAZADA.equals(codigoEstadoOferta)) {
 			codigoEstadoOferta = DDEstadoOferta.CODIGO_CONGELADA;
 		}
 		

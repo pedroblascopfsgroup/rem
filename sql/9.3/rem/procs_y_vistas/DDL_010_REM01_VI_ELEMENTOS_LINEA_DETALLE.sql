@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Javier Esbri
---## FECHA_CREACION=202205010
+--## FECHA_CREACION=20220826
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-17801
@@ -18,6 +18,7 @@
 --##        0.6 Cambar de donde se aprovisiona el campo DD_CBC_ID - [HREOS-17156] - Javier Esbri
 --##        0.7 Cambiar de donde se aprovisiona el campo DD_CBC_ID, debe salir de la GLD_ENT - [HREOS-17713] - Alejandra García
 --##        0.8 Borrar campo Primera toma posesión - [HREOS-17801] - Javier Esbri
+--##        0.9 Cambio direccion - [REMVIP-12328] - IRC
 --##########################################
 --*/
 
@@ -73,7 +74,7 @@ BEGIN
             GLDENT.GLD_PARTICIPACION_GASTO,          
             GLDENT.GLD_REFERENCIA_CATASTRAL,
             ACT.ACT_ID AS ACTIVO,
-            LOC.BIE_LOC_DIRECCION AS DIRECCION,
+				    TVI.DD_TVI_DESCRIPCION || '' '' || LOC.BIE_LOC_NOMBRE_VIA || '' '' || LOC.BIE_LOC_NUMERO_DOMICILIO AS DIRECCION,
             SAC.DD_SAC_DESCRIPCION AS TIPOACTIVO,
             ((GLD.GLD_IMPORTE_TOTAL * GLDENT.GLD_PARTICIPACION_GASTO)/100) AS IMPORTE_PROPORCIONAL_TOTAL,
             GLD.GPV_ID,
@@ -105,6 +106,7 @@ BEGIN
         LEFT JOIN ' || V_ESQUEMA || '.ACT_ACTIVO ACT ON GLDENT.ENT_ID = ACT.ACT_ID AND ENT.DD_ENT_CODIGO = ''ACT''
         LEFT JOIN ' || V_ESQUEMA || '.DD_SAC_SUBTIPO_ACTIVO SAC ON SAC.DD_SAC_ID = ACT.DD_SAC_ID
         LEFT JOIN ' || V_ESQUEMA || '.BIE_LOCALIZACION LOC ON ACT.BIE_ID = LOC.BIE_ID and LOC.BORRADO = 0
+        LEFT JOIN '|| V_ESQUEMA_MASTER ||'.DD_TVI_TIPO_VIA TVI ON LOC.DD_TVI_ID = TVI.DD_TVI_ID AND TVI.BORRADO = 0
         LEFT JOIN ' || V_ESQUEMA || '.ACT_BBVA_ACTIVOS BBVA ON BBVA.ACT_ID = ACT.ACT_ID AND BBVA.BORRADO = 0
         LEFT JOIN ' || V_ESQUEMA || '.DD_CBC_CARTERA_BC CBC ON CBC.DD_CBC_ID = GLDENT.DD_CBC_ID
         LEFT JOIN ' || V_ESQUEMA || '.DD_TTR_TIPO_TRANSMISION TTR ON TTR.DD_TTR_ID = GLDENT.DD_TTR_ID

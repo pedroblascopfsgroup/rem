@@ -1,6 +1,10 @@
 #!/bin/bash
- 
-fichero="${1}_"
+
+if [ "$1" == "URSITPAG" ]; then
+    fichero="${1}_"
+else
+    fichero="${1}_*_"
+fi
 fecha=$2
 
 if [[ -z ${DIR_DESTINO} ]] || [[ ! -d ${DIR_DESTINO} ]]; then

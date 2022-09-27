@@ -107,7 +107,7 @@ public class MSVActualizadorTarifasPresupuestos extends AbstractMSVActualizador 
 					presupuestoTrabajo.setFecha(new SimpleDateFormat("dd/MM/yyyy").parse(fecha));
 				}
 				if (importe != null && !importe.isEmpty()) {
-					presupuestoTrabajo.setImporte(Float.parseFloat(importe));
+					presupuestoTrabajo.setImporte(Double.parseDouble(importe));
 				}
 				genericDao.save(PresupuestoTrabajo.class, presupuestoTrabajo);
 				trabajoApi.actualizarImporteTotalTrabajo(trabajo.getId());

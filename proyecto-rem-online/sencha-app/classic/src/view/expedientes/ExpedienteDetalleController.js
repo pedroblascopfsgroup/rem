@@ -1485,13 +1485,19 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		var esCarteraGaleonOZeus =  ('15' == carteraCodigo || '14' == carteraCodigo);
 		var tipoOferta = me.getViewModel().get('expediente.tipoExpedienteCodigo');
 		var esCarteraGaleonOZeus =  ('15' == carteraCodigo || '14' == carteraCodigo);
+		var porcentajeReservaBBDD = me.getView().getViewModel().get('condiciones.porcentajeReserva');
+		var importeReservaBBDD = me.getView().getViewModel().get('condiciones.importeReserva');
+		var tipoCalculoBBDD = me.getView().getViewModel().get('condiciones.tipoCalculo');
 		
-		if (CONST.SUBCARTERA['DIVARIANREMAINING'] == subcarteraCodigo && value==1){ 
-			var porcentajeReservaBBDD = me.getView().getViewModel().get('condiciones.porcentajeReserva');
-			tipoCalculo.setValue(CONST.TIPOS_CALCULO['PORCENTAJE']);
-			tipoCalculo.setDisabled(false);
-			if(Ext.isEmpty(porcentajeReservaBBDD)){
-				porcentajeReserva.setValue('5');
+		if (CONST.SUBCARTERA['DIVARIANREMAINING'] == subcarteraCodigo && value==1){
+			if(Ext.isEmpty(tipoCalculoBBDD) || CONST.TIPOS_CALCULO['PORCENTAJE'] === tipoCalculoBBDD){
+				if (Ext.isEmpty(porcentajeReservaBBDD)){
+					porcentajeReserva.setValue('5');
+				}
+			} else {
+				if(!Ext.isEmpty(importeReservaBBDD)){
+					importeReserva.setValue(importeReservaBBDD);
+				}
 			}
 		} else if(!esCarteraGaleonOZeus && value==1 && CONST.TIPOS_OFERTA['VENTA'] == tipoOferta){
 			tipoCalculo.setDisabled(false);
@@ -3155,31 +3161,31 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		    			grupoImpuesto.allowBlank = false;
 		    			grupoImpuesto.setDisabled(false);
 		    			tributosPropiedad.setDisabled(false);
-	    			}
 	    			
-		    		if ( CONST.TIPO_GRUPO_IMPUESTO['CODIGO_EXENTO'] == grupoImpuesto.value ) {
-		    			tipoAplicable.setDisabled(false);
-		    			tipoAplicable.allowBlank = false;
-		    			renunciaExencion.setDisabled(false);
-		    		}else{
-		    			tipoAplicable.setDisabled(true);
-		    			tipoAplicable.allowBlank = true;
-		    			tipoAplicable.reset();
-		    			renunciaExencion.setDisabled(true);
-		    			renunciaExencion.reset();
-		    		}
-		    		
-		    		if(CONST.TIPO_GRUPO_IMPUESTO['CODIGO_TASA_CERO'] == grupoImpuesto.value){
-		    			tipoAplicable.setDisabled(true);
-		    			tipoAplicable.allowBlank = true;
-		    			tipoAplicable.reset();
-		    			renunciaExencion.setDisabled(true);
-		    			renunciaExencion.reset();
-		    		}else{
-		    			tipoAplicable.setDisabled(false);
-		    			tipoAplicable.allowBlank = false;
-		    			renunciaExencion.setDisabled(false);
-		    		}
+			    		if ( CONST.TIPO_GRUPO_IMPUESTO['CODIGO_EXENTO'] == grupoImpuesto.value ) {
+			    			tipoAplicable.setDisabled(false);
+			    			tipoAplicable.allowBlank = false;
+			    			renunciaExencion.setDisabled(false);
+			    		}else{
+			    			tipoAplicable.setDisabled(true);
+			    			tipoAplicable.allowBlank = true;
+			    			tipoAplicable.reset();
+			    			renunciaExencion.setDisabled(true);
+			    			renunciaExencion.reset();
+			    		}
+			    		
+			    		if(CONST.TIPO_GRUPO_IMPUESTO['CODIGO_TASA_CERO'] == grupoImpuesto.value){
+			    			tipoAplicable.setDisabled(true);
+			    			tipoAplicable.allowBlank = true;
+			    			tipoAplicable.reset();
+			    			renunciaExencion.setDisabled(true);
+			    			renunciaExencion.reset();
+			    		}else{
+			    			tipoAplicable.setDisabled(false);
+			    			tipoAplicable.allowBlank = false;
+			    			renunciaExencion.setDisabled(false);
+			    		}
+	    			}
 	    		}
 
 			}

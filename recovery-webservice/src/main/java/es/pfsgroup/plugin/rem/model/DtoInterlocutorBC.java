@@ -497,4 +497,41 @@ public class DtoInterlocutorBC {
     }
 
 
+    public void representateToDto(ClienteComercial representante){
+
+        if (representante == null)
+            return;
+
+        InfoAdicionalPersona infoAdicionalPersona = representante.getInfoAdicionalPersonaRep();
+
+        this.receiverInternalID= null;
+        this.zznombreBp =representante.getNombreRepresentante();
+        this.zzapellidosBp =representante.getApellidosRepresentante();
+        this.naturalPersonIndicator=null;
+        this.zzbirthDate =dateToString(representante.getFechaNacimientoRep());
+        this.pais_nacimiento=representante.getPaisNacimientoRep() != null ? representante.getPaisNacimientoRep().getCodigo() : null;
+        this.municipio_nac=representante.getLocalidadNacimientoRep() != null ? representante.getLocalidadNacimientoRep().getDescripcion() : null;
+        this.sexo=null;
+        this.via=representante.getDireccionRepresentante();
+        this.street=representante.getDireccionRepresentante();
+        this.cod_post=representante.getCodigoPostalRepresentante();
+        this.city=representante.getMunicipioRepresentante() != null ? representante.getMunicipioRepresentante().getDescripcion() : null;
+        this.regioID=representante.getProvinciaRepresentante() != null ? representante.getProvinciaRepresentante().getCodigo() : null;
+        this.telefono=null;
+        this.tlf_movil=null;
+        this.email=representante.getEmailRepresentante();
+        this.taxNumberCategoryCode=representante.getTipoDocumentoRepresentante() != null ? representante.getTipoDocumentoRepresentante().getCodigo() : null;
+        this.partyTaxID=representante.getDocumentoRepresentante();
+        if (infoAdicionalPersona != null){
+            this.internalID=infoAdicionalPersona.getIdC4C();
+            this.companyLegalFormCode=infoAdicionalPersona.getFormaJuridica() != null ? infoAdicionalPersona.getFormaJuridica().getCodigo() : null;
+            this.prp_kyc=infoAdicionalPersona.getPrp();
+            this.cnae=infoAdicionalPersona.getCnae() != null ? infoAdicionalPersona.getCnae().getCodigo() : null;
+            this.cno=infoAdicionalPersona.getCnOcupacional() != null ? infoAdicionalPersona.getCnOcupacional().getCodigo() : null;
+            this.roleCode=infoAdicionalPersona.getRolInterlocutor() != null ? infoAdicionalPersona.getRolInterlocutor().getCodigo() : null;
+            this.zztipoSocio =infoAdicionalPersona.getTipoSocioComercial() != null ? infoAdicionalPersona.getTipoSocioComercial().getCodigo() : null;
+        }
+    }
+
+
 }

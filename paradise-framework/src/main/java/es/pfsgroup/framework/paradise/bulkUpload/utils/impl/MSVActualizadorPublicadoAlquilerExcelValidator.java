@@ -504,7 +504,7 @@ public class MSVActualizadorPublicadoAlquilerExcelValidator extends MSVExcelVali
 				listaFilas.add(i);
 				logger.error(e.getMessage());
 			} catch (Exception e) {
-				listaFilas.add(0);
+				listaFilas.add(i);
 				logger.error(e.getMessage());
 			}
 		}

@@ -28,7 +28,12 @@ public class DtoTareasFormalizacion {
 	private Date fechaReagendarIngreso;
 	private	Double importe;
 	private	String ibanDevolucion;
-
+	
+	private String tipoAdenda;
+	private Boolean clienteAcepta;
+	
+	private Boolean adendaFirmada;
+	private String motivo;
 		
 		
 
@@ -89,6 +94,30 @@ public class DtoTareasFormalizacion {
 	}
 	public void setIbanDevolucion(String ibanDevolucion) {
 		this.ibanDevolucion = ibanDevolucion;
+	}
+	public String getTipoAdenda() {
+		return tipoAdenda;
+	}
+	public void setTipoAdenda(String tipoAdenda) {
+		this.tipoAdenda = tipoAdenda;
+	}
+	public Boolean getClienteAcepta() {
+		return clienteAcepta;
+	}
+	public void setClienteAcepta(Boolean clienteAcepta) {
+		this.clienteAcepta = clienteAcepta;
+	}
+	public Boolean getAdendaFirmada() {
+		return adendaFirmada;
+	}
+	public void setAdendaFirmada(Boolean adendaFirmada) {
+		this.adendaFirmada = adendaFirmada;
+	}
+	public String getMotivo() {
+		return motivo;
+	}
+	public void setMotivo(String motivo) {
+		this.motivo = motivo;
 	}
 	
 	

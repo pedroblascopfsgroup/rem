@@ -45,32 +45,32 @@ public class TramiteAlquilerNoComercialFactoryImpl implements TramiteAlquilerNoC
 	@Autowired
 	private TramiteAlquilerNoComercialSubrogacionEjecucionHipotecaria tncSubrogacionEjecucionHipotecaria;
 	
-	@Override
-	public TramiteAlquilerNoComercial getTramiteAlquilerNoComercial(TareaExterna tareaExterna) {
-		
+	@Override 
+	public TramiteAlquilerNoComercial getTramiteAlquilerNoComercialByTareaExterna(TareaExterna tareaExterna) {
 		ExpedienteComercial eco = expedienteComercialApi.tareaExternaToExpedienteComercial(tareaExterna);
-		if(eco == null)
+		if(eco == null || eco.getOferta() == null || eco.getOferta().getSubtipoOfertaAlquiler() == null) {
 			return null;
+		}
+		return this.getTramiteAlquilerNoComercial(eco.getOferta().getSubtipoOfertaAlquiler().getCodigo());
+	}
+	
+	@Override
+	public TramiteAlquilerNoComercial getTramiteAlquilerNoComercial(String codigo) {
 		
-		Oferta ofr = eco.getOferta();
-		if(ofr == null)
-			return null;
-		else if(ofr != null && ofr.getSubtipoOfertaAlquiler() == null)
-			return null;
-		
-		if (DDSubtipoOfertaAlquiler.CODIGO_SUBROGACION_DACION.equals(ofr.getSubtipoOfertaAlquiler().getCodigo()))
+	
+		if (DDSubtipoOfertaAlquiler.CODIGO_SUBROGACION_DACION.equals(codigo))
 			return tncAlquilerSocialDacion;
-		else if (DDSubtipoOfertaAlquiler.CODIGO_ALQUILER_SOCIAL_EJECUCION.equals(ofr.getSubtipoOfertaAlquiler().getCodigo()))
+		else if (DDSubtipoOfertaAlquiler.CODIGO_ALQUILER_SOCIAL_EJECUCION.equals(codigo))
 			return tncAlquilerSocialEjecucion;
-		else if (DDSubtipoOfertaAlquiler.CODIGO_OCUPA.equals(ofr.getSubtipoOfertaAlquiler().getCodigo()))
+		else if (DDSubtipoOfertaAlquiler.CODIGO_OCUPA.equals(codigo))
 			return tncOcupa; 
-		else if (DDSubtipoOfertaAlquiler.CODIGO_NOVACIONES.equals(ofr.getSubtipoOfertaAlquiler().getCodigo()))
+		else if (DDSubtipoOfertaAlquiler.CODIGO_NOVACIONES.equals(codigo))
 			return tncNovaciones;
-		else if (DDSubtipoOfertaAlquiler.CODIGO_RENOVACIONES.equals(ofr.getSubtipoOfertaAlquiler().getCodigo()))
+		else if (DDSubtipoOfertaAlquiler.CODIGO_RENOVACIONES.equals(codigo))
 			return tncRenovaciones;
-		else if (DDSubtipoOfertaAlquiler.CODIGO_SUBROGACION_DACION.equals(ofr.getSubtipoOfertaAlquiler().getCodigo()))
+		else if (DDSubtipoOfertaAlquiler.CODIGO_SUBROGACION_DACION.equals(codigo))
 			return tncSubrogacionDacion;
-		else if (DDSubtipoOfertaAlquiler.CODIGO_SUBROGACION_EJECUCION.equals(ofr.getSubtipoOfertaAlquiler().getCodigo()))
+		else if (DDSubtipoOfertaAlquiler.CODIGO_SUBROGACION_EJECUCION.equals(codigo))
 			return tncSubrogacionEjecucionHipotecaria;
 		
 		return null;

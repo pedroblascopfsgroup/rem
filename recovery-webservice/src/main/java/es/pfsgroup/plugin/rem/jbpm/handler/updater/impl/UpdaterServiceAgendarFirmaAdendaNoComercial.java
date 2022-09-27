@@ -22,35 +22,14 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 @Component
 public class UpdaterServiceAgendarFirmaAdendaNoComercial implements UpdaterService {
 	
-    @Autowired
-    private GenericABMDao genericDao;
-
-    @Autowired
-    private ExpedienteComercialApi expedienteComercialApi;
 	
     protected static final Log logger = LogFactory.getLog(UpdaterServiceAgendarFirmaAdendaNoComercial.class);
     
-	private static final String COMBO_RESULTADO = "comboResultado";
 
 	private static final String CODIGO_T018_AGENDAR_FIRMA_ADENDA = "T018_AgendarFirmaAdenda";
 	
 	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
-
-		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
-		String estadoBc = null;
 		
-		for(TareaExternaValor valor :  valores){
-			
-			if(COMBO_RESULTADO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-				if(DDSiNo.NO.equals(valor.getValor())) {
-					estadoBc = DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA;
-					expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class,genericDao.createFilter(FilterType.EQUALS,"codigo", estadoBc)));
-					genericDao.save(ExpedienteComercial.class, expedienteComercial);
-				}
-			}
-
-		}
-			
 	}
 
 	public String[] getCodigoTarea() {

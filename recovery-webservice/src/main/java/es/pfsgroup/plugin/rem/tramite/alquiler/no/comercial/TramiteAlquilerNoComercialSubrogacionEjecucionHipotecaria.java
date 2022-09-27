@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.tramite.alquiler.no.comercial;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.model.DtoTareasFormalizacion;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.HistoricoFirmaAdenda;
 import es.pfsgroup.plugin.rem.model.Oferta;
@@ -42,25 +44,29 @@ public class TramiteAlquilerNoComercialSubrogacionEjecucionHipotecaria extends T
 	}
 	
 	@Override
-	public Boolean noFirmaMenosTresVeces(TareaExterna tareaExterna) {
-		
+	public boolean firmaMenosTresVeces(TareaExterna tareaExterna) {
 		ExpedienteComercial eco = expedienteComercialApi.tareaExternaToExpedienteComercial(tareaExterna);
+		boolean firmaMenosTresVeces =  true;
+
+		List<HistoricoFirmaAdenda> historicosFirmasAdendas = genericDao.getList(HistoricoFirmaAdenda.class, genericDao.createFilter(FilterType.EQUALS, "oferta", eco.getOferta()));
 		
-		Oferta ofr = eco.getOferta();
+		if(historicosFirmasAdendas != null && !historicosFirmasAdendas.isEmpty() && historicosFirmasAdendas.size() > 2) {
+			firmaMenosTresVeces =  false;
+		}	
 		
-		Filter filtroOferta = genericDao.createFilter(FilterType.EQUALS, "oferta", ofr);
-		List<HistoricoFirmaAdenda> historicosFirmasAdendas = genericDao.getList(HistoricoFirmaAdenda.class, filtroOferta);
+		return firmaMenosTresVeces;
+	}
+
+	@Override
+	public void saveHistoricoFirmaAdenda(DtoTareasFormalizacion dto, Oferta oferta) {
+		HistoricoFirmaAdenda historicoFirmaAdenda = new HistoricoFirmaAdenda();
+
+		historicoFirmaAdenda.setFechaAdenda(new Date());
+		historicoFirmaAdenda.setOferta(oferta);
+		historicoFirmaAdenda.setFirmadoAdenda(dto.getAdendaFirmada());
+		historicoFirmaAdenda.setMotivoAdenda(dto.getMotivo());
 		
-		if(historicosFirmasAdendas != null && !historicosFirmasAdendas.isEmpty()) {
-			if(historicosFirmasAdendas.size() > 1) {
-				return false;
-			}else {
-				return true;
-			}
-		}else {
-			return true;
-		}
-		
+		genericDao.save(HistoricoFirmaAdenda.class, historicoFirmaAdenda);
 	}
 	
 }

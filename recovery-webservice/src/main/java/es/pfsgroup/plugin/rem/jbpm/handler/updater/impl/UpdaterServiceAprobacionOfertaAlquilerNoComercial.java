@@ -9,7 +9,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
@@ -17,15 +16,14 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.FuncionesTramitesApi;
-import es.pfsgroup.plugin.rem.api.TramiteAlquilerNoComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoTareasFormalizacion;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAdenda;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOfertaAlquiler;
 
 @Component
 public class UpdaterServiceAprobacionOfertaAlquilerNoComercial implements UpdaterService {
@@ -35,9 +33,6 @@ public class UpdaterServiceAprobacionOfertaAlquilerNoComercial implements Update
 
     @Autowired
     private ExpedienteComercialApi expedienteComercialApi;
-    
-    @Autowired
-	private TramiteAlquilerNoComercialApi tramiteAlquilerNoComercialApi;
     
     @Autowired
     private FuncionesTramitesApi funcionesTramitesApi;
@@ -57,55 +52,42 @@ public class UpdaterServiceAprobacionOfertaAlquilerNoComercial implements Update
 	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
 
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
-		boolean subrogacionDacion = tramiteAlquilerNoComercialApi.esSubrogacionCompraVenta(tareaExternaActual);
-		boolean novacionRenovacion = tramiteAlquilerNoComercialApi.esRenovacion(tareaExternaActual);
-		boolean subrogacionHipotecaria = tramiteAlquilerNoComercialApi.esSubrogacionHipoteca(tareaExternaActual);
-		boolean alquilerSocial = tramiteAlquilerNoComercialApi.esAlquilerSocial(tareaExternaActual);
- 		String estadoExpBC = null;
  		DtoTareasFormalizacion dto = new DtoTareasFormalizacion();
+ 		boolean isSubrogacion = DDTipoOfertaAlquiler.isSubrogacion(expedienteComercial.getOferta().getTipoOfertaAlquiler());
+ 		
 		
  		try {
  			for(TareaExternaValor valor :  valores) {
- 				if(subrogacionHipotecaria) {
- 					if(TIPO_ADENDA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
- 						if(DDTipoAdenda.CODIGO_NO_APLICA_ADENDA.equals(valor.getValor())){
- 							estadoExpBC = "130";
- 	 					}else {
- 	 						estadoExpBC = "550";
- 	 					}
- 	 				}
- 				}else if (subrogacionDacion) {
- 	 				estadoExpBC = "130";
- 	 			}else if (novacionRenovacion || alquilerSocial) {
- 	 					
- 					if(COMBO_CLIENTE_ACEPTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
- 						if(DDSiNo.SI.equals(valor.getValor())) { 
- 							estadoExpBC = "730";
- 	 					}else {
- 	 						estadoExpBC = "750";
- 	 					}
- 					}
- 					
- 					if(COMBO_LLAMADA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {					
- 						dto.setLlamadaRealizada(DDSinSiNo.cambioStringtoBooleano(valor.getValor()));
- 					}
- 					if(COMBO_BUROFAX.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {					
- 						dto.setBurofaxEnviado(DDSinSiNo.cambioStringtoBooleano(valor.getValor()));
- 					}
- 					if(FECHA_LLAMADA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {					
- 						dto.setFechaLlamadaRealizada(ft.parse(valor.getValor()));
- 					}
- 					if(FECHA_BUROFAX.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {					
- 						dto.setFechaBurofaxEnviado(ft.parse(valor.getValor()));
- 					}
- 					if(COMBO_CLIENTE_ACEPTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {					
- 						dto.setFechaBurofaxEnviado(ft.parse(valor.getValor()));
- 					}
- 	 			}
+
+				if(TIPO_ADENDA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+					dto.setTipoAdenda(valor.getValor());
+				}
+				if(COMBO_CLIENTE_ACEPTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+					dto.setClienteAcepta(DDSinSiNo.cambioStringtoBooleano(valor.getValor()));
+				}
+				if(COMBO_LLAMADA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {					
+					dto.setLlamadaRealizada(DDSinSiNo.cambioStringtoBooleano(valor.getValor()));
+				}
+				if(COMBO_BUROFAX.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {					
+					dto.setBurofaxEnviado(DDSinSiNo.cambioStringtoBooleano(valor.getValor()));
+				}
+				if(FECHA_LLAMADA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {					
+					dto.setFechaLlamadaRealizada(ft.parse(valor.getValor()));
+				}
+				if(FECHA_BUROFAX.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {					
+					dto.setFechaBurofaxEnviado(ft.parse(valor.getValor()));
+				}
+				if(COMBO_CLIENTE_ACEPTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {					
+					dto.setFechaBurofaxEnviado(ft.parse(valor.getValor()));
+				}
+ 			}
+ 			
+ 			if(dto.getTipoAdenda() != null) {
+ 				expedienteComercial.getOferta().setTipoAdenda(genericDao.get(DDTipoAdenda.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getTipoAdenda())));
  			}
  			
  			funcionesTramitesApi.createOrUpdateComunicacionApi(expedienteComercial, dto);
- 			expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigoC4C", estadoExpBC)));
+ 			expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigoC4C", this.devolverEstadoBC(isSubrogacion, dto))));
  			genericDao.save(ExpedienteComercial.class, expedienteComercial);
  			
  		}catch(ParseException e) {
@@ -122,4 +104,23 @@ public class UpdaterServiceAprobacionOfertaAlquilerNoComercial implements Update
 		return this.getCodigoTarea();
 	}
 
+	private String devolverEstadoBC(boolean isSubrogacion,  DtoTareasFormalizacion dto) {
+		String estadoExpBC = null;
+		
+		if(isSubrogacion) {
+			if(dto.getTipoAdenda() == null || DDTipoAdenda.CODIGO_NO_APLICA_ADENDA.equals(dto.getTipoAdenda())) {
+				estadoExpBC = DDEstadoExpedienteBc.CODIGO_CONTRATO_FIRMADO;
+			}else {
+				estadoExpBC = DDEstadoExpedienteBc.CODIGO_ADENDA_NECESARIA;
+			}
+		}else {
+			if(dto.getClienteAcepta() != null && dto.getClienteAcepta()) {
+				estadoExpBC = DDEstadoExpedienteBc.CODIGO_BORRADOR_ACEPTADO;
+			}else {
+				estadoExpBC = DDEstadoExpedienteBc.CODIGO_GESTION_ADECUCIONES_CERTIFICACIONES_CLIENTE;
+			}
+		}
+		
+		return estadoExpBC;
+	}
 }

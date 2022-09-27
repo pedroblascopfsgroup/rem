@@ -884,7 +884,7 @@
 				def tramiteAlquilerNoComercialManager = ctx.getBean("tramiteAlquilerNoComercialManager");
             	return tramiteAlquilerNoComercialManager.isTipoAdendaVacio(tareaExterna);
 			}
-			def noFirmaMenosTresVeces = {
+			def firmaMenosTresVeces = {
 				def tramiteAlquilerNoComercialManager = ctx.getBean("tramiteAlquilerNoComercialManager");
             	return tramiteAlquilerNoComercialManager.noFirmaMenosTresVeces(tareaExterna);
 			}

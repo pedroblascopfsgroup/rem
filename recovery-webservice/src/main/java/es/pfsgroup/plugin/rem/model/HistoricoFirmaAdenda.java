@@ -48,7 +48,7 @@ public class HistoricoFirmaAdenda implements Serializable, Auditable {
     private Oferta oferta;
 
 	@Column(name = "HFA_FIRMADO")
-	private Integer firmadoAdenda;
+	private Boolean firmadoAdenda;
 	
 	@Column(name = "HFA_FECHA")
 	private Date fechaAdenda;
@@ -78,11 +78,11 @@ public class HistoricoFirmaAdenda implements Serializable, Auditable {
 		this.oferta = oferta;
 	}
 
-	public Integer getFirmadoAdenda() {
+	public Boolean getFirmadoAdenda() {
 		return firmadoAdenda;
 	}
 
-	public void setFirmadoAdenda(Integer firmadoAdenda) {
+	public void setFirmadoAdenda(Boolean firmadoAdenda) {
 		this.firmadoAdenda = firmadoAdenda;
 	}
 

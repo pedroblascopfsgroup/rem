@@ -3,8 +3,10 @@ package es.pfsgroup.plugin.rem.api;
 import java.util.List;
 
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.pfsgroup.plugin.rem.model.DtoTareasFormalizacion;
 import es.pfsgroup.plugin.rem.model.DtoTiposAlquilerNoComercial;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.Oferta;
 
 public interface TramiteAlquilerNoComercialApi {
 	
@@ -46,7 +48,9 @@ public interface TramiteAlquilerNoComercialApi {
 	
 	boolean isAdendaVacio(TareaExterna tareaExterna);
 	
-	boolean noFirmaMenosTresVeces(TareaExterna tareaExterna);
+	boolean firmaMenosTresVeces(TareaExterna tareaExterna);
+
+	void saveHistoricoFirmaAdenda(DtoTareasFormalizacion dto, Oferta oferta);
 	
 }
 

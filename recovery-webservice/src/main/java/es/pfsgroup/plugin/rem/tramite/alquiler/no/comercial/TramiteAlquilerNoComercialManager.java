@@ -19,6 +19,7 @@ import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionSer
 import es.pfsgroup.plugin.rem.model.ActivoCaixa;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
+import es.pfsgroup.plugin.rem.model.DtoTareasFormalizacion;
 import es.pfsgroup.plugin.rem.model.DtoTiposAlquilerNoComercial;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Fianzas;
@@ -291,7 +292,7 @@ public class TramiteAlquilerNoComercialManager implements TramiteAlquilerNoComer
 	@Override
 	public boolean isAdendaVacio(TareaExterna tareaExterna) {
 		
-		TramiteAlquilerNoComercial tramiteNoComercial = tramiteNoComercialFactory.getTramiteAlquilerNoComercial(tareaExterna);
+		TramiteAlquilerNoComercial tramiteNoComercial = tramiteNoComercialFactory.getTramiteAlquilerNoComercialByTareaExterna(tareaExterna);
 		
 		boolean tipoAdendaVacio = tramiteNoComercial.isAdendaVacio(tareaExterna);
 		
@@ -299,13 +300,22 @@ public class TramiteAlquilerNoComercialManager implements TramiteAlquilerNoComer
 	}
 
 	@Override
-	public boolean noFirmaMenosTresVeces(TareaExterna tareaExterna) {
+	public boolean firmaMenosTresVeces(TareaExterna tareaExterna) {
 		
-		TramiteAlquilerNoComercial tramiteNoComercial = tramiteNoComercialFactory.getTramiteAlquilerNoComercial(tareaExterna);
+		TramiteAlquilerNoComercial tramiteNoComercial = tramiteNoComercialFactory.getTramiteAlquilerNoComercialByTareaExterna(tareaExterna);
 		
-		boolean noFirmaMenosTresVeces = tramiteNoComercial.noFirmaMenosTresVeces(tareaExterna);
+		boolean firmaMenosTresVeces = tramiteNoComercial.firmaMenosTresVeces(tareaExterna);
 		
-		return noFirmaMenosTresVeces;
+		return firmaMenosTresVeces;
 	}
+	
+	@Override
+	public void saveHistoricoFirmaAdenda(DtoTareasFormalizacion dto, Oferta oferta) {
+		
+		TramiteAlquilerNoComercial tramiteNoComercial = tramiteNoComercialFactory.getTramiteAlquilerNoComercial(oferta.getTipoOfertaAlquiler().getCodigo());
+		
+		tramiteNoComercial.saveHistoricoFirmaAdenda(dto, oferta);
+	}
+	
 	
 }

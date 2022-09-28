@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -264,7 +265,7 @@ public class TramiteAlquilerNoComercialManager implements TramiteAlquilerNoComer
 	@Override
 	public boolean conAdenda(TareaExterna tareaExterna, String tipoAdenda) {
 		boolean resultado = false;
-		if(!DDTipoAdenda.CODIGO_NO_APLICA_ADENDA.equals(tipoAdenda)) {
+		if(!Checks.esNulo(tipoAdenda) && !DDTipoAdenda.CODIGO_NO_APLICA_ADENDA.equals(tipoAdenda)) {
 			resultado = true;
 		}
 		return resultado;

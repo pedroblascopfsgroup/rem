@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Adrian Molina
---## FECHA_CREACION=20220921
+--## FECHA_CREACION=20220921 
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-18717

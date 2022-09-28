@@ -42,7 +42,7 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     			--  DD_EEB_CODIGO  	DD_EEB_DESCRIPCION  							DD_EEB_CODIGO_C4C
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-       T_TIPO_DATA('051', 			'Borrador enviado', 									'720'),
+       T_TIPO_DATA('063', 			'Borrador enviado', 									'720'),
        T_TIPO_DATA('052', 			'Pte validación cambios clausurado en clausulado', 		'780'),
        T_TIPO_DATA('053', 			'Clausulado no negociable', 							'790'),
        T_TIPO_DATA('054', 			'Entrega de fianzas/garantías/Aval', 					'740'),

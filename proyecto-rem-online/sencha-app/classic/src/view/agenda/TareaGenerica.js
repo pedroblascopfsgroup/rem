@@ -4596,28 +4596,26 @@
 		
 		var clienteAcepta = me.down('[name=comboAprobadoApi]');
 		var fecha = me.down('[name=fecha]');
-		var motivo = me.down('[name=motivo]');
 		var tipoAdenda = me.down('[name=tipoAdenda]');
 		var tituloObtenido = me.down('[name=tituloObtenido]');
 		var fechaTitulo = me.down('[name=fechaTitulo]');
+		var observaciones = me.down('[name=observaciones]');
 		
 		tituloObtenido.addListener('change', function(combo) {
-			if (combo.value == '01') { //SI
+			if (combo.value == CONST.COMBO_SIN_SINO['SI']) { 
 				me.habilitarCampo(fechaTitulo);
-				me.campoObligatorio(fechaTitulo);
-			} else { //NO
-				me.campoNoObligatorio(fechaTitulo);
+				fechaTitulo.allowBlank = false;
+			} else { 
 				me.deshabilitarCampo(fechaTitulo);
+				fechaTitulo.allowBlank = true;
 			}
 		});
 		
 		clienteAcepta.addListener('change', function(combo) {
-			if (combo.value == '01') { //SI
-				me.campoNoObligatorio(motivo);
-				me.deshabilitarCampo(motivo);
-			} else { //NO
-				me.habilitarCampo(motivo);
-				me.campoObligatorio(motivo);
+			if (combo.value == CONST.COMBO_SIN_SINO['SI']) { 
+				me.campoNoObligatorio(observaciones);
+			} else { 
+				me.campoObligatorio(observaciones);
 			}
 		});
 		
@@ -4631,10 +4629,11 @@
 	    			if(CONST.TIPO_OFERTA_ALQUILER_NO_COMERCIAL['CODIGO_SUBROGACION'] === dto.codTipoAlquiler){
 	    				me.campoNoObligatorio(clienteAcepta);
 	    				me.campoNoObligatorio(fecha);
-	    				me.campoNoObligatorio(motivo);
 	    				me.ocultarCampo(clienteAcepta);
 	    				me.ocultarCampo(fecha);
-	    				me.ocultarCampo(motivo);
+	    			}else{
+	    				me.campoObligatorio(clienteAcepta);
+	    				fecha.allowBlank = false;
 	    			}
 	    			if(CONST.SUBTIPO_OFERTA_ALQUILER_NO_COMERCIAL['CODIGO_SUBROGACION_EJECUCION'] === dto.codSubtipoAlquiler){
 	    				me.campoObligatorio(tipoAdenda);

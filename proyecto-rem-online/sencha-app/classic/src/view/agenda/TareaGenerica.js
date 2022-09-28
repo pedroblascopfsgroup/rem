@@ -4571,8 +4571,10 @@
 		comboFianza.addListener('change', function(comboFianza) {
 			if (comboFianza.value == CONST.COMBO_SIN_SINO['SI']) { 
 				me.campoObligatorio(fechaAbono);
+				fechaAbono.allowBlank = false;
 			} else { 
 				me.campoNoObligatorio(fechaAbono);
+				fechaAbono.allowBlank = true;
 			}
 		});
 	},
@@ -4590,13 +4592,11 @@
 	
 	T018_AprobacionOfertaValidacion: function(){
 		var me = this;
-		var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
 		var idExpediente = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
 		
 		var clienteAcepta = me.down('[name=comboAprobadoApi]');
 		var fecha = me.down('[name=fecha]');
 		var motivo = me.down('[name=motivo]');
-		var contraOferta = me.down('[name=contraoferta]');
 		var tipoAdenda = me.down('[name=tipoAdenda]');
 		var tituloObtenido = me.down('[name=tituloObtenido]');
 		var fechaTitulo = me.down('[name=fechaTitulo]');
@@ -4621,8 +4621,6 @@
 			}
 		});
 		
-		me.ocultarCampo(contraoferta);
-
 		Ext.Ajax.request({
 			url: $AC.getRemoteUrl('expedientecomercial/getDtoTipoAlquiler'),
 			params: {idExpediente : idExpediente},
@@ -4630,28 +4628,19 @@
 		    	var data = Ext.decode(response.responseText);
 		    	var dto = data.data;
 		    	if(!Ext.isEmpty(dto)){
-		    		if (!Ext.isEmpty(dto.codTipoAlquiler)) {
-		    			if(CONST.TIPO_OFERTA_ALQUILER_NO_COMERCIAL['CODIGO_SUBROGACION'] === dto.codTipoAlquiler){
-		    				me.campoNoObligatorio(clienteAcepta);
-		    				me.campoNoObligatorio(fecha);
-		    				me.campoNoObligatorio(motivo);
-		    				me.campoNoObligatorio(contraOferta);
-		    				me.ocultarCampo(clienteAcepta);
-		    				me.ocultarCampo(fecha);
-		    				me.ocultarCampo(motivo);
-		    				me.ocultarCampo(contraOferta);
-		    			}
-		    			if(CONST.SUBTIPO_OFERTA_ALQUILER_NO_COMERCIAL['CODIGO_SUBROGACION_EJECUCION'] === dto.codSubtipoAlquiler){
-		    				me.campoObligatorio(tipoAdenda);
-		    			}else{
-		    				me.deshabilitarCampo(tipoAdenda);
-		    			}
-		    			if(CONST.TIPO_OFERTA_ALQUILER_NO_COMERCIAL['CODIGO_ALQUILER_SOCIAL'] === dto.codTipoAlquiler || 
-		    					CONST.TIPO_OFERTA_ALQUILER_NO_COMERCIAL['CODIGO_RENOVACION'] === dto.codTipoAlquiler){
-		    				me.campoNoObligatorio(contraOferta);
-		    				me.ocultarCampo(contraOferta);
-		    			}
-					}
+	    			if(CONST.TIPO_OFERTA_ALQUILER_NO_COMERCIAL['CODIGO_SUBROGACION'] === dto.codTipoAlquiler){
+	    				me.campoNoObligatorio(clienteAcepta);
+	    				me.campoNoObligatorio(fecha);
+	    				me.campoNoObligatorio(motivo);
+	    				me.ocultarCampo(clienteAcepta);
+	    				me.ocultarCampo(fecha);
+	    				me.ocultarCampo(motivo);
+	    			}
+	    			if(CONST.SUBTIPO_OFERTA_ALQUILER_NO_COMERCIAL['CODIGO_SUBROGACION_EJECUCION'] === dto.codSubtipoAlquiler){
+	    				me.campoObligatorio(tipoAdenda);
+	    			}else{
+	    				me.deshabilitarCampo(tipoAdenda);
+	    			}
 		    	}
 		    }
 		});

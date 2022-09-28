@@ -464,7 +464,7 @@
 		<transition to="Fin" name="Anulada"></transition>
 		<transition to="T015_EnvioContrato" name="NoAplica"></transition>
 		<transition to="T015_PBC" name="RiesgoAltoMedioBajo"></transition>
-		<transition to="T015_AprobacionOfertaAlquilerComercial" name="RiesgoMedioBajo"></transition>
+		<transition to="T015_EnvioContrato" name="RiesgoMedioBajo"></transition>
 		<transition to="T015_PBC" name="RiesgoAlto"></transition>
 		<transition to="Fin" name="Fin"></transition>
     </decision>

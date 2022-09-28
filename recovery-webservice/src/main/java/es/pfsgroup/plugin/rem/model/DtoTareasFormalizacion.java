@@ -34,10 +34,17 @@ public class DtoTareasFormalizacion {
 	
 	private Boolean adendaFirmada;
 	private String motivo;
-	
+
 	private Date fechaFirma;
 	private Date fechaInicioAlquiler;
 	private Date fechaFinAlquiler;
+
+	private String decisionComite;
+	
+	private Boolean comboResultado;
+	private String tipoActivoRescision;
+		
+
 		
 
 	
@@ -124,9 +131,6 @@ public class DtoTareasFormalizacion {
 	public void setMotivo(String motivo) {
 		this.motivo = motivo;
 	}
-	
-	
-	
 	public Date getFechaFirma() {
 		return fechaFirma;
 	}
@@ -145,8 +149,23 @@ public class DtoTareasFormalizacion {
 	public void setFechaFinAlquiler(Date fechaFinAlquiler) {
 		this.fechaFinAlquiler = fechaFinAlquiler;
 	}
-	
-	
-	
+	public String getDecisionComite() {
+		return decisionComite;
+	}
+	public void setDecisionComite(String decisionComite) {
+		this.decisionComite = decisionComite;
+	}
+	public Boolean getComboResultado() {
+		return comboResultado;
+	}
+	public void setComboResultado(Boolean comboResultado) {
+		this.comboResultado = comboResultado;
+	}
+	public String getTipoActivoRescision() {
+		return tipoActivoRescision;
+	}
+	public void setTipoActivoRescision(String tipoActivoRescision) {
+		this.tipoActivoRescision = tipoActivoRescision;
+	}
 	
 }

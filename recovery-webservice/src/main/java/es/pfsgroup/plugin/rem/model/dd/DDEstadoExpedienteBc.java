@@ -92,6 +92,8 @@ public class DDEstadoExpedienteBc implements Auditable, Dictionary {
 	public static final String CODIGO_OFERTA_TRAMITE_CONCURRENCIA_TRAMITACION = "051";
 	public static final String CODIGO_JUDICIALIZAR_COMITE_POSESIONES = "062";
 	public static final String CODIGO_IMPOSIBILIDAD_FIRMA = "061";
+	public static final String CODIGO_PENDIENTE_CP_GED = "063";
+	public static final String CODIGO_NUEVAS_CONDICIONES_COMITE_POSESIONES = "064";
 	
 	private static final long serialVersionUID = 1L;
 

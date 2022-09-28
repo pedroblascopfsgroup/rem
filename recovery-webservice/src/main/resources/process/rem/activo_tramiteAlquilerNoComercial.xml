@@ -623,10 +623,10 @@
 	<decision name ="T018_ProponerRescisionClienteDecision" expression="#{T018_ProponerRescisionClienteDecision}">
 		<transition to="T018_FirmaRescisionContrato" name="acepta"></transition>
 		<transition to="Fin" name="rechazaNoCarteraConcertadaResidencial"></transition>
-		<transition to="T018_RespuestaOfertaBC" name="rechazaCarteraConcertadaResidencial"></transition>
+		<transition to="T018_DecisionComite" name="rechazaCarteraConcertadaResidencial"></transition>
 	</decision>
 	
-	<state name="T018_RespuestaOfertaBC">
+	<state name="T018_DecisionComite">
 		<event type="node-enter">
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
@@ -645,12 +645,13 @@
 				</targetBean>
 			</action>
 		</event>
-		<transition to="T018_RespuestaOfertaBCDecision" name="avanzaBPM"></transition>
+		<transition to="T018_DecisionComiteDecision" name="avanzaBPM"></transition>
 		<transition to="Fin" name="Fin"></transition>
 	</state> 
-	<decision name ="T018_RespuestaOfertaBCDecision" expression="#{T018_RespuestaOfertaBCDecision}">
-		<transition to="T018_AprobacionOferta" name="acepta"></transition>
-		<transition to="Fin" name="rechaza"></transition>
+	<decision name ="T018_DecisionComiteDecision" expression="#{T018_DecisionComiteDecision}">
+		<transition to="T018_ConfirmacionBC" name="nuevasCondiciones"></transition>
+		<transition to="T018_AgendarFirma" name="reagendar"></transition>
+		<transition to="Fin" name="cancelar"></transition>
 	</decision>
 	
 	<state name="T018_FirmaRescisionContrato">

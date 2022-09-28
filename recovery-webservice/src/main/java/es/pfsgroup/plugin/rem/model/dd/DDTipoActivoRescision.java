@@ -31,6 +31,9 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 public class DDTipoActivoRescision implements Auditable, Dictionary {
 	
 	private static final long serialVersionUID = 1L;
+	
+	public static final String CODIGO_RESIDENCIAL = "01";
+	public static final String CODIGO_TERCIARIA = "02";
 
 	@Id
 	@Column(name = "DD_TAR_ID")

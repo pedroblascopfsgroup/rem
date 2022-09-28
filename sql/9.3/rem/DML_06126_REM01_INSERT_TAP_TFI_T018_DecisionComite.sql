@@ -40,7 +40,7 @@ DECLARE
     -- TAP_CODIGO  TAP_DESCRIPCION   TAP_SCRIPT_VALIDACION   TAP_SCRIPT_VALIDACION_JBPM   TAP_SCRIPT_DECISION
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
         
-		T_TIPO_DATA('T018_DecisionContinuidadOferta', 'Decisión BC sobre la continuidad de la oferta', '', '', '')
+		T_TIPO_DATA('T018_DecisionComite', 'Decisión comite', '', '', '')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 
@@ -49,9 +49,10 @@ DECLARE
     -- TAP_CODIGO  TAP_DESCRIPCION   TAP_SCRIPT_VALIDACION   TAP_SCRIPT_VALIDACION_JBPM   TAP_SCRIPT_DECISION
     V_TIPO_DATA2 T_ARRAY_DATA2 := T_ARRAY_DATA2(
 
-    	T_TIPO_DATA2('T018_DecisionContinuidadOferta'    ,'label'		,'0'	,'titulo'					,'<p style="margin-bottom:10px">Instrucciones por defecto de la tarea ''''Decision coninuidad de la oferta'''' </p>'		    			,null		,null),
-   		T_TIPO_DATA2('T018_DecisionContinuidadOferta'	,'combobox'		,'1'	,'seguirOferta'	        	,'Debe indicar si se sigue con la oferta o No'    																							,'false'   	,'DDSiNo'),
-   		T_TIPO_DATA2('T018_DecisionContinuidadOferta'	,'textarea'     ,'2'	,'justificacion'	        ,'Justificacion'                                       																						,'false'   	,null)
+    	T_TIPO_DATA2('T018_DecisionComite'    	,'label'		,'0'	,'titulo'					,'<p style="margin-bottom:10px">Instrucciones por defecto de la tarea ''''Decision coninuidad de la oferta'''' </p>'		    			,null		,null),
+   		T_TIPO_DATA2('T018_DecisionComite'		,'combobox'		,'1'	,'decisionComite'	        ,'Decisión comité'    																														,'false'   	,'DDDecisionComite'),
+   		T_TIPO_DATA2('T018_DecisionComite'		,'combobox'		,'2'	,'cambiosComiteRealizados'	,'Cambios del comité realizados'    																										,null   	,'DDSiNo'),
+   		T_TIPO_DATA2('T018_DecisionComite'		,'textarea'     ,'3'	,'cambiosComite'	        ,'Cambios de comité'                                       																					,null   	,null)
      ); 
     V_TMP_TIPO_DATA2 T_TIPO_DATA2;
 BEGIN	

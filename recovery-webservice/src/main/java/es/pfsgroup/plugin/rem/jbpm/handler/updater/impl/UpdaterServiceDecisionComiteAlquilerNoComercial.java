@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -7,12 +8,10 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.TramiteAlquilerNoComercialApi;
@@ -23,13 +22,10 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDDecisionComite;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
-import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoActivoRescision;
 
 @Component
-public class UpdaterServiceProponerRescisionClienteAlquilerNoComercial implements UpdaterService {
+public class UpdaterServiceDecisionComiteAlquilerNoComercial implements UpdaterService {
 	
 	@Autowired
     private ExpedienteComercialApi expedienteComercialApi;
@@ -42,9 +38,8 @@ public class UpdaterServiceProponerRescisionClienteAlquilerNoComercial implement
 	
     protected static final Log logger = LogFactory.getLog(UpdaterServiceDecisionComiteAlquilerNoComercial.class);
     
-	private static final String CODIGO_T018_PROPONER_RESCISION_CLIENTE= "T018_ProponerRescisionCliente";
-	private static final String COMBO_RESULTADO ="comboResultado";
-	private static final String TIPO_ACTIVO_RESCISION ="tipoActivoRescision";
+	private static final String CODIGO_T018_DECISION_COMITE = "T018_DecisionComite";
+	private static final String DECISION_COMITE ="decisionComite";
 	
 	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
 
@@ -53,16 +48,19 @@ public class UpdaterServiceProponerRescisionClienteAlquilerNoComercial implement
 		Oferta oferta = expedienteComercial.getOferta();
 		
 		for(TareaExternaValor valor :  valores){
-			if(COMBO_RESULTADO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-				dto.setComboResultado(DDSinSiNo.cambioStringtoBooleano(valor.getValor()));
-			}
-			if(TIPO_ACTIVO_RESCISION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-				dto.setTipoActivoRescision(valor.getValor());
+			if(DECISION_COMITE.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+				dto.setDecisionComite(valor.getValor());
 			}
 		}
 		
-		String estadoExpBC = this.devolverEstadoBC(dto.getComboResultado(), dto.getTipoActivoRescision(), tareaExternaActual);
+		String estadoExpBC = this.devolverEstadoBC(dto.getDecisionComite(), tareaExternaActual);
+		if(estadoExpBC != null) {
+			expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigoC4C", estadoExpBC)));
+		}
 		
+		if(DDDecisionComite.CODIGO_CANCELAR.equals(dto.getDecisionComite())) {
+			expedienteComercial.setMotivoAnulacion(genericDao.get(DDMotivoAnulacionExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoAnulacionExpediente.COD_CAIXA_JUDICIALIZADO)));
+		}
 		
 		tramiteAlquilerNoComercialApi.saveHistoricoFirmaAdenda(dto, oferta);
 		
@@ -71,7 +69,7 @@ public class UpdaterServiceProponerRescisionClienteAlquilerNoComercial implement
 	}
 
 	public String[] getCodigoTarea() {
-		return new String[]{CODIGO_T018_PROPONER_RESCISION_CLIENTE};
+		return new String[]{CODIGO_T018_DECISION_COMITE};
 	}
 
 	public String[] getKeys() {
@@ -79,21 +77,18 @@ public class UpdaterServiceProponerRescisionClienteAlquilerNoComercial implement
 	}
 
 
-	private String devolverEstadoBC(Boolean comboResultado, String activoRescion, TareaExterna tareaExterna) {
+	private String devolverEstadoBC(String decisionComite,  TareaExterna tareaExterna) {
 		String estadoExpBC = null;
-		if(comboResultado != null) {
-			if(comboResultado) {
-				estadoExpBC = DDEstadoExpedienteBc.CODIGO_RECESION_AGENDADA;
-			}else {
-				if(DDTipoActivoRescision.CODIGO_TERCIARIA.equals(activoRescion)) {
-					estadoExpBC = DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO;
-				}else {
-					estadoExpBC = DDEstadoExpedienteBc.CODIGO_PENDIENTE_CP_GED;
-				}
+		if(decisionComite != null) {
+			if(DDDecisionComite.CODIGO_NUEVAS_CONDICIONES.equals(decisionComite)) {
+				estadoExpBC = DDEstadoExpedienteBc.CODIGO_NUEVAS_CONDICIONES_COMITE_POSESIONES;
+			}else if(DDDecisionComite.CODIGO_REAGENDAR.equals(decisionComite)) {
+				estadoExpBC = DDEstadoExpedienteBc.CODIGO_BORRADOR_ACEPTADO;
+			}else if(DDDecisionComite.CODIGO_CANCELAR.equals(decisionComite)) {
+				estadoExpBC = DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO;
 			}
 		}
 		
 		return estadoExpBC;
 	}
-
 }

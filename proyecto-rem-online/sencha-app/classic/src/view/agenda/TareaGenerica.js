@@ -4848,19 +4848,33 @@
 		var idExpediente = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
 		
 		var comboResultado = me.down('[name=comboResultado]');
+		var tipoActivoRescision = me.down('[name=tipoActivoRescision]');
+		var tipoCarteraRescision = me.down('[name=tipoCarteraRescision]');
 		var justificacion = me.down('[name=justificacion]');
 		
-		if (CONST.CARTERA['BANKIA'] == codigoCartera) {
-			me.habilitarCampo(comboResultado);
-			me.campoObligatorio(comboResultado);
-			me.editableyNoObligatorio(justificacion);
-			
-		} else {
-			me.deshabilitarCampo(comboResultado);
-			me.ocultarCampo(comboResultado);
-			me.deshabilitarCampo(justificacion);
-			me.ocultarCampo(justificacion);
-		}
+		comboResultado.addListener('change', function(comboResultado) {
+			if (comboResultado.value == CONST.COMBO_SIN_SINO['NO'] && tipoActivoRescision.value == CONST.CODIGO_TIPO_ACTIVO_RESCISION['TERCIARIA']) { 
+				justificacion.setValue('Demanda judicial');
+				me.bloquearCampo(justificacion);
+				me.campoObligatorio(tipoActivoRescision);
+				me.campoObligatorio(tipoCarteraRescision);
+			} else {
+				me.borrarCampo(justificacion);
+				me.desbloquearCampo(justificacion);
+				me.campoNoObligatorio(tipoActivoRescision);
+				me.campoObligatorio(tipoCarteraRescision);
+			}
+		});
+		
+		tipoActivoRescision.addListener('change', function(tipoActivoRescision) {
+			if (comboResultado.value == CONST.COMBO_SIN_SINO['NO'] && tipoActivoRescision.value == CONST.CODIGO_TIPO_ACTIVO_RESCISION['TERCIARIA']) { 
+				justificacion.setValue('Demanda judicial');
+				me.bloquearCampo(justificacion);
+			} else {
+				me.borrarCampo(justificacion);
+				me.desbloquearCampo(justificacion);
+			}
+		});
 	},
 	
 	T018_FirmaRescisionContratoValidacion: function(){
@@ -4983,34 +4997,24 @@
 
 	},
 	
-	T018_RespuestaOfertaBCValidacion: function(){
+	T018_DecisionComiteValidacion: function(){
 		var me = this;
 		var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
 		var idExpediente = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
 		
-		var comboResultado = me.down('[name=comboResultado]');
-		var fecha = me.down('[name=fecha]');
+		var cambiosComite = me.down('[name=cambiosComite]');
+		var decisionComite = me.down('[name=decisionComite]');
 		
-		if (CONST.CARTERA['BANKIA'] == codigoCartera) {
-			me.habilitarCampo(comboResultado);
-			me.campoObligatorio(comboResultado);
-			me.habilitarCampo(fecha);
-			me.campoObligatorio(fecha);
-			
-			if($AU.userHasFunction('FUNC_AVANZA_FORMALIZACION_ALQUILER_NC_BC')){
-				me.desbloquearCampo(comboResultado);
-				me.desbloquearCampo(fecha);
+		decisionComite.addListener('change', function(decisionComite) {
+			if (decisionComite.value == CONST.CODIGO_DECISION_COMITE['CANCELAR']) { 
+				cambiosComite.setValue('Demanda judicial');
+				me.bloquearCampo(cambiosComite);
 			} else {
-				me.bloquearCampo(comboResultado);
-				me.bloquearCampo(fecha);
+				me.borrarCampo(cambiosComite);
+				me.desbloquearCampo(cambiosComite);
 			}
-			
-		} else {
-			me.deshabilitarCampo(comboResultado);
-			me.ocultarCampo(comboResultado);
-			me.deshabilitarCampo(fecha);
-			me.ocultarCampo(fecha);
-		}
+		});
+		
 	},
 	
 	T018_DecisionContinuidadOfertaValidacion: function(){

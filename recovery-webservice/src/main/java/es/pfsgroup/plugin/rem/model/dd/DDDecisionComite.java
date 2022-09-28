@@ -25,6 +25,9 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 public class DDDecisionComite implements Auditable, Dictionary {
 		    
 	private static final long serialVersionUID = 1L;
+	public static final String CODIGO_NUEVAS_CONDICIONES = "01";
+	public static final String CODIGO_REAGENDAR = "02";
+	public static final String CODIGO_CANCELAR = "03";
 
 	@Id
 	@Column(name = "DD_DEC_ID")

@@ -7060,8 +7060,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		String descripcionTrabajo = !Checks.esNulo(trabajo.getDescripcion()) ? (trabajo.getDescripcion() + " - ") : "";
 	   
 	    if (proveedor) {
-	    	if (!Checks.esNulo(trabajo.getUsuarioResponsableTrabajo()) && !Checks.esNulo(trabajo.getUsuarioResponsableTrabajo().getEmail())) {
-				mailsPara.add(trabajo.getUsuarioResponsableTrabajo().getEmail());
+	    	if (!Checks.esNulo(trabajo.getUsuarioGestorActivoResponsable()) && !Checks.esNulo(trabajo.getUsuarioGestorActivoResponsable().getEmail())) {
+				mailsPara.add(trabajo.getUsuarioGestorActivoResponsable().getEmail());
 			}
 	    	
 	    	if (DDTipoApunte.CODIGO_LLAVES_ACCESO.equals(dtoAgendaTrabajo.getTipoGestion())) {

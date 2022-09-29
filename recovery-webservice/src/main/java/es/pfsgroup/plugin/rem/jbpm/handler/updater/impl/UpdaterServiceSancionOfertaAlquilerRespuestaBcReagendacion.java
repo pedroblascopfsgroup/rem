@@ -25,6 +25,7 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 
 @Component
 public class UpdaterServiceSancionOfertaAlquilerRespuestaBcReagendacion implements UpdaterService {
@@ -54,20 +55,18 @@ public class UpdaterServiceSancionOfertaAlquilerRespuestaBcReagendacion implemen
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
 		boolean aprueba = false;
 		String estadoBc = null;
+		String estadoHaya = null;
 		
 		for(TareaExternaValor valor :  valores){
-			
 			if(COMBO_RESULTADO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-				if (DDSiNo.SI.equals(valor.getValor())) {					
-					aprueba = true;
-					estadoBc = DDEstadoExpedienteBc.CODIGO_BORRADOR_ACEPTADO;
-				}
+				aprueba = DDSinSiNo.cambioStringaBooleanoNativo(valor.getValor());
 			}			
 		}
 		
 		if (!aprueba) {
-			//estadoExp =  DDEstadosExpedienteComercial.DENEGADO;
+
 			estadoBc = DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO;
+			estadoHaya = DDEstadosExpedienteComercial.ANULADO;
 			Oferta oferta = expedienteComercial.getOferta();
 			expedienteComercial.setFechaAnulacion(new Date());
 			//expedienteComercial.setMotivoAnulacion(genericDao.get(DDMotivoAnulacionExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoAnulacionExpediente.COD_CAIXA_RECHAZADO_PBC)));
@@ -75,9 +74,14 @@ public class UpdaterServiceSancionOfertaAlquilerRespuestaBcReagendacion implemen
 			if(oferta != null) {
 				ofertaApi.finalizarOferta(oferta);
 			}
+		}else {
+			estadoBc = DDEstadoExpedienteBc.CODIGO_BORRADOR_ACEPTADO;
+			estadoHaya = DDEstadosExpedienteComercial.PTE_AGENDAR_FIRMA;
 		}
 		
+		expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoHaya)));
 		expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoBc)));
+		
 		genericDao.save(ExpedienteComercial.class, expedienteComercial);
 	}
 

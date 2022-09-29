@@ -20,6 +20,8 @@ import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 
 @Component
 public class UpdaterServiceSancionOfertaAlquilerEntregaFianzas implements UpdaterService {
@@ -48,27 +50,31 @@ public class UpdaterServiceSancionOfertaAlquilerEntregaFianzas implements Update
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
 		boolean fianzaAbonada = false;
 		String estadoBC;
+		String estadoHaya;
  		
  		for(TareaExternaValor valor :  valores){
 			
 			if(COMBO_FIANZA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-				if (DDSiNo.SI.equals(valor.getValor())) {					
-					fianzaAbonada = true;
-				}
+				fianzaAbonada = DDSinSiNo.cambioStringaBooleanoNativo(valor.getValor());
 			}
 		}
  		
  		if (fianzaAbonada) {
  			estadoBC = DDEstadoExpedienteBc.CODIGO_FIRMA_DE_CONTRATO_AGENDADO;
+ 			estadoHaya = DDEstadosExpedienteComercial.PTE_FIRMA;
 		} else {
 			if(funcionesTramitesApi.seHaReagendado2VecesOMas(tareaExternaActual)) {
 				estadoBC = DDEstadoExpedienteBc.CODIGO_VALIDACION_DE_FIRMA_DE_CONTRATO_POR_BC;
+				estadoHaya = DDEstadosExpedienteComercial.PTE_RESPUESTA_BC;
 			}else {
 				estadoBC = DDEstadoExpedienteBc.CODIGO_BORRADOR_ACEPTADO;
+				estadoHaya = DDEstadosExpedienteComercial.PTE_AGENDAR_FIRMA;
 			}
 		}
  		
+		expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoHaya)));
  		expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class,genericDao.createFilter(FilterType.EQUALS, "codigo", estadoBC)));
+ 		
 		genericDao.save(ExpedienteComercial.class, expedienteComercial);	
 	}
 

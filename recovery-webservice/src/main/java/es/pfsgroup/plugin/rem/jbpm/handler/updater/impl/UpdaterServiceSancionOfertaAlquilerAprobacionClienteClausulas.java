@@ -22,7 +22,9 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 
 @Component
 public class UpdaterServiceSancionOfertaAlquilerAprobacionClienteClausulas implements UpdaterService {
@@ -52,29 +54,23 @@ public class UpdaterServiceSancionOfertaAlquilerAprobacionClienteClausulas imple
 
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
 		
-		boolean anulacion = false;
+		boolean contraoferta = false;
 		boolean acepta = false;
+		boolean anula = false;
 		String estadoBc = null;
 		String codigoMotivo = null;
 		String observaciones = null;
+		String estadoHaya = null;
 		
 		for(TareaExternaValor valor :  valores) {
 			
 			if(COMBO_CLIENTE_ACEPTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor()) && DDSiNo.SI.equals(valor.getValor())) {
-				acepta = true;
-				estadoBc =  DDEstadoExpedienteBc.CODIGO_BORRADOR_ACEPTADO;
+				acepta = DDSinSiNo.cambioStringaBooleanoNativo(valor.getValor());
 			}
 			
-		
 			if(COMBO_CONTRAOFERTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-				if(DDSiNo.NO.equals(valor.getValor())) {
-					anulacion = true;
-					estadoBc =  DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO;
-				} else if (DDSiNo.SI.equals(valor.getValor())) {
-					estadoBc = DDEstadoExpedienteBc.CODIGO_PTE_VALIDACION_CAMBIOS_CLAUSURADO;
-				}
+				contraoferta = DDSinSiNo.cambioStringaBooleanoNativo(valor.getValor());
 			}
-			
 			
 			if(CAMPO_OBSERVACIONES.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 				observaciones = valor.getValor();
@@ -87,7 +83,8 @@ public class UpdaterServiceSancionOfertaAlquilerAprobacionClienteClausulas imple
 		
 
 		
-		if(anulacion || (!acepta && DDEstadoExpedienteBc.CODIGO_CLAUSULADO_NO_COMERCIABLE.equals(expedienteComercial.getEstadoBc().getCodigo()))) {
+		if(contraoferta || (!acepta && DDEstadoExpedienteBc.CODIGO_CLAUSULADO_NO_COMERCIABLE.equals(expedienteComercial.getEstadoBc().getCodigo()))) {
+			anula = true;
 			Oferta oferta = expedienteComercial.getOferta();
 			expedienteComercial.setFechaAnulacion(new Date());
 			//expedienteComercial.setMotivoAnulacion(genericDao.get(DDMotivoAnulacionExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoMotivo)));
@@ -97,9 +94,14 @@ public class UpdaterServiceSancionOfertaAlquilerAprobacionClienteClausulas imple
 				ofertaApi.finalizarOferta(oferta);
 			}
 			
+		}else if(acepta) {
+			estadoHaya = DDEstadosExpedienteComercial.PTE_AGENDAR_FIRMA;
+		}else {
+			estadoHaya = DDEstadosExpedienteComercial.PTE_NEGOCIACION;
 		}
 		
-		expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoBc)));
+		expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", this.devolverEstadoBc(anula, acepta))));
+		expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", this.devolverEstadoHaya(anula, acepta))));
 		genericDao.save(ExpedienteComercial.class, expedienteComercial);
 	}
 
@@ -111,4 +113,24 @@ public class UpdaterServiceSancionOfertaAlquilerAprobacionClienteClausulas imple
 		return this.getCodigoTarea();
 	}
 	
+	private String devolverEstadoBc(boolean anula, boolean acepta) {
+		String estadoBc = DDEstadoExpedienteBc.CODIGO_PTE_VALIDACION_CAMBIOS_CLAUSURADO;
+		
+		if(anula) {
+			estadoBc =  DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO;
+		}else if(acepta) {
+			estadoBc =  DDEstadoExpedienteBc.CODIGO_BORRADOR_ACEPTADO;
+		}
+		
+		return estadoBc;
+	}
+	private String devolverEstadoHaya(boolean anula, boolean acepta) {
+		String estadoHaya = DDEstadosExpedienteComercial.PTE_NEGOCIACION;
+		if(anula) {
+			estadoHaya =  DDEstadosExpedienteComercial.ANULADO;
+		}else if(acepta) {
+			estadoHaya =  DDEstadosExpedienteComercial.PTE_AGENDAR_FIRMA;
+		}
+		return estadoHaya;
+	}
 }

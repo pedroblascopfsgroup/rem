@@ -127,9 +127,9 @@ public class UpdaterServiceSancionOfertaAlquileresAgendarFirma implements Update
 
 		DtoTareasFormalizacion dto = new DtoTareasFormalizacion();
 		String estadoBC = null;
+		String estadoHaya = null;
 		
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
-		Activo activo =tramite.getActivo();
 		Oferta oferta = expedienteComercial.getOferta();		
 		try {
 			for(TareaExternaValor valor :  valores){
@@ -155,32 +155,21 @@ public class UpdaterServiceSancionOfertaAlquileresAgendarFirma implements Update
 			Fianzas fia = genericDao.get(Fianzas.class, genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId()));
 			
 			if(!Checks.esNulo(dto.getFianzaExonerada()) && dto.getFianzaExonerada()) {
-				Auditoria.delete(fia);
-				genericDao.save(Fianzas.class, fia);
+				if(fia != null) {
+					Auditoria.delete(fia);
+					genericDao.save(Fianzas.class, fia);
+				}
 				estadoBC = DDEstadoExpedienteBc.CODIGO_FIRMA_DE_CONTRATO_AGENDADO;
+				estadoHaya = DDEstadosExpedienteComercial.PTE_FIRMA;
 			}else {
 				estadoBC = DDEstadoExpedienteBc.CODIGO_ENTREGA_GARANTIAS_FIANZAS_AVAL;
-				if(fia == null) {
-					fia = new Fianzas();
-					fia.setOferta(oferta);
-					genericApi.saveCuentaVirtualAlquiler(activo, fia);
-				}
-				
-				fia.setFechaAgendacionIngreso(dto.getFechaAgendacion());
-				fia.setImporte(dto.getImporte());
-				
-				fia.setIbanDevolucion(dto.getIbanDevolucion());
-				genericDao.save(Fianzas.class, fia);
-				
-				if (!Checks.esNulo(dto.getFechaReagendarIngreso())) {
-					HistoricoReagendacion histReagendacion = new HistoricoReagendacion();
-					histReagendacion.setFianza(fia);
-					histReagendacion.setFechaReagendacionIngreso(dto.getFechaReagendarIngreso());
-					genericDao.save(HistoricoReagendacion.class, histReagendacion);
-				}
+				estadoHaya = DDEstadosExpedienteComercial.PTE_INGRESO_FIANZA;
+
+				fia = this.updateOrCreateFianza(fia, oferta, dto);
+				this.crearRegistroEnHistorico(fia, dto);
 			}
 			
-			
+			expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoHaya)));
 			expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoBC)));
 			genericDao.save(ExpedienteComercial.class, expedienteComercial);
 			
@@ -198,6 +187,31 @@ public class UpdaterServiceSancionOfertaAlquileresAgendarFirma implements Update
 
 	public String[] getKeys() {
 		return this.getCodigoTarea();
+	}
+	
+	private Fianzas updateOrCreateFianza(Fianzas fia, Oferta oferta, DtoTareasFormalizacion dto) {
+		if(fia == null) {
+			fia = new Fianzas();
+			fia.setOferta(oferta);
+			genericApi.saveCuentaVirtualAlquiler(oferta.getActivoPrincipal(), fia);
+		}
+		
+		fia.setFechaAgendacionIngreso(dto.getFechaAgendacion());
+		fia.setImporte(dto.getImporte());
+		
+		fia.setIbanDevolucion(dto.getIbanDevolucion());
+		genericDao.save(Fianzas.class, fia);
+		
+		return fia;
+	}
+	
+	private void crearRegistroEnHistorico(Fianzas fia, DtoTareasFormalizacion dto) {
+		if (!Checks.esNulo(dto.getFechaReagendarIngreso())) {
+			HistoricoReagendacion histReagendacion = new HistoricoReagendacion();
+			histReagendacion.setFianza(fia);
+			histReagendacion.setFechaReagendacionIngreso(dto.getFechaReagendarIngreso());
+			genericDao.save(HistoricoReagendacion.class, histReagendacion);
+		}
 	}
 
 }

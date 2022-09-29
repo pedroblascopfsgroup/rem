@@ -19,6 +19,8 @@ import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 
 @Component
 public class UpdaterServiceSancionOfertaAlquilerNegociacionClausulasAlquiler implements UpdaterService {
@@ -41,20 +43,28 @@ public class UpdaterServiceSancionOfertaAlquilerNegociacionClausulasAlquiler imp
 	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
 
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
+		boolean aprueba = false;
 		String estadoBc = null;
+		String estadoHaya = null;
 		
 		for(TareaExternaValor valor :  valores) {
 			
 			if(COMBO_ACEPTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-				if (DDSiNo.SI.equals(valor.getValor())) {	
-					estadoBc =  DDEstadoExpedienteBc.CODIGO_FIRMA_APROBADA;
-				} else if (DDSiNo.NO.equals(valor.getValor())) {					
-					estadoBc = DDEstadoExpedienteBc.CODIGO_CLAUSULADO_NO_COMERCIABLE;
-				}
+				aprueba = DDSinSiNo.cambioStringaBooleanoNativo(valor.getValor());
 			}
 		}
 		
+		if(aprueba) {
+			estadoBc =  DDEstadoExpedienteBc.CODIGO_FIRMA_APROBADA;
+			estadoHaya = DDEstadosExpedienteComercial.PTE_TRASLADAR_OFERTA_AL_CLIENTE;
+		}else {
+			estadoBc = DDEstadoExpedienteBc.CODIGO_CLAUSULADO_NO_COMERCIABLE;
+			estadoHaya = DDEstadosExpedienteComercial.PTE_CLAUSULAS_CLIENTE;
+		}
+		
 		expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoBc)));
+		expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoHaya)));
+
 		genericDao.save(ExpedienteComercial.class, expedienteComercial);
 	}
 

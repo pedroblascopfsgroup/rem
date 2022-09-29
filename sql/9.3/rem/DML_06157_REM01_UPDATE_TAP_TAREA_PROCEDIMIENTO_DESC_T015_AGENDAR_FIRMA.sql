@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR= Lara Pablo
---## FECHA_CREACION=20220930
+--## FECHA_CREACION=20220928
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-18804
@@ -43,8 +43,7 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(800);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-    	T_TIPO_DATA('T015_CalculoRiesgo', '(valores[''''T015_CalculoRiesgo''''][''''comboRiesgo''''] == DDRiesgoOperacion.CODIGO_ROP_MEDIO || valores[''''T015_CalculoRiesgo''''][''''comboRiesgo''''] == DDRiesgoOperacion.CODIGO_ROP_BAJO) ? ''''RiesgoMedioBajo'''' : valores[''''T015_CalculoRiesgo''''][''''comboRiesgo''''] == DDRiesgoOperacion.CODIGO_ROP_NO_APLICA ? ''''NoAplica'''' : ''''RiesgoAlto'''' '),
-    	T_TIPO_DATA('T015_Firma', 'valores[''''T015_Firma''''][''''comboFirma'''']  == DDSiNo.SI? checkBankia() == true ? ''''Fin'''' : ''''Firmado'''' : ''''Anulada''''')
+    	T_TIPO_DATA('T015_AgendarFechaFirma', 'Agendar Firma')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 BEGIN
@@ -65,7 +64,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
         IF V_NUM_TABLAS > 0 THEN				
           -- Si existe se modifica.
        	  V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.'||V_TEXT_TABLA||' '||
-                    'SET '||V_TEXT_CHARS||'_SCRIPT_DECISION = '''||TRIM(V_TMP_TIPO_DATA(2))||''', USUARIOMODIFICAR = '''||V_USUARIO||''', FECHAMODIFICAR = SYSDATE, BORRADO = 0 WHERE '||V_TEXT_CHARS||'_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||''' ';
+                    'SET '||V_TEXT_CHARS||'_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(2))||''', USUARIOMODIFICAR = '''||V_USUARIO||''', FECHAMODIFICAR = SYSDATE, BORRADO = 0 WHERE '||V_TEXT_CHARS||'_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||''' ';
           EXECUTE IMMEDIATE V_MSQL;
          
           DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO MODIFICADO CORRECTAMENTE');

@@ -21,6 +21,7 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoTareasFormalizacion;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 
 @Component
@@ -50,7 +51,6 @@ public class UpdaterServiceSancionOfertaAlquilerEnvioContrato implements Updater
 	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
 
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
-		DDEstadoExpedienteBc estadoBc = null;
 		DtoTareasFormalizacion dto = new DtoTareasFormalizacion();
 		try {
 			for(TareaExternaValor valor :  valores) {
@@ -71,9 +71,10 @@ public class UpdaterServiceSancionOfertaAlquilerEnvioContrato implements Updater
 			
 				
 			funcionesTramitesApi.createOrUpdateComunicacionApi(expedienteComercial, dto);
-			estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_BORRADOR_ENVIADO));
-			expedienteComercial.setEstadoBc(estadoBc);	
-	
+			
+			expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_BORRADOR_ENVIADO)));	
+			expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PTE_CLAUSULAS_CLIENTE)));
+			
 			expedienteComercialApi.update(expedienteComercial, false);
 		
 		}catch(ParseException e) {

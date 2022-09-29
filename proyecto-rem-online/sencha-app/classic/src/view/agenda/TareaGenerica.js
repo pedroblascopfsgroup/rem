@@ -3975,6 +3975,11 @@
 						if (!Ext.isEmpty(dto.ibanDevolucion)) {
 							ibanDevolucion.setValue(dto.ibanDevolucion);
 						}
+						
+						if(!Ext.isEmpty(dto.fechaAprobacionOferta)){
+							fechaAgendacionIngreso.setMaxValue(dto.fechaAprobacionOferta + 5);
+							fechaReagendarIngreso.setMaxValue(dto.fechaAprobacionOferta + 5);
+						}
 		    		}
 		    	}
 		    }
@@ -4526,7 +4531,14 @@
 		var fechaFirma = me.down('[name=fecha]');
 		var comboContraoferta = me.down('[name=comboContraoferta]');
 		var comboMotivo = me.down('[name=justificacion]');
-
+		
+		if(Ext.isEmpty(comboAcepta) || comboAcepta == CONST.COMBO_SIN_SINO['NO']){
+            me.deshabilitarCampo(comboContraoferta);
+            me.campoNoObligatorio(comboContraoferta);
+            me.deshabilitarCampo(comboMotivo);
+            me.campoNoObligatorio(comboMotivo);
+		}
+		
 		comboAcepta.addListener('change', function(combo) {
             if (combo.value == CONST.COMBO_SIN_SINO['SI']) {
             	comboContraoferta.reset();

@@ -42,7 +42,7 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     			--  DD_EEB_CODIGO  	DD_EEB_DESCRIPCION  							DD_EEB_CODIGO_C4C
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-       T_TIPO_DATA('063', 			'Pte. CP/GED', 											'430'),
+       T_TIPO_DATA('065', 			'Pte. CP/GED', 											'430'),
        T_TIPO_DATA('064', 			'Nuevas condiciones comité posesiones', 				'890')
 		); 
     V_TMP_TIPO_DATA T_TIPO_DATA;

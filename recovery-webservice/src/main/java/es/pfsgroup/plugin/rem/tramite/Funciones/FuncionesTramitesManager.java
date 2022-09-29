@@ -271,8 +271,9 @@ public class FuncionesTramitesManager implements FuncionesTramitesApi {
 		ExpedienteComercial eco = expedienteComercialApi.findOne(idExpediente);
 		Oferta ofr = eco.getOferta();
 		if (ofr != null) {
-			dto.setFianzaExonerada(eco.getCondicionante().getFianzaExonerada());
 			
+			dto.setFechaAprobacionOferta(eco.getFechaSancionComite());
+			dto.setFianzaExonerada(eco.getCondicionante().getFianzaExonerada());
 			Fianzas fia = genericDao.get(Fianzas.class, genericDao.createFilter(FilterType.EQUALS, "oferta.id", ofr.getId()));
 			
 			if (fia != null) {

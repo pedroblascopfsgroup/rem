@@ -24,6 +24,8 @@ public class DtoTabFianza extends WebDto {
 	private Boolean fianzaExonerada;
 	private Date agendacionFechaIngreso;
 	
+	private Date fechaAprobacionOferta;
+	
 	public Long getId() {
 		return id;
 	}
@@ -84,6 +86,12 @@ public class DtoTabFianza extends WebDto {
 	}
 	public void setAgendacionFechaIngreso(Date agendacionFechaIngreso) {
 		this.agendacionFechaIngreso = agendacionFechaIngreso;
+	}
+	public Date getFechaAprobacionOferta() {
+		return fechaAprobacionOferta;
+	}
+	public void setFechaAprobacionOferta(Date fechaAprobacionOferta) {
+		this.fechaAprobacionOferta = fechaAprobacionOferta;
 	}
 	
 	

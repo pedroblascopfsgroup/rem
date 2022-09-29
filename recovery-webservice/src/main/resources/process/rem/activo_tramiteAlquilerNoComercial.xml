@@ -351,7 +351,7 @@
 		<transition to="T018_AprobacionOferta" name="aceptaAlquilerSocial"></transition>
 		<transition to="T018_AgendarFirma" name="aceptaRenovacion"></transition>
 		<transition to="T018_ProponerRescisionCliente" name="rechazaRenovacion"></transition>
-		<transition to="Fin" name="rechazaAlquilerSocial"></transition>
+		<transition to="T018_EsperaComitePosesiones" name="rechazaAlquilerSocial"></transition>
 	</decision>
 	
 	<state name="T018_EntregaFianzas">
@@ -829,6 +829,57 @@
 		</event>
 		<transition to="Fin" name="avanzaBPM"></transition>
 	</state>
+	
+	<state name="T018_EsperaComitePosesiones">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="T018_EsperaComitePosesionesDecision" name="avanzaBPM"></transition>
+	</state> 
+	<decision name ="T018_EsperaComitePosesionesDecision" expression="#{T018_EsperaComitePosesionesDecision}">
+		<transition to="T018_AprobacionOferta" name="acepta"></transition>
+		<transition to="Fin" name="rechaza"></transition>
+	</decision>
+	
+	<state name="T018_ConfirmacionBC">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="T018_ConfirmacionBCDecision" name="avanzaBPM"></transition>
+	</state> 
+	<decision name ="T018_ConfirmacionBCDecision" expression="#{T018_ConfirmacionBCDecision}">
+		<transition to="T018_AprobacionOferta" name="aprueba"></transition>
+	</decision>
 	
 	<end-state name="Fin">
 		<event type="node-enter">

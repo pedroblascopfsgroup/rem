@@ -5036,6 +5036,32 @@
 		    }
 		});
 	},
+	
+	T018_EsperaComitePosesionesValidacion: function(){
+		var me = this;
+		
+		var aprueba = me.down('[name=aprueba]');
+			
+		if($AU.userHasFunction('FUNC_AVANZA_FORMALIZACION_ALQUILER_NC_BC')){
+			me.desbloquearCampo(aprueba);
+		} else {
+			me.bloquearCampo(aprueba);
+		}
+
+	},
+	
+	T018_ConfirmacionBCValidacion: function(){
+		var me = this;
+		
+		var confirma = me.down('[name=confirma]');
+			
+		if($AU.userHasFunction('FUNC_AVANZA_FORMALIZACION_ALQUILER_NC_BC')){
+			me.desbloquearCampo(confirma);
+		} else {
+			me.bloquearCampo(confirma);
+		}
+
+	},
     
     habilitarCampo: function(campo) {
         var me = this;

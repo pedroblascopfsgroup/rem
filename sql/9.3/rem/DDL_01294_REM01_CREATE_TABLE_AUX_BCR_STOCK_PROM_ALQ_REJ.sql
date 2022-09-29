@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20220921
+--## FECHA_CREACION=20220929
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-18692
@@ -9,7 +9,8 @@
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial - HREOS-18692 - Alejandra García
+--##        0.2 Modificación campo SUM_ALQUILABLE de number a varchar - HREOS-18793 - Alejandra García
 --##########################################
 --*/
 
@@ -269,7 +270,7 @@ BEGIN
         , FLAG_EN_REM	        NUMBER(1,0)
         , FLAG_FICHEROS	        VARCHAR2(1 CHAR)
         , FLAG_OFERTA_VIVA	    NUMBER(1,0)
-        , SUP_ALQUILABLE        NUMBER(16,2)
+        , SUP_ALQUILABLE        VARCHAR2(12 CHAR)
         , CONCURRENCIA_ENVIADA  NUMBER (1)
         , ERRORCODE                   VARCHAR2(255 CHAR)
         , ERRORMESSAGE                VARCHAR2(512 CHAR)

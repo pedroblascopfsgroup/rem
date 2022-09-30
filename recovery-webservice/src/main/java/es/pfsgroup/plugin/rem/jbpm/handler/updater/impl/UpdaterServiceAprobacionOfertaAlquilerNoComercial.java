@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -14,13 +15,19 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
+import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.FuncionesTramitesApi;
+import es.pfsgroup.plugin.rem.api.TramiteAlquilerApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoTareasFormalizacion;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAdenda;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOfertaAlquiler;
@@ -36,6 +43,15 @@ public class UpdaterServiceAprobacionOfertaAlquilerNoComercial implements Update
     
     @Autowired
     private FuncionesTramitesApi funcionesTramitesApi;
+    
+    @Autowired
+	private TramiteAlquilerApi tramiteAlquilerApi;
+    
+    @Autowired
+    private ActivoDao activoDao;
+    
+    @Autowired
+    private ActivoAdapter activoAdapter;
 	
     protected static final Log logger = LogFactory.getLog(UpdaterServiceAprobacionOfertaAlquilerNoComercial.class);
     
@@ -87,7 +103,13 @@ public class UpdaterServiceAprobacionOfertaAlquilerNoComercial implements Update
  			}
  			
  			funcionesTramitesApi.createOrUpdateComunicacionApi(expedienteComercial, dto);
- 			expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigoC4C", this.devolverEstadoBC(isSubrogacion, dto))));
+ 			expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", this.devolverEstadoBC(isSubrogacion, dto))));
+ 			expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", this.devolverEstadoHaya(isSubrogacion, dto))));
+ 			
+ 			if(DDEstadosExpedienteComercial.isFirmado(expedienteComercial.getEstado())) {
+ 				this.actualizarEstadosPublicacionActivos(expedienteComercial);
+ 			}
+ 			
  			genericDao.save(ExpedienteComercial.class, expedienteComercial);
  			
  		}catch(ParseException e) {
@@ -122,5 +144,41 @@ public class UpdaterServiceAprobacionOfertaAlquilerNoComercial implements Update
 		}
 		
 		return estadoExpBC;
+	}
+	
+	private String devolverEstadoHaya(boolean isSubrogacion,  DtoTareasFormalizacion dto) {
+		String estadoHaya = null;
+		
+		if(isSubrogacion) {
+			if(dto.getTipoAdenda() == null || DDTipoAdenda.CODIGO_NO_APLICA_ADENDA.equals(dto.getTipoAdenda())) {
+				estadoHaya = DDEstadosExpedienteComercial.FIRMADO;
+			}else {
+				//estadoHaya = DDEstadoExpedienteBc.CODIGO_ADENDA_NECESARIA;
+			}
+		}else {
+			if(dto.getClienteAcepta() != null && dto.getClienteAcepta()) {
+				//estadoHaya = DDEstadoExpedienteBc.CODIGO_BORRADOR_ACEPTADO;
+			}else {
+				//estadoHaya = DDEstadoExpedienteBc.CODIGO_GESTION_ADECUCIONES_CERTIFICACIONES_CLIENTE;
+			}
+		}
+		
+		return estadoHaya;
+	}
+	
+	private void actualizarEstadosPublicacionActivos(ExpedienteComercial expedienteComercial) {
+		Oferta oferta = expedienteComercial.getOferta();
+		Activo activo = oferta.getActivoPrincipal();
+		
+		expedienteComercial.setFechaFirmaContrato(new Date());
+		
+		tramiteAlquilerApi.actualizarSituacionComercialUAs(activo);
+		tramiteAlquilerApi.actualizarSituacionComercial(oferta.getActivosOferta(), activo, expedienteComercial.getId());
+		activoDao.saveOrUpdate(activo);
+		activoAdapter.actualizarEstadoPublicacionActivo(activo.getId(),true);
+
+		if(activoDao.isActivoMatriz(activo.getId())){
+			tramiteAlquilerApi.actualizarEstadoPublicacionUAs(activo);
+		}
 	}
 }

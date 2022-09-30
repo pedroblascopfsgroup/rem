@@ -2,7 +2,6 @@ package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -13,51 +12,33 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
-import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
-import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
+import es.pfsgroup.plugin.rem.api.TramiteAlquilerApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
-import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
-import es.pfsgroup.plugin.rem.model.ActivoOferta;
-import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
-import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoTareasFormalizacion;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.HistoricoOcupadoTitulo;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
-import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 
 @Component
 public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterService {
 
     @Autowired
     private GenericABMDao genericDao;
-    
-    @Autowired
-	private UtilDiccionarioApi utilDiccionarioApi;
     
     @Autowired
     private ActivoDao activoDao;
@@ -68,17 +49,14 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
     @Autowired
     private ActivoAdapter activoAdapter;
         
-    @Autowired
-    private ApiProxyFactory proxyFactory;
-    
-    @Autowired
-    private ActivoAgrupacionActivoDao activoAgrupacionActivoDao;
-	
 	@Autowired
 	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
 	
 	@Autowired
 	private OfertaApi ofertaApi;
+	
+	@Autowired
+	private TramiteAlquilerApi tramiteAlquilerApi;
 	
 	@Resource(name = "entityTransactionManager")
 	private PlatformTransactionManager transactionManager;
@@ -134,13 +112,13 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
 			expedienteComercial.setFechaFinAlquiler(dto.getFechaFinAlquiler());
 			oferta.setFechaFinContrato(dto.getFechaFinAlquiler());
 			
-			this.actualizarSituacionComercialUAs(activo);
-			this.actualizarSituacionComercial(oferta.getActivosOferta(), activo, expedienteComercial.getId());
+			tramiteAlquilerApi.actualizarSituacionComercialUAs(activo);
+			tramiteAlquilerApi.actualizarSituacionComercial(oferta.getActivosOferta(), activo, expedienteComercial.getId());
 			activoDao.saveOrUpdate(activo);
 			activoAdapter.actualizarEstadoPublicacionActivo(activo.getId(),true);
 
 			if(activoDao.isActivoMatriz(activo.getId())){
-				this.actualizarEstadoPublicacionUAs(activo);
+				tramiteAlquilerApi.actualizarEstadoPublicacionUAs(activo);
 			}
 		}
 		
@@ -177,76 +155,13 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
 	}
 	
 	private String devolverEstadoBC(boolean anular) {
-		String estadoBC = DDEstadoExpedienteBc.CODIGO_FIRMA_DE_CONTRATO_AGENDADO;
+		String estadoBC = DDEstadoExpedienteBc.CODIGO_CONTRATO_FIRMADO;
 		if(anular) {
 			estadoBC = DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO;
 		}
 		return estadoBC;
 	}
 	
-	private void actualizarSituacionComercial(List<ActivoOferta> activosOferta, Activo activo, Long ecoId) {
-		DDTipoEstadoAlquiler tipoEstadoAlquiler = genericDao.get(DDTipoEstadoAlquiler.class, genericDao.createFilter(FilterType.EQUALS, "codigo",DDTipoEstadoAlquiler.ESTADO_ALQUILER_ALQUILADO));
-		DDSituacionComercial situacionComercial = (DDSituacionComercial) utilDiccionarioApi.dameValorDiccionarioByCod(DDSituacionComercial.class, DDSituacionComercial.CODIGO_ALQUILADO);
-		DDTipoTituloActivoTPA tipoTituloActivoTPA = (DDTipoTituloActivoTPA) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoTituloActivoTPA.class, DDTipoTituloActivoTPA.tipoTituloSi);
-		ActivoSituacionPosesoria sitpos = activo.getSituacionPosesoria();
-		Usuario usu = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 
-		
-		for(ActivoOferta activoOferta : activosOferta){
-			activo = activoOferta.getPrimaryKey().getActivo();
-			Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-			ActivoPatrimonio activoPatrimonio = genericDao.get(ActivoPatrimonio.class, filtroActivo);
-			if(!Checks.esNulo(activoPatrimonio)){
-				activoPatrimonio.setTipoEstadoAlquiler(tipoEstadoAlquiler);
-			} else{
-				activoPatrimonio = new ActivoPatrimonio();
-				activoPatrimonio.setActivo(activo);
-				if (!Checks.esNulo(tipoEstadoAlquiler)){
-					activoPatrimonio.setTipoEstadoAlquiler(tipoEstadoAlquiler);
-				}
-			}
-			if (!Checks.esNulo(situacionComercial)) {
-				activo.setSituacionComercial(situacionComercial);
-			}
-			
-			if (!Checks.esNulo(activo.getSituacionPosesoria())) {
-				activo.getSituacionPosesoria().setOcupado(1);
-				if(!Checks.esNulo(tipoTituloActivoTPA)) {
-					activo.getSituacionPosesoria().setConTitulo(tipoTituloActivoTPA);
-				}
-				activo.getSituacionPosesoria().setFechaUltCambioTit(new Date());
-			}
-			
-			if(sitpos!=null && usu!=null) {			
-				HistoricoOcupadoTitulo histOcupado = new HistoricoOcupadoTitulo(activo,sitpos,usu,HistoricoOcupadoTitulo.COD_OFERTA_ALQUILER,null);
-				genericDao.save(HistoricoOcupadoTitulo.class, histOcupado);					
-			}
-			
-			activoDao.validateAgrupacion(ecoId);
-			genericDao.save(ActivoPatrimonio.class, activoPatrimonio);
-		}
-	}
-	
-	private void actualizarSituacionComercialUAs(Activo activo) {
-		List<ActivoAgrupacionActivo> agrupacionesActivo = activo.getAgrupaciones();
-		for(ActivoAgrupacionActivo activoAgrupacionActivo : agrupacionesActivo){
-			if(!Checks.esNulo(activoAgrupacionActivo.getAgrupacion()) && !Checks.esNulo(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion())){
-				if((DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER).equals(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo())){
-					Long idAgrupacion = activoAgrupacionActivo.getAgrupacion().getId();
-					Activo activoMatriz = activoAgrupacionActivoDao.getActivoMatrizByIdAgrupacion(idAgrupacion);
-					DDSituacionComercial alquiladoParcialmente = genericDao.get(DDSituacionComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSituacionComercial.CODIGO_ALQUILADO_PARCIALMENTE));
-					activoMatriz.setSituacionComercial(alquiladoParcialmente);
-					activoDao.saveOrUpdate(activoMatriz);
-				}
-			}
-		}
-	}
-	private void actualizarEstadoPublicacionUAs(Activo activo) {
-		ActivoAgrupacion activoAgrupacion = activoDao.getAgrupacionPAByIdActivo(activo.getId());
-		List<ActivoAgrupacionActivo> listaActivosAgrupacion = activoAgrupacion.getActivos();
-		for (ActivoAgrupacionActivo activoAgrupacionActivo : listaActivosAgrupacion) {	
-			activoAdapter.actualizarEstadoPublicacionActivo(activoAgrupacionActivo.getActivo().getId());
-		}
-	}
 
 }

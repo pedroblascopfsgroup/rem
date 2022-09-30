@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.tramite.alquiler;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -14,14 +15,19 @@ import org.springframework.stereotype.Service;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
 import es.capgemini.devon.message.MessageService;
+import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.activo.ActivoManager;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
+import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
@@ -30,16 +36,27 @@ import es.pfsgroup.plugin.rem.api.TramiteAlquilerApi;
 import es.pfsgroup.plugin.rem.constants.TareaProcedimientoConstants;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
+import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
+import es.pfsgroup.plugin.rem.model.ActivoOferta;
+import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
+import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Fianzas;
+import es.pfsgroup.plugin.rem.model.HistoricoOcupadoTitulo;
 import es.pfsgroup.plugin.rem.model.HistoricoReagendacion;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDRespuestaComprador;
 import es.pfsgroup.plugin.rem.model.dd.DDRiesgoOperacion;
+import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTratamiento;
 
 @Service("tramiteAlquilerManager")
@@ -77,6 +94,18 @@ public class TramiteAlquilerManager implements TramiteAlquilerApi {
     
     @Autowired
 	private GenericAdapter genericAdapter;
+    
+    @Autowired
+    private ActivoDao activoDao;
+    
+    @Autowired
+    private ActivoAgrupacionActivoDao activoAgrupacionActivoDao;
+    
+    @Autowired
+    private ActivoAdapter activoAdapter;
+    
+    @Autowired
+	private GenericAdapter adapter;
 		
 	@Override
 	public boolean haPasadoScoring(Long idTramite) {
@@ -381,5 +410,74 @@ public class TramiteAlquilerManager implements TramiteAlquilerApi {
 		listaTareas.add(TareaProcedimientoConstants.TramiteAlquilerT015.CODIGO_FIRMA);
 		
 		return listaTareas;
+	}
+	
+	@Override
+	public void actualizarSituacionComercial(List<ActivoOferta> activosOferta, Activo activo, Long ecoId) {
+		DDTipoEstadoAlquiler tipoEstadoAlquiler = genericDao.get(DDTipoEstadoAlquiler.class, genericDao.createFilter(FilterType.EQUALS, "codigo",DDTipoEstadoAlquiler.ESTADO_ALQUILER_ALQUILADO));
+		DDSituacionComercial situacionComercial = genericDao.get(DDSituacionComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSituacionComercial.CODIGO_ALQUILADO));
+		DDTipoTituloActivoTPA tipoTituloActivoTPA =  genericDao.get(DDTipoTituloActivoTPA.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoTituloActivoTPA.tipoTituloSi));
+		ActivoSituacionPosesoria sitpos = activo.getSituacionPosesoria();
+		Usuario usu = adapter.getUsuarioLogado();
+
+		
+		for(ActivoOferta activoOferta : activosOferta){
+			activo = activoOferta.getPrimaryKey().getActivo();
+			Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+			ActivoPatrimonio activoPatrimonio = genericDao.get(ActivoPatrimonio.class, filtroActivo);
+			if(!Checks.esNulo(activoPatrimonio)){
+				activoPatrimonio.setTipoEstadoAlquiler(tipoEstadoAlquiler);
+			} else{
+				activoPatrimonio = new ActivoPatrimonio();
+				activoPatrimonio.setActivo(activo);
+				if (!Checks.esNulo(tipoEstadoAlquiler)){
+					activoPatrimonio.setTipoEstadoAlquiler(tipoEstadoAlquiler);
+				}
+			}
+			if (!Checks.esNulo(situacionComercial)) {
+				activo.setSituacionComercial(situacionComercial);
+			}
+			
+			if (!Checks.esNulo(activo.getSituacionPosesoria())) {
+				activo.getSituacionPosesoria().setOcupado(1);
+				if(!Checks.esNulo(tipoTituloActivoTPA)) {
+					activo.getSituacionPosesoria().setConTitulo(tipoTituloActivoTPA);
+				}
+				activo.getSituacionPosesoria().setFechaUltCambioTit(new Date());
+			}
+			
+			if(sitpos!=null && usu!=null) {			
+				HistoricoOcupadoTitulo histOcupado = new HistoricoOcupadoTitulo(activo,sitpos,usu,HistoricoOcupadoTitulo.COD_OFERTA_ALQUILER,null);
+				genericDao.save(HistoricoOcupadoTitulo.class, histOcupado);					
+			}
+			
+			activoDao.validateAgrupacion(ecoId);
+			genericDao.save(ActivoPatrimonio.class, activoPatrimonio);
+		}
+	}
+	
+	@Override
+	public  void actualizarSituacionComercialUAs(Activo activo) {
+		List<ActivoAgrupacionActivo> agrupacionesActivo = activo.getAgrupaciones();
+		for(ActivoAgrupacionActivo activoAgrupacionActivo : agrupacionesActivo){
+			if(!Checks.esNulo(activoAgrupacionActivo.getAgrupacion()) && !Checks.esNulo(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion())){
+				if((DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER).equals(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo())){
+					Long idAgrupacion = activoAgrupacionActivo.getAgrupacion().getId();
+					Activo activoMatriz = activoAgrupacionActivoDao.getActivoMatrizByIdAgrupacion(idAgrupacion);
+					DDSituacionComercial alquiladoParcialmente = genericDao.get(DDSituacionComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSituacionComercial.CODIGO_ALQUILADO_PARCIALMENTE));
+					activoMatriz.setSituacionComercial(alquiladoParcialmente);
+					activoDao.saveOrUpdate(activoMatriz);
+				}
+			}
+		}
+	}
+	
+	@Override
+	public  void actualizarEstadoPublicacionUAs(Activo activo) {
+		ActivoAgrupacion activoAgrupacion = activoDao.getAgrupacionPAByIdActivo(activo.getId());
+		List<ActivoAgrupacionActivo> listaActivosAgrupacion = activoAgrupacion.getActivos();
+		for (ActivoAgrupacionActivo activoAgrupacionActivo : listaActivosAgrupacion) {	
+			activoAdapter.actualizarEstadoPublicacionActivo(activoAgrupacionActivo.getActivo().getId());
+		}
 	}
 }

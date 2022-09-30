@@ -3,6 +3,8 @@ package es.pfsgroup.plugin.rem.api;
 import java.util.List;
 
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 
@@ -44,6 +46,12 @@ public interface TramiteAlquilerApi {
 	
 	boolean getRespuestaHistReagendacionMayor(TareaExterna tareaExterna);
 
-	boolean modificarFianza(ActivoTramite tramite);	
+	boolean modificarFianza(ActivoTramite tramite);
+
+	void actualizarSituacionComercial(List<ActivoOferta> activosOferta, Activo activo, Long ecoId);
+
+	void actualizarSituacionComercialUAs(Activo activo);
+
+	void actualizarEstadoPublicacionUAs(Activo activo);	
 }
 

@@ -1,4 +1,4 @@
--Ext.define('HreRem.view.agenda.TareaGenerica', {
+Ext.define('HreRem.view.agenda.TareaGenerica', {
     extend: 'HreRem.view.common.TareaBase',
     xtype: 'tareagenerica',
     reference: 'windowTareaGenerica',
@@ -4532,7 +4532,7 @@
 		var comboContraoferta = me.down('[name=comboContraoferta]');
 		var comboMotivo = me.down('[name=justificacion]');
 		
-		if(Ext.isEmpty(comboAcepta) || comboAcepta == CONST.COMBO_SIN_SINO['NO']){
+		if(Ext.isEmpty(comboAcepta.value) || comboAcepta.value == CONST.COMBO_SIN_SINO['NO']){
             me.deshabilitarCampo(comboContraoferta);
             me.campoNoObligatorio(comboContraoferta);
             me.deshabilitarCampo(comboMotivo);

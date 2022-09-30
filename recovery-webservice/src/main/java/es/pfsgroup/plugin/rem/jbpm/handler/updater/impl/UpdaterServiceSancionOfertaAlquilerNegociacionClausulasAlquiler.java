@@ -55,7 +55,7 @@ public class UpdaterServiceSancionOfertaAlquilerNegociacionClausulasAlquiler imp
 		}
 		
 		if(aprueba) {
-			estadoBc =  DDEstadoExpedienteBc.CODIGO_FIRMA_APROBADA;
+			estadoBc =  DDEstadoExpedienteBc.CODIGO_IMPORTE_FINAL_APROBADO;
 			estadoHaya = DDEstadosExpedienteComercial.PTE_TRASLADAR_OFERTA_AL_CLIENTE;
 		}else {
 			estadoBc = DDEstadoExpedienteBc.CODIGO_CLAUSULADO_NO_COMERCIABLE;

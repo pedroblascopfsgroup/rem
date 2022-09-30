@@ -836,9 +836,9 @@
             	def funcionesTramitesManager = ctx.getBean("funcionesTramitesManager");
             	return funcionesTramitesManager.tieneCampoClasificacionRelleno(tareaExterna);
             }
-            def getRespuestaHistReagendacionMayor = {
-            	def tramiteAlquilerManager = ctx.getBean("tramiteAlquilerManager");
-            	return tramiteAlquilerManager.getRespuestaHistReagendacionMayor(tareaExterna);
+            def seHaReagendado2VecesOMas = {
+            	def funcionesTramitesApi = ctx.getBean("funcionesTramitesManager");
+            	return funcionesTramitesApi.seHaReagendado2VecesOMas(tareaExterna);
             }
             def checkIBANValido (String numIban) {
             	def funcionesTramitesManager = ctx.getBean("funcionesTramitesManager");

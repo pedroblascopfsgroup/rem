@@ -30,7 +30,6 @@ import es.pfsgroup.plugin.rem.model.HistoricoReagendacion;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 
 @Component
@@ -52,8 +51,6 @@ public class UpdaterServiceAgendarFirmaNoComercial implements UpdaterService {
     
     SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
     
-    private static final String FECHA_FIRMA = "fechaFirma";
-    private static final String LUGAR_FIRMA = "lugarFirma";
 	private static final String COMBO_FIANZA_EXONERADA = "comboResultado";
 	private static final String FECHA_AGENDACION = "fechaAgendacionIngreso";
 	private static final String FECHA_REAGENDACION = "fechaReagendarIngreso";
@@ -63,15 +60,12 @@ public class UpdaterServiceAgendarFirmaNoComercial implements UpdaterService {
 	private static final String CODIGO_T018_AGENDAR_FIRMA = "T018_AgendarFirma";
 	
 	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
-		boolean estadoBcModificado = false;
-		boolean estadoModificado = false;
 		boolean fianzaExonerada = false;
 		boolean fechaReagendacionRelleno = false;
 		String fechaAgendacionValor = null;
 		String fechaReagendarIngresoValor = null;
 		String importe = null;
 		String ibanDevolucion = null;
-		String codigoTarea = tareaExternaActual.getTareaProcedimiento().getCodigo();
 		Fianzas fianza = null;
 		
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
@@ -80,8 +74,6 @@ public class UpdaterServiceAgendarFirmaNoComercial implements UpdaterService {
 		Usuario usu = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 		Filter filterOfr =  genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId());
 		Fianzas fia = genericDao.get(Fianzas.class, filterOfr);
-		DDEstadoExpedienteBc estadoExpBC = null;
- 		DDEstadosExpedienteComercial estadoExpComercial = null;
 		
 		for(TareaExternaValor valor :  valores){
 			
@@ -112,11 +104,6 @@ public class UpdaterServiceAgendarFirmaNoComercial implements UpdaterService {
 				fia.getAuditoria().setBorrado(true);
 				genericDao.save(Fianzas.class, fia);
 			}
-			
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigoC4C", "120");
-			estadoExpBC = genericDao.get(DDEstadoExpedienteBc.class,filtro);
-//			Filter filtroEstadoExpComer = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PDTE_FIRMA);
-//			estadoExpComercial = genericDao.get(DDEstadosExpedienteComercial.class,filtroEstadoExpComer);
 			
 		} else {
 			if (fia != null) {
@@ -177,16 +164,13 @@ public class UpdaterServiceAgendarFirmaNoComercial implements UpdaterService {
 				genericDao.save(HistoricoReagendacion.class, histReagendacion);
 			}
 			
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigoC4C", "470");
-			estadoExpBC = genericDao.get(DDEstadoExpedienteBc.class,filtro);
-//			Filter filtroEstadoExpComer = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PDTE_FIRMA);
-//			estadoExpComercial = genericDao.get(DDEstadosExpedienteComercial.class,filtroEstadoExpComer);
 		}	
 		
-		expedienteComercial.setEstadoBc(estadoExpBC);
-		estadoBcModificado = true;
-		expedienteComercial.setEstado(estadoExpComercial);
-		estadoModificado = true;
+		String estadoExpBC = this.devolverEstadoBC(fianzaExonerada, tareaExternaActual);
+		if(estadoExpBC != null) {
+			expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigoC4C", estadoExpBC)));
+		}
+				
 		genericDao.save(ExpedienteComercial.class, expedienteComercial);
 	}
 
@@ -196,6 +180,19 @@ public class UpdaterServiceAgendarFirmaNoComercial implements UpdaterService {
 
 	public String[] getKeys() {
 		return this.getCodigoTarea();
+	}
+	
+	private String devolverEstadoBC(Boolean fianzaExonerada,  TareaExterna tareaExterna) {
+		String estadoExpBC = null;
+		if(fianzaExonerada != null) {
+			if(fianzaExonerada) {
+				estadoExpBC = DDEstadoExpedienteBc.CODIGO_FIRMA_DE_CONTRATO_AGENDADO;
+			}else {
+				estadoExpBC = DDEstadoExpedienteBc.CODIGO_ENTREGA_GARANTIAS_FIANZAS_AVAL;
+			}
+		}
+		
+		return estadoExpBC;
 	}
 
 }

@@ -1,10 +1,13 @@
 package es.pfsgroup.plugin.rem.tareasactivo;
 
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
-import es.pfsgroup.plugin.rem.activo.dao.TareaValoresDao;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jbpm.graph.exe.Token;
@@ -47,13 +50,12 @@ import es.pfsgroup.framework.paradise.jbpm.JBPMProcessManagerApi;
 import es.pfsgroup.plugin.recovery.mejoras.api.registro.MEJRegistroApi;
 import es.pfsgroup.plugin.recovery.mejoras.api.registro.MEJTrazaDto;
 import es.pfsgroup.plugin.recovery.mejoras.registro.model.MEJDDTipoRegistro;
+import es.pfsgroup.plugin.rem.activo.dao.TareaValoresDao;
 import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
-import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
-import es.pfsgroup.plugin.rem.constants.TareaProcedimientoConstants;
 import es.pfsgroup.plugin.rem.jbpm.ValidateJbpmApi;
 import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoScriptExecutorApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.listener.ActivoGenerarSaltoImpl;
@@ -131,9 +133,6 @@ public class TareaActivoManager implements TareaActivoApi {
 
 	@Autowired
 	private TareaValoresDao tareaValoresDao;
-	
-	@Autowired
-	private ActivoTramiteApi activoTramiteApi;
 	
 	@Override
 	public TareaActivo get(Long id) {
@@ -694,22 +693,4 @@ public class TareaActivoManager implements TareaActivoApi {
 		return tareaValoresDao.getValorCampoTarea(codTarea, numExpediente, nombreCampo);
 	}
 	
-	@Override
-	public boolean checkTareaTramiteOfertaFianzaExonerada(Long idTramite) {
-		boolean resultado = false;
-		if (idTramite != null) {
-			List<TareaExterna> tareasActivas = activoTramiteApi.getListaTareaExternaActivasByIdTramite(idTramite);
-			for (TareaExterna tarea : tareasActivas) {
-				if (TareaProcedimientoConstants.TramiteAlquilerT015.CODIGO_ENTREGA_FIANZAS.equals(tarea.getTareaProcedimiento().getCodigo())
-						|| TareaProcedimientoConstants.TramiteAlquilerT015.CODIGO_RESPUESTA_BC_REAGENDACION.equals(tarea.getTareaProcedimiento().getCodigo())
-						|| TareaProcedimientoConstants.TramiteAlquilerT015.CODIGO_CIERRE_CONTRATO.equals(tarea.getTareaProcedimiento().getCodigo())
-						|| TareaProcedimientoConstants.CODIGO_T015_FIRMA.equals(tarea.getTareaProcedimiento().getCodigo())) {
-					resultado = true;
-				}
-			}
-		}
-		
-		return resultado;
-	}
-
 }

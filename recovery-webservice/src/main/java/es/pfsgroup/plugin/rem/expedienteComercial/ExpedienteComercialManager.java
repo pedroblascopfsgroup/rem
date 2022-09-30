@@ -3820,16 +3820,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				}
 			}
 		}
+		
 		if (DDCartera.isCarteraBk(oferta.getActivoPrincipal().getCartera())) {
-			ActivoTramite tramite = tramiteDao.getTramiteComercialVigenteByTrabajoT015(expediente.getTrabajo().getId());
-			if (tramite != null) {
-				if (tareaActivoApi.checkTareaTramiteOfertaFianzaExonerada(tramite.getId())) {
-					dto.setFianzaExoneradaEditable(false);
-				} else {
-					dto.setFianzaExoneradaEditable(true);
-				}
-			}
+			dto.setFianzaExoneradaEditable(funcionesTramitesApi.modificarFianza(expediente));
+		}else {
+			dto.setFianzaExoneradaEditable(true);
 		}
+		
 		return dto;
 	}
 
@@ -7412,7 +7409,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	public void sendPosicionamientoToBc(Long idEntidad, Boolean success) {
 		ExpedienteComercial expediente = findOne(idEntidad);
 		Boolean tieneTareaActiva = ofertaDao.tieneTareaActiva(TareaProcedimientoConstants.CODIGO_T018_AGENDAR_FIRMAR, expediente.getOferta().getNumOferta().toString())
-				|| ofertaDao.tieneTareaActiva(TareaProcedimientoConstants.CODIGO_T015_FIRMA, expediente.getOferta().getNumOferta().toString()) ;
+				|| ofertaDao.tieneTareaActiva(TareaProcedimientoConstants.TramiteAlquilerT015.CODIGO_FIRMA, expediente.getOferta().getNumOferta().toString()) ;
 
 		if(tieneTareaActiva && success && DDCartera.isCarteraBk(expediente.getOferta().getActivoPrincipal().getCartera())){
 			ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), this.buildReplicarOfertaDtoFromExpediente(expediente));

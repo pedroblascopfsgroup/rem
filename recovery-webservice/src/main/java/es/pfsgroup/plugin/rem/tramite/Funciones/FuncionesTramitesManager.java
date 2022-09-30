@@ -1,5 +1,17 @@
 package es.pfsgroup.plugin.rem.tramite.Funciones;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.commons.validator.routines.checkdigit.IBANCheckDigit;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import edu.emory.mathcs.backport.java.util.Arrays;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
@@ -9,9 +21,17 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.activo.ActivoManager;
-import es.pfsgroup.plugin.rem.api.*;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoTramiteDao;
+import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
+import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.FuncionesTramitesApi;
+import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.TramiteAlquilerApi;
+import es.pfsgroup.plugin.rem.api.TramiteAlquilerNoComercialApi;
+import es.pfsgroup.plugin.rem.api.TramiteVentaApi;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
+import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ComunicarFormalizacionApi;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.CuentasVirtualesAlquiler;
@@ -24,22 +44,10 @@ import es.pfsgroup.plugin.rem.model.Fianzas;
 import es.pfsgroup.plugin.rem.model.HistoricoReagendacion;
 import es.pfsgroup.plugin.rem.model.HistoricoTareaPbc;
 import es.pfsgroup.plugin.rem.model.Oferta;
-import es.pfsgroup.plugin.rem.model.VGridDescuentoColectivos;
 import es.pfsgroup.plugin.rem.model.VGridHistoricoReagendaciones;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
-import es.pfsgroup.plugin.rem.model.dd.DDSubtipoOfertaAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTareaPbc;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.commons.validator.routines.checkdigit.IBANCheckDigit;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
 @Service("funcionesTramitesManager")
 public class FuncionesTramitesManager implements FuncionesTramitesApi {
@@ -69,6 +77,9 @@ public class FuncionesTramitesManager implements FuncionesTramitesApi {
 	
 	@Autowired
 	private ExpedienteComercialDao expedienteComercialDao;
+	
+	@Autowired
+	private ActivoTramiteDao tramiteDao;
 	
 	@Override
 	public boolean tieneRellenosCamposAnulacion(TareaExterna tareaExterna){
@@ -366,4 +377,19 @@ public class FuncionesTramitesManager implements FuncionesTramitesApi {
 		
 		genericDao.save(ComunicarFormalizacionApi.class, comApi);
 	}
+	
+
+	@Override
+	public boolean modificarFianza(ExpedienteComercial eco) {
+		boolean resultado = false;
+		if(DDTipoOferta.isTipoAlquilerNoComercial(eco.getOferta().getTipoOferta())) {
+			resultado = tramiteAlquilerNoComercialApi.modificarFianza(eco);
+		}else if(DDTipoOferta.isTipoAlquiler(eco.getOferta().getTipoOferta())) {
+			resultado = tramiteAlquilerApi.modificarFianza(tramiteDao.getTramiteComercialVigenteByTrabajoAllTramites(eco.getTrabajo().getId()));
+		}
+
+		return resultado;
+	}
+
+
 }

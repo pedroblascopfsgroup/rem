@@ -1,6 +1,8 @@
 package es.pfsgroup.plugin.rem.tramite.alquiler;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -25,8 +27,10 @@ import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.FuncionesApi;
 import es.pfsgroup.plugin.rem.api.TramiteAlquilerApi;
+import es.pfsgroup.plugin.rem.constants.TareaProcedimientoConstants;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
+import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Fianzas;
@@ -36,8 +40,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDRespuestaComprador;
 import es.pfsgroup.plugin.rem.model.dd.DDRiesgoOperacion;
-import es.pfsgroup.plugin.rem.model.dd.DDSubtipoOfertaAlquiler;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoOfertaAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTratamiento;
 
 @Service("tramiteAlquilerManager")
@@ -351,5 +353,33 @@ public class TramiteAlquilerManager implements TramiteAlquilerApi {
 		}
 		
 		return resultado;
+	}
+	
+	
+	@Override
+	public boolean modificarFianza(ActivoTramite tramite) {
+		boolean resultado = false;
+		if(tramite != null) {
+			Set<String> tareasActivas = tramite.getTareasExternasActivasCodigo(); 
+			List<String> tareasNoEditableList = this.devolverTareasNoExoneracionFianzaBk();
+			List<String> tareasActivasList = new ArrayList<String>(); 
+			tareasActivasList.addAll(tareasActivas);
+			
+			if(CollectionUtils.containsAny(tareasActivasList, tareasNoEditableList)) {
+				resultado = true;
+			}
+		}
+		
+		return resultado;
+	}
+	
+	private List<String> devolverTareasNoExoneracionFianzaBk(){
+		List<String> listaTareas = new ArrayList<String>();	
+		listaTareas.add(TareaProcedimientoConstants.TramiteAlquilerT015.CODIGO_ENTREGA_FIANZAS);
+		listaTareas.add(TareaProcedimientoConstants.TramiteAlquilerT015.CODIGO_RESPUESTA_BC_REAGENDACION);
+		listaTareas.add(TareaProcedimientoConstants.TramiteAlquilerT015.CODIGO_CIERRE_CONTRATO);
+		listaTareas.add(TareaProcedimientoConstants.TramiteAlquilerT015.CODIGO_FIRMA);
+		
+		return listaTareas;
 	}
 }

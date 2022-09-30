@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.api;
 import java.util.List;
 
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoCondicionantesExpediente;
 import es.pfsgroup.plugin.rem.model.DtoTabFianza;
 import es.pfsgroup.plugin.rem.model.DtoTareasFormalizacion;
@@ -46,5 +47,7 @@ public interface FuncionesTramitesApi {
 	boolean seHaReagendado2VecesOMas(TareaExterna tareaExterna);
 	
 	void createOrUpdateComunicacionApi(ExpedienteComercial eco, DtoTareasFormalizacion dto);
+
+	boolean modificarFianza(ExpedienteComercial eco);
 }
 

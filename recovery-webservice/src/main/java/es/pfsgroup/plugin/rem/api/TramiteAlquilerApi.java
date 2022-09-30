@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.api;
 import java.util.List;
 
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 
 public interface TramiteAlquilerApi {
@@ -42,6 +43,7 @@ public interface TramiteAlquilerApi {
 	boolean siUsuarioTieneFuncionAvanzarPBC();
 	
 	boolean getRespuestaHistReagendacionMayor(TareaExterna tareaExterna);
-	
+
+	boolean modificarFianza(ActivoTramite tramite);	
 }
 

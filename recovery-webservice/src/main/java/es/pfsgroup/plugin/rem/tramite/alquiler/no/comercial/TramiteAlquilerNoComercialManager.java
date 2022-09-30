@@ -318,5 +318,11 @@ public class TramiteAlquilerNoComercialManager implements TramiteAlquilerNoComer
 		tramiteNoComercial.saveHistoricoFirmaAdenda(dto, oferta);
 	}
 	
+	@Override
+	public boolean modificarFianza (ExpedienteComercial eco) {
+		TramiteAlquilerNoComercial tramiteNoComercial = tramiteNoComercialFactory.getTramiteAlquilerNoComercial(eco.getOferta().getTipoOfertaAlquiler().getCodigo());
+		return tramiteNoComercial.modificarFianza(eco);
+	}
+	
 	
 }

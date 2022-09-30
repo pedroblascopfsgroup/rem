@@ -51,6 +51,8 @@ public interface TramiteAlquilerNoComercialApi {
 	boolean firmaMenosTresVeces(TareaExterna tareaExterna);
 
 	void saveHistoricoFirmaAdenda(DtoTareasFormalizacion dto, Oferta oferta);
+
+	boolean modificarFianza(ExpedienteComercial eco);
 	
 }
 

@@ -8,8 +8,7 @@ Ext.define('HreRem.model.HistoricoAntiguoDeudorModel', {
     			name: 'idHistorico'
     		},
     		{
-    			name: 'codigoLocalizable',
-    			type: 'boolean'
+    			name: 'codigoLocalizable'
     		},
     		{
     			name: 'fechaIlocalizable',

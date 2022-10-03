@@ -10,8 +10,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
@@ -25,6 +23,7 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 
 /**
  * Modelo que gestiona la informacion del historico de antiguos deudores
@@ -35,8 +34,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 @Table(name = "HAD_HIST_ANTIGUO_DEUDOR", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Where(clause = Auditoria.UNDELETED_RESTICTION)
-@Inheritance(strategy=InheritanceType.JOINED)
-public class HistoricoAntiguoDeudor implements Serializable, Auditable{
+public class HistoricoAntiguoDeudor implements Serializable, Auditable {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -50,8 +48,9 @@ public class HistoricoAntiguoDeudor implements Serializable, Auditable{
     @JoinColumn(name = "OFR_ID")
     private Oferta oferta;
 	
-	@Column(name = "HAD_LOCALIZABLE")
-	private Boolean localizable;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "HAD_LOCALIZABLE")
+	private DDSinSiNo localizable;
 	
 	@Column(name = "HAD_FECHA_ILOCALIZABLE")
 	private Date fechaIlocalizable;
@@ -88,11 +87,11 @@ public class HistoricoAntiguoDeudor implements Serializable, Auditable{
 		this.oferta = oferta;
 	}
 
-	public Boolean getLocalizable() {
+	public DDSinSiNo getLocalizable() {
 		return localizable;
 	}
 
-	public void setLocalizable(Boolean localizable) {
+	public void setLocalizable(DDSinSiNo localizable) {
 		this.localizable = localizable;
 	}
 

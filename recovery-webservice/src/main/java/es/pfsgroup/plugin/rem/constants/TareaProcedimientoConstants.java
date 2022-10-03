@@ -57,7 +57,8 @@ public class TareaProcedimientoConstants {
     	public static final String CODIGO_AGENDAR_FIRMA = "T018_AgendarFirma";
     	public static final String CODIGO_RESPUESTA_REAGENDACION_BC = "T018_RespuestaReagendacionBC";
     	public static final String CODIGO_FIRMA = "T018_FirmaContrato";
-
+    	public static final String CODIGO_BLOQUEO_SCREENING = "T018_BloqueoScreening";
+		public static final String CODIGO_BLOQUEO_SCORING = "T018_BloqueoScoring";
     }
 
 }

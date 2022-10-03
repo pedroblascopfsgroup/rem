@@ -1067,7 +1067,24 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 									flex : 1
 								}]
 					}]
-		}
+		},
+		{
+			xtype:'fieldsettable',
+			defaultType: 'textfieldbase',
+			colspan: 3,
+			reference: 'historicoantiguodeudor',
+			bind: {
+				hidden: '{!esCaixaAlquilerNoComercial}'
+			},
+			title: HreRem.i18n('fieldlabel.historico.antiguo.deudor.titulo'),
+			items: [
+				{
+					xtype: "historicoantiguodeudorgrid", 
+					reference: "historicoantiguodeudorref", 
+					colspan: 3
+				}
+			]
+   		}
 
 		]
 

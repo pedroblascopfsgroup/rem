@@ -14037,10 +14037,17 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		genericAdapter.sendMail(mailsPara, new ArrayList<String>(), asunto, cuerpo);
 	}
 	
-	
+	@Override
 	@Transactional(readOnly = false)
-	private void guardarBloqueoExpediente(ExpedienteComercial expediente) {
+	public void guardarBloqueoExpediente(ExpedienteComercial expediente) {
 		expediente.setBloqueado(1);
+		genericDao.update(ExpedienteComercial.class, expediente);
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public void guardarDesbloqueoExpediente(ExpedienteComercial expediente) {
+		expediente.setBloqueado(0);
 		genericDao.update(ExpedienteComercial.class, expediente);
 	}
 	

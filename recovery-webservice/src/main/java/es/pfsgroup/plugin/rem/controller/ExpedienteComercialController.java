@@ -42,6 +42,7 @@ import es.pfsgroup.framework.paradise.http.client.HttpSimplePostRequest;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
+import es.pfsgroup.plugin.rem.activo.exception.HistoricoTramitacionException;
 import es.pfsgroup.plugin.rem.adapter.ExpedienteAdapter;
 import es.pfsgroup.plugin.rem.adapter.ExpedienteComercialAdapter;
 import es.pfsgroup.plugin.rem.adapter.TrabajoAdapter;
@@ -95,7 +96,9 @@ import es.pfsgroup.plugin.rem.model.DtoGarantiasExpediente;
 import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoGastoRepercutido;
 import es.pfsgroup.plugin.rem.model.DtoGridFechaArras;
+import es.pfsgroup.plugin.rem.model.DtoHistoricoAntiguoDeudor;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoCondiciones;
+import es.pfsgroup.plugin.rem.model.DtoHistoricoTramitacionTituloAdicional;
 import es.pfsgroup.plugin.rem.model.DtoHstcoSeguroRentas;
 import es.pfsgroup.plugin.rem.model.DtoInformeJuridico;
 import es.pfsgroup.plugin.rem.model.DtoListadoTramites;
@@ -3365,6 +3368,55 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			logger.error("Error en ExpedienteComercialController", e);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getHistoricoAntiguoDeudor(Long idOferta, ModelMap model) {
+		
+		try {
+			model.put(RESPONSE_DATA_KEY, ofertaApi.getDtoHistoricoAntiguoDeudorList(idOferta));
+		} catch (Exception e) {
+			logger.error("Error en ExpedienteComercialController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView createHistoricoAntiguoDeudor(DtoHistoricoAntiguoDeudor dtoHitoricoAntiguoDeudor, Long idOferta, ModelMap model) {
+		
+		try {
+			boolean success = ofertaApi.createHistoricoAntiguoDeudor(dtoHitoricoAntiguoDeudor, idOferta);
+			model.put(RESPONSE_SUCCESS_KEY, success);
+
+		} catch (Exception e) {
+			logger.error("Error en ExpedienteComercialController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_MESSAGE_KEY, e.getMessage());
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView updateHistoricoAntiguoDeudor(DtoHistoricoAntiguoDeudor dtoHitoricoAntiguoDeudor, ModelMap model) {
+		
+		try {
+			boolean success = ofertaApi.updateHistoricoAntiguoDeudor(dtoHitoricoAntiguoDeudor);
+			model.put(RESPONSE_SUCCESS_KEY, success);
+
+		} catch (Exception e) {
+			logger.error("Error en ExpedienteComercialController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_MESSAGE_KEY, e.getMessage());
 		}
 
 		return createModelAndViewJson(model);

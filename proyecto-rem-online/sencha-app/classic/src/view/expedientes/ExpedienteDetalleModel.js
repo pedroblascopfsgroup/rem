@@ -9,7 +9,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 				'HreRem.model.ExpedienteScoring', 'HreRem.model.HistoricoExpedienteScoring', 'HreRem.model.SeguroRentasExpediente', 'HreRem.model.HistoricoCondiciones',
 				'HreRem.model.OfertasAgrupadasModel', 'HreRem.model.OrigenLead', 'HreRem.model.AuditoriaDesbloqueo', 'HreRem.model.ActivoAlquiladosGrid', 'HreRem.model.Testigos',
 				'HreRem.model.FechaArrasModel', 'HreRem.model.GastosRepercutidosModel', 'HreRem.model.ActualizacionRentaModel','HreRem.model.SancionesModel',
-				'HreRem.model.IntervinientesPBC', 'HreRem.model.HistoricoReagendacionesGridModel'],
+				'HreRem.model.IntervinientesPBC', 'HreRem.model.HistoricoReagendacionesGridModel', 'HreRem.model.HistoricoAntiguoDeudorModel'],
     
     data: {
     },
@@ -722,6 +722,13 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 			 var isBK = get('expediente.entidadPropietariaCodigo') == CONST.CARTERA['BANKIA'];
 			
 			 return isAlquiler && isBK;
+		 },
+		 esCaixaAlquilerNoComercial: function(get){
+			 var me = this;
+			 var isAlquilerNoComercial = get('expediente.tipoExpedienteCodigo')  == CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER_NO_COMERCIAL"];
+			 var isCaixa = get('expediente.entidadPropietariaCodigo') == CONST.CARTERA['BANKIA'];
+			
+			 return isAlquilerNoComercial && isCaixa;
 		 },
 		 esAlquilerNoBk: function(get){
 			 var me = this;
@@ -1936,6 +1943,21 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		        extraParams: {idExpediente: '{expediente.id}'}
 	    	},
 			autoLoad: true
+		},
+		
+		storeHistoricoAntiguoDeudor: {
+			pageSize: $AC.getDefaultPageSize(),
+			model: 'HreRem.model.HistoricoAntiguoDeudorModel',
+			sorters: [{ property: 'fechaCreacion', direction: 'DESC' }],
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'expedientecomercial/getHistoricoAntiguoDeudor', 
+				extraParams: {idOferta: '{datosbasicosoferta.idOferta}'}
+			},
+			autoLoad: true,
+			remoteSort: true,
+	    	remoteFilter: true
 		}
+		
 	}	
 });

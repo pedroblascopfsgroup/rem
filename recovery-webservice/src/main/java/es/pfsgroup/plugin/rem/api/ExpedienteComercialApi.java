@@ -1536,4 +1536,8 @@ public interface ExpedienteComercialApi {
 	void desbloquearExpediente(Long idOferta) throws Exception;
 
 	boolean checkEstadoBcClausuladoNoComerciable(TareaExterna tareaExterna);
+
+	void guardarBloqueoExpediente(ExpedienteComercial expediente);
+
+	void guardarDesbloqueoExpediente(ExpedienteComercial expediente);
 }

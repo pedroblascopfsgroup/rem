@@ -547,7 +547,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 				type : 'uxproxy',
 				remoteUrl : 'generic/getTiposImpuestoFiltered',
 				extraParams : {
-					esBankia : '{esPropietarioCaixa}'
+					esBankia : 'false'
 				}
 			},
 			autoLoad: true

@@ -871,9 +871,10 @@ public interface OfertaApi {
 
 	List<DtoHistoricoAntiguoDeudor> getDtoHistoricoAntiguoDeudorList(Long idOferta);
 
+	List<HistoricoAntiguoDeudor> getHistoricoAntiguoDeudorList(Long idOferta);
+	
 	boolean createHistoricoAntiguoDeudor(DtoHistoricoAntiguoDeudor dtoHitoricoAntiguoDeudor, Long idOferta);
 
 	boolean updateHistoricoAntiguoDeudor(DtoHistoricoAntiguoDeudor dtoHitoricoAntiguoDeudor);
 
-	boolean deleteHistoricoAntiguoDeudor(Long idHistorico);
 }

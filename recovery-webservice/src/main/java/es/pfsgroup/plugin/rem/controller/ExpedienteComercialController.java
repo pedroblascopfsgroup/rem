@@ -3421,21 +3421,5 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
-	
-	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView deleteHistoricoAntiguoDeudor(Long idHistorico, ModelMap model) {
-		
-		try {
-			boolean success = ofertaApi.deleteHistoricoAntiguoDeudor(idHistorico);
-			model.put(RESPONSE_SUCCESS_KEY, success);
 
-		} catch (Exception e) {
-			logger.error("Error en ExpedienteComercialController", e);
-			model.put(RESPONSE_SUCCESS_KEY, false);
-			model.put(RESPONSE_ERROR_MESSAGE_KEY, e.getMessage());
-		}
-
-		return createModelAndViewJson(model);
-	}
 }

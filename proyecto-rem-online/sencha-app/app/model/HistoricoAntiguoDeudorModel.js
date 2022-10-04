@@ -33,8 +33,7 @@ Ext.define('HreRem.model.HistoricoAntiguoDeudorModel', {
 		type: 'uxproxy',
 		api: {
             create: 'expedientecomercial/createHistoricoAntiguoDeudor',
-            update: 'expedientecomercial/updateHistoricoAntiguoDeudor',
-            destroy: 'expedientecomercial/deleteHistoricoAntiguoDeudor'
+            update: 'expedientecomercial/updateHistoricoAntiguoDeudor'
         }
     }
 });

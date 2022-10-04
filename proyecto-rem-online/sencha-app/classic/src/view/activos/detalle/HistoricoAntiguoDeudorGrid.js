@@ -5,7 +5,7 @@ Ext.define('HreRem.view.activos.detalle.HistoricoAntiguoDeudorGrid', {
 	topBar		: true,
 	targetGrid	: 'historicoAntiguoDeudor',
 	editOnSelect: true,
-	disabledDeleteBtn: false,
+	removeButton: false,
 	sortableColumns: false,
 	requires	: ['HreRem.model.HistoricoAntiguoDeudorModel'],
     bind: {
@@ -251,54 +251,6 @@ Ext.define('HreRem.view.activos.detalle.HistoricoAntiguoDeudorGrid', {
       		me.evaluarBotonAdd();
 		}
       
-   },
-   
-   onDeleteClick: function(btn, context){
-	   var me = this;
-   	
-       Ext.Msg.show({
-			   title: HreRem.i18n('title.confirmar.eliminacion'),
-			   msg: HreRem.i18n('msg.desea.eliminar'),
-			   buttons: Ext.MessageBox.YESNO,
-			   fn: function(buttonId) {
-			        if (buttonId == 'yes') {
-			        	
-			        	me.mask(HreRem.i18n("msg.mask.espere"));
-			    		me.rowEditing.cancelEdit();
-			            var sm = me.getSelectionModel();
-			            
-			            sm.getSelection()[0].erase({
-			            	
-			            	params: {
-			                      idHistorico: sm.selected.items[0].data.idHistorico
-			                },
-			                
-			            	success: function (a, operation, c) {
-			            		me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-           						me.unmask();
-                           },
-                           
-                           failure: function (a, operation) {
-	                           	var data = {};
-	                           	try {
-	                           		data = Ext.decode(operation._response.responseText);
-	                           	} catch (e){ };
-	                           	if (!Ext.isEmpty(data.msg)) {
-	                           		me.fireEvent("errorToast", data.msg);
-	                           	} else {
-	                           		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-	                           	}
-	        					me.unmask();
-                           }
-			            });
-			            
-						if (me.getStore().getCount() > 0) {
-						    sm.select(0);
-						}
-			        }
-			   }
-		});
-
    },
 
    evaluarBotonAdd: function(){

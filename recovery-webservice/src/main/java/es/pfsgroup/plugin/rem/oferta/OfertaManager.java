@@ -9995,12 +9995,22 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	public List<DtoHistoricoAntiguoDeudor> getDtoHistoricoAntiguoDeudorList(Long idOferta) {
 		if (idOferta == null)
 			return new ArrayList<DtoHistoricoAntiguoDeudor>();
+
+		List<HistoricoAntiguoDeudor> historicoAntiguoDeudorList = getHistoricoAntiguoDeudorList(idOferta);
+		
+		return getDtoHistoricoAntiguoDeudorListFromHistoricoAntiguoDeudorList(historicoAntiguoDeudorList);
+	}
+	
+	@Override
+	public List<HistoricoAntiguoDeudor> getHistoricoAntiguoDeudorList(Long idOferta) {
+		if (idOferta == null)
+			return new ArrayList<HistoricoAntiguoDeudor>();
 		
 		Order order = new Order(OrderType.DESC, "auditoria.fechaCrear");
 		Filter filter = genericDao.createFilter(FilterType.EQUALS, "oferta.id", idOferta);
 		List<HistoricoAntiguoDeudor> historicoAntiguoDeudorList = genericDao.getListOrdered(HistoricoAntiguoDeudor.class, order, filter);
 		
-		return getDtoHistoricoAntiguoDeudorListFromHistoricoAntiguoDeudorList(historicoAntiguoDeudorList);
+		return historicoAntiguoDeudorList;
 	}
 	
 	public List<DtoHistoricoAntiguoDeudor> getDtoHistoricoAntiguoDeudorListFromHistoricoAntiguoDeudorList(List<HistoricoAntiguoDeudor> historicoAntiguoDeudorList) {
@@ -10119,24 +10129,5 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		return historicoAntiguoDeudor;
 	}
 
-	@Override
-	@SuppressWarnings("static-access")
-	@Transactional(readOnly = false)
-	public boolean deleteHistoricoAntiguoDeudor(Long idHistorico) {
-		
-		if(idHistorico == null)
-			return false;
-		
-		Filter filterHistoricoAntiguoDeudor = genericDao.createFilter(FilterType.EQUALS, "id", idHistorico);
-		HistoricoAntiguoDeudor historicoAntiguoDeudor = genericDao.get(HistoricoAntiguoDeudor.class, filterHistoricoAntiguoDeudor);
-		if(historicoAntiguoDeudor == null)
-			return false;
-		
-		historicoAntiguoDeudor.getAuditoria().delete(historicoAntiguoDeudor);
-		
-		genericDao.save(HistoricoAntiguoDeudor.class, historicoAntiguoDeudor);
-		
-		return true;
-	}
 }
 

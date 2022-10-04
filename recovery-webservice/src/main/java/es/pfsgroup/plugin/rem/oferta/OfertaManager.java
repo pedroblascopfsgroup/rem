@@ -10043,7 +10043,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		else
 			expedienteComercial = oferta.getExpedienteComercial();
 		
-		HistoricoAntiguoDeudor historicoAntiguoDeudor = getHistoricoAntiguoDeudorFromDtoHistoricoAntiguoDeudor(dtoHistoricoAntiguoDeudor);
+		HistoricoAntiguoDeudor historicoAntiguoDeudor = getHistoricoAntiguoDeudorFromDtoHistoricoAntiguoDeudor(new HistoricoAntiguoDeudor(), dtoHistoricoAntiguoDeudor);
 		historicoAntiguoDeudor.setOferta(oferta);
 		
 		DDEstadoExpedienteBc ddEstadoExpedienteBc = expedienteComercial.getEstadoBc();
@@ -10062,19 +10062,21 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		replicateOfertaFlush(oferta);
 		
 		return true;
-		
 	}
 	
 	@Override
 	@Transactional(readOnly = false)
 	public boolean updateHistoricoAntiguoDeudor(DtoHistoricoAntiguoDeudor dtoHistoricoAntiguoDeudor) {
 		
+		if(dtoHistoricoAntiguoDeudor.getIdHistorico() == null)
+			return false;
+		
 		Filter filterHistoricoAntiguoDeudor = genericDao.createFilter(FilterType.EQUALS, "id", dtoHistoricoAntiguoDeudor.getIdHistorico());
 		HistoricoAntiguoDeudor historicoAntiguoDeudor = genericDao.get(HistoricoAntiguoDeudor.class, filterHistoricoAntiguoDeudor);
 		if(historicoAntiguoDeudor == null)
 			return false;
 		
-		historicoAntiguoDeudor = getHistoricoAntiguoDeudorFromDtoHistoricoAntiguoDeudor(dtoHistoricoAntiguoDeudor);
+		historicoAntiguoDeudor = getHistoricoAntiguoDeudorFromDtoHistoricoAntiguoDeudor(historicoAntiguoDeudor, dtoHistoricoAntiguoDeudor);
 		
 		ExpedienteComercial expedienteComercial;
 		Oferta oferta = historicoAntiguoDeudor.getOferta();
@@ -10091,16 +10093,14 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				&& !ofertaDao.tieneTareaActiva(TareaProcedimientoConstants.TramiteAlquilerNoCmT018.CODIGO_BLOQUEO_SCORING, oferta.getNumOferta().toString()))
 			expedienteComercialApi.guardarDesbloqueoExpediente(expedienteComercial);
 		
-		genericDao.update(HistoricoAntiguoDeudor.class, historicoAntiguoDeudor);
+		genericDao.save(HistoricoAntiguoDeudor.class, historicoAntiguoDeudor);
 		
 		replicateOfertaFlush(oferta);
 		
 		return true;
-		
 	}
 	
-	public HistoricoAntiguoDeudor getHistoricoAntiguoDeudorFromDtoHistoricoAntiguoDeudor(DtoHistoricoAntiguoDeudor dtoHistoricoAntiguoDeudor) {
-		HistoricoAntiguoDeudor historicoAntiguoDeudor = new HistoricoAntiguoDeudor();
+	public HistoricoAntiguoDeudor getHistoricoAntiguoDeudorFromDtoHistoricoAntiguoDeudor(HistoricoAntiguoDeudor historicoAntiguoDeudor, DtoHistoricoAntiguoDeudor dtoHistoricoAntiguoDeudor) {
 		
 		try {
 			beanUtilNotNull.copyProperties(historicoAntiguoDeudor, dtoHistoricoAntiguoDeudor);
@@ -10117,6 +10117,26 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 			
 		return historicoAntiguoDeudor;
+	}
+
+	@Override
+	@SuppressWarnings("static-access")
+	@Transactional(readOnly = false)
+	public boolean deleteHistoricoAntiguoDeudor(Long idHistorico) {
+		
+		if(idHistorico == null)
+			return false;
+		
+		Filter filterHistoricoAntiguoDeudor = genericDao.createFilter(FilterType.EQUALS, "id", idHistorico);
+		HistoricoAntiguoDeudor historicoAntiguoDeudor = genericDao.get(HistoricoAntiguoDeudor.class, filterHistoricoAntiguoDeudor);
+		if(historicoAntiguoDeudor == null)
+			return false;
+		
+		historicoAntiguoDeudor.getAuditoria().delete(historicoAntiguoDeudor);
+		
+		genericDao.save(HistoricoAntiguoDeudor.class, historicoAntiguoDeudor);
+		
+		return true;
 	}
 }
 

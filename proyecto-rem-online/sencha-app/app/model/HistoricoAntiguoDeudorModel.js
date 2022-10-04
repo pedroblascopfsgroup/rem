@@ -1,6 +1,5 @@
 Ext.define('HreRem.model.HistoricoAntiguoDeudorModel', {
     extend: 'HreRem.model.Base',
-    //requires: ['HreRem.model.Activo'],
     idProperty: 'id',
 
     fields: [
@@ -33,10 +32,9 @@ Ext.define('HreRem.model.HistoricoAntiguoDeudorModel', {
 	proxy: {
 		type: 'uxproxy',
 		api: {
-            // read: 'activo/getActivoCalificacionNegativa',
-            /*create: 'activo/createHistoricoTramitacionTituloAdicional',
-            update: 'activo/updateHistoricoTramitacionTituloAdicional',
-            destroy: 'activo/destroyHistoricoTramitacionTituloAdicional'*/
+            create: 'expedientecomercial/createHistoricoAntiguoDeudor',
+            update: 'expedientecomercial/updateHistoricoAntiguoDeudor',
+            destroy: 'expedientecomercial/deleteHistoricoAntiguoDeudor'
         }
     }
 });

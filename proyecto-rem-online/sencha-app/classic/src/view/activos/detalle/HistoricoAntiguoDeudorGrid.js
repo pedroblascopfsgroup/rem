@@ -11,55 +11,26 @@ Ext.define('HreRem.view.activos.detalle.HistoricoAntiguoDeudorGrid', {
     bind: {
         store: '{storeHistoricoAntiguoDeudor}'
     },
-    listeners:{
-    	/*afterrender: function() {
-    		var me = this;
-    		me.getStore().load();
-    		me.evaluarBotonAdd();
-    	}*/
-    	//beforeEdit: 'validarEdicionHistoricoTitulo',
-    	/*containermouseover: function () {
+    listeners: {
+    	containermouseover: function () {
     		var me = this;
     		me.evaluarBotonAdd();
     	},
     	itemmouseenter: function () {
     		var me = this;
     		me.evaluarBotonAdd();
-    	}*/
+    	}
     },
 
     initComponent: function () {
      	var me = this;
-     	
-     	/*me.getStore().load();
-		me.evaluarBotonAdd();*/
-		
+    	
 		me.columns = [
 				{
 					dataIndex: 'idHistorico',
 					text: 'idHistoricoAntiguoDeudor',
 					hidden: true
 				},
-				/*{
-                    text : HreRem.i18n('fieldlabel.historico.antiguo.deudor.localizable'), 
-                    flex : 1,
-                    dataIndex : 'codigoLocalizable',
-                    reference: 'comboLocalizableRef',
-                    editor: {
-		        		xtype: 'textfield',
-		        		disabled: true,
-						allowBlank: false
-		        	},
-                    renderer : function(value) {
-		        		if(value == true){
-		        			return "Si";
-		        		} else if(value == false) {
-		        			return "No";
-		        		} else {
-		        			return "";
-		        		}
-	                }
-				},*/
 				{
 		            dataIndex: 'codigoLocalizable',
 		            text: HreRem.i18n('fieldlabel.historico.antiguo.deudor.localizable'), 
@@ -67,7 +38,6 @@ Ext.define('HreRem.view.activos.detalle.HistoricoAntiguoDeudorGrid', {
 		            editor: {
 						xtype: 'combobox',
 						allowBlank: false,
-						reference: 'comboLocalizableRefEditor',
 						store: new Ext.data.Store({
 							model: 'HreRem.model.ComboBase',
 							proxy: {
@@ -85,6 +55,10 @@ Ext.define('HreRem.view.activos.detalle.HistoricoAntiguoDeudorGrid', {
 					renderer: function(value, metaData, record, rowIndex, colIndex, store, view) {	
 		        		var me = this,
 		        		comboEditor =  me.columns  && me.columns[colIndex].getEditor ? me.columns[colIndex].getEditor() : me.getEditor ? me.getEditor() : null;
+		        		
+		        		if(!Ext.isEmpty(comboEditor)) {
+		        			record.data.codigoLocalizableOldValue = record.data.codigoLocalizable;
+		        		}
 		        		
 		        		if(!Ext.isEmpty(comboEditor)) {
 			        		store = comboEditor.getStore(),							        		
@@ -146,12 +120,11 @@ Ext.define('HreRem.view.activos.detalle.HistoricoAntiguoDeudorGrid', {
 		            }
 		        }
 		    ];
-		    
 
 		    me.callParent();
 		    
 		    me.addListener ('beforeedit', function(editor, context) {
-		    	var me = this, 
+		    	var me = this,
 		    	allowEdit = false;
 		    	
 		    	var comboLocalizableEditor = me.down('[reference="comboLocalizableRef"]').getEditor(),
@@ -159,20 +132,19 @@ Ext.define('HreRem.view.activos.detalle.HistoricoAntiguoDeudorGrid', {
 		    	fechaLocalizadoEditor = me.down('[reference="fechaLocalizadoRef"]').getEditor(),
 		    	motivoEditor = me.down('[reference="motivoRef"]').getEditor();
 		    	
-		    	if(me.getUltimoRegistro().data.idHistorico == context.record.data.idHistorico) {
-		    		allowEdit = true;
-		    	} else {
-		    		this.editOnSelect = allowEdit;
+		    	if(!Ext.isEmpty(me.getUltimoRegistro()) && me.getUltimoRegistro().data.idHistorico != context.record.data.idHistorico) {
+		    		me.disableAddButton(true);
 		    		return allowEdit;
-		    	}      
+		    	} else {
+		    		allowEdit = true;
+		    	}   
 
 		    	store = comboLocalizableEditor.getStore();
-		    	store.load();
 		    	
 		    	if(editor.isNew) {						        		
 	        		record = store.findRecord("codigo", CONST.COMBO_SIN_SINO['NO']);
-	        		comboLocalizableEditor.value = record;
-	        		comboLocalizableEditor.emptyText = record.get("descripcion");
+	        		context.record.data.codigoLocalizable = record.get("codigo");
+	        		comboLocalizableEditor.setDisplayTpl(Ext.create('Ext.XTemplate', '<tpl for=".">', record.get("descripcion"), '</tpl>'));
 		    		
 		    		comboLocalizableEditor.allowBlank = false;
 		    		comboLocalizableEditor.disabled = true;
@@ -181,15 +153,18 @@ Ext.define('HreRem.view.activos.detalle.HistoricoAntiguoDeudorGrid', {
 		    		fechaIlocalizableEditor.disabled = false;
 		    		
 		    		fechaLocalizadoEditor.allowBlank = true;
+		    		fechaLocalizadoEditor.readOnly = true;
 		    		fechaLocalizadoEditor.disabled = true;
 		    		
 		    		motivoEditor.allowBlank = true;
+		    		motivoEditor.readOnly = true;
 		    		motivoEditor.disabled = true;
 
 		    	} else {
 		    		record = store.findRecord("codigo", CONST.COMBO_SIN_SINO['SI']);
-	        		comboLocalizableEditor.value = record;
-	        		comboLocalizableEditor.emptyText = record.get("descripcion");
+		    		context.record.data.codigoLocalizableOldValue = context.record.data.codigoLocalizable;
+	        		context.record.data.codigoLocalizable = record.get("codigo");
+	        		comboLocalizableEditor.setDisplayTpl(Ext.create('Ext.XTemplate', '<tpl for=".">', record.get("descripcion"), '</tpl>'));
 	        		
 		    		comboLocalizableEditor.allowBlank = false;
 		    		comboLocalizableEditor.disabled = true;
@@ -198,30 +173,23 @@ Ext.define('HreRem.view.activos.detalle.HistoricoAntiguoDeudorGrid', {
 		    		fechaIlocalizableEditor.disabled = false;
 		    		
 		    		fechaLocalizadoEditor.allowBlank = false;
+		    		fechaLocalizadoEditor.readOnly = false;
 		    		fechaLocalizadoEditor.disabled = false;
 		    		
 		    		motivoEditor.allowBlank = true;
+		    		motivoEditor.readOnly = false;
 		    		motivoEditor.disabled = false;
 		    		
 		    	}
 		    	
-		    	this.editOnSelect = allowEdit;
-		    	
 		    	return allowEdit;
+		    	
 	        });
 		    
-		    /*me.addListener('afterbind', function(grid) {
-					me.evaluarBotonAdd();
-			});
-		    
-		    me.addListener('selectionchange', function(grid, records) {
-	        	me.onGridBaseSelectionChange(grid, records);
-	        	me.evaluarBotonRemove(grid, records);
-	        	me.evaluarBotonAdd();
-	        });
-		    
-		    me.addListener('canceledit', function(editor){
-				me.disableAddButton(false);
+		    me.addListener('canceledit', function(editor) {
+		    	if(!Ext.isEmpty(me.getUltimoRegistro()) && me.getUltimoRegistro().data.codigoLocalizableOldValue != undefined) {
+		    		me.getUltimoRegistro().data.codigoLocalizable = me.getUltimoRegistro().data.codigoLocalizableOldValue;
+		    	}
 				me.disablePagingToolBar(false);
 	        	me.getSelectionModel().deselectAll();
 	        	if(editor.isNew) {
@@ -230,116 +198,106 @@ Ext.define('HreRem.view.activos.detalle.HistoricoAntiguoDeudorGrid', {
 	        	}
 	        	me.evaluarBotonAdd();
 	        });
-	        
-	        me.saveSuccessFn = function() {
-		    	var me = this;
-		    	me.up('saneamientoactivo').funcionRecargar();
-		    	return true;
-		    };*/
+
    },
    
    editFuncion: function(editor, context){
- 		var me= this;
-
-		/*me.mask(HreRem.i18n("msg.mask.espere"));
+ 		var me = this;
+ 		
+		me.mask(HreRem.i18n("msg.mask.espere"));
 		
 			if (me.isValidRecord(context.record) ) {		
 
+			context.record.modified.codigoLocalizable = context.record.data.codigoLocalizable;
+			if(context.record.data.idHistorico != null && context.record.data.idHistorico != undefined) {
+				context.record.modified.idHistorico = context.record.data.idHistorico;
+			}
 			
       		context.record.save({
       				
-                  params: {
-                      idActivo: me.lookupController().getViewModel().data.activo.id,
-                      idHistorico: context.record.data.idHistorico
-                      
-                  },
-                  success: function (a, operation, c) {
-                      if (context.store.load) {
-                      	context.store.load();
-                      }
-                      me.unmask();
-                      me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));																			
-					  me.saveSuccessFn();	
-						var grid = me.lookupController().lookupReference('calificacionnegativagridad');
-						if(a.data.estadoPresentacion === CONST.DD_ESP_ESTADO_PRESENTACION['CALIFICADO_NEGATIVAMENTE']){
-							grid.setDisabledAddBtn(true)
-						}else{
-							grid.setDisabledAddBtn(true);
-						}
-						
-                  },
+      			params: {
+      				idOferta: me.lookupController().getViewModel().get("datosbasicosoferta.idOferta")
+      			},
+  
+      			success: function (a, operation, c) {
+				     if (context.store.load) {
+				     	context.store.load();
+				     }
+				     me.unmask();
+				     me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));					
+      			},
                   
 				failure: function (a, operation) {
                   	try {
-                  		
                   		var response = Ext.JSON.decode(operation.getResponse().responseText)
-                  		
-                  	}catch(err) {}
+                  	} catch(err) {}
                   	
                   	if(!Ext.isEmpty(response) && !Ext.isEmpty(response.msgError)) {
                   		me.fireEvent("errorToast", response.msgError);
                   	} else {
                   		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
                   	}     
-                  		me.up('saneamientoactivo').funcionRecargar();
-						me.unmask();
-                  }
-               });                            
+              		if (context.store.load) {
+              			context.store.load();
+              		}
+					me.unmask();
+				}
+      			
+            });      
+      		
       		me.disablePagingToolBar(false);
       		me.getSelectionModel().deselectAll();
       		editor.isNew = false;
       		me.evaluarBotonAdd();
-			}*/
+		}
       
    },
    
    onDeleteClick: function(btn, context){
-   	var me = this;
-
-       /*Ext.Msg.show({
+	   var me = this;
+   	
+       Ext.Msg.show({
 			   title: HreRem.i18n('title.confirmar.eliminacion'),
 			   msg: HreRem.i18n('msg.desea.eliminar'),
 			   buttons: Ext.MessageBox.YESNO,
 			   fn: function(buttonId) {
 			        if (buttonId == 'yes') {
+			        	
 			        	me.mask(HreRem.i18n("msg.mask.espere"));
 			    		me.rowEditing.cancelEdit();
 			            var sm = me.getSelectionModel();
+			            
 			            sm.getSelection()[0].erase({
+			            	
 			            	params: {
 			                      idHistorico: sm.selected.items[0].data.idHistorico
-			                  },
+			                },
+			                
 			            	success: function (a, operation, c) {
-                               me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-                               me.up('saneamientoactivo').funcionRecargar();
-							   me.unmask();
-							   me.deleteSuccessFn();
+			            		me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+           						me.unmask();
                            },
                            
                            failure: function (a, operation) {
-                           	var data = {};
-                           	try {
-                           		data = Ext.decode(operation._response.responseText);
-                           	}
-                           	catch (e){ };
-                           	if (!Ext.isEmpty(data.msg)) {
-                           		me.fireEvent("errorToast", data.msg);
-                           	} else {
-                           		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-                           	}
-								me.unmask();
-								me.deleteFailureFn();
+	                           	var data = {};
+	                           	try {
+	                           		data = Ext.decode(operation._response.responseText);
+	                           	} catch (e){ };
+	                           	if (!Ext.isEmpty(data.msg)) {
+	                           		me.fireEvent("errorToast", data.msg);
+	                           	} else {
+	                           		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+	                           	}
+	        					me.unmask();
                            }
-                       }
-			            	
-			            	
-			            );
-			            if (me.getStore().getCount() > 0) {
-			                sm.select(0);
-			            }
+			            });
+			            
+						if (me.getStore().getCount() > 0) {
+						    sm.select(0);
+						}
 			        }
 			   }
-		});*/
+		});
 
    },
 
@@ -347,33 +305,27 @@ Ext.define('HreRem.view.activos.detalle.HistoricoAntiguoDeudorGrid', {
 	   var me =this;
 	   me.down("[itemId=addButton]").setDisabled(me.isDeshabilitarAddButton());
    },
-   evaluarBotonRemove: function(grid, records){
-	   var me =this;
-	   me.down("[itemId=removeButton]").setDisabled(me.isDeshabilitarRemoveButton(grid, records));
-   },
    
    isDeshabilitarAddButton: function(){
 	   	var me = this;
 	   	
-	   	var tieneDatosStore = me.store.data.length > 0;
-	   	if (tieneDatosStore && me.getUltimoRegistro().data.codigoLocalizable == CONST.COMBO_SIN_SINO['NO']) {
-	   		return true;
+	   	if(!Ext.isEmpty(me.store.data)) {
+	   		var tieneDatosStore = me.store.data.length > 0;
+		   	if (tieneDatosStore && me.getUltimoRegistro().data.codigoLocalizableOldValue == CONST.COMBO_SIN_SINO['NO']) {
+		   		return true;
+		   	}
 	   	}
 		
 	   	return false;
    },
    
-   isDeshabilitarRemoveButton:function(grid, records){
-	   var me = this;
-	   /*var isBankia = me.lookupController().getViewModel().get('activo.isCarteraBankia');
-	   if(records[0] && !isBankia){
-		   return records[0].data.codigoEstadoPresentacion != "01";
-	   	}
-	   return true;*/
-   },
-   
    getUltimoRegistro: function(){
 	   var me = this;
-	   return me.store.data.items[0];
+	   
+	   if(!Ext.isEmpty(me.store.data)) {
+		   return me.store.data.items[0];
+	   }
+	   
+	   return null;
    }
 });

@@ -874,4 +874,6 @@ public interface OfertaApi {
 	boolean createHistoricoAntiguoDeudor(DtoHistoricoAntiguoDeudor dtoHitoricoAntiguoDeudor, Long idOferta);
 
 	boolean updateHistoricoAntiguoDeudor(DtoHistoricoAntiguoDeudor dtoHitoricoAntiguoDeudor);
+
+	boolean deleteHistoricoAntiguoDeudor(Long idHistorico);
 }

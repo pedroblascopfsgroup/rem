@@ -9992,7 +9992,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 	
 	@Override
-	public List<DtoHistoricoAntiguoDeudor> getDtoHistoricoAntiguoDeudorList(Long idOferta) {
+	public List<DtoHistoricoAntiguoDeudor> getDtoHistoricoAntiguoDeudorList(Long idOferta) throws IllegalAccessException, InvocationTargetException {
 		if (idOferta == null)
 			return new ArrayList<DtoHistoricoAntiguoDeudor>();
 
@@ -10013,7 +10013,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		return historicoAntiguoDeudorList;
 	}
 	
-	public List<DtoHistoricoAntiguoDeudor> getDtoHistoricoAntiguoDeudorListFromHistoricoAntiguoDeudorList(List<HistoricoAntiguoDeudor> historicoAntiguoDeudorList) {
+	public List<DtoHistoricoAntiguoDeudor> getDtoHistoricoAntiguoDeudorListFromHistoricoAntiguoDeudorList(List<HistoricoAntiguoDeudor> historicoAntiguoDeudorList) throws IllegalAccessException, InvocationTargetException {
 		List<DtoHistoricoAntiguoDeudor> dtoHistoricoAntiguoDeudorList = new ArrayList<DtoHistoricoAntiguoDeudor>();
 		
 		if(historicoAntiguoDeudorList != null && !historicoAntiguoDeudorList.isEmpty()) {
@@ -10032,9 +10032,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						beanUtilNotNull.copyProperty(dtoHistoricoAntiguoDeudor, "fechaCreacion", historicoAntiguoDeudor.getAuditoria().getFechaCrear());
 					
 					dtoHistoricoAntiguoDeudorList.add(dtoHistoricoAntiguoDeudor);
-				} catch (Exception e) {
+				} catch (IllegalAccessException iae) { 
 					logger.error("Error al recuperar valores de un registro del historico de antiguo deudor. HAD_ID: "+historicoAntiguoDeudor.getId());
-					logger.error(e.getMessage());
+					throw iae;
+				} catch (InvocationTargetException ite) {
+					logger.error("Error al recuperar valores de un registro del historico de antiguo deudor. HAD_ID: "+historicoAntiguoDeudor.getId());
+					throw ite;
 				}
 			}
 		}
@@ -10045,6 +10048,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	@Override
 	@Transactional(readOnly = false)
 	public boolean createHistoricoAntiguoDeudor(DtoHistoricoAntiguoDeudor dtoHistoricoAntiguoDeudor, Long idOferta) {
+		if (idOferta == null)
+			return false;
 		
 		ExpedienteComercial expedienteComercial;
 		Oferta oferta = ofertaDao.get(idOferta);

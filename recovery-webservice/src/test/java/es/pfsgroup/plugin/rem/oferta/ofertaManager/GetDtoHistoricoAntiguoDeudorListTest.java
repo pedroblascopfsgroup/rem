@@ -2,17 +2,26 @@ package es.pfsgroup.plugin.rem.oferta.ofertaManager;
 
 import static org.junit.Assert.assertEquals;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.pfsgroup.commons.utils.Assertions;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.commons.utils.dao.abm.Order;
+import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoAntiguoDeudor;
 import es.pfsgroup.plugin.rem.model.HistoricoAntiguoDeudor;
 import es.pfsgroup.plugin.rem.model.Oferta;
@@ -21,44 +30,80 @@ import es.pfsgroup.plugin.rem.oferta.OfertaManager;
 
 public class GetDtoHistoricoAntiguoDeudorListTest {
 	
-	@Mock
+	@InjectMocks
     private OfertaManager ofertaManager;
+	
+	@Mock
+	private GenericABMDao genericDao;
 
+	private final Log logger = LogFactory.getLog(GetDtoHistoricoAntiguoDeudorListTest.class);
+	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
+	
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
     }
     
     @Test
-    public void givenIncorrectIdOferta_whenHistoricoAntiguoDeudorHasRecords_thenReturnEmptyList() {
+    public void givenNullIdOferta_thenReturnEmptyDtoHistoricoAntiguoDeudorList() {
     	
-    	List<DtoHistoricoAntiguoDeudor> dtoHistoricoAntiguoDeudorList = new ArrayList<DtoHistoricoAntiguoDeudor>();
+    	List<DtoHistoricoAntiguoDeudor> returnDtoHistoricoAntiguoDeudorList = new ArrayList<DtoHistoricoAntiguoDeudor>();
+		try {
+			returnDtoHistoricoAntiguoDeudorList = ofertaManager.getDtoHistoricoAntiguoDeudorList(null);
+		} catch (IllegalAccessException iae) {
+			logger.error(iae.getMessage());
+		} catch (InvocationTargetException ite) {
+			logger.error(ite.getMessage());
+		}
 
-    	Mockito.when(ofertaManager.getDtoHistoricoAntiguoDeudorList(0L)).thenReturn(dtoHistoricoAntiguoDeudorList);
-    	
-    	List<DtoHistoricoAntiguoDeudor> returnDtoHistoricoAntiguoDeudorList = ofertaManager.getDtoHistoricoAntiguoDeudorList(0L);
-
-    	assertEquals(returnDtoHistoricoAntiguoDeudorList, dtoHistoricoAntiguoDeudorList);
-    	
+    	assertEquals(new ArrayList<DtoHistoricoAntiguoDeudor>(), returnDtoHistoricoAntiguoDeudorList);
     }
-    //https://www.baeldung.com/java-test-driven-list
     
     @Test
-    public void givenCorrectIdOferta_whenHistoricoAntiguoDeudorHasRecords_thenReturnRecords() {
+    public void givenIncorrectIdOferta_thenReturnEmptyDtoHistoricoAntiguoDeudorList_1() {
+    	
+    	Mockito.when(genericDao.getListOrdered(Mockito.eq(HistoricoAntiguoDeudor.class), Mockito.any(Order.class), Mockito.any(Filter.class))).thenReturn(null);
+    	
+    	List<DtoHistoricoAntiguoDeudor> returnDtoHistoricoAntiguoDeudorList = new ArrayList<DtoHistoricoAntiguoDeudor>();
+		try {
+			returnDtoHistoricoAntiguoDeudorList = ofertaManager.getDtoHistoricoAntiguoDeudorList(0L);
+		} catch (IllegalAccessException iae) {
+			logger.error(iae.getMessage());
+		} catch (InvocationTargetException ite) {
+			logger.error(ite.getMessage());
+		}
+
+    	assertEquals(new ArrayList<DtoHistoricoAntiguoDeudor>(), returnDtoHistoricoAntiguoDeudorList);
+    }
+    
+    @Test
+    public void givenIncorrectIdOferta_thenReturnEmptyDtoHistoricoAntiguoDeudorList_2() {
+    	
+    	Mockito.when(genericDao.getListOrdered(Mockito.eq(HistoricoAntiguoDeudor.class), Mockito.any(Order.class), Mockito.any(Filter.class))).thenReturn(new ArrayList<HistoricoAntiguoDeudor>());
+    	
+    	List<DtoHistoricoAntiguoDeudor> returnDtoHistoricoAntiguoDeudorList = new ArrayList<DtoHistoricoAntiguoDeudor>();
+		try {
+			returnDtoHistoricoAntiguoDeudorList = ofertaManager.getDtoHistoricoAntiguoDeudorList(0L);
+		} catch (IllegalAccessException iae) {
+			logger.error(iae.getMessage());
+		} catch (InvocationTargetException ite) {
+			logger.error(ite.getMessage());
+		}
+
+    	assertEquals(new ArrayList<DtoHistoricoAntiguoDeudor>(), returnDtoHistoricoAntiguoDeudorList);
+    }
+    
+    @Test
+    public void givenCorrectIdOferta_whenHistoricoAntiguoDeudorHasRecords_thenReturnDtoHistoricoAntiguoDeudorList() throws IllegalAccessException, InvocationTargetException {
     	
     	Auditoria auditoria = new Auditoria();
     	auditoria.setFechaCrear(new Date());
-    	auditoria.setUsuarioCrear("TDD");
-    	auditoria.setBorrado(false);
     	
     	DDSinSiNo ddSinSiNo = new DDSinSiNo();
-    	ddSinSiNo.setId(1L);
     	ddSinSiNo.setCodigo("02");
-    	ddSinSiNo.setDescripcion("No");
-    	ddSinSiNo.setDescripcionLarga("No");
     	
     	Oferta oferta = new Oferta();
-    	oferta.setId(0L);
+    	oferta.setId(1L);
     	
     	HistoricoAntiguoDeudor historicoAntiguoDeudor = new HistoricoAntiguoDeudor();
     	historicoAntiguoDeudor.setId(1L);
@@ -71,188 +116,57 @@ public class GetDtoHistoricoAntiguoDeudorListTest {
     	historicoAntiguoDeudorList.add(historicoAntiguoDeudor);
     	
     	DtoHistoricoAntiguoDeudor dtoHistoricoAntiguoDeudor = new DtoHistoricoAntiguoDeudor();
+    	beanUtilNotNull.copyProperties(dtoHistoricoAntiguoDeudor, historicoAntiguoDeudor);
     	dtoHistoricoAntiguoDeudor.setIdHistorico(historicoAntiguoDeudor.getId());
     	dtoHistoricoAntiguoDeudor.setCodigoLocalizable(historicoAntiguoDeudor.getLocalizable().getCodigo());
-    	dtoHistoricoAntiguoDeudor.setFechaIlocalizable(historicoAntiguoDeudor.getFechaIlocalizable());
+    	dtoHistoricoAntiguoDeudor.setFechaCreacion(historicoAntiguoDeudor.getAuditoria().getFechaCrear());
     	
     	List<DtoHistoricoAntiguoDeudor> dtoHistoricoAntiguoDeudorList = new ArrayList<DtoHistoricoAntiguoDeudor>();
     	dtoHistoricoAntiguoDeudorList.add(dtoHistoricoAntiguoDeudor);
 
-    	Mockito.when(ofertaManager.getDtoHistoricoAntiguoDeudorList(1L)).thenReturn(dtoHistoricoAntiguoDeudorList);
+    	Mockito.when(genericDao.getListOrdered(Mockito.eq(HistoricoAntiguoDeudor.class), Mockito.any(Order.class), Mockito.any(Filter.class))).thenReturn(historicoAntiguoDeudorList);
     	
     	List<DtoHistoricoAntiguoDeudor> returnDtoHistoricoAntiguoDeudorList = ofertaManager.getDtoHistoricoAntiguoDeudorList(1L);
 
-    	assertEquals(returnDtoHistoricoAntiguoDeudorList, dtoHistoricoAntiguoDeudorList);
+    	Assertions.assertNotEmptyList(returnDtoHistoricoAntiguoDeudorList, "Error en GetDtoHistoricoAntiguoDeudorListTest: La lista 'List<DtoHistoricoAntiguoDeudor>' esta vacía");
     	
-    }
-    //Ejemplos
-    
-    /*@Test
-    public void givenOfertaWithWrongParameters_whenOfertaIsPrincipal_thenReturnFalse() {
-    	
-    	DDCartera cartera = new DDCartera();
-    	cartera.setId(0L);
-    	cartera.setCodigo(DDCartera.CODIGO_CARTERA_BANKIA);
-    	
-    	Activo activo = new Activo();
-    	activo.setId(0L);
-    	activo.setCartera(cartera);
-    	
-    	DDTipoOferta tipoOferta = new DDTipoOferta();
-    	tipoOferta.setId(0L);
-    	tipoOferta.setCodigo(DDTipoOferta.CODIGO_ALQUILER);
-    	
-    	DDClaseOferta claseOferta = new DDClaseOferta();
-    	claseOferta.setId(0L);
-    	claseOferta.setCodigo(DDClaseOferta.CODIGO_OFERTA_PRINCIPAL);
-    	
-    	Oferta oferta = new Oferta();
-    	oferta.setId(0L);
-    	oferta.setTipoOferta(tipoOferta);
-    	oferta.setClaseOferta(claseOferta);
-    	
-    	ActivoOferta.ActivoOfertaPk activoOfertaPk = new ActivoOferta.ActivoOfertaPk();
-    	activoOfertaPk.setActivo(activo);
-    	activoOfertaPk.setOferta(oferta);
-    	
-    	ActivoOferta activoOferta = new ActivoOferta();
-    	activoOferta.setPrimaryKey(activoOfertaPk);
-    	
-    	List<ActivoOferta> activoOfertaList = new ArrayList<ActivoOferta>();
-    	activoOfertaList.add(activoOferta);
-    	
-    	oferta.setActivosOferta(activoOfertaList);
-    	
-    	Boolean result = ofertaManager.isOfertaPrincipal(oferta);
-    	
-    	assertEquals(result, Boolean.FALSE);
-    	
+    	for(@SuppressWarnings("unused") DtoHistoricoAntiguoDeudor returnDtoHistoricoAntiguoDeudor : returnDtoHistoricoAntiguoDeudorList) {
+    		Assertions.assertNotNull(returnDtoHistoricoAntiguoDeudorList, "Error en GetDtoHistoricoAntiguoDeudorListTest: El objeto 'DtoHistoricoAntiguoDeudor' es nulo");
+    	}
     }
     
     @Test
-    public void givenOfertaWithWrongParameters_whenOfertaIsNotPrincipal_thenReturnFalse() {
+    public void givenCorrectIdOferta_whenHistoricoAntiguoDeudorHasNoRecords_thenReturnEmptyDtoHistoricoAntiguoDeudorList_1() {
     	
-    	DDCartera cartera = new DDCartera();
-    	cartera.setId(0L);
-    	cartera.setCodigo(DDCartera.CODIGO_CARTERA_BANKIA);
+    	Mockito.when(genericDao.getListOrdered(Mockito.eq(HistoricoAntiguoDeudor.class), Mockito.any(Order.class), Mockito.any(Filter.class))).thenReturn(null);
     	
-    	Activo activo = new Activo();
-    	activo.setId(0L);
-    	activo.setCartera(cartera);
-    	
-    	DDTipoOferta tipoOferta = new DDTipoOferta();
-    	tipoOferta.setId(0L);
-    	tipoOferta.setCodigo(DDTipoOferta.CODIGO_ALQUILER_NO_COMERCIAL);
-    	
-    	DDClaseOferta claseOferta = new DDClaseOferta();
-    	claseOferta.setId(0L);
-    	claseOferta.setCodigo(DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE);
-    	
-    	Oferta oferta = new Oferta();
-    	oferta.setId(0L);
-    	oferta.setTipoOferta(tipoOferta);
-    	oferta.setClaseOferta(claseOferta);
-    	
-    	ActivoOferta.ActivoOfertaPk activoOfertaPk = new ActivoOferta.ActivoOfertaPk();
-    	activoOfertaPk.setActivo(activo);
-    	activoOfertaPk.setOferta(oferta);
-    	
-    	ActivoOferta activoOferta = new ActivoOferta();
-    	activoOferta.setPrimaryKey(activoOfertaPk);
-    	
-    	List<ActivoOferta> activoOfertaList = new ArrayList<ActivoOferta>();
-    	activoOfertaList.add(activoOferta);
-    	
-    	oferta.setActivosOferta(activoOfertaList);
-    	
-    	Boolean result = ofertaManager.isOfertaPrincipal(oferta);
-    	
-    	assertEquals(result, Boolean.FALSE);
-    	
+    	List<DtoHistoricoAntiguoDeudor> returnDtoHistoricoAntiguoDeudorList = new ArrayList<DtoHistoricoAntiguoDeudor>();
+		try {
+			returnDtoHistoricoAntiguoDeudorList = ofertaManager.getDtoHistoricoAntiguoDeudorList(1L);
+		} catch (IllegalAccessException iae) {
+			logger.error(iae.getMessage());
+		} catch (InvocationTargetException ite) {
+			logger.error(ite.getMessage());
+		}
+
+    	assertEquals(new ArrayList<DtoHistoricoAntiguoDeudor>(), returnDtoHistoricoAntiguoDeudorList);
     }
     
     @Test
-    public void givenOfertaWithCorrectParameters_whenOfertaIsNotPrincipal_thenReturnFalse() {
+    public void givenCorrectIdOferta_whenHistoricoAntiguoDeudorHasNoRecords_thenReturnEmptyDtoHistoricoAntiguoDeudorList_2() {
     	
-    	DDCartera cartera = new DDCartera();
-    	cartera.setId(0L);
-    	cartera.setCodigo(DDCartera.CODIGO_CARTERA_LIBERBANK);
+    	Mockito.when(genericDao.getListOrdered(Mockito.eq(HistoricoAntiguoDeudor.class), Mockito.any(Order.class), Mockito.any(Filter.class))).thenReturn(new ArrayList<HistoricoAntiguoDeudor>());
     	
-    	Activo activo = new Activo();
-    	activo.setId(0L);
-    	activo.setCartera(cartera);
-    	
-    	DDTipoOferta tipoOferta = new DDTipoOferta();
-    	tipoOferta.setId(0L);
-    	tipoOferta.setCodigo(DDTipoOferta.CODIGO_VENTA);
-    	
-    	DDClaseOferta claseOferta = new DDClaseOferta();
-    	claseOferta.setId(0L);
-    	claseOferta.setCodigo(DDClaseOferta.CODIGO_OFERTA_INDIVIDUAL);
-    	
-    	Oferta oferta = new Oferta();
-    	oferta.setId(0L);
-    	oferta.setTipoOferta(tipoOferta);
-    	oferta.setClaseOferta(claseOferta);
-    	
-    	ActivoOferta.ActivoOfertaPk activoOfertaPk = new ActivoOferta.ActivoOfertaPk();
-    	activoOfertaPk.setActivo(activo);
-    	activoOfertaPk.setOferta(oferta);
-    	
-    	ActivoOferta activoOferta = new ActivoOferta();
-    	activoOferta.setPrimaryKey(activoOfertaPk);
-    	
-    	List<ActivoOferta> activoOfertaList = new ArrayList<ActivoOferta>();
-    	activoOfertaList.add(activoOferta);
-    	
-    	oferta.setActivosOferta(activoOfertaList);
-    	
-    	Boolean result = ofertaManager.isOfertaPrincipal(oferta);
-    	
-    	assertEquals(result, Boolean.FALSE);
-    	
+    	List<DtoHistoricoAntiguoDeudor> returnDtoHistoricoAntiguoDeudorList = new ArrayList<DtoHistoricoAntiguoDeudor>();
+		try {
+			returnDtoHistoricoAntiguoDeudorList = ofertaManager.getDtoHistoricoAntiguoDeudorList(1L);
+		} catch (IllegalAccessException iae) {
+			logger.error(iae.getMessage());
+		} catch (InvocationTargetException ite) {
+			logger.error(ite.getMessage());
+		}
+
+    	assertEquals(new ArrayList<DtoHistoricoAntiguoDeudor>(), returnDtoHistoricoAntiguoDeudorList);
     }
-    
-    @Test
-    public void givenOfertaWithCorrectParameters_whenOfertaIsPrincipal_thenReturnTrue() {
-    	
-    	DDCartera cartera = new DDCartera();
-    	cartera.setId(0L);
-    	cartera.setCodigo(DDCartera.CODIGO_CARTERA_LIBERBANK);
-    	
-    	Activo activo = new Activo();
-    	activo.setId(0L);
-    	activo.setCartera(cartera);
-    	
-    	DDTipoOferta tipoOferta = new DDTipoOferta();
-    	tipoOferta.setId(0L);
-    	tipoOferta.setCodigo(DDTipoOferta.CODIGO_VENTA);
-    	
-    	DDClaseOferta claseOferta = new DDClaseOferta();
-    	claseOferta.setId(0L);
-    	claseOferta.setCodigo(DDClaseOferta.CODIGO_OFERTA_PRINCIPAL);
-    	
-    	Oferta oferta = new Oferta();
-    	oferta.setId(0L);
-    	oferta.setTipoOferta(tipoOferta);
-    	oferta.setClaseOferta(claseOferta);
-    	
-    	ActivoOferta.ActivoOfertaPk activoOfertaPk = new ActivoOferta.ActivoOfertaPk();
-    	activoOfertaPk.setActivo(activo);
-    	activoOfertaPk.setOferta(oferta);
-    	
-    	ActivoOferta activoOferta = new ActivoOferta();
-    	activoOferta.setPrimaryKey(activoOfertaPk);
-    	
-    	List<ActivoOferta> activoOfertaList = new ArrayList<ActivoOferta>();
-    	activoOfertaList.add(activoOferta);
-    	
-    	oferta.setActivosOferta(activoOfertaList);
-    	
-    	Boolean result = ofertaManager.isOfertaPrincipal(oferta);
-    	
-    	assertEquals(result, Boolean.TRUE);
-    	
-    }*/
     
 }

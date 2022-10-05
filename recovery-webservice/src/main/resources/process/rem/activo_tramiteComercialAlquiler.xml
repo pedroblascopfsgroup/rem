@@ -410,7 +410,6 @@
     <decision name ="T015_PBCDecision" expression="#{T015_PBCDecision}">
 		<transition to="Fin" name="Anular"></transition>
 		<transition to="T015_EnvioContrato" name="OK"></transition>
-		<transition to="T015_AprobacionOfertaAlquilerComercial" name="Aprueba"></transition>
 		<transition to="Fin" name="Fin"></transition>
     </decision>
     
@@ -461,10 +460,7 @@
     </state>
     
     <decision name ="T015_CalculoRiesgoDecision" expression="#{T015_CalculoRiesgoDecision}">
-		<transition to="Fin" name="Anulada"></transition>
-		<transition to="T015_EnvioContrato" name="NoAplica"></transition>
-		<transition to="T015_PBC" name="RiesgoAltoMedioBajo"></transition>
-		<transition to="T015_EnvioContrato" name="RiesgoMedioBajo"></transition>
+		<transition to="T015_EnvioContrato" name="RiesgoBajoMedioNA"></transition>
 		<transition to="T015_PBC" name="RiesgoAlto"></transition>
 		<transition to="Fin" name="Fin"></transition>
     </decision>

@@ -289,14 +289,9 @@
 				</targetBean>
 			</action>
 		</event>
-		<transition to="T018_DatosPBCDecision" name="avanzaBPM"></transition>
+		<transition to="T018_CalculoRiesgo" name="avanzaBPM"></transition>
 		<transition to="Fin" name="Fin"></transition>
-	</state> 
-	<decision name ="T018_DatosPBCDecision" expression="#{T018_DatosPBCDecision}">
-		<transition to="T018_CalculoRiesgo" name="acepta"></transition>
-        <transition to="Fin" name="rechaza"></transition>
-	</decision>
-	
+	</state> 	
 	<state name="T018_CalculoRiesgo">
 		<event type="node-enter">
 			<action name="miTarea"

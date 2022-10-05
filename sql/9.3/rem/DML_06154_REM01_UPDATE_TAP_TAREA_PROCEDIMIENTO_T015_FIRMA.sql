@@ -43,8 +43,9 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(800);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-    	T_TIPO_DATA('T015_CalculoRiesgo', '(valores[''''T015_CalculoRiesgo''''][''''comboRiesgo''''] == DDRiesgoOperacion.CODIGO_ROP_MEDIO || valores[''''T015_CalculoRiesgo''''][''''comboRiesgo''''] == DDRiesgoOperacion.CODIGO_ROP_BAJO) ? ''''RiesgoMedioBajo'''' : valores[''''T015_CalculoRiesgo''''][''''comboRiesgo''''] == DDRiesgoOperacion.CODIGO_ROP_NO_APLICA ? ''''NoAplica'''' : ''''RiesgoAlto'''' '),
-    	T_TIPO_DATA('T015_Firma', 'valores[''''T015_Firma''''][''''comboFirma'''']  == DDSiNo.SI? checkBankia() == true ? ''''Fin'''' : ''''Firmado'''' : ''''Anulada''''')
+    	T_TIPO_DATA('T015_CalculoRiesgo', 'valores[''''T015_CalculoRiesgo''''][''''comboRiesgo''''] == DDRiesgoOperacion.CODIGO_ROP_ALTO ? ''''RiesgoAlto'''' : ''''RiesgoBajoMedioNA'''' '),
+    	T_TIPO_DATA('T015_Firma', 'valores[''''T015_Firma''''][''''comboFirma'''']  == DDSiNo.SI ? checkBankia() == true ? ''''Fin'''' : ''''Firmado'''' : ''''Anulada'''''),
+    	T_TIPO_DATA('T015_PBC', 'valores[''''T015_PBC''''][''''comboResultado''''] == DDSiNo.SI ? ''''OK'''' : ''''Anular''''')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 BEGIN

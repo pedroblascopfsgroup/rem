@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR= Lara Pablo
---## FECHA_CREACION=20220924
+--## FECHA_CREACION=20221004
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-18727
@@ -43,8 +43,9 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(800);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-    	T_TIPO_DATA('T015_AgendarFechaFirma', 'checkIBANValido(valores[''''T015_AgendarFechaFirma''''][''''ibanDev'''']) ? seNecesitaCuentaVirtualAlquiler() ? checkCuentasVirtualesAlquilerLibres() ? null : ''''No existen cuentas virtuales libres'''' : null : ''''El formato del IBAN no es v&aacute;lido'''' ')
-       ); 
+    	T_TIPO_DATA('T015_AgendarFechaFirma', 'valores[''''T015_AgendarFechaFirma''''][''''comboFianza''''] == DDSiNo.NO ? checkIBANValido(valores[''''T015_AgendarFechaFirma''''][''''ibanDev''''])  ? seNecesitaCuentaVirtualAlquiler()  ? checkCuentasVirtualesAlquilerLibres()  ? null : ''''No existen cuentas virtuales libres''''  : null   : ''''El formato del IBAN no es v&aacute;lido'''' : null'),
+       	T_TIPO_DATA('T018_AgendarFirma', 'valores[''''T018_AgendarFirma''''][''''comboResultado''''] == DDSiNo.NO ? checkIBANValido(valores[''''T018_AgendarFirma''''][''''ibanDev''''])  ? seNecesitaCuentaVirtualAlquiler()  ? checkCuentasVirtualesAlquilerLibres()  ? null : ''''No existen cuentas virtuales libres''''  : null   : ''''El formato del IBAN no es v&aacute;lido'''' : null')
+    ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 BEGIN
 DBMS_OUTPUT.PUT_LINE('[INICIO]');

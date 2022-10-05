@@ -1,6 +1,5 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -12,17 +11,18 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.FuncionesTramitesApi;
 import es.pfsgroup.plugin.rem.api.TramiteAlquilerNoComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.DtoEstados;
 import es.pfsgroup.plugin.rem.model.DtoTareasFormalizacion;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.HistoricoFirmaAdenda;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 
 @Component
@@ -36,6 +36,9 @@ public class UpdaterServiceFirmaAdendaAlquilerNoComercial implements UpdaterServ
 	 
     @Autowired
     private TramiteAlquilerNoComercialApi tramiteAlquilerNoComercialApi;
+    
+    @Autowired
+    private FuncionesTramitesApi funcionesTramitesApi;
 	
     protected static final Log logger = LogFactory.getLog(UpdaterServiceFirmaAdendaAlquilerNoComercial.class);
     
@@ -58,10 +61,16 @@ public class UpdaterServiceFirmaAdendaAlquilerNoComercial implements UpdaterServ
 			}
 		}
 		
-		String estadoExpBC = this.devolverEstadoBC(dto.getAdendaFirmada(), tareaExternaActual);
-		if(estadoExpBC != null) {
-			expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigoC4C", estadoExpBC)));
+		DtoEstados dtoEstados = this.devolverEstados(dto.getAdendaFirmada(), tareaExternaActual);
+		if(dtoEstados.getCodigoEstadoExpedienteBc() != null) {
+			expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dtoEstados.getCodigoEstadoExpedienteBc())));
 		}
+		
+		expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dtoEstados.getCodigoEstadoExpediente())));
+		if(DDEstadosExpedienteComercial.isFirmado(expedienteComercial.getEstado())) {
+			funcionesTramitesApi.actualizarEstadosPublicacionActivos(expedienteComercial);
+		}
+			
 		
 		tramiteAlquilerNoComercialApi.saveHistoricoFirmaAdenda(dto, oferta);
 		
@@ -78,14 +87,19 @@ public class UpdaterServiceFirmaAdendaAlquilerNoComercial implements UpdaterServ
 	}
 
 
-	private String devolverEstadoBC(Boolean adendaFirmada,  TareaExterna tareaExterna) {
-		String estadoExpBC = null;
+	private DtoEstados devolverEstados(Boolean adendaFirmada,  TareaExterna tareaExterna) {
+		DtoEstados dtoEstados = new DtoEstados();
+		
 		if(adendaFirmada != null && adendaFirmada) {
-			estadoExpBC = DDEstadoExpedienteBc.CODIGO_CONTRATO_FIRMADO;
+			dtoEstados.setCodigoEstadoExpedienteBc(DDEstadoExpedienteBc.CODIGO_CONTRATO_FIRMADO);
+			dtoEstados.setCodigoEstadoExpediente(DDEstadosExpedienteComercial.FIRMADO);
 		}else if(tramiteAlquilerNoComercialApi.firmaMenosTresVeces(tareaExterna)) {
-			estadoExpBC = DDEstadoExpedienteBc.CODIGO_IMPOSIBILIDAD_FIRMA;
+			dtoEstados.setCodigoEstadoExpedienteBc(DDEstadoExpedienteBc.CODIGO_IMPOSIBILIDAD_FIRMA);
+			dtoEstados.setCodigoEstadoExpediente(DDEstadosExpedienteComercial.PTE_RESPUESTA_BC);
+		}else {
+			dtoEstados.setCodigoEstadoExpediente(DDEstadosExpedienteComercial.PTE_AGENDAR_FIRMA_ADENDA);
 		}
 		
-		return estadoExpBC;
+		return dtoEstados;
 	}
 }

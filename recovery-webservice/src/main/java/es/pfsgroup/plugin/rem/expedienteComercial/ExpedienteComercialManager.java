@@ -1693,10 +1693,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 							}
 						}
 
-						if (!Checks.esNulo(expediente.getEstado().getCodigo())) {
-							dto.setEstaFirmado(
-									DDEstadosExpedienteComercial.FIRMADO.equals(expediente.getEstado().getCodigo()));
-						}
+						dto.setEstaFirmado(DDEstadosExpedienteComercial.isFirmado(expediente.getEstado()));
+						
 					}
 				}
 
@@ -2245,9 +2243,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		}		
 		
-		if(expediente.getEstado().getCodigo() != null 
-		&& (!DDEstadosExpedienteComercial.EN_TRAMITACION.equals(expediente.getEstado().getCodigo()))
-		&& isCarteraLbkVenta) {
+		if(!DDEstadosExpedienteComercial.isEnTramitacion(expediente.getEstado()) && isCarteraLbkVenta) {
 			dto.setEstadoAprobadoLbk(true);
 		}
 

@@ -13,10 +13,13 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.FuncionesTramitesApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.DtoEstados;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 
@@ -28,6 +31,9 @@ public class UpdaterServiceDecisionContinuidadOfertaAlquilerNoComercial implemen
 	
 	@Autowired
 	private GenericABMDao genericDao;
+	
+	@Autowired
+    private FuncionesTramitesApi funcionesTramitesApi;
 	
     protected static final Log logger = LogFactory.getLog(UpdaterServiceDecisionContinuidadOfertaAlquilerNoComercial.class);
     
@@ -49,8 +55,16 @@ public class UpdaterServiceDecisionContinuidadOfertaAlquilerNoComercial implemen
 			expedienteComercial.setMotivoAnulacion(genericDao.get(DDMotivoAnulacionExpediente.class,genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoAnulacionExpediente.COD_CAIXA_JUDICIALIZADO)));
 		}
 		
-		expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigoC4C", this.devolverEstadoBC(seguir))));
-
+		DtoEstados dtoEstados = this.devolverEstados(seguir);
+		
+		expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dtoEstados.getCodigoEstadoExpedienteBc())));
+		expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dtoEstados.getCodigoEstadoExpediente())));
+		
+		if(DDEstadosExpedienteComercial.isFirmado(expedienteComercial.getEstado())) {
+			funcionesTramitesApi.actualizarEstadosPublicacionActivos(expedienteComercial);
+		}
+			
+		
 		genericDao.save(ExpedienteComercial.class, expedienteComercial);
 		
 	}
@@ -63,14 +77,16 @@ public class UpdaterServiceDecisionContinuidadOfertaAlquilerNoComercial implemen
 		return this.getCodigoTarea();
 	}
 	
-	private String devolverEstadoBC(boolean seguir) {
-		String estadoExpBC = null;
+	private DtoEstados devolverEstados(boolean seguir) {
+		DtoEstados dtoEstados = new DtoEstados();
 		if(seguir) {
-			estadoExpBC = DDEstadoExpedienteBc.CODIGO_CONTRATO_FIRMADO;
+			dtoEstados.setCodigoEstadoExpedienteBc(DDEstadoExpedienteBc.CODIGO_CONTRATO_FIRMADO);
+			dtoEstados.setCodigoEstadoExpediente(DDEstadosExpedienteComercial.FIRMADO);
 		}else {
-			estadoExpBC = DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO;
+			dtoEstados.setCodigoEstadoExpedienteBc(DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO);
+			dtoEstados.setCodigoEstadoExpediente(DDEstadosExpedienteComercial.ANULADO);
 		}
 		
-		return estadoExpBC;
+		return dtoEstados;
 	}
 }

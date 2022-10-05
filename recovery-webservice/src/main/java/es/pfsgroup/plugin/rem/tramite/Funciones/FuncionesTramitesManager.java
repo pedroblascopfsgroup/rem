@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.tramite.Funciones;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -21,7 +22,8 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.activo.ActivoManager;
-import es.pfsgroup.plugin.rem.activo.dao.ActivoTramiteDao;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
+import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.FuncionesTramitesApi;
@@ -31,7 +33,7 @@ import es.pfsgroup.plugin.rem.api.TramiteAlquilerNoComercialApi;
 import es.pfsgroup.plugin.rem.api.TramiteVentaApi;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
-import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ComunicarFormalizacionApi;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.CuentasVirtualesAlquiler;
@@ -45,7 +47,6 @@ import es.pfsgroup.plugin.rem.model.HistoricoReagendacion;
 import es.pfsgroup.plugin.rem.model.HistoricoTareaPbc;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.VGridHistoricoReagendaciones;
-import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTareaPbc;
 
@@ -79,7 +80,11 @@ public class FuncionesTramitesManager implements FuncionesTramitesApi {
 	private ExpedienteComercialDao expedienteComercialDao;
 	
 	@Autowired
-	private ActivoTramiteDao tramiteDao;
+	private ActivoDao activoDao;
+	
+	@Autowired
+	private ActivoAdapter activoAdapter;
+	
 	
 	@Override
 	public boolean tieneRellenosCamposAnulacion(TareaExterna tareaExterna){
@@ -91,16 +96,11 @@ public class FuncionesTramitesManager implements FuncionesTramitesApi {
 	@Override
 	public boolean isTramiteAprobado(ExpedienteComercial eco) {
 		Set<TareaExterna> tareasActivas = activoTramiteApi.getTareasActivasByExpediente(eco);
-		TareaExterna resolucionComite = null;
 		List<String> codigoTareasActivas = new ArrayList<String>();
 		boolean isAprobado = false;
 
-		DDSubcartera subcartera = eco.getOferta().getActivoPrincipal().getSubcartera();
 
 		for (TareaExterna tareaExterna : tareasActivas) {
-			if(ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_CES.equals(tareaExterna.getTareaProcedimiento().getCodigo())){
-				resolucionComite = tareaExterna;
-			}
 			codigoTareasActivas.add(tareaExterna.getTareaProcedimiento().getCodigo());
 		}
 		TipoProcedimiento tp = activoTramiteApi.getTipoTramiteByExpediente(eco);
@@ -391,5 +391,21 @@ public class FuncionesTramitesManager implements FuncionesTramitesApi {
 		return resultado;
 	}
 
+	@Override
+	public void actualizarEstadosPublicacionActivos(ExpedienteComercial expedienteComercial) {
+		Oferta oferta = expedienteComercial.getOferta();
+		Activo activo = oferta.getActivoPrincipal();
+		
+		expedienteComercial.setFechaFirmaContrato(new Date());
+		
+		tramiteAlquilerApi.actualizarSituacionComercialUAs(activo);
+		tramiteAlquilerApi.actualizarSituacionComercial(oferta.getActivosOferta(), activo, expedienteComercial.getId());
+		activoDao.saveOrUpdate(activo);
+		activoAdapter.actualizarEstadoPublicacionActivo(activo.getId(),true);
+
+		if(activoDao.isActivoMatriz(activo.getId())){
+			tramiteAlquilerApi.actualizarEstadoPublicacionUAs(activo);
+		}
+	}
 
 }

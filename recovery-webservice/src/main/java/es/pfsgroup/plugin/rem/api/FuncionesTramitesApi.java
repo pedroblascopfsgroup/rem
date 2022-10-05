@@ -49,5 +49,7 @@ public interface FuncionesTramitesApi {
 	void createOrUpdateComunicacionApi(ExpedienteComercial eco, DtoTareasFormalizacion dto);
 
 	boolean modificarFianza(ExpedienteComercial eco);
+
+	void actualizarEstadosPublicacionActivos(ExpedienteComercial expedienteComercial);
 }
 

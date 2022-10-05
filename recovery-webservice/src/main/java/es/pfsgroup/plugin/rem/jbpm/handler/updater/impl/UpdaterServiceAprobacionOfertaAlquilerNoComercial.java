@@ -2,7 +2,6 @@ package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -15,17 +14,13 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
-import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.FuncionesTramitesApi;
-import es.pfsgroup.plugin.rem.api.TramiteAlquilerApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
-import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.DtoEstados;
 import es.pfsgroup.plugin.rem.model.DtoTareasFormalizacion;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
@@ -44,14 +39,6 @@ public class UpdaterServiceAprobacionOfertaAlquilerNoComercial implements Update
     @Autowired
     private FuncionesTramitesApi funcionesTramitesApi;
     
-    @Autowired
-	private TramiteAlquilerApi tramiteAlquilerApi;
-    
-    @Autowired
-    private ActivoDao activoDao;
-    
-    @Autowired
-    private ActivoAdapter activoAdapter;
 	
     protected static final Log logger = LogFactory.getLog(UpdaterServiceAprobacionOfertaAlquilerNoComercial.class);
     
@@ -93,9 +80,6 @@ public class UpdaterServiceAprobacionOfertaAlquilerNoComercial implements Update
 				if(FECHA_BUROFAX.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {					
 					dto.setFechaBurofaxEnviado(ft.parse(valor.getValor()));
 				}
-				if(COMBO_CLIENTE_ACEPTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {					
-					dto.setFechaBurofaxEnviado(ft.parse(valor.getValor()));
-				}
  			}
  			
  			if(dto.getTipoAdenda() != null) {
@@ -103,11 +87,13 @@ public class UpdaterServiceAprobacionOfertaAlquilerNoComercial implements Update
  			}
  			
  			funcionesTramitesApi.createOrUpdateComunicacionApi(expedienteComercial, dto);
- 			expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", this.devolverEstadoBC(isSubrogacion, dto))));
- 			expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", this.devolverEstadoHaya(isSubrogacion, dto))));
+ 			
+ 			DtoEstados dtoEstados = this.devolverEstados(isSubrogacion, dto);
+ 			expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dtoEstados.getCodigoEstadoExpedienteBc())));
+ 			expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dtoEstados.getCodigoEstadoExpediente())));
  			
  			if(DDEstadosExpedienteComercial.isFirmado(expedienteComercial.getEstado())) {
- 				this.actualizarEstadosPublicacionActivos(expedienteComercial);
+ 				funcionesTramitesApi.actualizarEstadosPublicacionActivos(expedienteComercial);
  			}
  			
  			genericDao.save(ExpedienteComercial.class, expedienteComercial);
@@ -126,59 +112,27 @@ public class UpdaterServiceAprobacionOfertaAlquilerNoComercial implements Update
 		return this.getCodigoTarea();
 	}
 
-	private String devolverEstadoBC(boolean isSubrogacion,  DtoTareasFormalizacion dto) {
-		String estadoExpBC = null;
+	private DtoEstados devolverEstados( boolean isSubrogacion,  DtoTareasFormalizacion dto) {
+		DtoEstados dtoEstados = new DtoEstados();
 		
 		if(isSubrogacion) {
 			if(dto.getTipoAdenda() == null || DDTipoAdenda.CODIGO_NO_APLICA_ADENDA.equals(dto.getTipoAdenda())) {
-				estadoExpBC = DDEstadoExpedienteBc.CODIGO_CONTRATO_FIRMADO;
+				dtoEstados.setCodigoEstadoExpedienteBc(DDEstadoExpedienteBc.CODIGO_CONTRATO_FIRMADO);
+				dtoEstados.setCodigoEstadoExpediente(DDEstadosExpedienteComercial.FIRMADO);
 			}else {
-				estadoExpBC = DDEstadoExpedienteBc.CODIGO_ADENDA_NECESARIA;
+				dtoEstados.setCodigoEstadoExpedienteBc(DDEstadoExpedienteBc.CODIGO_ADENDA_NECESARIA);
+				dtoEstados.setCodigoEstadoExpediente(DDEstadosExpedienteComercial.PTE_AGENDAR_FIRMA_ADENDA);
 			}
 		}else {
 			if(dto.getClienteAcepta() != null && dto.getClienteAcepta()) {
-				estadoExpBC = DDEstadoExpedienteBc.CODIGO_BORRADOR_ACEPTADO;
+				dtoEstados.setCodigoEstadoExpedienteBc(DDEstadoExpedienteBc.CODIGO_BORRADOR_ACEPTADO);
+				dtoEstados.setCodigoEstadoExpediente(DDEstadosExpedienteComercial.EN_TRAMITACION);				
 			}else {
-				estadoExpBC = DDEstadoExpedienteBc.CODIGO_GESTION_ADECUCIONES_CERTIFICACIONES_CLIENTE;
+				dtoEstados.setCodigoEstadoExpedienteBc(DDEstadoExpedienteBc.CODIGO_GESTION_ADECUCIONES_CERTIFICACIONES_CLIENTE);
+				dtoEstados.setCodigoEstadoExpediente(DDEstadosExpedienteComercial.EN_TRAMITACION);
 			}
 		}
 		
-		return estadoExpBC;
-	}
-	
-	private String devolverEstadoHaya(boolean isSubrogacion,  DtoTareasFormalizacion dto) {
-		String estadoHaya = null;
-		
-		if(isSubrogacion) {
-			if(dto.getTipoAdenda() == null || DDTipoAdenda.CODIGO_NO_APLICA_ADENDA.equals(dto.getTipoAdenda())) {
-				estadoHaya = DDEstadosExpedienteComercial.FIRMADO;
-			}else {
-				//estadoHaya = DDEstadoExpedienteBc.CODIGO_ADENDA_NECESARIA;
-			}
-		}else {
-			if(dto.getClienteAcepta() != null && dto.getClienteAcepta()) {
-				//estadoHaya = DDEstadoExpedienteBc.CODIGO_BORRADOR_ACEPTADO;
-			}else {
-				//estadoHaya = DDEstadoExpedienteBc.CODIGO_GESTION_ADECUCIONES_CERTIFICACIONES_CLIENTE;
-			}
-		}
-		
-		return estadoHaya;
-	}
-	
-	private void actualizarEstadosPublicacionActivos(ExpedienteComercial expedienteComercial) {
-		Oferta oferta = expedienteComercial.getOferta();
-		Activo activo = oferta.getActivoPrincipal();
-		
-		expedienteComercial.setFechaFirmaContrato(new Date());
-		
-		tramiteAlquilerApi.actualizarSituacionComercialUAs(activo);
-		tramiteAlquilerApi.actualizarSituacionComercial(oferta.getActivosOferta(), activo, expedienteComercial.getId());
-		activoDao.saveOrUpdate(activo);
-		activoAdapter.actualizarEstadoPublicacionActivo(activo.getId(),true);
-
-		if(activoDao.isActivoMatriz(activo.getId())){
-			tramiteAlquilerApi.actualizarEstadoPublicacionUAs(activo);
-		}
+		return dtoEstados;
 	}
 }

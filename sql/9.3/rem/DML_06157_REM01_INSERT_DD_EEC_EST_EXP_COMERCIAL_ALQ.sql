@@ -41,7 +41,9 @@ DECLARE
         T_TIPO_DATA('61', '0', '1', 'Pte. Clausulas cliente'),
         T_TIPO_DATA('62', '0', '1', 'Pte. Ingreso fianza'),
         T_TIPO_DATA('63', '0', '1', 'Pte. Respuesta BC'),
-        T_TIPO_DATA('48',  '1', '1','Pte. agendar firma')
+        T_TIPO_DATA('48', '1', '1',	'Pte.Agendar firma'),
+        T_TIPO_DATA('64', '0', '1',	'Pte.Agendar firma adenda'),
+        T_TIPO_DATA('67', '0', '1',	'Pte.firma adenda'),
 	); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

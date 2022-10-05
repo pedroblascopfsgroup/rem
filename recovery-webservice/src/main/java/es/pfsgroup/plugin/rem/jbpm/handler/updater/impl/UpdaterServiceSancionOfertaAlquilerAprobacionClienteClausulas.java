@@ -94,10 +94,6 @@ public class UpdaterServiceSancionOfertaAlquilerAprobacionClienteClausulas imple
 				ofertaApi.finalizarOferta(oferta);
 			}
 			
-		}else if(acepta) {
-			estadoHaya = DDEstadosExpedienteComercial.PTE_AGENDAR_FIRMA;
-		}else {
-			estadoHaya = DDEstadosExpedienteComercial.PTE_NEGOCIACION;
 		}
 		
 		expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", this.devolverEstadoBc(anula, acepta))));

@@ -3926,15 +3926,12 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		comboFianza.addListener('change', function(comboFianza) {
 			if(!fechaAgendacionIngreso.readOnly){
 	            if (comboFianza.value ==  CONST.COMBO_SIN_SINO['SI']) {
-	            	fechaAgendacionIngreso.reset();
 	            	importe.reset();
 	            	ibanDevolucion.reset();
-	            	me.bloquearCampo(fechaAgendacionIngreso);
 	            	me.bloquearCampo(importe);
 	            	me.bloquearCampo(ibanDevolucion);
 	
 	            } else {
-	            	me.desbloquearCampo(fechaAgendacionIngreso);
 		    		me.desbloquearCampo(importe);
 		    		me.desbloquearCampo(ibanDevolucion);
 	
@@ -3977,8 +3974,10 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 						}
 						
 						if(!Ext.isEmpty(dto.fechaAprobacionOferta)){
-							fechaAgendacionIngreso.setMaxValue(dto.fechaAprobacionOferta + 5);
-							fechaReagendarIngreso.setMaxValue(dto.fechaAprobacionOferta + 5);
+							var fecha = new Date(dto.fechaAprobacionOferta);
+							fecha.setDate(fecha.getDate() + 5);
+							fechaAgendacionIngreso.setMaxValue(fecha);
+							fechaReagendarIngreso.setMaxValue(fecha);
 						}
 		    		}
 		    	}
@@ -4955,12 +4954,10 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
             	fechaAgendacionIngreso.reset();
             	importe.reset();
             	ibanDevolucion.reset();
-            	me.bloquearCampo(fechaAgendacionIngreso);
             	me.bloquearCampo(importe);
             	me.bloquearCampo(ibanDevolucion);
 
             } else {
-            	me.desbloquearCampo(fechaAgendacionIngreso);
 	    		me.desbloquearCampo(importe);
 	    		me.desbloquearCampo(ibanDevolucion);
 
@@ -5001,6 +4998,13 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 						}
 						if (!Ext.isEmpty(dto.ibanDevolucion)) {
 							ibanDevolucion.setValue(dto.ibanDevolucion);
+						}
+						
+						if(!Ext.isEmpty(dto.fechaAprobacionOferta)){
+							var fecha = new Date(dto.fechaAprobacionOferta);
+							fecha.setDate(fecha.getDate() + 5);
+							fechaAgendacionIngreso.setMaxValue(fecha);
+							fechaReagendarIngreso.setMaxValue(fecha);
 						}
 		    		}
 		    	}

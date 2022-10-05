@@ -353,7 +353,7 @@ func-rem-datosProveedores|R-Nagami
 rem_mirror|func-rem-contabilizarDepositoOtrosEstados
 func-rem-sincronizacionPrinexREM|R-Jax
 func-rem-variosUICsPorEntidad|R-Jax
-version-@-rem-@|version-@-rem
+version-2.49.3-rem-REMVIP-12419|version-2.53.1-rem
 func-rem-ofrecimientosAlquilerSocialBBVA|R-Jax
 func-rem-nuevaNomenclaturaFicherosGastos|version-2.52.0-rem
 func-rem-tdd|version-2.52.0-rem

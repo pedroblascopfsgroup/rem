@@ -1936,6 +1936,17 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		        extraParams: {idExpediente: '{expediente.id}'}
 	    	},
 			autoLoad: true
+		},
+
+		storeFirmaAdenda: {
+			pageSize: $AC.getDefaultPageSize(),
+	    	model: 'HreRem.model.FirmaAdendaGrid',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'expedientecomercial/getFirmaAdenda',
+		        extraParams: {idExpediente: '{expediente.id}'}
+	    	},
+			autoLoad: true
 		}
 	}	
 });

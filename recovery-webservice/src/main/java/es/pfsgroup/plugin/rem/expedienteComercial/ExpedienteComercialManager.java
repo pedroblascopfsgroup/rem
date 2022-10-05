@@ -187,6 +187,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSnsSiNoNosabe;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubestadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoOfertaAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTfnTipoFinanciacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAdenda;
@@ -4705,6 +4706,40 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		if(oferta != null) {
 			formalizacionDto.setFechaInicioCnt(oferta.getFechaInicioContrato());
 			formalizacionDto.setFechaFinCnt(oferta.getFechaFinContrato());
+			
+			Filter filtroOferta = genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId());
+			List<ComunicarFormalizacionApi> comunicarFormalizacion = genericDao.getList(ComunicarFormalizacionApi.class, filtroOferta);
+			
+			if(comunicarFormalizacion != null && !comunicarFormalizacion.isEmpty()) {
+				if(comunicarFormalizacion.get(0).getLlamadaRealizada()) {
+					Filter filtroDdSi = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_SI);
+					DDSinSiNo dDSi = genericDao.get(DDSinSiNo.class, filtroDdSi);
+					formalizacionDto.setLlamadaRealizada(dDSi.getDescripcion());
+				}else if(!comunicarFormalizacion.get(0).getLlamadaRealizada()) {
+					Filter filtroDdNo = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_NO);
+					DDSinSiNo dDNo = genericDao.get(DDSinSiNo.class, filtroDdNo);
+					formalizacionDto.setLlamadaRealizada(dDNo.getDescripcion());
+				}
+				formalizacionDto.setFechaLlamada(comunicarFormalizacion.get(0).getFechaLlamada());
+				if(comunicarFormalizacion.get(0).getBurofaxEnviado()) {
+					Filter filtroDdSi = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_SI);
+					DDSinSiNo dDSi = genericDao.get(DDSinSiNo.class, filtroDdSi);
+					formalizacionDto.setBurofaxEnviado(dDSi.getDescripcion());
+				}else if(!comunicarFormalizacion.get(0).getBurofaxEnviado()) {
+					Filter filtroDdNo = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_NO);
+					DDSinSiNo dDNo = genericDao.get(DDSinSiNo.class, filtroDdNo);
+					formalizacionDto.setBurofaxEnviado(dDNo.getDescripcion());
+				}
+				formalizacionDto.setFechaBurofax(comunicarFormalizacion.get(0).getFechaBurofax());
+			}
+			
+			if(oferta.getSubtipoOfertaAlquiler() != null) {
+				if(DDSubtipoOfertaAlquiler.CODIGO_SUBROGACION_EJECUCION.equals(oferta.getSubtipoOfertaAlquiler().getCodigo())) {
+					formalizacionDto.setEsSubrogacionEjecucionHipotecaria(true);
+				}else {
+					formalizacionDto.setEsSubrogacionEjecucionHipotecaria(false);
+				}
+			}
 		}
 		
 		return formalizacionDto;
@@ -15722,6 +15757,41 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);
 		return expedienteComercial != null && expedienteComercial.getEstadoBc() != null 
 				&& DDEstadoExpedienteBc.CODIGO_CLAUSULADO_NO_COMERCIABLE.equals(expedienteComercial.getEstadoBc().getCodigo());
+	}
+	
+	@Override
+	public List<DtoFirmaAdendaGrid> getFirmaAdenda(Long idExpediente) {
+		
+		ExpedienteComercial expediente = findOne(idExpediente);
+		Oferta oferta = expediente.getOferta();
+		List<DtoFirmaAdendaGrid> dtoFirmaAdenda = new ArrayList <DtoFirmaAdendaGrid>();
+		
+		Filter filtroOferta =  genericDao.createFilter(FilterType.EQUALS, "oferta", oferta);
+		List<HistoricoFirmaAdenda> historicoFirmaAdenda = genericDao.getList(HistoricoFirmaAdenda.class, filtroOferta);
+		
+		if(historicoFirmaAdenda != null && !historicoFirmaAdenda.isEmpty()) {
+			for (HistoricoFirmaAdenda histFirmAdenda : historicoFirmaAdenda) {
+				DtoFirmaAdendaGrid dto = new DtoFirmaAdendaGrid();
+				
+				if(histFirmAdenda.getFirmadoAdenda() != null) {
+					if(histFirmAdenda.getFirmadoAdenda()) {
+						Filter filtroDdSi = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_SI);
+						DDSinSiNo dDSi = genericDao.get(DDSinSiNo.class, filtroDdSi);
+						dto.setFirmado(dDSi.getDescripcion());
+					}else if(!histFirmAdenda.getFirmadoAdenda()) {
+						Filter filtroDdNo = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_NO);
+						DDSinSiNo dDNo = genericDao.get(DDSinSiNo.class, filtroDdNo);
+						dto.setFirmado(dDNo.getDescripcion());
+					}
+				}
+				dto.setFecha(histFirmAdenda.getFechaAdenda());
+				dto.setMotivo(histFirmAdenda.getMotivoAdenda());
+				
+				dtoFirmaAdenda.add(dto);
+			}
+		}
+				
+		return dtoFirmaAdenda;
 	}
 	
 }

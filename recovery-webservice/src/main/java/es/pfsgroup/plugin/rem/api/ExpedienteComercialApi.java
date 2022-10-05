@@ -39,6 +39,7 @@ import es.pfsgroup.plugin.rem.model.DtoExpedienteComercialGestionEconomica;
 import es.pfsgroup.plugin.rem.model.DtoExpedienteHistScoring;
 import es.pfsgroup.plugin.rem.model.DtoExpedienteScoring;
 import es.pfsgroup.plugin.rem.model.DtoFichaExpediente;
+import es.pfsgroup.plugin.rem.model.DtoFirmaAdendaGrid;
 import es.pfsgroup.plugin.rem.model.DtoFormalizacionFinanciacion;
 import es.pfsgroup.plugin.rem.model.DtoFormalizacionResolucion;
 import es.pfsgroup.plugin.rem.model.DtoGarantiasExpediente;
@@ -1536,4 +1537,6 @@ public interface ExpedienteComercialApi {
 	void desbloquearExpediente(Long idOferta) throws Exception;
 
 	boolean checkEstadoBcClausuladoNoComerciable(TareaExterna tareaExterna);
+
+	List<DtoFirmaAdendaGrid> getFirmaAdenda(Long idExpediente);
 }

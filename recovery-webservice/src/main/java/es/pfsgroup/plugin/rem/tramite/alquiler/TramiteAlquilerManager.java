@@ -386,31 +386,19 @@ public class TramiteAlquilerManager implements TramiteAlquilerApi {
 	
 	
 	@Override
-	public boolean modificarFianza(ActivoTramite tramite) {
-		boolean resultado = false;
-		if(tramite != null) {
-			Set<String> tareasActivas = tramite.getTareasExternasActivasCodigo(); 
-			List<String> tareasNoEditableList = this.devolverTareasNoExoneracionFianzaBk();
-			List<String> tareasActivasList = new ArrayList<String>(); 
-			tareasActivasList.addAll(tareasActivas);
-			
-			if(CollectionUtils.containsAny(tareasActivasList, tareasNoEditableList)) {
-				resultado = true;
-			}
+	public boolean modificarFianza(ExpedienteComercial eco) {
+		boolean modificarFianza = false;
+		
+		Fianzas fianza = genericDao.get(Fianzas.class, genericDao.createFilter(FilterType.EQUALS, "oferta.id", eco.getOferta().getId()));
+		
+		if(fianza == null || fianza.getFechaAgendacionIngreso() == null) {
+			modificarFianza = true;
 		}
 		
-		return resultado;
+		return modificarFianza;
 	}
 	
-	private List<String> devolverTareasNoExoneracionFianzaBk(){
-		List<String> listaTareas = new ArrayList<String>();	
-		listaTareas.add(TareaProcedimientoConstants.TramiteAlquilerT015.CODIGO_ENTREGA_FIANZAS);
-		listaTareas.add(TareaProcedimientoConstants.TramiteAlquilerT015.CODIGO_RESPUESTA_BC_REAGENDACION);
-		listaTareas.add(TareaProcedimientoConstants.TramiteAlquilerT015.CODIGO_CIERRE_CONTRATO);
-		listaTareas.add(TareaProcedimientoConstants.TramiteAlquilerT015.CODIGO_FIRMA);
-		
-		return listaTareas;
-	}
+	
 	
 	@Override
 	public void actualizarSituacionComercial(List<ActivoOferta> activosOferta, Activo activo, Long ecoId) {

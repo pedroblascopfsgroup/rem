@@ -385,7 +385,7 @@ public class FuncionesTramitesManager implements FuncionesTramitesApi {
 		if(DDTipoOferta.isTipoAlquilerNoComercial(eco.getOferta().getTipoOferta())) {
 			resultado = tramiteAlquilerNoComercialApi.modificarFianza(eco);
 		}else if(DDTipoOferta.isTipoAlquiler(eco.getOferta().getTipoOferta())) {
-			resultado = tramiteAlquilerApi.modificarFianza(tramiteDao.getTramiteComercialVigenteByTrabajoAllTramites(eco.getTrabajo().getId()));
+			resultado = tramiteAlquilerApi.modificarFianza(eco);
 		}
 
 		return resultado;

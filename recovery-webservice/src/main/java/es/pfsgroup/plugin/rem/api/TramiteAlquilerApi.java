@@ -46,12 +46,12 @@ public interface TramiteAlquilerApi {
 	
 	boolean getRespuestaHistReagendacionMayor(TareaExterna tareaExterna);
 
-	boolean modificarFianza(ActivoTramite tramite);
-
 	void actualizarSituacionComercial(List<ActivoOferta> activosOferta, Activo activo, Long ecoId);
 
 	void actualizarSituacionComercialUAs(Activo activo);
 
-	void actualizarEstadoPublicacionUAs(Activo activo);	
+	void actualizarEstadoPublicacionUAs(Activo activo);
+
+	boolean modificarFianza(ExpedienteComercial eco);	
 }
 

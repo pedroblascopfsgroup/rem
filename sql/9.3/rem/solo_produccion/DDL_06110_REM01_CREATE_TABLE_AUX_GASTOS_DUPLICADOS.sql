@@ -1,7 +1,8 @@
 --/*
 --#########################################
 --## AUTOR=Remus Ovidiu
---## ARTEFACTO=batch
+--## FECHA_CREACION=20220922
+--## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP_12544
 --## PRODUCTO=NO
@@ -13,7 +14,6 @@
 --##        0.1 Versión inicial
 --#########################################
 --*/
-
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
 
 WHENEVER SQLERROR EXIT SQL.SQLCODE;

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Adrián Molina
---## FECHA_CREACION=20220927
+--## FECHA_CREACION=20220928
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-18736
@@ -82,7 +82,7 @@ BEGIN
 		            ,0  
 		            ,'''||V_TMP_TIPO_DATA(2)||''' 
 		            ,0
-		            ,''HREOS-18268''
+		            ,''HREOS-18736''
 		            ,SYSDATE
 		            ,null 
 		            ,null 
@@ -161,6 +161,32 @@ BEGIN
 	          DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE');
 	
 	       END IF;
+	       
+	       --INSERT DD_PTP_PLAZOS_TAREAS_PLAZAS  ----------------------------
+	    DBMS_OUTPUT.PUT_LINE(' INSERTANDO EN [DD_PTP_PLAZOS_TAREAS_PLAZAS] ');
+	    EXECUTE IMMEDIATE 'SELECT count(1) FROM '||V_ESQUEMA||'.DD_PTP_PLAZOS_TAREAS_PLAZAS WHERE TAP_ID = (SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = '''||V_TMP_TIPO_DATA(1)||''') ' INTO V_COUNT;
+	
+	    IF V_COUNT = 0 THEN
+	        V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.DD_PTP_PLAZOS_TAREAS_PLAZAS
+	            VALUES (
+	                '||V_ESQUEMA||'.S_DD_PTP_PLAZOS_TAREAS_PLAZAS.NEXTVAL
+	                ,null ,null
+	                ,(SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = '''||V_TMP_TIPO_DATA(1)||''')
+	                ,''5*24*60*60*1000L''
+	                ,0
+	                ,''HREOS-18736''
+	                ,SYSDATE
+	                , null,null,null,null
+	                ,0
+	                ,0
+	                ,null
+	            )';
+	        EXECUTE IMMEDIATE V_MSQL;
+	        
+	        DBMS_OUTPUT.PUT_LINE(' INSERCION EN [DD_PTP_PLAZOS_TAREAS_PLAZAS] CORRECTA');
+	    ELSE
+	        DBMS_OUTPUT.PUT_LINE(' LA FILA YA EXISE EN [DD_PTP_PLAZOS_TAREAS_PLAZAS]');
+	    END IF;
 	   
 	END LOOP;
 	COMMIT;

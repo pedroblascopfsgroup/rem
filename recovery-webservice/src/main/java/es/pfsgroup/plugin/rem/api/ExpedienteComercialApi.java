@@ -1539,4 +1539,8 @@ public interface ExpedienteComercialApi {
 	boolean checkEstadoBcClausuladoNoComerciable(TareaExterna tareaExterna);
 
 	List<DtoFirmaAdendaGrid> getFirmaAdenda(Long idExpediente);
+
+	void guardarBloqueoExpediente(ExpedienteComercial expediente);
+
+	void guardarDesbloqueoExpediente(ExpedienteComercial expediente);
 }

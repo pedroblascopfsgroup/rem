@@ -76,7 +76,6 @@ import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
 import es.pfsgroup.plugin.rem.adapter.AgrupacionAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
-import es.pfsgroup.plugin.rem.api.*;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
@@ -109,9 +108,21 @@ import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.gasto.dao.GastoDao;
 import es.pfsgroup.plugin.rem.gestor.GestorExpedienteComercialManager;
 import es.pfsgroup.plugin.rem.gestorDocumental.manager.GestorDocumentalAdapterManager;
-import es.pfsgroup.plugin.rem.model.*;
+import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionJudicial;
+import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionNoJudicial;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
+import es.pfsgroup.plugin.rem.model.ActivoBancario;
+import es.pfsgroup.plugin.rem.model.ActivoBbvaActivos;
+import es.pfsgroup.plugin.rem.model.ActivoBbvaUic;
+import es.pfsgroup.plugin.rem.model.ActivoCaixa;
+import es.pfsgroup.plugin.rem.model.ActivoCatastro;
+import es.pfsgroup.plugin.rem.model.ActivoDistribucion;
+import es.pfsgroup.plugin.rem.model.ActivoHistoricoValoraciones;
+import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
+import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoOferta.ActivoOfertaPk;
-import es.pfsgroup.plugin.rem.model.dd.*;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
@@ -145,6 +156,7 @@ import es.pfsgroup.plugin.rem.model.DtoDetalleOferta;
 import es.pfsgroup.plugin.rem.model.DtoExcelFichaComercial;
 import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoHcoComercialFichaComercial;
+import es.pfsgroup.plugin.rem.model.DtoHistoricoAntiguoDeudor;
 import es.pfsgroup.plugin.rem.model.DtoHonorariosOferta;
 import es.pfsgroup.plugin.rem.model.DtoListFichaAutorizacion;
 import es.pfsgroup.plugin.rem.model.DtoListadoGestores;
@@ -162,6 +174,7 @@ import es.pfsgroup.plugin.rem.model.DtoVariablesCalculoComiteLBK;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GastosExpediente;
 import es.pfsgroup.plugin.rem.model.GestorActivo;
+import es.pfsgroup.plugin.rem.model.HistoricoAntiguoDeudor;
 import es.pfsgroup.plugin.rem.model.InfoAdicionalPersona;
 import es.pfsgroup.plugin.rem.model.LlamadaPbcDto;
 import es.pfsgroup.plugin.rem.model.Oferta;
@@ -172,7 +185,6 @@ import es.pfsgroup.plugin.rem.model.OfertaTestigos;
 import es.pfsgroup.plugin.rem.model.OfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.ProveedorGestorCajamar;
-import es.pfsgroup.plugin.rem.model.Puja;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.TextosOferta;
 import es.pfsgroup.plugin.rem.model.TitularesAdicionalesOferta;
@@ -250,7 +262,14 @@ import es.pfsgroup.plugin.rem.oferta.dao.VOfertaActivoDao;
 import es.pfsgroup.plugin.rem.proveedores.dao.ProveedoresDao;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
-import es.pfsgroup.plugin.rem.rest.dto.*;
+import es.pfsgroup.plugin.rem.rest.dto.ActivosLoteOfertaDto;
+import es.pfsgroup.plugin.rem.rest.dto.ComunicacionBoardingResponse;
+import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
+import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
+import es.pfsgroup.plugin.rem.rest.dto.OfertaTitularAdicionalDto;
+import es.pfsgroup.plugin.rem.rest.dto.ReportGeneratorResponse;
+import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
+import es.pfsgroup.plugin.rem.rest.dto.TestigosOfertaDto;
 import es.pfsgroup.plugin.rem.restclient.caixabc.CaixaBcRestClient;
 import es.pfsgroup.plugin.rem.restclient.caixabc.ReplicarOfertaDto;
 import es.pfsgroup.plugin.rem.service.InterlocutorCaixaService;
@@ -262,26 +281,6 @@ import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
 import es.pfsgroup.plugin.rem.tramitacionofertas.TramitacionOfertasManager;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 import net.sf.json.JSONObject;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.servlet.ModelAndView;
-
-import javax.annotation.Resource;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.DecimalFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.*;
 
 @Service("ofertaManager")
 public class OfertaManager extends BusinessOperationOverrider<OfertaApi> implements OfertaApi {
@@ -9990,6 +9989,150 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				activoOferta.setImporteActivoOferta(ofertaDto.getImporte());
 			}
 		}
-	}	
+	}
+	
+	@Override
+	public List<DtoHistoricoAntiguoDeudor> getDtoHistoricoAntiguoDeudorList(Long idOferta) throws IllegalAccessException, InvocationTargetException {
+		if (idOferta == null)
+			return new ArrayList<DtoHistoricoAntiguoDeudor>();
+
+		List<HistoricoAntiguoDeudor> historicoAntiguoDeudorList = getHistoricoAntiguoDeudorList(idOferta);
+		
+		return getDtoHistoricoAntiguoDeudorListFromHistoricoAntiguoDeudorList(historicoAntiguoDeudorList);
+	}
+	
+	@Override
+	public List<HistoricoAntiguoDeudor> getHistoricoAntiguoDeudorList(Long idOferta) {
+		if (idOferta == null)
+			return new ArrayList<HistoricoAntiguoDeudor>();
+		
+		Order order = new Order(OrderType.DESC, "auditoria.fechaCrear");
+		Filter filter = genericDao.createFilter(FilterType.EQUALS, "oferta.id", idOferta);
+		List<HistoricoAntiguoDeudor> historicoAntiguoDeudorList = genericDao.getListOrdered(HistoricoAntiguoDeudor.class, order, filter);
+		
+		return historicoAntiguoDeudorList;
+	}
+	
+	public List<DtoHistoricoAntiguoDeudor> getDtoHistoricoAntiguoDeudorListFromHistoricoAntiguoDeudorList(List<HistoricoAntiguoDeudor> historicoAntiguoDeudorList) throws IllegalAccessException, InvocationTargetException {
+		List<DtoHistoricoAntiguoDeudor> dtoHistoricoAntiguoDeudorList = new ArrayList<DtoHistoricoAntiguoDeudor>();
+		
+		if(historicoAntiguoDeudorList != null && !historicoAntiguoDeudorList.isEmpty()) {
+			for(HistoricoAntiguoDeudor historicoAntiguoDeudor : historicoAntiguoDeudorList) {
+				try {
+					DtoHistoricoAntiguoDeudor dtoHistoricoAntiguoDeudor = new DtoHistoricoAntiguoDeudor();
+					beanUtilNotNull.copyProperties(dtoHistoricoAntiguoDeudor, historicoAntiguoDeudor);
+
+					if (historicoAntiguoDeudor.getId() != null)
+						beanUtilNotNull.copyProperty(dtoHistoricoAntiguoDeudor, "idHistorico", historicoAntiguoDeudor.getId());
+					
+					if (historicoAntiguoDeudor.getLocalizable() != null)
+						beanUtilNotNull.copyProperty(dtoHistoricoAntiguoDeudor, "codigoLocalizable", historicoAntiguoDeudor.getLocalizable().getCodigo());
+					
+					if (historicoAntiguoDeudor.getAuditoria() != null)
+						beanUtilNotNull.copyProperty(dtoHistoricoAntiguoDeudor, "fechaCreacion", historicoAntiguoDeudor.getAuditoria().getFechaCrear());
+					
+					dtoHistoricoAntiguoDeudorList.add(dtoHistoricoAntiguoDeudor);
+				} catch (IllegalAccessException iae) { 
+					logger.error("Error al recuperar valores de un registro del historico de antiguo deudor. HAD_ID: "+historicoAntiguoDeudor.getId());
+					throw iae;
+				} catch (InvocationTargetException ite) {
+					logger.error("Error al recuperar valores de un registro del historico de antiguo deudor. HAD_ID: "+historicoAntiguoDeudor.getId());
+					throw ite;
+				}
+			}
+		}
+			
+		return dtoHistoricoAntiguoDeudorList;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public boolean createHistoricoAntiguoDeudor(DtoHistoricoAntiguoDeudor dtoHistoricoAntiguoDeudor, Long idOferta) {
+		if (idOferta == null)
+			return false;
+		
+		ExpedienteComercial expedienteComercial;
+		Oferta oferta = ofertaDao.get(idOferta);
+		if(oferta == null)
+			return false;
+		else
+			expedienteComercial = oferta.getExpedienteComercial();
+		
+		HistoricoAntiguoDeudor historicoAntiguoDeudor = getHistoricoAntiguoDeudorFromDtoHistoricoAntiguoDeudor(new HistoricoAntiguoDeudor(), dtoHistoricoAntiguoDeudor);
+		historicoAntiguoDeudor.setOferta(oferta);
+		
+		DDEstadoExpedienteBc ddEstadoExpedienteBc = expedienteComercial.getEstadoBc();
+		if(ddEstadoExpedienteBc != null)
+			historicoAntiguoDeudor.setEstadoExpedienteBc(ddEstadoExpedienteBc);
+		
+		Filter filterJudicializarComitePosesiones = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_JUDICIALIZAR_COMITE_POSESIONES);
+		DDEstadoExpedienteBc ddEstadoExpedienteBcJudicializarComitePosesiones = genericDao.get(DDEstadoExpedienteBc.class, filterJudicializarComitePosesiones);
+		if(ddEstadoExpedienteBcJudicializarComitePosesiones != null)
+			expedienteComercial.setEstadoBc(ddEstadoExpedienteBcJudicializarComitePosesiones);
+		
+		expedienteComercialApi.guardarBloqueoExpediente(expedienteComercial);
+
+		genericDao.save(HistoricoAntiguoDeudor.class, historicoAntiguoDeudor);
+		
+		replicateOfertaFlush(oferta);
+		
+		return true;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public boolean updateHistoricoAntiguoDeudor(DtoHistoricoAntiguoDeudor dtoHistoricoAntiguoDeudor) {
+		
+		if(dtoHistoricoAntiguoDeudor.getIdHistorico() == null)
+			return false;
+		
+		Filter filterHistoricoAntiguoDeudor = genericDao.createFilter(FilterType.EQUALS, "id", dtoHistoricoAntiguoDeudor.getIdHistorico());
+		HistoricoAntiguoDeudor historicoAntiguoDeudor = genericDao.get(HistoricoAntiguoDeudor.class, filterHistoricoAntiguoDeudor);
+		if(historicoAntiguoDeudor == null)
+			return false;
+		
+		historicoAntiguoDeudor = getHistoricoAntiguoDeudorFromDtoHistoricoAntiguoDeudor(historicoAntiguoDeudor, dtoHistoricoAntiguoDeudor);
+		
+		ExpedienteComercial expedienteComercial;
+		Oferta oferta = historicoAntiguoDeudor.getOferta();
+		if(historicoAntiguoDeudor.getOferta() == null)
+			return false;
+		else
+			expedienteComercial = oferta.getExpedienteComercial();
+		
+		DDEstadoExpedienteBc ddEstadoExpedienteBc = historicoAntiguoDeudor.getEstadoExpedienteBc();
+		if(ddEstadoExpedienteBc != null)
+			expedienteComercial.setEstadoBc(ddEstadoExpedienteBc);
+		
+		if(!ofertaDao.tieneTareaActiva(TareaProcedimientoConstants.TramiteAlquilerNoCmT018.CODIGO_BLOQUEO_SCREENING, oferta.getNumOferta().toString()) 
+				&& !ofertaDao.tieneTareaActiva(TareaProcedimientoConstants.TramiteAlquilerNoCmT018.CODIGO_BLOQUEO_SCORING, oferta.getNumOferta().toString()))
+			expedienteComercialApi.guardarDesbloqueoExpediente(expedienteComercial);
+		
+		genericDao.save(HistoricoAntiguoDeudor.class, historicoAntiguoDeudor);
+		
+		replicateOfertaFlush(oferta);
+		
+		return true;
+	}
+	
+	public HistoricoAntiguoDeudor getHistoricoAntiguoDeudorFromDtoHistoricoAntiguoDeudor(HistoricoAntiguoDeudor historicoAntiguoDeudor, DtoHistoricoAntiguoDeudor dtoHistoricoAntiguoDeudor) {
+		
+		try {
+			beanUtilNotNull.copyProperties(historicoAntiguoDeudor, dtoHistoricoAntiguoDeudor);
+	
+			if (dtoHistoricoAntiguoDeudor.getCodigoLocalizable() != null) {
+				Filter filterSiNo = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoHistoricoAntiguoDeudor.getCodigoLocalizable());
+				DDSinSiNo ddSiNo = genericDao.get(DDSinSiNo.class, filterSiNo);
+				if(ddSiNo != null)
+					historicoAntiguoDeudor.setLocalizable(ddSiNo);
+			}
+		} catch (Exception e) {
+			logger.error("Error de conversión de un registro nuevo del historico de antiguo deudor");
+			logger.error(e.getMessage());
+		}
+			
+		return historicoAntiguoDeudor;
+	}
+
 }
 

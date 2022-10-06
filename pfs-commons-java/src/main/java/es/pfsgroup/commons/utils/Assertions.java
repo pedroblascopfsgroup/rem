@@ -1,5 +1,7 @@
 package es.pfsgroup.commons.utils;
 
+import java.util.List;
+
 /**
  * Comprobaciones estándares que lanzan excepciones estándares.
  * @author bruno
@@ -19,6 +21,23 @@ public class Assertions {
 				throw new IllegalArgumentException(msg);	
 			}else{
 				throw new IllegalArgumentException("El parámetro no puede ser NULL");
+			}
+			
+		}
+	}
+	
+	/**
+	 * Lanza una IllegalArgumentException si la List<T> esta VACÍA.
+	 * 
+	 * @param oList List<T> a testear
+	 * @param msg Mensaje de error de la excepción. Si es NULL el mensaje será el estándar.
+	 */
+	public static <T> void assertNotEmptyList(List<T> oList, String msg) throws IllegalArgumentException {
+		if (Checks.estaVacio(oList)) {
+			if (msg != null) {
+				throw new IllegalArgumentException(msg);	
+			} else {
+				throw new IllegalArgumentException("El parámetro no puede estar VACÍO");
 			}
 			
 		}

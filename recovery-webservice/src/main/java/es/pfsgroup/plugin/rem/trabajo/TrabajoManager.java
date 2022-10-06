@@ -7059,34 +7059,34 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		String titulo = "";
 		String descripcionTrabajo = !Checks.esNulo(trabajo.getDescripcion()) ? (trabajo.getDescripcion() + " - ") : "";
 	   
-	    if (proveedor) {
-	    	if (!Checks.esNulo(trabajo.getUsuarioGestorActivoResponsable()) && !Checks.esNulo(trabajo.getUsuarioGestorActivoResponsable().getEmail())) {
-				mailsPara.add(trabajo.getUsuarioGestorActivoResponsable().getEmail());
-			}else if(!Checks.esNulo(trabajo.getUsuarioResponsableTrabajo()) && !Checks.esNulo(trabajo.getUsuarioResponsableTrabajo().getEmail())){
-				mailsPara.add(trabajo.getUsuarioGestorActivoResponsable().getEmail());
-			}
-	    	
-	    	if (DDTipoApunte.CODIGO_LLAVES_ACCESO.equals(dtoAgendaTrabajo.getTipoGestion())) {
-	    		contenido = "<p>Activo "+  trabajo.getActivo().getNumActivo() + " OT " + trabajo.getNumTrabajo() + "</p>"
-	    				+"<p>Sin acceso por falta de llaves.</p>"
-	    				+"<p>Urgente envío</p>";
-				titulo = "Notificación de inserción de registro en la agenda de trabajo en REM (" + descripcionTrabajo + "Nº Trabajo "+dtoSendNotificator.getNumTrabajo()+")";
-			} else if (DDTipoApunte.CODIGO_PTE_INSTRUCCIONES.equals(dtoAgendaTrabajo.getTipoGestion())) {
-				contenido = "<p>Activo "+  trabajo.getActivo().getNumActivo() + " OT " + trabajo.getNumTrabajo() + "</p>"
-	    				+"<p>Pte. Instrucciones.</p>"
-	    				+"<p>Urgente envío</p>";
-				titulo = "Notificación de inserción de registro en la agenda de trabajo en REM (" + descripcionTrabajo + "Nº Trabajo "+dtoSendNotificator.getNumTrabajo()+")";
-			} else if (DDTipoApunte.CODIGO_PTE_APR_PRESUPUESTO.equals(dtoAgendaTrabajo.getTipoGestion())) {
-				contenido = "<p>Activo "+  trabajo.getActivo().getNumActivo() + " OT " + trabajo.getNumTrabajo() + "</p>"
-	    				+"<p>Pte de aprobación presupuesto.</p>"
-	    				+"<p>Urgente envío</p>";
-				titulo = "Notificación de inserción de registro en la agenda de trabajo en REM (" + descripcionTrabajo + "Nº Trabajo "+dtoSendNotificator.getNumTrabajo()+")";
-			} else if (DDTipoApunte.CODIGO_FINALIZADO.equals(dtoAgendaTrabajo.getTipoGestion())) {
-				contenido = "<p>Activo "+  trabajo.getActivo().getNumActivo() + " OT " + trabajo.getNumTrabajo() + "</p>"
-	    				+"<p>Finalizado.</p>";
-				titulo = "Notificación de inserción de registro en la agenda de trabajo en REM (" + descripcionTrabajo + "Nº Trabajo "+dtoSendNotificator.getNumTrabajo()+")";
-			}
-		}
+//	    if (proveedor) {
+//	    	if (!Checks.esNulo(trabajo.getUsuarioGestorActivoResponsable()) && !Checks.esNulo(trabajo.getUsuarioGestorActivoResponsable().getEmail())) {
+//				mailsPara.add(trabajo.getUsuarioGestorActivoResponsable().getEmail());
+//			}else if(!Checks.esNulo(trabajo.getUsuarioResponsableTrabajo()) && !Checks.esNulo(trabajo.getUsuarioResponsableTrabajo().getEmail())){
+//				mailsPara.add(trabajo.getUsuarioGestorActivoResponsable().getEmail());
+//			}
+//	    	
+//	    	if (DDTipoApunte.CODIGO_LLAVES_ACCESO.equals(dtoAgendaTrabajo.getTipoGestion())) {
+//	    		contenido = "<p>Activo "+  trabajo.getActivo().getNumActivo() + " OT " + trabajo.getNumTrabajo() + "</p>"
+//	    				+"<p>Sin acceso por falta de llaves.</p>"
+//	    				+"<p>Urgente envío</p>";
+//				titulo = "Notificación de inserción de registro en la agenda de trabajo en REM (" + descripcionTrabajo + "Nº Trabajo "+dtoSendNotificator.getNumTrabajo()+")";
+//			} else if (DDTipoApunte.CODIGO_PTE_INSTRUCCIONES.equals(dtoAgendaTrabajo.getTipoGestion())) {
+//				contenido = "<p>Activo "+  trabajo.getActivo().getNumActivo() + " OT " + trabajo.getNumTrabajo() + "</p>"
+//	    				+"<p>Pte. Instrucciones.</p>"
+//	    				+"<p>Urgente envío</p>";
+//				titulo = "Notificación de inserción de registro en la agenda de trabajo en REM (" + descripcionTrabajo + "Nº Trabajo "+dtoSendNotificator.getNumTrabajo()+")";
+//			} else if (DDTipoApunte.CODIGO_PTE_APR_PRESUPUESTO.equals(dtoAgendaTrabajo.getTipoGestion())) {
+//				contenido = "<p>Activo "+  trabajo.getActivo().getNumActivo() + " OT " + trabajo.getNumTrabajo() + "</p>"
+//	    				+"<p>Pte de aprobación presupuesto.</p>"
+//	    				+"<p>Urgente envío</p>";
+//				titulo = "Notificación de inserción de registro en la agenda de trabajo en REM (" + descripcionTrabajo + "Nº Trabajo "+dtoSendNotificator.getNumTrabajo()+")";
+//			} else if (DDTipoApunte.CODIGO_FINALIZADO.equals(dtoAgendaTrabajo.getTipoGestion())) {
+//				contenido = "<p>Activo "+  trabajo.getActivo().getNumActivo() + " OT " + trabajo.getNumTrabajo() + "</p>"
+//	    				+"<p>Finalizado.</p>";
+//				titulo = "Notificación de inserción de registro en la agenda de trabajo en REM (" + descripcionTrabajo + "Nº Trabajo "+dtoSendNotificator.getNumTrabajo()+")";
+//			}
+//		}
 	    if (gestor) {
 			
 			if (!Checks.esNulo(trabajo.getProveedorContacto()) && !Checks.esNulo(trabajo.getProveedorContacto().getEmail())) {
@@ -7111,9 +7111,10 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	    				+"<p>Pto. Aprobado.</p>";
 				titulo = "Notificación de inserción de registro en la agenda de trabajo en REM (" + descripcionTrabajo + "Nº Trabajo "+dtoSendNotificator.getNumTrabajo()+")";
 			}
+			
+			genericAdapter.sendMail(mailsPara, null, titulo, generateCuerpo(dtoSendNotificator, contenido));
 		}
 	   
-		genericAdapter.sendMail(mailsPara, null, titulo, generateCuerpo(dtoSendNotificator, contenido));
 		
 	}
 

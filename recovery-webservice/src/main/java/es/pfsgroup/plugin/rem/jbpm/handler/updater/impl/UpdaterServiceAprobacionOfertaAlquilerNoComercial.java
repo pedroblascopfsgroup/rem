@@ -66,13 +66,13 @@ public class UpdaterServiceAprobacionOfertaAlquilerNoComercial implements Update
 					dto.setTipoAdenda(valor.getValor());
 				}
 				if(COMBO_CLIENTE_ACEPTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-					dto.setClienteAcepta(DDSinSiNo.cambioStringtoBooleano(valor.getValor()));
+					dto.setClienteAcepta(DDSinSiNo.cambioStringaBooleanoNativo(valor.getValor()));
 				}
 				if(COMBO_LLAMADA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {					
-					dto.setLlamadaRealizada(DDSinSiNo.cambioStringtoBooleano(valor.getValor()));
+					dto.setLlamadaRealizada(DDSinSiNo.cambioStringaBooleanoNativo(valor.getValor()));
 				}
 				if(COMBO_BUROFAX.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {					
-					dto.setBurofaxEnviado(DDSinSiNo.cambioStringtoBooleano(valor.getValor()));
+					dto.setBurofaxEnviado(DDSinSiNo.cambioStringaBooleanoNativo(valor.getValor()));
 				}
 				if(FECHA_LLAMADA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {					
 					dto.setFechaLlamadaRealizada(ft.parse(valor.getValor()));

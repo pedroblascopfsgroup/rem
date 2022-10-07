@@ -93,7 +93,7 @@ public class UpdaterServiceFirmaAdendaAlquilerNoComercial implements UpdaterServ
 		if(adendaFirmada != null && adendaFirmada) {
 			dtoEstados.setCodigoEstadoExpedienteBc(DDEstadoExpedienteBc.CODIGO_CONTRATO_FIRMADO);
 			dtoEstados.setCodigoEstadoExpediente(DDEstadosExpedienteComercial.FIRMADO);
-		}else if(tramiteAlquilerNoComercialApi.firmaMenosTresVeces(tareaExterna)) {
+		}else if(!tramiteAlquilerNoComercialApi.firmaMenosTresVeces(tareaExterna)) {
 			dtoEstados.setCodigoEstadoExpedienteBc(DDEstadoExpedienteBc.CODIGO_IMPOSIBILIDAD_FIRMA);
 			dtoEstados.setCodigoEstadoExpediente(DDEstadosExpedienteComercial.PTE_RESPUESTA_BC);
 		}else {

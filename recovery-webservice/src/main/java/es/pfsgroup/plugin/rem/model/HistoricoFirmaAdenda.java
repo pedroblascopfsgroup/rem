@@ -27,7 +27,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
  * Modelo que gestiona el modelo de Albaranes para la gestión, 
  * flujo e información de los trabajos.
  * 
- * @author Alberto Flores
+ * @author Lara Pablo
  */
 @Entity
 @Table(name = "HFA_HIST_FIRMA_ADENDA", schema = "${entity.schema}")

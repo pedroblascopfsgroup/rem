@@ -556,13 +556,9 @@
 				</targetBean>
 			</action>
 		</event>
-		<transition to="T018_DecisionContinuidadOfertaDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="avanzaBPM"></transition>
 		<transition to="Fin" name="Fin"></transition>
 	</state> 
-	<decision name ="T018_DecisionContinuidadOfertaDecision" expression="#{T018_DecisionContinuidadOfertaDecision}">
-		<transition to="Fin" name="acepta"></transition>
-		<transition to="Fin" name="rechaza"></transition>
-	</decision>
 	
 	<state name="T018_AltaContratoAlquilerAdenda">
 		<event type="node-enter">

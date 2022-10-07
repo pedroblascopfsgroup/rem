@@ -175,6 +175,7 @@
            <value>es.pfsgroup.plugin.rem.model.dd.DDTipoOfertaAlquiler</value>
            <value>es.pfsgroup.plugin.rem.model.dd.DDSubtipoOfertaAlquiler</value>
            <value>es.pfsgroup.plugin.rem.model.dd.DDRiesgoOperacion</value>
+           <value>es.pfsgroup.plugin.rem.model.dd.DDTipoActivoRescision</value>
     </list>
     </property>
     </bean>

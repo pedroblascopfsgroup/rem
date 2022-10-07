@@ -886,7 +886,7 @@
 			}
 			def firmaMenosTresVeces = {
 				def tramiteAlquilerNoComercialManager = ctx.getBean("tramiteAlquilerNoComercialManager");
-            	return tramiteAlquilerNoComercialManager.noFirmaMenosTresVeces(tareaExterna);
+            	return tramiteAlquilerNoComercialManager.firmaMenosTresVeces(tareaExterna);
 			}
 			def seNecesitaCuentaVirtualAlquiler = {
             	def funcionesTramitesManager = ctx.getBean("funcionesTramitesManager");

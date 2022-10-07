@@ -43,7 +43,7 @@ DECLARE
         T_TIPO_DATA('63', '0', '1', 'Pte. Respuesta BC'),
         T_TIPO_DATA('48', '1', '1',	'Pte.Agendar firma'),
         T_TIPO_DATA('64', '0', '1',	'Pte.Agendar firma adenda'),
-        T_TIPO_DATA('67', '0', '1',	'Pte.firma adenda')
+        T_TIPO_DATA('65', '0', '1',	'Pte.firma adenda')
 	); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

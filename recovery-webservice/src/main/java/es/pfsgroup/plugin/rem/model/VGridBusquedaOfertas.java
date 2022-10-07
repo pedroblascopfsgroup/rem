@@ -132,6 +132,9 @@ public class VGridBusquedaOfertas implements Serializable {
 	
 	@Column(name="FECHA_ENT_CRM_SF")
 	private Date fechaOfertaEntradaCRM;
+	
+	@Column(name="OFERTA_CONCURRENCIA_ACTIVA")
+	private Integer concurrenciaActiva;
 
 	public Long getId() {
 		return id;
@@ -443,6 +446,14 @@ public class VGridBusquedaOfertas implements Serializable {
 
 	public void setFechaOfertaEntradaCRM(Date fechaOfertaEntradaCRM) {
 		this.fechaOfertaEntradaCRM = fechaOfertaEntradaCRM;
+	}
+
+	public Integer getConcurrenciaActiva() {
+		return concurrenciaActiva;
+	}
+
+	public void setConcurrenciaActiva(Integer concurrenciaActiva) {
+		this.concurrenciaActiva = concurrenciaActiva;
 	}
 	
 	

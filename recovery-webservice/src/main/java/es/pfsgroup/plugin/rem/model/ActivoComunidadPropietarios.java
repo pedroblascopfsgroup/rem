@@ -158,6 +158,9 @@ public class ActivoComunidadPropietarios implements Serializable, Auditable {
     @Column(name = "CPR_FECHA_ENVIO_CARTA")
    	private Date fechaEnvioCarta;
 		
+    @Column(name = "CPR_OBSERV_COM_PROP")
+	private String observacionesComPropietarios;
+		
 	@Version   
 	private Long version;
 	
@@ -467,6 +470,14 @@ public class ActivoComunidadPropietarios implements Serializable, Auditable {
 
 	public void setAsistenciaJuntaObligatoria(Integer asistenciaJuntaObligatoria) {
 		this.asistenciaJuntaObligatoria = asistenciaJuntaObligatoria;
+	}
+
+	public String getObservacionesComPropietarios() {
+		return observacionesComPropietarios;
+	}
+
+	public void setObservacionesComPropietarios(String observacionesComPropietarios) {
+		this.observacionesComPropietarios = observacionesComPropietarios;
 	}
 
 }

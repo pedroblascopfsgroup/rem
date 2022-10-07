@@ -12,6 +12,8 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialList', {
        	me.listeners = {	    	
 			rowdblclick: 'onOfertasListDobleClick'
 	     };
+
+        var userPefSuper = $AU.userIsRol(CONST.PERFILES['HAYASUPER']);
 	    
         me.columns= [
         
@@ -126,7 +128,13 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialList', {
 		            text: HreRem.i18n('header.oferta.importeOferta'),
 		            flex: 1,
 		            align: 'right',
-    				renderer: Ext.util.Format.numberRenderer('0.00')
+			        renderer: function(value, metadata, record) {
+			        	if (!userPefSuper && record.get("concurrenciaActiva") == 1) {
+			        		return "*****";
+			        	} else {
+			        		return  Ext.util.Format.number(value, '0.00');
+			        	}
+			        }
 		        },
 		        /*{
 		            dataIndex: 'gestorFormalizacion',

@@ -242,6 +242,17 @@ Ext.define('HreRem.view.activos.detalle.DatosComunidadActivo', {
 									      value : '{datosComunidad.asistenciaJuntaObligatoria}',
 									      editable: '{esEditableAsistenciaJuntaObligatoria}'
 									    }
+									},
+									{
+										xtype: 'textareafieldbase',
+					                	fieldLabel: HreRem.i18n('fieldlabel.observaciones.com.propietarios'),
+					                	name: 'observacionesComPropietarios',
+					                	reference: 'observacionesComPropietariosRef',
+					                	bind: {
+					                		value: '{datosComunidad.observacionesComPropietarios}'
+					                	},
+					                	colspan: 2,
+					                	maxLength: 250
 									}
 						]
 				},

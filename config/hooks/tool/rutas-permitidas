@@ -339,6 +339,10 @@ func-rem-reposicionamientoCalculoRiesgo|R-Caracara
 func-rem-deposito|R-Baal
 func-rem-proveedoresNoHomologables|R-Nagami
 func-rem-datosProveedores|R-Nagami
+rem_mirror|func-rem-formalizacionAlquileres
+rem_mirror|func-rem-extraccionSuperficiesAlquilables
+remvip-11238-rem|R-Caracara
+rem_mirror|version-@-rem
 remvip-11238-rem|R-Caracara
 rem_mirror|func-rem-nuevaNomenclaturaFicherosGastos
 rem_mirror|func-rem-ofrecimientosAlquilerSocialBBVA

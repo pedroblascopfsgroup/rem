@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR= Lara Pablo
---## FECHA_CREACION=20221006
+--## FECHA_CREACION=20221007
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-18804
@@ -43,7 +43,7 @@ DECLARE
         T_TIPO_DATA('63', '0', '1', 'Pte. Respuesta BC'),
         T_TIPO_DATA('48', '1', '1',	'Pte.Agendar firma'),
         T_TIPO_DATA('64', '0', '1',	'Pte.Agendar firma adenda'),
-        T_TIPO_DATA('67', '0', '1',	'Pte.firma adenda'),
+        T_TIPO_DATA('67', '0', '1',	'Pte.firma adenda')
 	); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

@@ -343,8 +343,7 @@
 		<transition to="Fin" name="Fin"></transition>
 	</state> 
 	<decision name ="T018_RespuestaContraofertaBCDecision" expression="#{T018_RespuestaContraofertaBCDecision}">
-		<transition to="T018_AprobacionOferta" name="aceptaAlquilerSocial"></transition>
-		<transition to="T018_AgendarFirma" name="aceptaRenovacion"></transition>
+		<transition to="T018_AprobacionOferta" name="acepta"></transition>
 		<transition to="T018_ProponerRescisionCliente" name="rechazaRenovacion"></transition>
 		<transition to="T018_EsperaComitePosesiones" name="rechazaAlquilerSocial"></transition>
 	</decision>

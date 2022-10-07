@@ -328,6 +328,12 @@ public class TramiteAlquilerNoComercialManager implements TramiteAlquilerNoComer
 		TramiteAlquilerNoComercial tramiteNoComercial = tramiteNoComercialFactory.getTramiteAlquilerNoComercial(eco.getOferta().getSubtipoOfertaAlquiler().getCodigo());
 		return tramiteNoComercial.modificarFianza(eco);
 	}
+
+	@Override
+	public boolean rechazaMenosTresVeces(TareaExterna tareaExterna) {
+		
+		return false;
+	}
 	
 	
 }

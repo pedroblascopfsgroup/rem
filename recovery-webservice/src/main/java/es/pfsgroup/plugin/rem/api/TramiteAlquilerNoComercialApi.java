@@ -54,5 +54,6 @@ public interface TramiteAlquilerNoComercialApi {
 
 	boolean modificarFianza(ExpedienteComercial eco);
 	
+	boolean rechazaMenosTresVeces(TareaExterna tareaExterna);
 }
 

@@ -68,7 +68,7 @@ public class UpdaterServiceEsperaComitePosesionesAlquilerNoComercial implements 
 		if(comboResultado != null) {
 			if(comboResultado) {
 				estadoExpBC = DDEstadoExpedienteBc.CODIGO_CONTRAOFERTADO;
-			}else {
+			}else if(!comboResultado){
 				estadoExpBC = DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO;
 			}
 		}

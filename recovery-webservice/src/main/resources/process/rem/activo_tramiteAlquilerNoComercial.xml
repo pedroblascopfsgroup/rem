@@ -372,9 +372,8 @@
 	</state> 
 	<decision name ="T018_EntregaFianzasDecision" expression="#{T018_EntregaFianzasDecision}">
 		<transition to="T018_FirmaContrato" name="acepta"></transition>
-		<transition to="T018_RespuestaContraofertaBC" name="rechazaAlquilerSocial"></transition>
-		<transition to="T018_RespuestaReagendacionBC" name="rechazaRenovacion"></transition>
-		<transition to="T018_AgendarFirma" name="rechazaMenosDosVecesRenovacion"></transition>
+		<transition to="T018_RespuestaReagendacionBC" name="rechaza"></transition>
+		<transition to="T018_AgendarFirma" name="rechazaMenosTres"></transition>
 	</decision>
 	
 	<state name="T018_AprobacionOferta">

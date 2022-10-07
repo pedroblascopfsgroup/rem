@@ -48,7 +48,7 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('[INFO] Registro actualizado en '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO');
 	
 	/*Decision para T018_EntregaFianzas*/
-	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_DECISION = ''valores[''''T018_EntregaFianzas''''][''''comboResultado''''] == DDSiNo.SI ? ''''acepta'''' :  esRenovacion() ? rechazaMenosDosVeces() ? ''''rechazaMenosDosVecesRenovacion'''' : ''''rechazaRenovacion'''' : ''''rechazaAlquilerSocial'''''' 
+	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_DECISION = ''valores[''''T018_EntregaFianzas''''][''''comboResultado''''] == DDSiNo.SI ? ''''acepta'''' :  seHaReagendado2VecesOMas() ? ''''rechaza'''' : ''''rechazaMenosTres'''''' 
 	WHERE TAP_CODIGO = ''T018_EntregaFianzas''';
 	DBMS_OUTPUT.PUT_LINE(V_MSQL);
 	EXECUTE IMMEDIATE V_MSQL;

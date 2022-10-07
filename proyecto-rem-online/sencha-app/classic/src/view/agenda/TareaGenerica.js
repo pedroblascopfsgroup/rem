@@ -4822,7 +4822,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		
 
 		comboResultado.addListener('change', function(comboResultado) {
-			if (combo.value == CONST.COMBO_SIN_SINO['SI']) { 
+			if (comboResultado.value == CONST.COMBO_SIN_SINO['SI']) { 
 				me.campoObligatorio(fechaAbono);
 			} else {
 				me.campoNoObligatorio(fechaAbono);

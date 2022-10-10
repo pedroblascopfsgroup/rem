@@ -867,7 +867,7 @@
 		<transition to="T018_ConfirmacionBCDecision" name="avanzaBPM"></transition>
 	</state> 
 	<decision name ="T018_ConfirmacionBCDecision" expression="#{T018_ConfirmacionBCDecision}">
-		<transition to="T018_AprobacionOferta" name="aprueba"></transition>
+		<transition to="T018_AprobacionOferta" name="acepta"></transition>
 	</decision>
 	
 	<end-state name="Fin">

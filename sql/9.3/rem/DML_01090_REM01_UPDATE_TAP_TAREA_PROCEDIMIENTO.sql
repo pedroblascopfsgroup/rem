@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=IVAN REPISO
---## FECHA_CREACION=20221010
+--## FECHA_CREACION=20221011
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-12505
@@ -34,8 +34,8 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(3500);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        T_TIPO_DATA('T017_ResolucionCES', '(checkBankia() == true && checkExpedienteBloqueadoPorFuncion() == true) ? '''' El expediente est&aacute; bloqueado '''' : checkBankia() == false && checkReservaInformada() == false ? ''''En la reserva del expediente se debe marcar si es necesaria o no para poder avanzar.'''' : checkImporteParticipacion()  ? checkCompradores() ? checkVendido()  ? ''''El activo est&aacute; vendido''''  : checkComercializable() ? checkBankia()  || checkPoliticaCorporativa()  ?  null : ''''El estado de la pol&iacute;tica corporativa no es el correcto para poder avanzar.''''): ''''El activo debe ser comercializable'''') ) : ''''Los compradores deben sumar el 100%'''') : ''''El sumatorio de importes de participaci&oacute;n de los activos ha de ser el mismo que el importe total del expediente'''''),
-        T_TIPO_DATA('T017_ConfirmarFechaEscritura', '(checkBankia() && valores[''''T017_ConfirmarFechaEscritura''''][''''cambioRiesgo''''] == DDSiNo.SI) ? null :  (checkBankia() == true && checkExpedienteBloqueadoPorFuncion() == true)  ? '''' El expediente est&aacute; bloqueado '''' : (checkBankia() == true && (checkAprobadoRechazadoBCPosicionamiento() == false && userHasPermisoParaAvanzarTareas() == false )) ? ''''El estado de Validaci&oacute;n BC de la fecha arras tiene que ser Aceptado o Rechazado'''' : !tieneTramiteGENCATVigenteByIdActivo()  ? checkImporteParticipacion()  ? checkCompradores() ? checkVendido() ? ''''El activo est&aacute; vendido'''' : checkComercializable() ? null : ''''El activo debe ser comercializable'''' : ''''Los compradores deben sumar el 100%'''')  : ''''El sumatorio de importes de participaci&oacute;n de los activos ha de ser el mismo que el importe total del expediente'''' : ''''El activo tiene un tr&aacute;mite GENCAT en curso.''''')
+        T_TIPO_DATA('T017_ResolucionCES', ' checkBankia() ? checkExpedienteBloqueadoPorFuncion() == true ? '''' El expediente est&aacute; bloqueado '''' : null : checkReservaInformada() == false ? ''''En la reserva del expediente se debe marcar si es necesaria o no para poder avanzar.'''' : checkImporteParticipacion()  ? (checkCompradores() ? (checkVendido()  ? ''''El activo est&aacute; vendido''''  : (checkComercializable() ? (checkPoliticaCorporativa()  ?  null : ''''El estado de la pol&iacute;tica corporativa no es el correcto para poder avanzar.''''): ''''El activo debe ser comercializable'''') ) : ''''Los compradores deben sumar el 100%'''') : ''''El sumatorio de importes de participaci&oacute;n de los activos ha de ser el mismo que el importe total del expediente'''' '),
+        T_TIPO_DATA('T017_ConfirmarFechaEscritura', '(checkBankia() && valores[''''T017_ConfirmarFechaEscritura''''][''''cambioRiesgo''''] == DDSiNo.SI) ? null :  (checkBankia() == true && checkExpedienteBloqueadoPorFuncion() == true)  ? '''' El expediente est&aacute; bloqueado '''' : (checkBankia() == true && (checkAprobadoRechazadoBCPosicionamiento() == false && userHasPermisoParaAvanzarTareas() == false )) ? ''''El estado de Validaci&oacute;n BC de la fecha arras tiene que ser Aceptado o Rechazado'''' : null')
                     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 BEGIN	

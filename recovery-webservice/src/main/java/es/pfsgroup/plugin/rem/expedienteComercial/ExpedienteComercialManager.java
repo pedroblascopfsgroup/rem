@@ -1967,6 +1967,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 							}
 						}
 					}
+					
+					if (!Checks.esNulo(tramitesActivo) && !tramitesActivo.isEmpty()) {
+						dto.setTieneTramiteComercial(true);
+					} else {
+						dto.setTieneTramiteComercial(false);
+					}
 				}
 				if (!Checks.estaVacio(expediente.getCompradores())) {
 					Boolean problemasUrsus = hayProblemasURSUS(expediente.getId());
@@ -1987,14 +1993,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				
 				dto.setFinalizadoCierreEconomico(finalizadoCierreEconomico(expediente));
 				dto.setEsActivoHayaHome(activoManager.esActivoHayaHome(activo, null));
-				
-				
-				List<ActivoTramite> tramitesActivo = tramiteDao.getTramitesActivoTrabajoList(expediente.getTrabajo().getId());
-				if (!Checks.esNulo(tramitesActivo) && !tramitesActivo.isEmpty()) {
-					dto.setTieneTramiteComercial(true);
-				} else {
-					dto.setTieneTramiteComercial(false);
-				}
+								
 			}
 			
 			if(expediente.getEstadoBc() != null) {

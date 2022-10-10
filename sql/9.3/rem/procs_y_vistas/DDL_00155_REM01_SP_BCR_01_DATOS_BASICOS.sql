@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20220815
+--## FECHA_CREACION=20220922
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-11670
@@ -37,6 +37,7 @@
 --##	      0.25 Añadir merge a la ACT_ACTIVO_CAIXA para rellenar el DD_CBC_ID de los activos vendidos de Caixa [REMVIP-11683] - Alejandra García
 --##	      0.26 Tipo/subtipo [REMVIP-11670] - Daniel Algaba
 --##	      0.27 Tipo/subtipo, usando CLASE_USO si es nulo CLASE_USO_REGISTRAL [REMVIP-12292] - IVAN REPISO
+--##	      0.28 Insertar EST_CONSERVACION en activo caixa [REMVIP-12391] - IVAN REPISO
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -367,7 +368,8 @@ BEGIN
                   ELSE (SELECT DD_CBC_ID FROM '|| V_ESQUEMA ||'.DD_CBC_CARTERA_BC WHERE DD_CBC_CODIGO = ''01'')
                END AS DD_CBC_ID,
                TVC.DD_TVC_ID DD_TVC_ID,
-               TEC.DD_TEC_ID DD_TEC_ID
+               TEC.DD_TEC_ID DD_TEC_ID,
+               AUX.EST_CONSERVACION
                FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK aux
                JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT2 ON ACT2.ACT_NUM_ACTIVO_CAIXA = aux.NUM_IDENTIFICATIVO AND ACT2.BORRADO = 0  
                LEFT JOIN  '|| V_ESQUEMA ||'.ACT_ACTIVO_CAIXA CAIXA ON ACT2.ACT_ID=CAIXA.ACT_ID AND CAIXA.BORRADO=0
@@ -425,7 +427,8 @@ BEGIN
                               ,act1.CBX_NUMERO_INMUEBLE_ANTERIOR = us.CBX_NUMERO_INMUEBLE_ANTERIOR   
                               ,act1.dd_cbc_id = us.dd_cbc_id
                               ,act1.DD_TVC_ID = NVL(US.DD_TVC_ID,act1.DD_TVC_ID)
-                              ,act1.DD_TEC_ID = NVL(US.DD_TEC_ID,act1.DD_TEC_ID)                                                                                                               
+                              ,act1.DD_TEC_ID = NVL(US.DD_TEC_ID,act1.DD_TEC_ID)  
+                              ,ACT1.DD_ECV_STOCK_BC = US.EST_CONSERVACION                                                                                                             
                               ,act1.USUARIOMODIFICAR = ''STOCK_BC''
                               ,act1.FECHAMODIFICAR = sysdate
                               
@@ -459,6 +462,7 @@ BEGIN
                                           dd_cbc_id,
                                           DD_TVC_ID,
                                           DD_TEC_ID,
+                                          DD_ECV_STOCK_BC,
                                           USUARIOCREAR,
                                           FECHACREAR
                                           )
@@ -491,6 +495,7 @@ BEGIN
                                           us.dd_cbc_id,
                                           us.DD_TVC_ID,
                                           us.DD_TEC_ID,
+                                          US.EST_CONSERVACION,  
                                           ''STOCK_BC'',
                                           sysdate)';
 

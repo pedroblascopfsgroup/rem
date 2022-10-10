@@ -29,6 +29,7 @@ public class DtoComunidadpropietariosActivo extends DtoTabActivo {
 	private String subestadoGestion;
 	private String subestadoGestionDescripcion;
 	private Integer asistenciaJuntaObligatoria;
+	private String observacionesComPropietarios;
 	
 
 	public Date getFechaComunicacionComunidad() {
@@ -132,6 +133,12 @@ public class DtoComunidadpropietariosActivo extends DtoTabActivo {
 	}
 	public void setSubestadoGestionDescripcion(String subestadoGestionDescripcion) {
 		this.subestadoGestionDescripcion = subestadoGestionDescripcion;
+	}
+	public String getObservacionesComPropietarios() {
+		return observacionesComPropietarios;
+	}
+	public void setObservacionesComPropietarios(String observacionesComPropietarios) {
+		this.observacionesComPropietarios = observacionesComPropietarios;
 	}
 	
 	

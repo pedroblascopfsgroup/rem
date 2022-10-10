@@ -341,6 +341,10 @@ rem_mirror|func-rem-actualizacionCamposCFV
 rem_mirror|version-@-rem
 func-rem-proveedoresNoHomologables|R-Nagami
 func-rem-datosProveedores|R-Nagami
+rem_mirror|func-rem-formalizacionAlquileres
+rem_mirror|func-rem-extraccionSuperficiesAlquilables
+remvip-11238-rem|R-Caracara
+rem_mirror|version-@-rem
 remvip-11238-rem|R-Caracara
 rem_mirror|func-rem-nuevaNomenclaturaFicherosGastos
 rem_mirror|func-rem-ofrecimientosAlquilerSocialBBVA

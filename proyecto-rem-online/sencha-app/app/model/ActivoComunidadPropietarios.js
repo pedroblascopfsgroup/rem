@@ -58,6 +58,9 @@ Ext.define('HreRem.model.ActivoComunidadPropietarios', {
     		},
     		{
     			name: 'asistenciaJuntaObligatoria'
+    		},
+    		{
+    			name: 'observacionesComPropietarios'
     		}
     ],
     

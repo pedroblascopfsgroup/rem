@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Javier Esbri
---## FECHA_CREACION=20220517
+--## FECHA_CREACION=20221005
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-17818
@@ -21,6 +21,7 @@
 --##        0.9 REMVIP-9459 - JAC - se modifica logica tipologia inmueble
 --##        1.0 REMVIP-11493 - JAC - Se modifica case when tipologia inmueble para añadir condicion
 --##        1.1 HREOS-17818 - JEG - Se modifica BBVA_CEXPER para aprovisionarlo de la nueva tabla act_bbva_uic
+--##        1.2 REMVIP-12483 - VRO - Se corrige join por left con tabla ACT_BBVA_UIC UIC por que hay activos que no salen 
 --##########################################
 --*/
 
@@ -278,7 +279,7 @@ BEGIN
         GROUP BY ID_AAII
     ) CANCEL 
     ON act.act_num_activo = CANCEL.ID_AAII
-    JOIN '||V_ESQUEMA||'.ACT_BBVA_UIC UIC ON UIC.ACT_ID = BBVA.ACT_ID AND UIC.BORRADO = 0
+    LEFT JOIN '||V_ESQUEMA||'.ACT_BBVA_UIC UIC ON UIC.ACT_ID = BBVA.ACT_ID AND UIC.BORRADO = 0
     WHERE ACT.BORRADO = 0 AND COALESCE(PRO.PRO_DOCIDENTIF,CPR.CPR_DOCIDENTIF) IS NOT NULL
     ';
 		

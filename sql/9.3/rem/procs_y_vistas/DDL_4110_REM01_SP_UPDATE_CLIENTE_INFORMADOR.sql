@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20220525
+--## FECHA_CREACION=20221005
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=2.0.17
---## INCIDENCIA_LINK=HREOS-
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=REMVIP-12540
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -13,6 +13,7 @@
 --##        0.1 Versión inicial - [HREOS-17157] - PIER GOTTA
 --##        0.2 Modificación consulta - [HREOS-17266] - Alejandra García
 --##        0.3 Añadir tipos de gastos Pendiente autorizar y Incompleto - [HREOS-] - Alejandra García
+--##		0.4 Añadir Distinct para quitar duplicados para varias lineas de detale - [REMVIP-12540] - Juan Bautista Alfonso
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -106,7 +107,7 @@ BEGIN
                     AND GEN.GLD_ENT_ID IS NULL
                     AND PRO.PRO_DOCIDENTIF NOT IN (''A08663619'',''A58032244'',''B46644290'')
 				)
-			SELECT 
+			SELECT DISTINCT
 				  GGE.GGE_ID
 				, CASE 
 					WHEN PRO.PRO_SOCIEDAD_PAGADORA = ''0015'' AND GIC.GIC_FECHA_DEVENGO_ESPECIAL <= TO_DATE(''15/11/2021'',''DD/MM/YYYY'') AND GIC.GIC_FECHA_DEVENGO_ESPECIAL IS NOT NULL THEN  ''0001''

@@ -769,22 +769,18 @@ public class GenericController extends ParadiseJsonController{
 			
 			Long activoID = jsonObject.get("activoID") != null ? new Long(jsonObject.get("activoID").toString()) : null ;
 			Long agrupacionID = jsonObject.get("agrupacionID") != null ? new Long(jsonObject.get("agrupacionID").toString()) : null ;
-			List<ImagenWebDto> data = null;
+			boolean data = false;
 			
 			if(activoID != null && agrupacionID != null) {
 				throw new RestClientException("No se pueden incluir Id de activo y de agrupacion en la misma llamada");
 			}
 			
-			String urlCompleta = request.getRequestURL().toString();
-			String urlBase = urlCompleta.substring(0,urlCompleta.length()-URL_ENDPOINT_FOTOSEXCEL.length());
 			if (activoID != null) {
-				data = genericApi.getFichaComercialFotosActivo(activoID,urlBase);
+				data = genericApi.getFichaComercialFotosActivo(activoID);
 			}else if (agrupacionID != null) {
-				data = genericApi.getFichaComercialFotosAgrupacion(agrupacionID,urlBase);
+				data = genericApi.getFichaComercialFotosAgrupacion(agrupacionID);
 			}
-			
-			model.put("data", data);
-			model.put("succes", true);
+			model.put("succes", data);
 			
 		} catch (Exception e) {
 			model.put("error", e.getMessage());

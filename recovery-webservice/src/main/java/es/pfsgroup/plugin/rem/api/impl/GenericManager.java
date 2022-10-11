@@ -1677,15 +1677,15 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		return listaResultado;
 	}
 	
-	public List<ImagenWebDto> getFichaComercialFotosActivo(Long id, String urlBase) {		
+	public boolean getFichaComercialFotosActivo(Long id) {		
 		
-	return downloadFotos(activoAdapter.getListFotosActivoById(id),urlBase);
+		return activoApi.reloadFotosActivoById(id);
 		
 	}
 	
-	public List<ImagenWebDto> getFichaComercialFotosAgrupacion(Long id, String urlBase) {		
+	public boolean getFichaComercialFotosAgrupacion(Long id) {		
 		
-	return downloadFotos(activoAgrupacionApi.getFotosAgrupacionById(id),urlBase);
+		return activoAgrupacionApi.reloadFotosAgrupacionById(id);
 	
 	}
 	

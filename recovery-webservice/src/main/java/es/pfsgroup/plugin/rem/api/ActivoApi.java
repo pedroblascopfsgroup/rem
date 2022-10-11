@@ -1508,4 +1508,6 @@ public interface ActivoApi {
 	Boolean updateActivoBbvaUicProp(DtoActivoBbvaUic dto)throws Exception;
 
 	Activo getActivoMatrizIfIsUA(Long idActivo);
+
+	boolean reloadFotosActivoById(Long id);
 }

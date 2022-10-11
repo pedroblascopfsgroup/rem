@@ -66,6 +66,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
+import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
@@ -218,6 +219,7 @@ import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dto.ActivoCrearPeticionTrabajoDto;
 import es.pfsgroup.plugin.rem.rest.dto.ActivoDto;
 import es.pfsgroup.plugin.rem.rest.dto.File;
+import es.pfsgroup.plugin.rem.rest.dto.FileListResponse;
 import es.pfsgroup.plugin.rem.rest.dto.FileResponse;
 import es.pfsgroup.plugin.rem.rest.dto.HistoricoPropuestasPreciosDto;
 import es.pfsgroup.plugin.rem.rest.dto.PortalesDto;
@@ -402,6 +404,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	
 	@Autowired
 	private ProveedoresApi proveedorApi;
+
+	@Autowired
+	private HibernateUtils hibernateUtils;
 
 	@Override
 	public String managerName() {
@@ -10030,6 +10035,47 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			logger.error("Error en activoManager", e);
 			return false;
 		}
+	}
+	
+	@Override
+	@Transactional(readOnly = false)	
+	public boolean reloadFotosActivoById(Long id) {
+
+		Activo activo = get(id);
+		if(activo != null && activoDao.isUnidadAlquilable(id)) {
+			ActivoAgrupacion activoAgrupacion = activoDao.getAgrupacionPAByIdActivo(id);
+			if(activoAgrupacion != null) {
+				Activo activoMatriz = activoDao.getActivoById(activoDao.getIdActivoMatriz(activoAgrupacion.getId()));
+				if(activoMatriz != null) {
+					id = activoMatriz.getId();
+					activo = activoMatriz;
+				}
+			}
+		}
+		
+
+		if (activo != null) {
+			if (gestorDocumentalFotos.isActive()) {
+				FileListResponse fileListResponse = null;
+				try {
+					fileListResponse = gestorDocumentalFotos.get(PROPIEDAD.ACTIVO, activo.getNumActivo());
+
+					if (fileListResponse.getError() == null || fileListResponse.getError().isEmpty()) {
+						for (es.pfsgroup.plugin.rem.rest.dto.File fileGD : fileListResponse.getData()) {
+							uploadFoto(fileGD);
+						}
+		
+						hibernateUtils.flushSession();
+					}
+				} catch (Exception e) {
+					logger.error("Error obteniendo las fotos del CDN", e);
+					return false;
+				}
+			}
+		}
+		
+		return true;
+
 	}
 }
 

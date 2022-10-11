@@ -372,9 +372,9 @@ public interface GenericApi {
 	
 	List<DDEstadoAdmision> getComboEstadoAdmisionFiltrado(Set<String> tipoEstadoAdmisionCodigo);
 
-	List<ImagenWebDto> getFichaComercialFotosActivo(Long id, String urlBase);
+	boolean getFichaComercialFotosActivo(Long id);
 	
-	List<ImagenWebDto> getFichaComercialFotosAgrupacion(Long id, String urlBase);
+	boolean getFichaComercialFotosAgrupacion(Long id);
 	
 	List<DDTipoDocumentoActivoDto> getDiccionarioTiposDocumentoBySubtipoTrabajo(String subtipoTrabajo,String entidad);
 	

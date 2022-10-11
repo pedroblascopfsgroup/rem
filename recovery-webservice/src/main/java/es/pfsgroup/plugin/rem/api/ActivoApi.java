@@ -1515,4 +1515,6 @@ public interface ActivoApi {
 	void saveOrUpdateOrganismo(Long idActivo, DtoOrganismos dto);
 	
 	Activo getActivoMatrizIfIsUA(Long idActivo);
+
+	boolean reloadFotosActivoById(Long id);
 }

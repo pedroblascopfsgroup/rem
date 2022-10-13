@@ -22,6 +22,7 @@
 --##        0.10 Corrección cálculo para PEP Tarifa plana Prorrata 0% y Tarifa plana Prorrata 100% - [HREOS-17495] - Alejandra García
 --##        0.11 Quitar la versión 1.10 - [HREOS-17704] - Alejandra García
 --##        0.12 Quitar cálculo primera toma de posesion en la ETG- [HREOS-17802] - Alejandra García
+--##        0.13 Añadido pro_id al order by del row_number en caso de que sea mayor a 2022 - [REMVIP-12105] - Juan Bautista Alfonso
 --##########################################
 --*/
 
@@ -71,7 +72,13 @@ BEGIN
                           WHEN NVL(GLD.GLD_IMPORTE_TOTAL, 0) > 0 THEN ETG.COSBAC_POS
                           ELSE ETG.COSBAC_NEG
                         END AS COD_SUBTIPO_ACCION
-                      , ROW_NUMBER() OVER(PARTITION BY GPV.GPV_NUM_GASTO_HAYA, AUX.ID_ACTIVO_ESPECIAL, AUX.LINEA_GASTO ORDER BY ETG.DD_SCM_ID DESC NULLS LAST) RN
+                      , ROW_NUMBER() OVER(PARTITION BY GPV.GPV_NUM_GASTO_HAYA, AUX.ID_ACTIVO_ESPECIAL, AUX.LINEA_GASTO 
+                      ORDER BY 
+                      CASE WHEN TO_NUMBER(EJE.EJE_ANYO)>=2022 THEN ETG.PRO_ID
+                      ELSE NULL
+                      END,
+                      ETG.DD_SCM_ID DESC NULLS LAST
+                      ) RN
                 FROM '|| V_ESQUEMA ||'.APR_AUX_I_RU_LFACT_SIN_PROV AUX
                 JOIN '|| V_ESQUEMA ||'.GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_NUM_GASTO_HAYA = AUX.FAC_ID_REM
                     AND GPV.BORRADO = 0
@@ -202,7 +209,13 @@ BEGIN
                           WHEN NVL(GLD.GLD_IMPORTE_TOTAL, 0) > 0 THEN ETG.COSBAC_POS
                           ELSE ETG.COSBAC_NEG
                         END AS COD_SUBTIPO_GASTO
-                      , ROW_NUMBER() OVER(PARTITION BY GPV.GPV_NUM_GASTO_HAYA, AUX.ID_ACTIVO_ESPECIAL, AUX.LINEA_GASTO ORDER BY ETG.DD_SCM_ID DESC NULLS LAST) RN
+                      , ROW_NUMBER() OVER(PARTITION BY GPV.GPV_NUM_GASTO_HAYA, AUX.ID_ACTIVO_ESPECIAL, AUX.LINEA_GASTO 
+                      ORDER BY 
+                      CASE WHEN TO_NUMBER(EJE.EJE_ANYO)>=2022 THEN ETG.PRO_ID
+                      ELSE NULL
+                      END,
+                      ETG.DD_SCM_ID DESC NULLS LAST
+                      ) RN
                 FROM '|| V_ESQUEMA ||'.APR_AUX_I_RU_FACT_PROV AUX
                 JOIN '|| V_ESQUEMA ||'.GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_NUM_GASTO_HAYA = AUX.FAC_ID_REM
                     AND GPV.BORRADO = 0

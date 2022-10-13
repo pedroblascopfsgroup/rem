@@ -1256,7 +1256,7 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 			if (isUA) {
 				if (ua.getId() == activoActual.getId()) {
 					if(!Checks.esNulo(activoDto.getSuperficieConstruida())) {
-						ua.getInfoRegistral().getInfoRegistralBien().setSuperficieConstruida(BigDecimal.valueOf(Long.parseLong(activoDto.getSuperficieConstruida())));
+						ua.getInfoRegistral().getInfoRegistralBien().setSuperficieConstruida(BigDecimal.valueOf(Double.valueOf(activoDto.getSuperficieConstruida())));
 					}
 					if(!Checks.esNulo(activoDto.getSuperficieUtil())) {
 						ua.getInfoRegistral().setSuperficieUtil(Float.valueOf(activoDto.getSuperficieUtil()));

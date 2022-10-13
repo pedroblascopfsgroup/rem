@@ -26,26 +26,20 @@ Ext.define('HreRem.view.activos.detalle.ContratosPatrimonio', {
         var items= [
 			{   
 				xtype:'fieldsettable', //BLOQUE ESTADO DE ARRENDAMIENTO
-				//defaultType : 'displayfieldbase',
-		        title: HreRem.i18n('title.fieldset.contrato.estado.patrimonio'),
-				layout : {
-					type : 'table',
-					columns : 1
-				},
+				title: HreRem.i18n('title.fieldset.contrato.estado.patrimonio'),
 				items :
 					[	{
 							xtype: 'displayfieldbase',
 							bind: {hidden: '{!contrato.multiplesResultados}', value: HreRem.i18n('msg.error.informacion.duplicada')},
 		                	fieldStyle: 'color:#ff0000; padding-top: 4px; text-align:right; font-weight: bold; font-size: 12px',
+		                	colspan : 3,
 							readOnly: true
 						},
 						{
-							xtype:'fieldset',
+							xtype:'fieldsettable',
 							defaultType: 'textfieldbase',
-							layout : {
-								type : 'table',
-								columns : 3
-							},
+							collapsible: false,
+							colspan : 3,
 							items : 
 								[
 									{ //Fecha última actualización
@@ -53,20 +47,15 @@ Ext.define('HreRem.view.activos.detalle.ContratosPatrimonio', {
 										formatter: 'date("d/m/Y")',
 										fieldLabel : HreRem.i18n('fieldlabel.fecha.ultima.actualizacion'),
 										bind : '{contrato.fechaCreacion}',
+										colspan : 3,
 										readOnly : true
-									},
-									{
-										//Espacio en blanco
-									},
-									{
-										//Espacio en blanco
 									},
 									{ //Número de contrato
 										xtype : 'displayfieldbase',
 										fieldLabel : HreRem.i18n('fieldlabel.numero.contrato.alquiler'),
 										bind : '{contrato.idContrato}',
+										colspan : 1,
 										readOnly : true
-										
 									},
 									{ //Número de contrato antiguo
 										xtype : 'displayfieldbase',
@@ -75,14 +64,15 @@ Ext.define('HreRem.view.activos.detalle.ContratosPatrimonio', {
 												hidden : '{!contrato.esDivarian}',
 												value: '{contrato.idContratoAntiguo}'
 											},
+										colspan : 1,
 										readOnly : true
-										
 									},
 									{ 
 										//Inquilino
 										xtype : 'displayfieldbase',
 										fieldLabel : HreRem.i18n('fieldlabel.patrimonio.contrato.inquilino'),
 										bind : '{contrato.inquilino}',
+										colspan : 1,
 										readOnly : true
 									},
 									{ 	//Renta
@@ -90,6 +80,7 @@ Ext.define('HreRem.view.activos.detalle.ContratosPatrimonio', {
 										xtype : 'displayfieldbase',
 										fieldLabel : HreRem.i18n('fieldlabel.renta.contrato'),
 										bind : '{contrato.cuota}',
+										colspan : 1,
 										readOnly : true
 									},
 									{ //Fecha firma
@@ -97,6 +88,7 @@ Ext.define('HreRem.view.activos.detalle.ContratosPatrimonio', {
 										formatter: 'date("d/m/Y")',
 										fieldLabel : HreRem.i18n('fieldlabel.fecha.firma'),
 										bind : '{contrato.fechaFirma}',
+										colspan : 1,
 										readOnly : true
 									},
 									{ //Fecha de finalización del contrato
@@ -104,13 +96,72 @@ Ext.define('HreRem.view.activos.detalle.ContratosPatrimonio', {
 										formatter: 'date("d/m/Y")',
 										fieldLabel : HreRem.i18n('title.fieldset.contrato.finalizacion'),
 										bind : '{contrato.fechaFinContrato}',
+										colspan : 1,
 										readOnly : true
 									},
 									{ //Estado del contrato
 										xtype : 'displayfieldbase',
 										fieldLabel : HreRem.i18n('fieldlabel.estado.contrato'),
 										bind : '{contrato.estadoContrato}',
+										colspan : 1,
 										readOnly : true
+									},
+									{
+										xtype: 'comboboxfieldbasedd',
+										fieldLabel: HreRem.i18n('fieldlabel.suborigen.contrato'),
+										reference: 'cesionDeUsoRef',
+										bind: {
+											readOnly: true,
+											store: '{comboSuborigenContrato}',
+											value: '{contrato.suborigenContrato}',
+											rawValue: '{contrato.suborigenContratoDescripcion}'
+										},
+										colspan : 1
+									},
+									{
+										xtype:'datefieldbase',
+										formatter: 'date("d/m/Y")',
+										fieldLabel : HreRem.i18n('fieldlabel.obligado.cumplimiento'),
+										bind : {
+											value: '{contrato.fechaObligadoCumplimiento}'
+										},
+										colspan : 1,
+										readOnly : true
+									},
+									{
+										xtype : 'currencyfieldbase',
+										fieldLabel: HreRem.i18n('fieldlabel.fianza.obligatoria'),
+										bind: {
+											value: '{contrato.fianzaObligatoria}'
+										},
+										colspan : 1
+									},
+									{
+										xtype:'datefieldbase',
+										formatter: 'date("d/m/Y")',
+										fieldLabel : HreRem.i18n('fieldlabel.fecha.registro.aval.bancario'),
+										bind : {
+											value: '{contrato.fechaAvalBancario}'
+										},
+										colspan : 1,
+										readOnly : true
+									},
+									{
+										xtype : 'currencyfieldbase',
+										fieldLabel: HreRem.i18n('fieldlabel.importe.aval.bancario'),
+										bind: {
+											value: '{contrato.importeAvalBancario}'
+										},
+										colspan : 1
+									},
+									{
+										xtype : 'currencyfieldbase',
+										fieldLabel: HreRem.i18n('fieldlabel.importe.deposito.bancario'),
+										colspan: 1,
+										bind: {
+											value: '{contrato.importeDepositoBancario}'
+										},
+										colspan : 1
 									},
 									{ //Oferta REM
 										xtype : 'displayfieldbase',
@@ -118,7 +169,7 @@ Ext.define('HreRem.view.activos.detalle.ContratosPatrimonio', {
 										bind: {
 			                            	value: '<div style="color: #26607c">' + '{contrato.ofertaREM}' + '</div>'
 			                            },
-			                            colspan : 2,
+			                            colspan : 1,
 			                            style: 'background: transparent; border: none;',
 			                            handleMouseEvents: true,
 										listeners: {
@@ -131,45 +182,37 @@ Ext.define('HreRem.view.activos.detalle.ContratosPatrimonio', {
 			   								}
 										},
 										readOnly : true
-									},
-									{
-										//Espacio en blanco
-
-									},
-									{
-										//Espacio en blanco
 									}
 								]
 						},
 						{
-							layout : {
-								type : 'table',
-								columns : 2
-							},
+							xtype:'fieldsettable',
+							collapsible: false,
 							items : 
 								[
 									{ //BLOQUE DEUDA ACTUAL
-										xtype : 'fieldset',
-										title: HreRem.i18n('title.patrimonio.contrato.deuda.actual'),
-										height : 350,
-										width : 350,
-										margin : '0 10 10 0',
-										layout : {
-											type : 'table',
-											columns : 1
+										xtype:'fieldset',
+										height: 320,
+										margin: '0 10 10 0',
+										layout: {
+									        type: 'table',
+											columns: 1
 										},
-										defaultType : 'displayfieldbase',
+										defaultType: 'textfieldbase',
+										title: HreRem.i18n('title.patrimonio.contrato.deuda.actual'),
 										items : [
 											{
 												xtype : 'displayfieldbase',
 												fieldLabel : HreRem.i18n('title.patrimonio.contrato.deuda.actual'),
 												bind : '{contrato.deudaPendiente}',
+												colspan : 1,
 												readOnly : true
 											},
 											{
 												xtype : 'displayfieldbase',
 												fieldLabel : HreRem.i18n('title.fieldlabel.patrimonio.contrato.recibos.adeudados'),
 												bind : '{contrato.recibosPendientes}',
+												colspan : 1,
 												readOnly : true
 											},
 											{
@@ -178,6 +221,7 @@ Ext.define('HreRem.view.activos.detalle.ContratosPatrimonio', {
 												formatter: 'date("d/m/Y")',
 												fieldLabel : HreRem.i18n('title.fieldlabel.patrimonio.fecha.ultimo.recibo.adeudado'),
 												bind : '{contrato.ultimoReciboAdeudado}',
+												colspan : 1,
 												readOnly : true
 											},
 											{
@@ -186,6 +230,7 @@ Ext.define('HreRem.view.activos.detalle.ContratosPatrimonio', {
 												formatter: 'date("d/m/Y")',
 												fieldLabel : HreRem.i18n('title.fieldlabel.patrimonio.fecha.ultimo.recibo.pagado'),
 												bind : '{contrato.ultimoReciboPagado}',
+												colspan : 1,
 												readOnly : true
 											
 											}
@@ -193,16 +238,15 @@ Ext.define('HreRem.view.activos.detalle.ContratosPatrimonio', {
 								},
 								{ //BLOQUE ACTIVOS RELACIONADOS
 									xtype:'fieldsettable',
-									title: HreRem.i18n('title.patrimonio.contrato.activos.relacionados'),
-									height : 350,
 									collapsible: false,
+									height: 320,
+									margin: '0 10 10 0',
+									title: HreRem.i18n('title.patrimonio.contrato.activos.relacionados'),
 									items : [{
-										 xtype: 'gridBase',
-										 height: 300,
+										 xtype : 'gridBase',
 										 bind: {
 								                store: '{storeActivosAsociados}'
 								         },
-										 colspan: 3,
 										 columns: 
 											 [{	  
 									            text: HreRem.i18n('header.patrimonio.contrato.id.haya'),				            

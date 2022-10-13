@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Juan Bautista Alfonso
---## FECHA_CREACION=20220714
+--## FECHA_CREACION=20220923
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-12064
@@ -40,7 +40,7 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-		T_TIPO_DATA('18','suncapital' ,'SunCapital' ,'SunCapital', 'SUNCAPITAL','110251991','0','null','suncapital','null','null')
+		T_TIPO_DATA('18','suncapital' ,'SunCapital' ,'SunCapital', 'SUNCAPITAL','110251991','1020362','null','suncapital','null','null')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

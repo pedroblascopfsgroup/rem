@@ -1,35 +1,12 @@
 package es.pfsgroup.framework.paradise.bulkUpload.utils.impl;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.annotation.Resource;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.message.MessageService;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
-import es.pfsgroup.framework.paradise.bulkUpload.api.ExcelRepoApi;
 import es.pfsgroup.framework.paradise.bulkUpload.api.MSVProcesoApi;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
-import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVBusinessCompositeValidators;
-import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVBusinessValidationFactory;
-import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVBusinessValidationRunner;
-import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVBusinessValidators;
-import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVValidationResult;
+import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.*;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.types.MSVColumnValidator;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.types.MSVMultiColumnValidator;
 import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVDtoValidacion;
@@ -37,6 +14,17 @@ import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVExcelFileItemDto;
 import es.pfsgroup.framework.paradise.bulkUpload.dto.ResultadoValidacion;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
+import java.io.File;
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.*;
+import java.util.Map.Entry;
 
 @Component
 public class MSVActualizadorPublicadoAlquilerExcelValidator extends MSVExcelValidatorAbstract {
@@ -516,7 +504,7 @@ public class MSVActualizadorPublicadoAlquilerExcelValidator extends MSVExcelVali
 				listaFilas.add(i);
 				logger.error(e.getMessage());
 			} catch (Exception e) {
-				listaFilas.add(0);
+				listaFilas.add(i);
 				logger.error(e.getMessage());
 			}
 		}

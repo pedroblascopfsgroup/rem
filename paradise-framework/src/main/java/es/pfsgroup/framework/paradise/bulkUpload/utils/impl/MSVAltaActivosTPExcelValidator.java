@@ -52,7 +52,6 @@ public class MSVAltaActivosTPExcelValidator extends MSVExcelValidatorAbstract{
 	public static final String SUBCARTERA_NOT_EXISTS = "La subcartera no existe";
 	public static final String SUBTIPO_TITULO_IS_NULL = "El subtipo de título del activo no puede estar vacío.";
 	public static final String SUBTIPO_TITULO_NOT_EXISTS = "El código subtipo de título del activo indicado no existe";
-	public static final String NUM_ACT_EXTERNO_IS_NULL = "El número de activo externo no puede estar vacío";
 	public static final String TIPO_ACTIVO_IS_NULL = "El tipo de activo no puede estar vacío.";
 	public static final String TIPO_ACTIVO_NOT_EXISTS = "El tipo de activo no existe";
 	public static final String SUBTIPO_ACTIVO_IS_NULL = "El subtipo de activo no puede estar vacío.";
@@ -152,101 +151,100 @@ public class MSVAltaActivosTPExcelValidator extends MSVExcelValidatorAbstract{
 		static final int NUM_ACTIVO_HAYA = 0;
 		static final int COD_CARTERA = 1;
 		static final int COD_SUBTIPO_TITULO = 2;
-		static final int NUM_ACTIVO_EXTERNO = 3;
-		static final int COD_TIPO_ACTIVO = 4;
-		static final int COD_SUBTIPO_ACTIVO = 5;
-		static final int COD_ESTADO_FISICO = 6;
-		static final int COD_USO_DOMINANTE = 7;
-		static final int DESC_ACTIVO = 8;
+		static final int COD_TIPO_ACTIVO = 3;
+		static final int COD_SUBTIPO_ACTIVO = 4;
+		static final int COD_ESTADO_FISICO = 5;
+		static final int COD_USO_DOMINANTE = 6;
+		static final int DESC_ACTIVO = 7;
 		
 		//Dirección
-		static final int COD_TIPO_VIA = 9;
-		static final int NOMBRE_VIA = 10;
-		static final int NUM_VIA = 11;
-		static final int ESCALERA = 12;
-		static final int PLANTA = 13;
-		static final int PUERTA = 14;
-		static final int COD_PROVINCIA = 15;
-		static final int COD_MUNICIPIO = 16;
-		static final int COD_UNIDAD_MUNICIPIO = 17;
-		static final int CODPOSTAL = 18;
+		static final int COD_TIPO_VIA = 8;
+		static final int NOMBRE_VIA = 9;
+		static final int NUM_VIA = 10;
+		static final int ESCALERA = 11;
+		static final int PLANTA = 12;
+		static final int PUERTA = 13;
+		static final int COD_PROVINCIA = 14;
+		static final int COD_MUNICIPIO = 15;
+		static final int COD_UNIDAD_MUNICIPIO = 16;
+		static final int CODPOSTAL = 17;
 		
 		//Comercializacion
-		static final int COD_DESTINO_COMER = 19;
-		static final int COD_TIPO_ALQUILER = 20;
-		static final int COD_TIPO_DE_COMERCIALIZACION = 21;
+		static final int COD_DESTINO_COMER = 18;
+		static final int COD_TIPO_ALQUILER = 19;
+		static final int COD_TIPO_DE_COMERCIALIZACION = 20;
 		
 		//Inscripción
-		static final int POBL_REGISTRO = 22;
-		static final int NUM_REGISTRO = 23;
-		static final int TOMO = 24;
-		static final int LIBRO = 25;
-		static final int FOLIO = 26;
-		static final int FINCA = 27;
-		static final int IDUFIR_CRU = 28;
-		static final int SUPERFICIE_CONSTRUIDA_M2 = 29;
-		static final int SUPERFICIE_UTIL_M2 = 30;
-		static final int SUPERFICIE_REPERCUSION_EE_CC = 31;
-		static final int PARCELA = 32; // (INCLUIDA OCUPADA EDIFICACION)
-		static final int ES_INTEGRADO_DIV_HORIZONTAL = 33;
+		static final int POBL_REGISTRO = 21;
+		static final int NUM_REGISTRO = 22;
+		static final int TOMO = 23;
+		static final int LIBRO = 24;
+		static final int FOLIO = 25;
+		static final int FINCA = 26;
+		static final int IDUFIR_CRU = 27;
+		static final int SUPERFICIE_CONSTRUIDA_M2 = 28;
+		static final int SUPERFICIE_UTIL_M2 = 29;
+		static final int SUPERFICIE_REPERCUSION_EE_CC = 30;
+		static final int PARCELA = 31; // (INCLUIDA OCUPADA EDIFICACION)
+		static final int ES_INTEGRADO_DIV_HORIZONTAL = 32;
 		
 		//Titulo
-		static final int NIF_PROPIETARIO = 34;
-		static final int GRADO_PROPIEDAD = 35;
-		static final int PERCENT_PROPIEDAD = 36;
-		static final int PROP_ANTERIOR = 37;
+		static final int NIF_PROPIETARIO = 33;
+		static final int GRADO_PROPIEDAD = 34;
+		static final int PERCENT_PROPIEDAD = 35;
+		static final int PROP_ANTERIOR = 36;
 		
 		//
-		static final int REF_CATASTRAL = 38;
-		static final int VPO = 39;
-		static final int CALIFICACION_CEE = 40;
-		static final int CED_HABITABILIDAD = 41;
+		static final int REF_CATASTRAL = 37;
+		static final int VPO = 38;
+		static final int CALIFICACION_CEE = 39;
+		static final int CED_HABITABILIDAD = 40;
 		
 		//Información publicación
-		static final int NIF_MEDIADOR = 42;
-		static final int VIVIENDA_NUM_PLANTAS = 43;
-		static final int VIVIENDA_NUM_BANYOS = 44;
-		static final int VIVIENDA_NUM_ASEOS = 45;
-		static final int VIVIENDA_NUM_DORMITORIOS = 46;
-		static final int TRASTERO_ANEJO = 47;
-		static final int GARAJE_ANEJO = 48;
-		static final int ASCENSOR = 49;
+		static final int NIF_MEDIADOR = 41;
+		static final int VIVIENDA_NUM_PLANTAS = 42;
+		static final int VIVIENDA_NUM_BANYOS = 43;
+		static final int VIVIENDA_NUM_ASEOS = 44;
+		static final int VIVIENDA_NUM_DORMITORIOS = 45;
+		static final int TRASTERO_ANEJO = 46;
+		static final int GARAJE_ANEJO = 47;
+		static final int ASCENSOR = 48;
 		
 		//Información precios
-		static final int PRECIO_MINIMO = 50;
-		static final int PRECIO_VENTA_WEB = 51;
-		static final int VALOR_TASACION = 52;
-		static final int FECHA_TASACION = 53;
+		static final int PRECIO_MINIMO = 49;
+		static final int PRECIO_VENTA_WEB = 50;
+		static final int VALOR_TASACION = 51;
+		static final int FECHA_TASACION = 52;
 		
 		//Gestores del activo
-		static final int GESTOR_COMERCIAL = 54;
-		static final int SUPER_GESTOR_COMERCIAL = 55;
-		static final int GESTOR_FORMALIZACION = 56;
-		static final int SUPER_GESTOR_FORMALIZACION = 57;
-		static final int GESTOR_ADMISION = 58;
-		static final int GESTOR_ACTIVOS = 59;
-		static final int GESTORIA_DE_FORMALIZACION= 60;
+		static final int GESTOR_COMERCIAL = 53;
+		static final int SUPER_GESTOR_COMERCIAL = 54;
+		static final int GESTOR_FORMALIZACION = 55;
+		static final int SUPER_GESTOR_FORMALIZACION = 56;
+		static final int GESTOR_ADMISION = 57;
+		static final int GESTOR_ACTIVOS = 58;
+		static final int GESTORIA_DE_FORMALIZACION= 59;
 		
 		//Datos relevantes admisión
-		static final int FECHA_INSCRIPCION = 61;
-		static final int FECHA_OBT_TITULO = 62;
-		static final int FECHA_TOMA_POSESION = 63;
-		static final int FECHA_LANZAMIENTO = 64;
-		static final int OCUPADO = 65;
-		static final int TIENE_TITULO = 66;
-		static final int LLAVES = 67;
-		static final int CARGAS = 68;
+		static final int FECHA_INSCRIPCION = 60;
+		static final int FECHA_OBT_TITULO = 61;
+		static final int FECHA_TOMA_POSESION = 62;
+		static final int FECHA_LANZAMIENTO = 63;
+		static final int OCUPADO = 64;
+		static final int TIENE_TITULO = 65;
+		static final int LLAVES = 66;
+		static final int CARGAS = 67;
 		
 		//
-		static final int CLASE_ACTIVO = 69;
-		static final int FORMALIZACION = 70;
+		static final int CLASE_ACTIVO = 68;
+		static final int FORMALIZACION = 69;
 		
 		//Datos propietarios
-		static final int NOMBRE_PROPIETARIO = 71;
-		static final int APELLIDO1_PROPIETARIO = 72;
-		static final int APELLIDO2_PROPIETARIO = 73;
-		static final int TIPO_PROPIETARIO = 74;
-		static final int NIF_CIF_PROPIETARIO = 75;
+		static final int NOMBRE_PROPIETARIO = 70;
+		static final int APELLIDO1_PROPIETARIO = 71;
+		static final int APELLIDO2_PROPIETARIO = 72;
+		static final int TIPO_PROPIETARIO = 73;
+		static final int NIF_CIF_PROPIETARIO = 74;
 	};
 
 	protected final Log logger = LogFactory.getLog(getClass());
@@ -297,7 +295,6 @@ public class MSVAltaActivosTPExcelValidator extends MSVExcelValidatorAbstract{
 			mapaErrores.put(SUBCARTERA_IS_NULL, isColumnNullByRows(exc, COL_NUM.COD_CARTERA));
 			mapaErrores.put(SUBCARTERA_NOT_EXISTS, subCarteraNotExistsByRows(exc,COL_NUM.COD_CARTERA));
 			mapaErrores.put(SUBTIPO_TITULO_IS_NULL, isColumnNullByRows(exc, COL_NUM.COD_SUBTIPO_TITULO));
-			mapaErrores.put(NUM_ACT_EXTERNO_IS_NULL, isColumnNullByRows(exc,COL_NUM.NUM_ACTIVO_EXTERNO));
 			mapaErrores.put(TIPO_ACTIVO_IS_NULL, isColumnNullByRows(exc, COL_NUM.COD_TIPO_ACTIVO));
 			mapaErrores.put(TIPO_ACTIVO_NOT_EXISTS, tipoActivoNotExistsByRows(exc,COL_NUM.COD_TIPO_ACTIVO));
 			mapaErrores.put(SUBTIPO_ACTIVO_IS_NULL, isColumnNullByRows(exc, COL_NUM.COD_SUBTIPO_ACTIVO));
@@ -393,7 +390,6 @@ public class MSVAltaActivosTPExcelValidator extends MSVExcelValidatorAbstract{
 					|| !mapaErrores.get(SUBCARTERA_IS_NULL).isEmpty()
 					|| !mapaErrores.get(SUBCARTERA_NOT_EXISTS).isEmpty()
 					|| !mapaErrores.get(SUBTIPO_TITULO_IS_NULL).isEmpty()
-					|| !mapaErrores.get(NUM_ACT_EXTERNO_IS_NULL).isEmpty()
 					|| !mapaErrores.get(TIPO_ACTIVO_IS_NULL).isEmpty() 
 					|| !mapaErrores.get(TIPO_ACTIVO_NOT_EXISTS).isEmpty()
 					|| !mapaErrores.get(SUBTIPO_ACTIVO_IS_NULL).isEmpty() 

@@ -61,10 +61,10 @@ public class PresupuestoTrabajo implements Serializable, Auditable {
     private DDEstadoPresupuesto estadoPresupuesto;
     
     @Column(name = "PRT_IMPORTE")
-	private Float importe;
+	private Double importe;
     
     @Column(name = "PRT_IMPORTE_CLIENTE")
-	private Float importeCliente;
+	private Double importeCliente;
     
     @Column(name = "PRT_FECHA")
   	private Date fecha;
@@ -125,11 +125,11 @@ public class PresupuestoTrabajo implements Serializable, Auditable {
 		this.estadoPresupuesto = estadoPresupuesto;
 	}
 
-	public Float getImporte() {
+	public Double getImporte() {
 		return importe;
 	}
 
-	public void setImporte(Float importe) {
+	public void setImporte(Double importe) {
 		this.importe = importe;
 	}
 
@@ -189,11 +189,11 @@ public class PresupuestoTrabajo implements Serializable, Auditable {
 		this.proveedorContacto = proveedorContacto;
 	}
 
-	public Float getImporteCliente() {
+	public Double getImporteCliente() {
 		return importeCliente;
 	}
 
-	public void setImporteCliente(Float importeCliente) {
+	public void setImporteCliente(Double importeCliente) {
 		this.importeCliente = importeCliente;
 	}
 

@@ -1850,7 +1850,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				}
 				presupuesto.setFecha(new Date());
 				presupuesto.setEstadoPresupuesto(estadoPresupuesto);
-				presupuesto.setImporte(dtoTrabajo.getImportePresupuesto().floatValue());
+				presupuesto.setImporte(dtoTrabajo.getImportePresupuesto());
 				if(dtoTrabajo.getRefImportePresupueso() != null) {
 					presupuesto.setRefPresupuestoProveedor(dtoTrabajo.getRefImportePresupueso());
 				}
@@ -2037,7 +2037,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 						}
 						presupuesto.setFecha(new Date());
 						presupuesto.setEstadoPresupuesto(estadoPresupuesto);
-						presupuesto.setImporte(dtoTrabajo.getImportePresupuesto().floatValue());
+						presupuesto.setImporte(dtoTrabajo.getImportePresupuesto());
 						if(dtoTrabajo.getRefImportePresupueso() != null) {
 							presupuesto.setRefPresupuestoProveedor(dtoTrabajo.getRefImportePresupueso());
 						}
@@ -2098,7 +2098,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 					}
 					presupuesto.setFecha(new Date());
 					presupuesto.setEstadoPresupuesto(estadoPresupuesto);
-					presupuesto.setImporte(dtoTrabajo.getImportePresupuesto().floatValue());
+					presupuesto.setImporte(dtoTrabajo.getImportePresupuesto());
 					if(dtoTrabajo.getRefImportePresupueso() != null) {
 						presupuesto.setRefPresupuestoProveedor(dtoTrabajo.getRefImportePresupueso());
 					}
@@ -2441,7 +2441,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				}
 				presupuesto.setEstadoPresupuesto(estadoPresupuesto);
 				presupuesto.setFecha(new Date());
-				presupuesto.setImporte(dtoTrabajo.getImportePresupuesto().floatValue());
+				presupuesto.setImporte(dtoTrabajo.getImportePresupuesto());
 				if(dtoTrabajo.getRefImportePresupueso() != null) {
 					presupuesto.setRefPresupuestoProveedor(dtoTrabajo.getRefImportePresupueso());
 				}

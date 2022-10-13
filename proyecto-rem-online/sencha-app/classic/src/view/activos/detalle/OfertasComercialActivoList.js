@@ -45,7 +45,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		            items: [{
 			            tooltip: HreRem.i18n('tooltip.ver.activo.agrupacion'),
 			            getClass: function(v, metadata, record ) {
-			            	if (Ext.isEmpty(record.get("numAgrupacion"))) {
+			            	if (Ext.isEmpty(record.get("idAgrupacion"))) {
 			            		return 'app-list-ico ico-ver-activov2';
 			            	}
 			            	else{

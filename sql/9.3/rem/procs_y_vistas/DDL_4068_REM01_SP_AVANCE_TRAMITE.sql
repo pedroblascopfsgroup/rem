@@ -1,7 +1,7 @@
 --/*
 --#########################################
 --## AUTOR=DAP
---## FECHA_CREACION=20220728
+--## FECHA_CREACION=20220916
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=2.0.14
 --## INCIDENCIA_LINK=REMVIP-5828
@@ -17,6 +17,7 @@
 --##        0.4 REMVIP-9773 - IVAN REPISO - ADAPTAR ASIGNACIÓN GFORM COMO REMVIP-8239
 --##        0.5 REMVIP-11103 - Juan José Sanjuan - Actualizar asignaciones de usuarios
 --##        0.6 REMVIP-12148 - IVAN REPISO - No asigna en T013_DocumentosPostVenta
+--##        0.6 REMVIP-12242 - IVAN REPISO - No asigna gruboarding 
 --#########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -192,7 +193,7 @@ BEGIN
           USING (
               SELECT DISTINCT MIG.OFR_ID, GEE.USU_ID
               FROM '||V_ESQUEMA||'.MIG2_TRAMITES_OFERTAS_REP MIG
-              JOIN '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP ON TAP.TAP_ID = MIG.TAP_ID AND TAP.TAP_CODIGO IN (''T013_PosicionamientoYFirma'', ''T017_ObtencionContratoReserva'', ''T017_PosicionamientoYFirma'', ''T017_DocsPosVenta'', ''T013_DocumentosPostVenta'' )
+              JOIN '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP ON TAP.TAP_ID = MIG.TAP_ID AND TAP.TAP_CODIGO IN (''T013_PosicionamientoYFirma'', ''T017_PosicionamientoYFirma'', ''T017_DocsPosVenta'', ''T013_DocumentosPostVenta'' )
               JOIN '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.OFR_ID = MIG.OFR_ID
               JOIN '||V_ESQUEMA||'.GCO_GESTOR_ADD_ECO GCO ON GCO.ECO_ID = ECO.ECO_ID
               JOIN '||V_ESQUEMA||'.GEE_GESTOR_ENTIDAD GEE ON GEE.GEE_ID = GCO.GEE_ID
@@ -211,7 +212,7 @@ BEGIN
           ON (T1.ACT_ID = T2.ACT_ID AND T2.RN = 1)
           WHEN MATCHED THEN UPDATE SET
             T1.USU_ID = T2.USU_ID
-          WHERE T1.USU_ID IS NULL AND T1.TAP_ID IN (SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO IN (''T013_PosicionamientoYFirma'', ''T017_ObtencionContratoReserva'', ''T017_PosicionamientoYFirma'', ''T017_DocsPosVenta'', ''T013_DocumentosPostVenta''  ))';
+          WHERE T1.USU_ID IS NULL AND T1.TAP_ID IN (SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO IN (''T013_PosicionamientoYFirma'', ''T017_PosicionamientoYFirma'', ''T017_DocsPosVenta'', ''T013_DocumentosPostVenta''  ))';
         EXECUTE IMMEDIATE V_MSQL;
         V_UPDATE := V_UPDATE + SQL%ROWCOUNT;
         PL_OUTPUT := PL_OUTPUT ||chr(10) || '   [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' actualizada (Gestoría comercialización). '||V_UPDATE||' Filas.';
@@ -221,7 +222,7 @@ BEGIN
           USING (
               SELECT DISTINCT MIG.OFR_ID, GEE.USU_ID, TGE.DD_TGE_CODIGO
               FROM '||V_ESQUEMA||'.MIG2_TRAMITES_OFERTAS_REP MIG
-              JOIN '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP ON TAP.TAP_ID = MIG.TAP_ID AND TAP.TAP_CODIGO IN (''T013_PosicionamientoYFirma'', ''T017_ObtencionContratoReserva'', ''T017_PosicionamientoYFirma'', ''T017_DocsPosVenta'' )
+              JOIN '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP ON TAP.TAP_ID = MIG.TAP_ID AND TAP.TAP_CODIGO IN (''T013_PosicionamientoYFirma'', ''T017_PosicionamientoYFirma'', ''T017_DocsPosVenta'' )
               JOIN '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.OFR_ID = MIG.OFR_ID
               JOIN '||V_ESQUEMA||'.GCO_GESTOR_ADD_ECO GCO ON GCO.ECO_ID = ECO.ECO_ID
               JOIN '||V_ESQUEMA||'.GEE_GESTOR_ENTIDAD GEE ON GEE.GEE_ID = GCO.GEE_ID
@@ -240,7 +241,7 @@ BEGIN
           ON (T1.ACT_ID = T2.ACT_ID AND T2.RN = 1)
           WHEN MATCHED THEN UPDATE SET
             T1.SUP_ID = T2.USU_ID
-          WHERE T1.SUP_ID IS NULL AND T1.TAP_ID IN (SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO IN (''T013_PosicionamientoYFirma'', ''T017_ObtencionContratoReserva'', ''T017_PosicionamientoYFirma'', ''T017_DocsPosVenta'' ))';
+          WHERE T1.SUP_ID IS NULL AND T1.TAP_ID IN (SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO IN (''T013_PosicionamientoYFirma'', ''T017_PosicionamientoYFirma'', ''T017_DocsPosVenta'' ))';
         EXECUTE IMMEDIATE V_MSQL;
         V_UPDATE := V_UPDATE + SQL%ROWCOUNT;
         PL_OUTPUT := PL_OUTPUT ||chr(10) || '   [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' actualizada (Gestor comercial). '||V_UPDATE||' Filas.';
@@ -250,7 +251,7 @@ BEGIN
           USING (
               SELECT DISTINCT MIG.OFR_ID, GEE.USU_ID
               FROM '||V_ESQUEMA||'.MIG2_TRAMITES_OFERTAS_REP MIG
-              JOIN '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP ON TAP.TAP_ID = MIG.TAP_ID AND TAP.TAP_CODIGO IN (''T013_DefinicionOferta'',''T013_InstruccionesReserva'',''T013_RespuestaOfertante'',''T013_ResolucionComite'',''T013_CierreEconomico'',''T013_ResolucionExpediente'',''T014_DefinicionOferta'',''T013_RespuestaBankiaDevolucion'',''T013_PendienteDevolucion'',''T013_RespuestaBankiaAnulacionDevolucion'', ''T017_CierreEconomico
+              JOIN '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP ON TAP.TAP_ID = MIG.TAP_ID AND TAP.TAP_CODIGO IN (''T013_DefinicionOferta''''T013_RespuestaOfertante'',''T013_ResolucionComite'',''T013_CierreEconomico'',''T013_ResolucionExpediente'',''T014_DefinicionOferta'',''T013_RespuestaBankiaDevolucion'',''T013_PendienteDevolucion'',''T013_RespuestaBankiaAnulacionDevolucion'', ''T017_CierreEconomico
   '')
               JOIN '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.OFR_ID = MIG.OFR_ID
               JOIN '||V_ESQUEMA||'.GCO_GESTOR_ADD_ECO GCO ON GCO.ECO_ID = ECO.ECO_ID
@@ -270,7 +271,7 @@ BEGIN
           ON (T1.ACT_ID = T2.ACT_ID AND T2.RN = 1)
           WHEN MATCHED THEN UPDATE SET
             T1.USU_ID = T2.USU_ID
-          WHERE T1.USU_ID IS NULL AND T1.TAP_ID IN (SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO IN (''T013_DefinicionOferta'',''T013_InstruccionesReserva'',''T013_RespuestaOfertante'',''T013_ResolucionComite'',''T013_CierreEconomico'',''T013_ResolucionExpediente'',''T014_DefinicionOferta'',''T013_RespuestaBankiaDevolucion'',''T013_PendienteDevolucion'',''T013_RespuestaBankiaAnulacionDevolucion'',  ''T017_CierreEconomico
+          WHERE T1.USU_ID IS NULL AND T1.TAP_ID IN (SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO IN (''T013_DefinicionOferta''''T013_RespuestaOfertante'',''T013_ResolucionComite'',''T013_CierreEconomico'',''T013_ResolucionExpediente'',''T014_DefinicionOferta'',''T013_RespuestaBankiaDevolucion'',''T013_PendienteDevolucion'',''T013_RespuestaBankiaAnulacionDevolucion'',  ''T017_CierreEconomico
   ''))';
         EXECUTE IMMEDIATE V_MSQL;
         V_UPDATE := V_UPDATE + SQL%ROWCOUNT;
@@ -281,7 +282,7 @@ BEGIN
           USING (
               SELECT DISTINCT MIG.OFR_ID, GEE.USU_ID, TGE.DD_TGE_CODIGO
               FROM '||V_ESQUEMA||'.MIG2_TRAMITES_OFERTAS_REP MIG
-              JOIN '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP ON TAP.TAP_ID = MIG.TAP_ID AND TAP.TAP_CODIGO IN (''T013_DefinicionOferta'',''T013_InstruccionesReserva'',''T013_RespuestaOfertante'',''T013_ResolucionComite'',''T013_CierreEconomico'',''T013_ResolucionExpediente'',''T014_DefinicionOferta'',''T013_RespuestaBankiaDevolucion'',''T013_PendienteDevolucion'',''T013_RespuestaBankiaAnulacionDevolucion'',  ''T017_CierreEconomico
+              JOIN '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP ON TAP.TAP_ID = MIG.TAP_ID AND TAP.TAP_CODIGO IN (''T013_DefinicionOferta''''T013_RespuestaOfertante'',''T013_ResolucionComite'',''T013_CierreEconomico'',''T013_ResolucionExpediente'',''T014_DefinicionOferta'',''T013_RespuestaBankiaDevolucion'',''T013_PendienteDevolucion'',''T013_RespuestaBankiaAnulacionDevolucion'',  ''T017_CierreEconomico
   '')
               JOIN '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.OFR_ID = MIG.OFR_ID
               JOIN '||V_ESQUEMA||'.GCO_GESTOR_ADD_ECO GCO ON GCO.ECO_ID = ECO.ECO_ID
@@ -301,7 +302,7 @@ BEGIN
           ON (T1.ACT_ID = T2.ACT_ID AND T2.RN = 1)
           WHEN MATCHED THEN UPDATE SET
             T1.SUP_ID = T2.USU_ID
-          WHERE T1.SUP_ID IS NULL AND T1.TAP_ID IN (SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO IN (''T013_DefinicionOferta'',''T013_InstruccionesReserva'',''T013_RespuestaOfertante'',''T013_ResolucionComite'',''T013_CierreEconomico'',''T013_ResolucionExpediente'',''T014_DefinicionOferta'',''T013_RespuestaBankiaDevolucion'',''T013_PendienteDevolucion'',''T013_RespuestaBankiaAnulacionDevolucion'',  ''T017_CierreEconomico
+          WHERE T1.SUP_ID IS NULL AND T1.TAP_ID IN (SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO IN (''T013_DefinicionOferta''''T013_RespuestaOfertante'',''T013_ResolucionComite'',''T013_CierreEconomico'',''T013_ResolucionExpediente'',''T014_DefinicionOferta'',''T013_RespuestaBankiaDevolucion'',''T013_PendienteDevolucion'',''T013_RespuestaBankiaAnulacionDevolucion'',  ''T017_CierreEconomico
   ''))';
         EXECUTE IMMEDIATE V_MSQL;
         V_UPDATE := V_UPDATE + SQL%ROWCOUNT;
@@ -605,7 +606,7 @@ BEGIN
           USING (
               SELECT DISTINCT MIG.OFR_ID, GEE.USU_ID
               FROM '||V_ESQUEMA||'.MIG2_TRAMITES_OFERTAS_REP MIG
-              JOIN '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP ON TAP.TAP_ID = MIG.TAP_ID AND TAP.TAP_CODIGO IN ( ''T017_DefinicionOferta'', ''T017_RespuestaOfertantePM'', ''T017_RespuestaOfertanteCES'', ''T017_ResolucionExpediente'', ''T017_InstruccionesReserva'', ''T017_ResolucionCES'', ''T017_RecomendCES'', ''T017_ResolucionPROManzana'' )
+              JOIN '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP ON TAP.TAP_ID = MIG.TAP_ID AND TAP.TAP_CODIGO IN ( ''T017_DefinicionOferta'', ''T017_RespuestaOfertantePM'', ''T017_RespuestaOfertanteCES'', ''T017_ResolucionExpediente'', ''T017_ResolucionCES'', ''T017_RecomendCES'', ''T017_ResolucionPROManzana'' )
               JOIN '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.OFR_ID = MIG.OFR_ID
               JOIN '||V_ESQUEMA||'.GCO_GESTOR_ADD_ECO GCO ON GCO.ECO_ID = ECO.ECO_ID
               JOIN '||V_ESQUEMA||'.GEE_GESTOR_ENTIDAD GEE ON GEE.GEE_ID = GCO.GEE_ID
@@ -624,7 +625,7 @@ BEGIN
           ON (T1.ACT_ID = T2.ACT_ID AND T2.RN = 1)
           WHEN MATCHED THEN UPDATE SET
             T1.USU_ID = T2.USU_ID
-          WHERE T1.USU_ID IS NULL AND T1.TAP_ID IN (SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO IN ( ''T017_DefinicionOferta'', ''T017_RespuestaOfertantePM'', ''T017_RespuestaOfertanteCES'', ''T017_ResolucionExpediente'', ''T017_InstruccionesReserva'', ''T017_ResolucionCES'', ''T017_RecomendCES'', ''T017_ResolucionPROManzana'' ) )';
+          WHERE T1.USU_ID IS NULL AND T1.TAP_ID IN (SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO IN ( ''T017_DefinicionOferta'', ''T017_RespuestaOfertantePM'', ''T017_RespuestaOfertanteCES'', ''T017_ResolucionExpediente'', ''T017_ResolucionCES'', ''T017_RecomendCES'', ''T017_ResolucionPROManzana'' ) )';
         EXECUTE IMMEDIATE V_MSQL;
         V_UPDATE := V_UPDATE + SQL%ROWCOUNT;
         PL_OUTPUT := PL_OUTPUT ||chr(10) || '   [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' actualizada (Gestor comercial de back office inmobiliario). '||V_UPDATE||' Filas.';
@@ -634,7 +635,7 @@ BEGIN
           USING (
               SELECT DISTINCT MIG.OFR_ID, GEE.USU_ID, TGE.DD_TGE_CODIGO
               FROM '||V_ESQUEMA||'.MIG2_TRAMITES_OFERTAS_REP MIG
-              JOIN '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP ON TAP.TAP_ID = MIG.TAP_ID AND TAP.TAP_CODIGO IN ( ''T017_DefinicionOferta'', ''T017_RespuestaOfertantePM'', ''T017_RespuestaOfertanteCES'', ''T017_ResolucionExpediente'', ''T017_InstruccionesReserva'', ''T017_ResolucionCES'', ''T017_RecomendCES'', ''T017_ResolucionPROManzana'' )
+              JOIN '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP ON TAP.TAP_ID = MIG.TAP_ID AND TAP.TAP_CODIGO IN ( ''T017_DefinicionOferta'', ''T017_RespuestaOfertantePM'', ''T017_RespuestaOfertanteCES'', ''T017_ResolucionExpediente'', ''T017_ResolucionCES'', ''T017_RecomendCES'', ''T017_ResolucionPROManzana'' )
               JOIN '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.OFR_ID = MIG.OFR_ID
               JOIN '||V_ESQUEMA||'.GCO_GESTOR_ADD_ECO GCO ON GCO.ECO_ID = ECO.ECO_ID
               JOIN '||V_ESQUEMA||'.GEE_GESTOR_ENTIDAD GEE ON GEE.GEE_ID = GCO.GEE_ID
@@ -653,10 +654,23 @@ BEGIN
           ON (T1.ACT_ID = T2.ACT_ID AND T2.RN = 1)
           WHEN MATCHED THEN UPDATE SET
             T1.SUP_ID = T2.USU_ID
-          WHERE T1.SUP_ID IS NULL AND T1.TAP_ID IN (SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO IN ( ''T017_DefinicionOferta'', ''T017_RespuestaOfertantePM'', ''T017_RespuestaOfertanteCES'', ''T017_ResolucionExpediente'', ''T017_InstruccionesReserva'', ''T017_ResolucionCES'', ''T017_RecomendCES'', ''T017_ResolucionPROManzana'' ) )';
+          WHERE T1.SUP_ID IS NULL AND T1.TAP_ID IN (SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO IN ( ''T017_DefinicionOferta'', ''T017_RespuestaOfertantePM'', ''T017_RespuestaOfertanteCES'', ''T017_ResolucionExpediente'', ''T017_ResolucionCES'', ''T017_RecomendCES'', ''T017_ResolucionPROManzana'' ) )';
         EXECUTE IMMEDIATE V_MSQL;
         V_UPDATE := V_UPDATE + SQL%ROWCOUNT;
         PL_OUTPUT := PL_OUTPUT ||chr(10) || '   [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' actualizada (Supervisor Comercial BackOffice Inmobiliario). '||V_UPDATE||' Filas.';
+
+        V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.MIG2_TRAMITES_OFERTAS_REP T1
+          USING (
+              SELECT DISTINCT MIG.OFR_ID
+              FROM '||V_ESQUEMA||'.MIG2_TRAMITES_OFERTAS_REP MIG
+              JOIN '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP ON TAP.TAP_ID = MIG.TAP_ID AND TAP.TAP_CODIGO IN ( ''T013_InstruccionesReserva'', ''T017_InstruccionesReserva'', ''T013_ObtencionContratoReserva'', ''T017_ObtencionContratoReserva'')
+            ) T2
+          ON (T1.OFR_ID = T2.OFR_ID)
+          WHEN MATCHED THEN UPDATE SET
+              T1.USU_ID = (SELECT USU_ID FROM REMMASTER.USU_USUARIOS WHERE USU_USERNAME = ''gruboarding'')';
+        EXECUTE IMMEDIATE V_MSQL;
+        V_UPDATE := SQL%ROWCOUNT;
+        PL_OUTPUT := PL_OUTPUT ||chr(10) || '   [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' actualizada (Grupo boarding). '||V_UPDATE||' Filas.';
 
 
 

@@ -1,26 +1,16 @@
 package es.pfsgroup.framework.paradise.bulkUpload.api.impl;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
-import java.util.zip.Checksum;
-
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-
 import es.capgemini.devon.beans.Service;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.util.*;
 
 @Service
 @Transactional()
@@ -5903,7 +5893,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 			listaAgrupaciones.add(numAgrup.longValue());
 		}
 		
-		return listaAgrupaciones.isEmpty() ? null: listaAgrupaciones;
+		return listaAgrupaciones;
 	}
 	
 	@Override
@@ -7100,16 +7090,18 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean relacionEstadoSubestadoAdmisionValido(String codEstadoAdmision, String codSubestadoAdmision) {
-		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("codEstadoAdmision", codEstadoAdmision);
-		params.put("codSubestadoAdmision", codSubestadoAdmision);
-		rawDao.addParams(params);
 		
 		if(codEstadoAdmision == null) {
 			return false;
 		}
 		
 		if(estadoConSubestadosAdmisionValido(codEstadoAdmision)) {
+		
+			Map<String, Object> params = new HashMap<String, Object>();
+			params.put("codEstadoAdmision", codEstadoAdmision);
+			params.put("codSubestadoAdmision", codSubestadoAdmision);
+			rawDao.addParams(params);
+			
 			String resultado = rawDao.getExecuteSQL(
 					"SELECT COUNT(1) FROM DD_SAA_SUBESTADO_ACT_ADMISION SAA "
 					+ "JOIN DD_EAA_ESTADO_ACT_ADMISION EAA ON SAA.DD_EAA_ID = EAA.DD_EAA_ID " 

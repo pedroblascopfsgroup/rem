@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alejandro Valverde
---## FECHA_CREACION=20220831
+--## FECHA_CREACION=20220929
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-18638
@@ -19,6 +19,7 @@
 --##         0.7 Alejandro Valverde (HREOS-18526) - Incidencia datos incorrectos
 --##         0.8 Santi Monzó (HREOS-18574) - Incidencia DIASCONCURRENCIA
 --##         0.9 Alejandro Valverde (HREOS-18638) - Añadir campo OFERTA_CONCURRENCIA_ACTIVA
+--##         0.10 IVAN REPISO (REMVIP-12503) - Muestra agrupacion en oferta activo
 --##########################################
 --*/
 
@@ -95,7 +96,7 @@ BEGIN
 		join '|| V_ESQUEMA ||'.act_Activo act on act.act_id = aof.act_id
 		join '|| V_ESQUEMA ||'.con_concurrencia cnc on act.act_id = cnc.act_id and ofr.con_id = cnc.con_id and cnc.borrado = 0
 		JOIN '|| V_ESQUEMA ||'.CLC_CLIENTE_COMERCIAL CLC ON CLC.CLC_ID = OFR.CLC_ID
-    LEFT JOIN ' || V_ESQUEMA || '.ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = cnc.AGR_ID AND AGR.BORRADO = 0
+    LEFT JOIN ' || V_ESQUEMA || '.ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = OFR.AGR_ID AND AGR.BORRADO = 0
 		LEFT JOIN '|| V_ESQUEMA ||'.DEP_DEPOSITO DEP ON DEP.OFR_ID = OFR.OFR_ID and DEP.borrado = 0
 		LEFT JOIN '|| V_ESQUEMA ||'.DD_EDP_EST_DEPOSITO EDP ON EDP.DD_EDP_ID = DEP.DD_EDP_ID
 		LEFT JOIN ' || V_ESQUEMA || '.ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.OFR_ID = OFR.OFR_ID

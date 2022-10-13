@@ -342,6 +342,10 @@ func-rem-reposicionamientoCalculoRiesgo|R-Caracara
 func-rem-deposito|R-Baal
 func-rem-proveedoresNoHomologables|R-Nagami
 func-rem-datosProveedores|R-Nagami
+rem_mirror|func-rem-formalizacionAlquileres
+rem_mirror|func-rem-extraccionSuperficiesAlquilables
+remvip-11238-rem|R-Caracara
+rem_mirror|version-@-rem
 remvip-11238-rem|R-Caracara
 rem_mirror|func-rem-nuevaNomenclaturaFicherosGastos
 rem_mirror|func-rem-ofrecimientosAlquilerSocialBBVA
@@ -359,5 +363,8 @@ func-rem-variosUICsPorEntidad|R-Jax
 func-rem-ofrecimientosAlquilerSocialBBVA|R-Jax
 func-rem-nuevaNomenclaturaFicherosGastos|version-2.52.0-rem
 func-rem-tdd|version-2.52.0-rem
+<<<<<<< HEAD
 func-rem-catastroV2|R-Kisame
 
+=======
+>>>>>>> func-rem-modificacionesBulk

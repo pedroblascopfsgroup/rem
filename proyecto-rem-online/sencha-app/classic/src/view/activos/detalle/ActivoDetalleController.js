@@ -133,6 +133,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		'informecomercialactivo historicomediadorgrid' : {
 			onClickPropagation : 'onClickPropagationCalificacionNegativa'
 		},
+		
+		'datosbasicosactivo activobbvauicgrid': {
+	        onClickPropagation: 'onClickPropagationCalificacionNegativa'
+	    },
 
 		'adjuntosplusvalias gridBase' : {
 			abrirFormulario : 'abrirFormularioAdjuntarDocumentosPlusvalia',
@@ -3779,8 +3783,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			me.redirectTo('activos', true);
 			me.getView().fireEvent('abrirDetalleActivoOfertas', record);
 		} else {
-			var idAgrupacion = record.get("idAgrupacion");
-			me.getView().fireEvent('abrirDetalleActivoOfertas', record);
+			record.data.id = record.get("idAgrupacion");
+			record.data.numAgrupacionRem = record.get("numActivoAgrupacion");
+			me.getView().fireEvent('abrirDetalleAgrupacion', record);
 		}
 
 	},
@@ -4111,7 +4116,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var me = this, idActivo = me.getViewModel().get('activo').id, url = $AC
 				.getRemoteUrl('activo/getActivosPropagables'), form = grid
 				.up('form');
-
 		form.mask(HreRem.i18n("msg.mask.espere"));
 
 		Ext.Ajax.request({
@@ -4679,6 +4683,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 					me.getView().fireEvent("refreshComponentOnActivate","container[reference=tabBuscadorActivos]");
 				};
 				me.saveActivo(me.createTabDataCalificacionesNegativas(activosSeleccionados, window.tabData),successFn);
+			} else if (targetGrid == 'activobbvauic') {
+				var successFn = function(record, operation) {
+					window.destroy();
+					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+					me.getView().unmask();
+					me.getView().fireEvent("refreshComponentOnActivate","container[reference=tabBuscadorActivos]");
+				};
+				me.saveActivo(me.createTabDataBbvaUic(activosSeleccionados, window.tabData),successFn);
 			}
 		}
 		window.mask("Guardando activos 1 de " + (activosSeleccionados.length + 1));
@@ -4760,6 +4772,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				} else if (targetGrid == 'condicionesespecificas') {
 					propagableData = me
 							.createTabDataCondicionesEspecificas(activos);
+					activos = []
+				} else if (targetGrid == 'activobbvauic') {
+					propagableData = me
+						.createTabDataBbvaUic(activos);
 					activos = []
 				}
 			}
@@ -8916,6 +8932,39 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			this.getViewModel().data.activo.refCatastral = store.getData().getAt(0).data.descripcion;
 		}
     },
+    
+	createTabDataBbvaUic : function(listadoActivos, records4) {
+
+		var me = this, tabData = {};
+		tabData.id = me.getViewModel().get("activo.id");
+		tabData.models = [];
+		var uic = me.getView().down('[xtype=activobbvauicgrid]').selection.getData().uicBbva;
+		var activoEpa = me.getView().down('[xtype=activobbvauicgrid]').selection.getData().activoEpa;
+		var cexperBbva = me.getView().down('[xtype=activobbvauicgrid]').selection.getData().cexperBbva;
+		var contrapartida = me.getView().down('[xtype=activobbvauicgrid]').selection.getData().contrapartida;
+		var folio = me.getView().down('[xtype=activobbvauicgrid]').selection.getData().folio;
+		var cdpen = me.getView().down('[xtype=activobbvauicgrid]').selection.getData().cdpen;
+		var oficina = me.getView().down('[xtype=activobbvauicgrid]').selection.getData().oficina;
+		var empresa = me.getView().down('[xtype=activobbvauicgrid]').selection.getData().empresa;
+		Ext.Array.each(listadoActivos, function(record, index) {
+			var model = {};
+			model.name = 'activobbvauic';
+			model.type = 'activo';
+			model.data = {};
+			model.data.idActivo = record.data.activoId;
+			model.data.uicBbva = uic;
+			model.data.activoEpa = activoEpa;
+			model.data.cexperBbva = cexperBbva;
+			model.data.contrapartida = contrapartida;
+			model.data.folio = folio;
+			model.data.cdpen = cdpen;
+			model.data.oficina = oficina;
+			model.data.empresa = empresa;
+			tabData.models.push(model);
+		}); 
+		
+		return tabData;
+	},
 
     onSelectDiscrepanciasLocalizacion : function(combo, value) {
 		var me = this;

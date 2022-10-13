@@ -233,7 +233,7 @@ public class OfertasController {
 		}
 
 		new EmptyParamDetector().isEmpty(listaOfertas.size(), "ofertas",  usuarioManager.getUsuarioLogado().getUsername());		
-		ExcelReport report = new OfertaGridExcelReport(listaOfertas, esCarteraLBK, fechasReunionComite, sancionadores);
+		ExcelReport report = new OfertaGridExcelReport(listaOfertas, esCarteraLBK, fechasReunionComite, sancionadores,genericAdapter.isSuper(usuarioLogado));
 		excelReportGeneratorApi.generateAndSend(report, response);
 	}	
 	

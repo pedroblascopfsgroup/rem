@@ -4330,6 +4330,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     },
     
     T015_EnvioContratoValidacion: function() {
+			var me = this; 
 			var comboTitulo = me.down('[name=comboTitulo]');
 			var fechaTitulo = me.down('[name=fechaTitulo]');
 			

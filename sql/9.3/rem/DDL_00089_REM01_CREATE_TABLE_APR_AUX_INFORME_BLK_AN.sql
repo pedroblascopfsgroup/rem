@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Mª José Ponce
---## FECHA_CREACION=20200923
+--## FECHA_CREACION=20220525
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-9381
@@ -12,6 +12,7 @@
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##	    0.2 REMVIP-8099 - Ampliar campo de comentarios
+--##	    0.3 HREOS-17983 - Ampliar campo PORTFOLIO
 --##########################################
 --*/
 
@@ -76,7 +77,7 @@ BEGIN
 	SERVICIO_VENTA_ADM VARCHAR2(10 CHAR),
 	COSTE_TOTAL NUMBER(16,2),
 	FECHA_VENTA_ESTIMADA DATE,
-	PORTFOLIO VARCHAR2(10 CHAR),
+	PORTFOLIO VARCHAR2(50 CHAR),
 	WEB_LINK VARCHAR2(256 CHAR),
 	GESTOR_COMERCIAL VARCHAR2(256 CHAR),
 	PVE_COD_API VARCHAR2(50 CHAR),

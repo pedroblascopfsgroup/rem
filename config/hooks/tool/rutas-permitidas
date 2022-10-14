@@ -326,7 +326,10 @@ rem_mirror|remvip-11238-rem
 rem_mirror|func-rem-visibleComercialDespublicar
 rem_mirror|func-rem-primTomaPosGastos
 func-rem-desvincularCierreEconomico|R-Navelate
+func-rem-edicionPestañaInformeComercial|R-Freezers
+func-rem-desligarDisponibilidadJuridicaBankia|R-Freezer
 rem_mirror|func-rem-desligarDisponibilidadJuridicaBankia
+rem_mirror|func-rem-modificacionesBulk
 rem_mirror|func-rem-pbcSinArras
 rem_mirror|func-rem-formalizacionAlquileres
 func-rem-concurrencia|R-Tyrael
@@ -362,3 +365,8 @@ func-rem-variosUICsPorEntidad|R-Jax
 func-rem-ofrecimientosAlquilerSocialBBVA|R-Jax
 func-rem-nuevaNomenclaturaFicherosGastos|version-2.52.0-rem
 func-rem-tdd|version-2.52.0-rem
+<<<<<<< HEAD
+func-rem-catastroV2|R-Kisame
+
+=======
+>>>>>>> func-rem-modificacionesBulk

@@ -224,7 +224,7 @@ public class AccionesCaixaController extends ParadiseJsonController {
         return createModelAndViewJson(model);
     }
 
-    public ModelAndView accionFirmaContratoAprobada(DtoFirmaContratoCaixa dto){
+    public ModelAndView accionFirmaContratoAprobada(JSONObject dto){
         ModelMap model = new ModelMap();
         try {
             accionesCaixaApi.accionFirmaContratoAprobada(dto);
@@ -435,7 +435,7 @@ public class AccionesCaixaController extends ParadiseJsonController {
         return createModelAndViewJson(model);
     }
 
-    public ModelAndView accionFirmaContratoRechazada(DtoFirmaContratoCaixa dto) {
+    public ModelAndView accionFirmaContratoRechazada(JSONObject dto) {
         ModelMap model = new ModelMap();
         try {
             accionesCaixaApi.accionFirmaContratoRechazada(dto);

@@ -172,14 +172,14 @@ class AccionesCaixaControllerDispachableMethods {
             }
         });
 
-        dispachableMethods.put(AccionesCaixaController.ACCION_FIRMA_CONTRATO_APR, new AccionesCaixaControllerDispachableMethods.DispachableMethod<DtoFirmaContratoCaixa>() {
+        dispachableMethods.put(AccionesCaixaController.ACCION_FIRMA_CONTRATO_APR, new AccionesCaixaControllerDispachableMethods.DispachableMethod<JSONObject>() {
             @Override
-            public Class<DtoFirmaContratoCaixa> getArgumentType() {
-                return DtoFirmaContratoCaixa.class;
+            public Class<JSONObject> getArgumentType() {
+                return JSONObject.class;
             }
 
             @Override
-            public Boolean execute(DtoFirmaContratoCaixa dto) {
+            public Boolean execute(JSONObject dto) {
                 if (dto != null) {
                     ModelAndView mm = this.controller.accionFirmaContratoAprobada(dto);
                     if ("false".equals(mm.getModel().get("success").toString())
@@ -505,14 +505,14 @@ class AccionesCaixaControllerDispachableMethods {
             }
         });
 
-        dispachableMethods.put(AccionesCaixaController.ACCION_FIRMA_CONTRATO_RECHAZADO, new AccionesCaixaControllerDispachableMethods.DispachableMethod<DtoFirmaContratoCaixa>() {
+        dispachableMethods.put(AccionesCaixaController.ACCION_FIRMA_CONTRATO_RECHAZADO, new AccionesCaixaControllerDispachableMethods.DispachableMethod<JSONObject>() {
             @Override
-            public Class<DtoFirmaContratoCaixa> getArgumentType() {
-                return DtoFirmaContratoCaixa.class;
+            public Class<JSONObject> getArgumentType() {
+                return JSONObject.class;
             }
 
             @Override
-            public Boolean execute(DtoFirmaContratoCaixa dto) {
+            public Boolean execute(JSONObject dto) {
                 if (dto != null) {
                     ModelAndView mm = this.controller.accionFirmaContratoRechazada(dto);
                     if ("false".equals(mm.getModel().get("success").toString())

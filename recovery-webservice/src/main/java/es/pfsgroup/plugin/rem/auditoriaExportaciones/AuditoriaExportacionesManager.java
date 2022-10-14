@@ -35,6 +35,7 @@ public class AuditoriaExportacionesManager extends BusinessOperationOverrider<Au
 	}
 
 	@Override
+	@Transactional(readOnly = false)
 	public boolean permiteBusqueda(DtoActivoGridFilter dto,Usuario user, String buscador) throws Exception {
 		
 		String filtros = dtoParser(dto);
@@ -59,7 +60,6 @@ public class AuditoriaExportacionesManager extends BusinessOperationOverrider<Au
 		return permitido;
 	}
 	
-	@Transactional(readOnly = false)
 	private void registraBusqueda(String filtros,Usuario user, String buscador) throws Exception {
 
 		AuditoriaExportaciones ae = new AuditoriaExportaciones();

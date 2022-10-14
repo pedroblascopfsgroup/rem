@@ -505,7 +505,7 @@ class AccionesCaixaControllerDispachableMethods {
             }
         });
 
-        dispachableMethods.put(AccionesCaixaController.ACCION_FIRMA_CONTRATO_RECHAZADO, new AccionesCaixaControllerDispachableMethods.DispachableMethod<JSONObject>() {
+        dispachableMethods.put(DDTipoOfertaAcciones.CODIGO_FIRMA_DE_CONTRATO_RECHAZADO, new AccionesCaixaControllerDispachableMethods.DispachableMethod<JSONObject>() {
             @Override
             public Class<JSONObject> getArgumentType() {
                 return JSONObject.class;
@@ -1015,25 +1015,6 @@ class AccionesCaixaControllerDispachableMethods {
             }
         });
         
-        dispachableMethods.put(DDTipoOfertaAcciones.CODIGO_FIRMA_DE_CONTRATO_RECHAZADO, new AccionesCaixaControllerDispachableMethods.DispachableMethod<JSONObject>() {
-            @Override
-            public Class<JSONObject> getArgumentType() {
-                return JSONObject.class;
-            }
-
-            @Override
-            public Boolean execute(JSONObject dto) {
-                if (dto != null) {
-                    ModelAndView mm = this.controller.accionRespuestaBcReagendacion(dto);
-                    if ("false".equals(mm.getModel().get("success").toString())
-                            && !Checks.esNulo(mm.getModel().get("msgError"))) {
-                        throw new JsonViewerException(mm.getModel().get("msgError").toString());
-                    }  return true;
-                }
-
-                return false;
-            }
-        });
         
         dispachableMethods.put(DDTipoOfertaAcciones.CODIGO_COMUNICAR_CONTRAOFERTA_CLIENTE, new AccionesCaixaControllerDispachableMethods.DispachableMethod<JSONObject>() {
             @Override
@@ -1055,26 +1036,7 @@ class AccionesCaixaControllerDispachableMethods {
             }
         });
         
-//        dispachableMethods.put(DDTipoOfertaAcciones.CODIGO_FIRMA_DE_CONTRATO_RECHAZADO, new AccionesCaixaControllerDispachableMethods.DispachableMethod<JSONObject>() {
-//            @Override
-//            public Class<JSONObject> getArgumentType() {
-//                return JSONObject.class;
-//            }
-//
-//            @Override
-//            public Boolean execute(JSONObject dto) {
-//                if (dto != null) {
-//                    ModelAndView mm = this.controller.accionRespuestaBcReagendacion(dto);
-//                    if ("false".equals(mm.getModel().get("success").toString())
-//                            && !Checks.esNulo(mm.getModel().get("msgError"))) {
-//                        throw new JsonViewerException(mm.getModel().get("msgError").toString());
-//                    }  return true;
-//                }
-//
-//                return false;
-//            }
-//        });
-        
+
         dispachableMethods.put(DDTipoOfertaAcciones.ACCION_IMPOSIBILIDAD_FIRMA_FIRMAR, new AccionesCaixaControllerDispachableMethods.DispachableMethod<JSONObject>() {
             @Override
             public Class<JSONObject> getArgumentType() {

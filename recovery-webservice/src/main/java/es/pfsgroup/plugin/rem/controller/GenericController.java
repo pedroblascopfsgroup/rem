@@ -941,6 +941,12 @@ public class GenericController extends ParadiseJsonController{
 		restApi.sendResponse(response, model, request);
 	}
 	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getTipoApunteByUsuarioLog(){
+		return createModelAndViewJson(new ModelMap("data", genericApi.getTipoApunteByUsuarioLog()));	
+	}
+
+	
 	@RequestMapping(method= RequestMethod.GET)
 	public ModelAndView getComboCategoriaConducta(String idTipoConducta) {
 		return createModelAndViewJson(new ModelMap("data", genericApi.getComboCategoriaConducta(idTipoConducta)));	
@@ -997,5 +1003,7 @@ public class GenericController extends ParadiseJsonController{
 
 		}
 	}
+	
+
  }
 

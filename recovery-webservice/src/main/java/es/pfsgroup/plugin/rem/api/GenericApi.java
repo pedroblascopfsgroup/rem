@@ -49,6 +49,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlta;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoApunte;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoBloqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
@@ -410,6 +411,8 @@ public interface GenericApi {
 
 	Boolean avanzaDatosPbc(AvanzarDatosPBCDto dto) throws Exception;
 
+	public List<DDTipoApunte> getTipoApunteByUsuarioLog();
+	
 	public List<DDCategoriaConductaInapropiada> getComboCategoriaConducta(String idTipoConducta);
 
 	public DDNivelConductaInapropiada getComboNivelConducta(String idCategoriaConducta);

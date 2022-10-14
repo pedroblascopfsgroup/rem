@@ -24,6 +24,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.activo.exception.HistoricoTramitacionException;
 import es.pfsgroup.plugin.rem.activo.exception.PlusvaliaActivoException;
 //import es.pfsgroup.plugin.rem.activo.DtoCalificacionNegativa;
+import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
@@ -1318,7 +1319,7 @@ public interface ActivoApi {
 
 	List<DtoHistoricoDiarioGestion> getHistoricoDiarioGestion(Long idActivo);
 
-	Boolean crearHistoricoDiarioGestion(DtoComunidadpropietariosActivo activoDto, Long idActivo);
+	void crearHistoricoDiarioGestion(DtoComunidadpropietariosActivo activoDto, Long idActivo);
 
 	@BusinessOperationDefinition("activoManager.deleteAdjuntoPlusvalia")
 	boolean deleteAdjuntoPlusvalia(DtoAdjunto dtoAdjunto);
@@ -1507,5 +1508,11 @@ public interface ActivoApi {
 	
 	Boolean updateActivoBbvaUicProp(DtoActivoBbvaUic dto)throws Exception;
 
+	List<DtoOrganismos> getOrganismosByActivo(Long idActivo);
+
+	void deleteOrganismoById(Long idOrganismo);
+
+	void saveOrUpdateOrganismo(Long idActivo, DtoOrganismos dto);
+	
 	Activo getActivoMatrizIfIsUA(Long idActivo);
 }

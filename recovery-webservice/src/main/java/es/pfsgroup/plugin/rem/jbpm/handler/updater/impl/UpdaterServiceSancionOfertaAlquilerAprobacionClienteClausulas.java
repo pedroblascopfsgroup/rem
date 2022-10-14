@@ -83,7 +83,7 @@ public class UpdaterServiceSancionOfertaAlquilerAprobacionClienteClausulas imple
 		
 
 		
-		if(!contraoferta || (!acepta && DDEstadoExpedienteBc.CODIGO_CLAUSULADO_NO_COMERCIABLE.equals(expedienteComercial.getEstadoBc().getCodigo()))) {
+		if(!acepta && (!contraoferta || DDEstadoExpedienteBc.CODIGO_CLAUSULADO_NO_COMERCIABLE.equals(expedienteComercial.getEstadoBc().getCodigo()))) {
 			anula = true;
 			Oferta oferta = expedienteComercial.getOferta();
 			expedienteComercial.setFechaAnulacion(new Date());

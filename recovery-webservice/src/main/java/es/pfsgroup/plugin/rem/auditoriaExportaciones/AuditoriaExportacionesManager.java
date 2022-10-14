@@ -59,7 +59,7 @@ public class AuditoriaExportacionesManager extends BusinessOperationOverrider<Au
 		return permitido;
 	}
 	
-	@Transactional()
+	@Transactional(readOnly = false)
 	private void registraBusqueda(String filtros,Usuario user, String buscador) throws Exception {
 
 		AuditoriaExportaciones ae = new AuditoriaExportaciones();

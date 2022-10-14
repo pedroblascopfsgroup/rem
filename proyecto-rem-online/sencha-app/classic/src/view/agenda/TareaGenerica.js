@@ -4330,7 +4330,17 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     },
     
     T015_EnvioContratoValidacion: function() {
-    	var me = this;	
+			var comboTitulo = me.down('[name=comboTitulo]');
+			var fechaTitulo = me.down('[name=fechaTitulo]');
+			
+			comboTitulo.addListener('change', function(comboTitulo) {
+				if (comboTitulo.value ==  CONST.COMBO_SIN_SINO['NO']) {
+					fechaTitulo.reset();
+					me.bloquearCampo(fechaTitulo);
+				} else {
+					me.desbloquearCampo(fechaTitulo);
+				}
+			});
     },
 	
 	T018_AgendarYFirmarValidacion: function(){

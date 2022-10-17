@@ -19,11 +19,13 @@ import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.rem.api.DepositoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GenericApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.CuentasVirtualesAlquiler;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Fianzas;
 import es.pfsgroup.plugin.rem.model.HistoricoReagendacion;
@@ -46,7 +48,13 @@ public class UpdaterServiceAgendarFirmaNoComercial implements UpdaterService {
     
     @Autowired
 	private GenericApi genericApi;
+    
+    @Autowired
+    private DepositoApi depositoApi;
 	
+    @Autowired
+	private UsuarioApi usuarioApi;
+    
     protected static final Log logger = LogFactory.getLog(UpdaterServiceAgendarFirmaNoComercial.class);
     
     SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
@@ -59,6 +67,7 @@ public class UpdaterServiceAgendarFirmaNoComercial implements UpdaterService {
 
 	private static final String CODIGO_T018_AGENDAR_FIRMA = "T018_AgendarFirma";
 	
+	@SuppressWarnings("null")
 	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
 		boolean fianzaExonerada = false;
 		boolean fechaReagendacionRelleno = false;
@@ -145,9 +154,23 @@ public class UpdaterServiceAgendarFirmaNoComercial implements UpdaterService {
 				if (ibanDevolucion != null) {
 					fiaN.setIbanDevolucion(ibanDevolucion);
 				}
-				genericDao.save(Fianzas.class, fiaN);
+
 				fianza = fiaN;
-				genericApi.saveCuentaVirtualAlquiler(activo, fiaN);
+				List<CuentasVirtualesAlquiler> cuentasVirtualesAlquiler = depositoApi.vincularCuentaVirtualAlquiler(activo, fiaN);
+				
+				CuentasVirtualesAlquiler cuentaVirtualAlquiler = null;
+				
+				if(cuentasVirtualesAlquiler != null && !cuentasVirtualesAlquiler.isEmpty()) {
+					cuentaVirtualAlquiler = cuentasVirtualesAlquiler.get(0);
+					cuentaVirtualAlquiler.setFechaInicio(new Date());
+					cuentaVirtualAlquiler.getAuditoria().setUsuarioModificar(usuarioApi.getUsuarioLogado().getUsername());
+					cuentaVirtualAlquiler.getAuditoria().setFechaModificar(new Date());
+					
+					fia.setCuentaVirtualAlquiler(cuentaVirtualAlquiler);
+
+					genericDao.update(CuentasVirtualesAlquiler.class, cuentaVirtualAlquiler);
+				}
+				genericDao.save(Fianzas.class, fiaN);
 			}
 			
 			if (fechaReagendacionRelleno) {

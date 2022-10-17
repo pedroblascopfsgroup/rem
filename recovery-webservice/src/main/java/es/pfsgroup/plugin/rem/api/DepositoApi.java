@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.rem.api;
 
+import java.util.List;
+
 import es.pfsgroup.plugin.rem.model.*;
 
 public interface DepositoApi {
@@ -51,6 +53,6 @@ public interface DepositoApi {
 
 	boolean isDepositoDecidido(Deposito deposito);
 
-	CuentasVirtualesAlquiler vincularCuentaVirtualAlquiler(String codigoSubTipoOferta);
+	List<CuentasVirtualesAlquiler> vincularCuentaVirtualAlquiler(Activo activo, Fianzas fia);
 
 }

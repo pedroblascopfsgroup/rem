@@ -33,6 +33,7 @@ import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.alaskaComunicacion.AlaskaComunicacionManager;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
+import es.pfsgroup.plugin.rem.api.DepositoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GenericApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
@@ -100,6 +101,12 @@ public class UpdaterServiceSancionOfertaAlquileresAgendarFirma implements Update
 	
 	@Autowired
 	private UsuarioManager usuarioManager;
+	
+	@Autowired
+	private UsuarioApi usuarioApi;
+	
+	@Autowired
+	private DepositoApi depositoApi;
 
 	@Resource(name = "entityTransactionManager")
 	private PlatformTransactionManager transactionManager;
@@ -193,7 +200,21 @@ public class UpdaterServiceSancionOfertaAlquileresAgendarFirma implements Update
 		if(fia == null) {
 			fia = new Fianzas();
 			fia.setOferta(oferta);
-			genericApi.saveCuentaVirtualAlquiler(oferta.getActivoPrincipal(), fia);
+			
+			List<CuentasVirtualesAlquiler> cuentasVirtualesAlquiler = depositoApi.vincularCuentaVirtualAlquiler(oferta.getActivoPrincipal(), fia);
+			
+			CuentasVirtualesAlquiler cuentaVirtualAlquiler = null;
+			
+			if(cuentasVirtualesAlquiler != null && !cuentasVirtualesAlquiler.isEmpty()) {
+				cuentaVirtualAlquiler = cuentasVirtualesAlquiler.get(0);
+				cuentaVirtualAlquiler.setFechaInicio(new Date());
+				cuentaVirtualAlquiler.getAuditoria().setUsuarioModificar(usuarioApi.getUsuarioLogado().getUsername());
+				cuentaVirtualAlquiler.getAuditoria().setFechaModificar(new Date());
+				
+				fia.setCuentaVirtualAlquiler(cuentaVirtualAlquiler);
+
+				genericDao.update(CuentasVirtualesAlquiler.class, cuentaVirtualAlquiler);
+			}
 		}
 		
 		fia.setFechaAgendacionIngreso(dto.getFechaAgendacion());

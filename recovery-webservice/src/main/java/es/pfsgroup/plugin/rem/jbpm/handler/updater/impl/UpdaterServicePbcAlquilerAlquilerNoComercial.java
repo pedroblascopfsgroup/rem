@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -40,6 +42,9 @@ public class UpdaterServicePbcAlquilerAlquilerNoComercial implements UpdaterServ
     
 	private static final String COMBO_RESULTADO = "comboResultado";
 	private static final String CAMPO_OBSERVACIONES = "observaciones";
+	private static final String FECHA_RESOLUCION = "fechaResolucion";
+	
+	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
 	private static final String CODIGO_T018_PBC_ALQUILER = "T018_PbcAlquiler";
 	
@@ -62,6 +67,14 @@ public class UpdaterServicePbcAlquilerAlquilerNoComercial implements UpdaterServ
 			if(CAMPO_OBSERVACIONES.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 				observaciones = valor.getValor();
 			}
+			if (FECHA_RESOLUCION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+				try {
+					expedienteComercial.setFechaSancion(ft.parse(valor.getValor()));
+				} catch (ParseException e) {
+					logger.error(e.getMessage(), e);
+				}
+
+			}	
 		}
 		
 		if(aprueba) {

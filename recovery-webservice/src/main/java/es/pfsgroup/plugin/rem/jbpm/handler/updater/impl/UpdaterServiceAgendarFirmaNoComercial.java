@@ -191,7 +191,7 @@ public class UpdaterServiceAgendarFirmaNoComercial implements UpdaterService {
 		
 		String estadoExpBC = this.devolverEstadoBC(fianzaExonerada, tareaExternaActual);
 		if(estadoExpBC != null) {
-			expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigoC4C", estadoExpBC)));
+			expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoExpBC)));
 		}
 				
 		genericDao.save(ExpedienteComercial.class, expedienteComercial);

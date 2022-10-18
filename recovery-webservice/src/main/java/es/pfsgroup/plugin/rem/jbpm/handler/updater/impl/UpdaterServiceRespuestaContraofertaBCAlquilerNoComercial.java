@@ -19,7 +19,6 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoTareasFormalizacion;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 
 @Component
@@ -54,7 +53,7 @@ public class UpdaterServiceRespuestaContraofertaBCAlquilerNoComercial implements
 		
 		String estadoExpBC = this.devolverEstadoBC(dto.getComboResultado(), alquilerSocial, novacionRenovacion, tareaExternaActual);
 		if(estadoExpBC != null) {
-			expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigoC4C", estadoExpBC)));
+			expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoExpBC)));
 		}
 
 		genericDao.save(ExpedienteComercial.class, expedienteComercial);

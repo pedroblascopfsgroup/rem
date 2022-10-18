@@ -16,8 +16,11 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.DtoTareasFormalizacion;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 
 @Component
 public class UpdaterServiceFirmaRescisionContratoAlquilerNoComercial implements UpdaterService {
@@ -37,19 +40,25 @@ public class UpdaterServiceFirmaRescisionContratoAlquilerNoComercial implements 
 	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
 
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
-		String estadoBc = null;
+		DtoTareasFormalizacion dto = new DtoTareasFormalizacion();
 
 		for(TareaExternaValor valor :  valores){
-			
 			if(COMBO_RESULTADO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-				if(DDSiNo.NO.equals(valor.getValor())) {
-					estadoBc = DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA;
-					expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class,genericDao.createFilter(FilterType.EQUALS,"codigo", estadoBc)));
-					genericDao.save(ExpedienteComercial.class, expedienteComercial);
+				if(COMBO_RESULTADO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+					dto.setComboResultado(DDSinSiNo.cambioStringtoBooleano(valor.getValor()));
 				}
 			}
-
 		}
+		
+		String estadoExpBC = this.devolverEstadoBC(dto.getComboResultado(), tareaExternaActual);
+		
+		if(estadoExpBC != null) {
+			expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoExpBC)));
+		}
+		
+		expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO)));
+		
+		genericDao.save(ExpedienteComercial.class, expedienteComercial);
 			
 	}
 
@@ -59,6 +68,17 @@ public class UpdaterServiceFirmaRescisionContratoAlquilerNoComercial implements 
 
 	public String[] getKeys() {
 		return this.getCodigoTarea();
+	}
+	
+	private String devolverEstadoBC(Boolean comboResultado, TareaExterna tareaExterna) {
+		String estadoExpBC = null;
+		if(comboResultado != null) {
+			if(comboResultado) {
+				estadoExpBC = DDEstadoExpedienteBc.CODIGO_RECESION_CONTRATO;
+			}
+		}
+		
+		return estadoExpBC;
 	}
 
 }

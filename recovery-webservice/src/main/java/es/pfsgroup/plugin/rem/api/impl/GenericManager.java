@@ -1184,16 +1184,14 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	public List<DDComiteSancion> getComitesByCartera(String carteraCodigo, String subcarteraCodigo) {
 		List<DDComiteSancion> listaComites = null;
 		Order order = new Order(GenericABMDao.OrderType.ASC, "descripcion");
-		Filter filtro;
-		Filter filtroCartera;
-		if(!Checks.esNulo(subcarteraCodigo)){
-			
-			filtroCartera = genericDao.createFilter(FilterType.EQUALS,"cartera.codigo", carteraCodigo);
-			listaComites = genericDao.getList(DDComiteSancion.class,filtroCartera);
-
+		
+		if(!Checks.esNulo(subcarteraCodigo)) {
+			Filter filtroSubcartera = genericDao.createFilter(FilterType.EQUALS, "subcartera.codigo", subcarteraCodigo);
+			listaComites = genericDao.getList(DDComiteSancion.class, filtroSubcartera);
 		}
+		
 		if(Checks.esNulo(subcarteraCodigo) || Checks.estaVacio(listaComites)){
-			filtro = genericDao.createFilter(FilterType.EQUALS, "cartera.codigo", carteraCodigo);
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "cartera.codigo", carteraCodigo);
 			listaComites = genericDao.getListOrdered(DDComiteSancion.class,order,filtro);
 			
 			if(listaComites != null && !listaComites.isEmpty()) {

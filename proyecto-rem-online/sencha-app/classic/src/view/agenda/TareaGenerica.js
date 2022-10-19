@@ -3916,12 +3916,14 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		var importe = me.down('[name=importe]');
 		var ibanDevolucion = me.down('[name=ibanDev]');
 		var justificacion = me.down('[name=justificacion]');
+		var motivoFianzaExonerada = me.down('[name=motivoFianzaExonerada]');
 		
 		me.bloquearCampo(fechaAgendacionIngreso);
     	me.bloquearCampo(importe);
     	me.bloquearCampo(ibanDevolucion);
     	me.bloquearCampo(fechaReagendarIngreso);
     	me.bloquearCampo(justificacion);
+    	me.bloquearCampo(motivoFianzaExonerada);
 		
 		comboFianza.addListener('change', function(comboFianza) {
 			if(!fechaAgendacionIngreso.readOnly){
@@ -3930,10 +3932,14 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 	            	ibanDevolucion.reset();
 	            	me.bloquearCampo(importe);
 	            	me.bloquearCampo(ibanDevolucion);
+	            	me.desbloquearCampo(motivoFianzaExonerada);
+	            	me.campoObligatorio(motivoFianzaExonerada);
 	
 	            } else {
 		    		me.desbloquearCampo(importe);
 		    		me.desbloquearCampo(ibanDevolucion);
+		    		me.campoNoObligatorio(motivoFianzaExonerada);
+		    		me.bloquearCampo(motivoFianzaExonerada);
 	
 	            }
 			}
@@ -4953,12 +4959,14 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		var importe = me.down('[name=importe]');
 		var ibanDevolucion = me.down('[name=ibanDev]');
 		var justificacion = me.down('[name=justificacion]');
+		var motivoFianzaExonerada = me.down('[name=motivoFianzaExonerada]');
 		
 		me.bloquearCampo(fechaAgendacionIngreso);
     	me.bloquearCampo(importe);
     	me.bloquearCampo(ibanDevolucion);
     	me.bloquearCampo(fechaReagendarIngreso);
     	me.bloquearCampo(justificacion);
+    	me.bloquearCampo(motivoFianzaExonerada);
     	
 		comboFianza.addListener('change', function(comboFianza) {
             if (comboFianza.value ==  CONST.COMBO_SIN_SINO['SI']) {
@@ -4967,10 +4975,14 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
             	ibanDevolucion.reset();
             	me.bloquearCampo(importe);
             	me.bloquearCampo(ibanDevolucion);
+            	me.desbloquearCampo(motivoFianzaExonerada);
+            	me.campoObligatorio(motivoFianzaExonerada)
 
             } else {
 	    		me.desbloquearCampo(importe);
 	    		me.desbloquearCampo(ibanDevolucion);
+	    		me.campoNoObligatorio(motivoFianzaExonerada);
+	    		me.bloquearCampo(motivoFianzaExonerada);
 
             }
         });

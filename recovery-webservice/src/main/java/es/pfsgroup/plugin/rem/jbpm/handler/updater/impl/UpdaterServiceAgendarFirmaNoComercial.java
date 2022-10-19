@@ -25,6 +25,7 @@ import es.pfsgroup.plugin.rem.api.GenericApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.CuentasVirtualesAlquiler;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Fianzas;
@@ -32,6 +33,7 @@ import es.pfsgroup.plugin.rem.model.HistoricoReagendacion;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoExoneracionFianza;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 
 @Component
@@ -64,6 +66,7 @@ public class UpdaterServiceAgendarFirmaNoComercial implements UpdaterService {
 	private static final String FECHA_REAGENDACION = "fechaReagendarIngreso";
 	private static final String IMPORTE = "importe";
 	private static final String IBAN_DEVOLUCION = "ibanDev";
+	private static final String MOTIVO_EXONERACION_FIANZA = "motivoFianzaExonerada";
 
 	private static final String CODIGO_T018_AGENDAR_FIRMA = "T018_AgendarFirma";
 	
@@ -75,9 +78,11 @@ public class UpdaterServiceAgendarFirmaNoComercial implements UpdaterService {
 		String fechaReagendarIngresoValor = null;
 		String importe = null;
 		String ibanDevolucion = null;
+		String motivoExoneracionFianza = null;
 		Fianzas fianza = null;
 		
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
+		CondicionanteExpediente condicionantesExpediente = expedienteComercial.getCondicionante();
 		Activo activo =tramite.getActivo();
 		Oferta oferta = expedienteComercial.getOferta();
 		Usuario usu = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
@@ -103,7 +108,14 @@ public class UpdaterServiceAgendarFirmaNoComercial implements UpdaterService {
 				if (IBAN_DEVOLUCION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 					ibanDevolucion = valor.getValor();
 				}
+				if (MOTIVO_EXONERACION_FIANZA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+					motivoExoneracionFianza = valor.getValor();
+				}
 			}
+		}
+		
+		if(motivoExoneracionFianza != null) {
+			condicionantesExpediente.setMotivoExoneracionFianza(genericDao.get(DDMotivoExoneracionFianza.class, genericDao.createFilter(FilterType.EQUALS, "codigo", motivoExoneracionFianza)));
 		}
 		
 		if (fianzaExonerada) {
@@ -195,6 +207,9 @@ public class UpdaterServiceAgendarFirmaNoComercial implements UpdaterService {
 		}
 				
 		genericDao.save(ExpedienteComercial.class, expedienteComercial);
+		if(condicionantesExpediente != null) {
+			genericDao.save(CondicionanteExpediente.class, condicionantesExpediente);
+		}
 	}
 
 	public String[] getCodigoTarea() {

@@ -87,7 +87,7 @@ public class UpdaterServiceSancionOfertaAlquilerAprobacionClienteClausulas imple
 			anula = true;
 			Oferta oferta = expedienteComercial.getOferta();
 			expedienteComercial.setFechaAnulacion(new Date());
-			//expedienteComercial.setMotivoAnulacion(genericDao.get(DDMotivoAnulacionExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoMotivo)));
+			expedienteComercial.setMotivoAnulacion(genericDao.get(DDMotivoAnulacionExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoAnulacionExpediente.COD_CAIXA_MOD_CLAUSULAS)));
 			expedienteComercial.setDetalleAnulacionCntAlquiler(observaciones);
 			
 			if(oferta != null) {

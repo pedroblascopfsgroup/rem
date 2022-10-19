@@ -43,6 +43,8 @@ public class DtoTareasFormalizacion {
 	
 	private Boolean comboResultado;
 	private String tipoActivoRescision;
+	
+	private String motivoExoneracionFianza;
 		
 
 		
@@ -166,6 +168,12 @@ public class DtoTareasFormalizacion {
 	}
 	public void setTipoActivoRescision(String tipoActivoRescision) {
 		this.tipoActivoRescision = tipoActivoRescision;
+	}
+	public String getMotivoExoneracionFianza() {
+		return motivoExoneracionFianza;
+	}
+	public void setMotivoExoneracionFianza(String motivoExoneracionFianza) {
+		this.motivoExoneracionFianza = motivoExoneracionFianza;
 	}
 	
 }

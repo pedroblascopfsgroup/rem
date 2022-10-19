@@ -46,6 +46,7 @@ import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.CuentasVirtualesAlquiler;
 import es.pfsgroup.plugin.rem.model.DtoTareasFormalizacion;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -56,6 +57,7 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoExoneracionFianza;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
@@ -124,6 +126,7 @@ public class UpdaterServiceSancionOfertaAlquileresAgendarFirma implements Update
 	private static final String FECHA_REAGENDAR_INGRESO = "fechaReagendarIngreso";
 	private static final String IMPORTE = "importe";
 	private static final String IBAN_DEVOLUCION = "ibanDev";
+	private static final String MOTIVO_EXONERACION_FIANZA = "motivoFianzaExonerada";
 	
 	private static final String CODIGO_T015_AGENDAR_FIRMA = "T015_AgendarFechaFirma";
 
@@ -137,6 +140,7 @@ public class UpdaterServiceSancionOfertaAlquileresAgendarFirma implements Update
 		String estadoHaya = null;
 		
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
+		CondicionanteExpediente condicionantesExpediente = expedienteComercial.getCondicionante();
 		Oferta oferta = expedienteComercial.getOferta();		
 		try {
 			for(TareaExternaValor valor :  valores){
@@ -155,6 +159,9 @@ public class UpdaterServiceSancionOfertaAlquileresAgendarFirma implements Update
 				}
 				if (IBAN_DEVOLUCION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 					dto.setIbanDevolucion(valor.getValor());
+				}
+				if (MOTIVO_EXONERACION_FIANZA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+					dto.setMotivoExoneracionFianza(valor.getValor());
 				}
 			}
 		
@@ -176,9 +183,16 @@ public class UpdaterServiceSancionOfertaAlquileresAgendarFirma implements Update
 				this.crearRegistroEnHistorico(fia, dto);
 			}
 			
+			if(dto.getMotivoExoneracionFianza() != null) {
+				condicionantesExpediente.setMotivoExoneracionFianza(genericDao.get(DDMotivoExoneracionFianza.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getMotivoExoneracionFianza())));
+			}
+			
 			expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoHaya)));
 			expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoBC)));
 			genericDao.save(ExpedienteComercial.class, expedienteComercial);
+			if(condicionantesExpediente != null) {
+				genericDao.save(CondicionanteExpediente.class, condicionantesExpediente);
+			}
 			
 		}catch (ParseException e) {
 			logger.error("error en UpdaterServiceSancionOfertaAlquileresAgendarFirma", e);

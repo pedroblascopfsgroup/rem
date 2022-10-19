@@ -2413,7 +2413,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				modificado = true;
 			}
 			
-			if(ofertaDto.getImporte() != oferta.getImporteOferta() && oferta.getIsEnConcurrencia() != null && oferta.getIsEnConcurrencia()) {
+			if(ofertaDto.getImporte() != null && ofertaDto.getImporte() != oferta.getImporteOferta() && oferta.getIsEnConcurrencia() != null && oferta.getIsEnConcurrencia()) {
 				ActivoAgrupacion agrConc = null;
 				Activo activoConc  = null;
 				boolean isOfertaConActivoEnConcurrenciaViva = false;

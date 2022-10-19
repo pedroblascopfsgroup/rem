@@ -40,13 +40,7 @@ DECLARE
 	  V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'TFI_TAREAS_FORM_ITEMS'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
     V_TEXT_CHARS VARCHAR2(2400 CHAR) := 'TFI'; -- Vble. auxiliar para almacenar las 3 letras orientativas de la tabla de ref.
 	  V_USUARIO VARCHAR2(50 CHAR) := 'HREOS-18839';
-    TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(800);
     TYPE T_TIPO_DATA2 IS TABLE OF VARCHAR2(800);
-    TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
-    V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-    	-- Registros a borrar
-    ); 
-    V_TMP_TIPO_DATA T_TIPO_DATA;
     
     TYPE T_ARRAY_DATA2 IS TABLE OF T_TIPO_DATA2;
     V_TIPO_DATA2 T_ARRAY_DATA2 := T_ARRAY_DATA2(
@@ -67,35 +61,6 @@ DECLARE
     V_TMP_TIPO_DATA2 T_TIPO_DATA2;
 BEGIN
 DBMS_OUTPUT.PUT_LINE('[INICIO]');
-
-
-    -- LOOP para borrar los valores --
-    DBMS_OUTPUT.PUT_LINE('[INFO]: BORRADO EN '||V_TEXT_TABLA);
-    FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST
-      LOOP
-
-        V_TMP_TIPO_DATA := V_TIPO_DATA(I);
-
-        --Comprobar el dato a insertar.
-        
-		V_SQL := 'SELECT TAP_ID FROM TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
-		EXECUTE IMMEDIATE V_SQL INTO V_TAP_ID;
-		V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' WHERE '||
-				'TAP_ID = '||V_TAP_ID||' '||
-				'AND '||V_TEXT_CHARS||'_NOMBRE = '''||TRIM(V_TMP_TIPO_DATA(3))||'''';
-        EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
-        IF V_NUM_TABLAS > 0 THEN				
-          -- Si existe se borra.
-          DBMS_OUTPUT.PUT_LINE('[INFO]: BORRAR EL CAMPO '''|| TRIM(V_TMP_TIPO_DATA(3)) ||''' DE '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');
-       	  V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.'||V_TEXT_TABLA||' '||
-                    'SET USUARIOBORRAR = '''||V_USUARIO||''', FECHABORRAR = SYSDATE, BORRADO = 1 '||
-					'WHERE '||V_TEXT_CHARS||'_NOMBRE = '''||TRIM(V_TMP_TIPO_DATA(3))||''' AND '||V_TEXT_CHARS||'_TIPO = '''||TRIM(V_TMP_TIPO_DATA(2))||''' AND TAP_ID = '||V_TAP_ID||' AND BORRADO = 0';
-          EXECUTE IMMEDIATE V_MSQL;
-         
-          DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO BORRADO CORRECTAMENTE');
-
-       END IF;
-      END LOOP;
       
       -- LOOP para insertar los valores --
     DBMS_OUTPUT.PUT_LINE('[INFO]: INSERCION EN '||V_TEXT_TABLA);

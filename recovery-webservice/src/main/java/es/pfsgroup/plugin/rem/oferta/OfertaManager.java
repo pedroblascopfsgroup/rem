@@ -2975,7 +2975,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 		}
 
-		String estadoOfertaToCheck = !Checks.esNulo(estadoOferta) ? estadoOferta : oferta.getEstadoOferta().getCodigo();
+		String estadoOfertaToCheck = null;
+		if(estadoOferta != null) {
+			estadoOfertaToCheck = estadoOferta;
+		} else if (oferta != null && oferta.getEstadoOferta() != null) {
+			estadoOfertaToCheck = oferta.getEstadoOferta().getCodigo();
+		}
 
 		if (!Checks.esNulo(ofertaAcepted) &&
 				!(DDEstadoOferta.CODIGO_PENDIENTE_TITULARES.equals(estadoOfertaToCheck)
@@ -3015,7 +3020,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				ExpedienteComercial expedienteComercial = tramitacionOfertasManager.crearExpediente(oferta, trabajo, null, oferta.getActivoPrincipal());
 				ActivoTramite activoTramite = tramitacionOfertasManager.doTramitacion(oferta.getActivoPrincipal(), oferta, trabajo.getId(), expedienteComercial);
 				
-				if (activoTramite != null)
+				if (activoTramite != null && activoTramite.getProcessBPM() != null)
 					adapter.saltoInstruccionesReserva(activoTramite.getProcessBPM());
 				
 				DDEstadosExpedienteComercial estadoExpCom = null;
@@ -3163,9 +3168,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		
 		this.setEstadoOfertaBC(oferta, null);
 		
-		if (Checks.esNulo(oferta.getFechaOfertaPendiente()) && DDEstadoOferta.CODIGO_PENDIENTE.equals(oferta.getEstadoOferta().getCodigo())) oferta.setFechaOfertaPendiente(new Date());
+		if (Checks.esNulo(oferta.getFechaOfertaPendiente()) && oferta.getEstadoOferta() != null && DDEstadoOferta.CODIGO_PENDIENTE.equals(oferta.getEstadoOferta().getCodigo())) oferta.setFechaOfertaPendiente(new Date());
 
-		if(DDEstadoOferta.CODIGO_PENDIENTE.equals(oferta.getEstadoOferta().getCodigo())
+		if(oferta.getEstadoOferta() != null && DDEstadoOferta.CODIGO_PENDIENTE.equals(oferta.getEstadoOferta().getCodigo())
 			&& tramitacionOfertasApi.debeCongelarseOferta(oferta)){
 			oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class,	genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_CONGELADA)));
 		}
@@ -3178,7 +3183,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 		ofertaDao.saveOrUpdate(oferta);
 
-		if (DDEstadoOferta.CODIGO_PENDIENTE.equals(oferta.getEstadoOferta().getCodigo()) && oferta.getFechaOfertaPendiente() == null){
+		if (oferta.getEstadoOferta() != null && DDEstadoOferta.CODIGO_PENDIENTE.equals(oferta.getEstadoOferta().getCodigo()) && oferta.getFechaOfertaPendiente() == null){
 			oferta.setFechaOfertaPendiente(new Date());
 		}
 

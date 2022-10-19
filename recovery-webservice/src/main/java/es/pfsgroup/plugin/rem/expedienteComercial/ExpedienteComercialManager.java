@@ -133,12 +133,14 @@ import es.pfsgroup.plugin.rem.model.dd.DDApruebaDeniega;
 import es.pfsgroup.plugin.rem.model.dd.DDAreaBloqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDCanalPrescripcion;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDClaseCondicion;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseContratoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDClasificacionContratoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
+import es.pfsgroup.plugin.rem.model.dd.DDDerechoArrendamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDDevolucionReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadFinanciera;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadesAvalistas;
@@ -178,6 +180,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoCampo;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoScoring;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
+import es.pfsgroup.plugin.rem.model.dd.DDRetencionImpuestos;
 import es.pfsgroup.plugin.rem.model.dd.DDRiesgoOperacion;
 import es.pfsgroup.plugin.rem.model.dd.DDRolInterlocutor;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
@@ -1509,6 +1512,25 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			DDClaseContratoAlquiler claseContrato = genericDao.get(DDClaseContratoAlquiler.class, genericDao.createFilter(FilterType.EQUALS,"codigo",  dto.getClaseContratoCodigo()));
 			oferta.setClaseContratoAlquiler(claseContrato);
 		}
+		
+		if(dto.getCodigoClaseCondicion() != null){
+			DDClaseCondicion claseCondicion = genericDao.get(DDClaseCondicion.class, genericDao.createFilter(FilterType.EQUALS,"codigo",  dto.getCodigoClaseCondicion()));
+			oferta.setClaseCondicion(claseCondicion);
+		}
+		
+		if(dto.getCodigoDerechoArrendamiento() != null){
+			DDDerechoArrendamiento derechoArrendamiento = genericDao.get(DDDerechoArrendamiento.class, genericDao.createFilter(FilterType.EQUALS,"codigo",  dto.getCodigoDerechoArrendamiento()));
+			oferta.setDerechoArrendamiento(derechoArrendamiento);
+		}
+		
+		if(dto.getCodigoRetenciondeImpuestos() != null){
+			DDRetencionImpuestos retencionImpuestos = genericDao.get(DDRetencionImpuestos.class, genericDao.createFilter(FilterType.EQUALS,"codigo",  dto.getCodigoRetenciondeImpuestos()));
+			oferta.setRetencionImpuestos(retencionImpuestos);;
+		}
+		
+		if(dto.getCodigoGrupoContratoCBK() != null){
+			oferta.setGrupoContratoCBK(DDSinSiNo.CODIGO_SI.equals(dto.getCodigoGrupoContratoCBK()));
+		}
 
 
 		if (!Checks.esNulo(dto.getCheckForzadoCajamar())) {
@@ -2492,7 +2514,22 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		if (oferta.getAutoFirme() != null) {
 			dto.setAutoFirme(oferta.getAutoFirme());
 		}
-	
+		
+		if (oferta.getClaseCondicion() != null) {
+			dto.setCodigoClaseCondicion(oferta.getClaseCondicion().getCodigo());
+		}
+		
+		if (oferta.getDerechoArrendamiento() != null) {
+			dto.setCodigoDerechoArrendamiento(oferta.getDerechoArrendamiento().getCodigo());
+		}
+		
+		if (oferta.getRetencionImpuestos() != null) {
+			dto.setCodigoRetenciondeImpuestos(oferta.getRetencionImpuestos().getCodigo());
+		}
+		
+		if (oferta.getGrupoContratoCBK() != null) {
+			dto.setCodigoGrupoContratoCBK(oferta.getGrupoContratoCBK() ? DDSinSiNo.CODIGO_SI : DDSinSiNo.CODIGO_NO);
+		}
 		
 		return dto;
 	}

@@ -199,6 +199,14 @@ public class DtoDatosBasicosOferta extends WebDto {
 	
 	private Boolean autoFirme;
 	
+	private String codigoClaseCondicion;
+	
+	private String codigoDerechoArrendamiento;
+	
+	private String codigoRetenciondeImpuestos;
+	
+	private String codigoGrupoContratoCBK;
+	
 	public Boolean getEstadoAprobadoLbk() {
 		return estadoAprobadoLbk;
 	}
@@ -978,5 +986,39 @@ public class DtoDatosBasicosOferta extends WebDto {
 	public void setAutoFirme(Boolean autoFirme) {
 		this.autoFirme = autoFirme;
 	}
+
+	public String getCodigoClaseCondicion() {
+		return codigoClaseCondicion;
+	}
+
+	public void setCodigoClaseCondicion(String codigoClaseCondicion) {
+		this.codigoClaseCondicion = codigoClaseCondicion;
+	}
+
+	public String getCodigoDerechoArrendamiento() {
+		return codigoDerechoArrendamiento;
+	}
+
+	public void setCodigoDerechoArrendamiento(String codigoDerechoArrendamiento) {
+		this.codigoDerechoArrendamiento = codigoDerechoArrendamiento;
+	}
+
+	public String getCodigoRetenciondeImpuestos() {
+		return codigoRetenciondeImpuestos;
+	}
+
+	public void setCodigoRetenciondeImpuestos(String codigoRetenciondeImpuestos) {
+		this.codigoRetenciondeImpuestos = codigoRetenciondeImpuestos;
+	}
+
+	public String getCodigoGrupoContratoCBK() {
+		return codigoGrupoContratoCBK;
+	}
+
+	public void setCodigoGrupoContratoCBK(String codigoGrupoContratoCBK) {
+		this.codigoGrupoContratoCBK = codigoGrupoContratoCBK;
+	}
+	
+	
 	
 }

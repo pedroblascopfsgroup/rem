@@ -355,8 +355,20 @@ Ext.define('HreRem.model.DatosBasicosOferta', {
             {
             	name:'autoFirme',
     			type: 'boolean'   	
-            }
-            
+						},
+			
+			{
+				name: 'codigoClaseCondicion'
+			},
+			{
+				name: 'codigoDerechoArrendamiento'
+			},
+			{
+				name: 'codigoRetenciondeImpuestos'
+			},
+			{
+				name: 'codigoGrupoContratoCBK'
+			}
     		
     ],
 

@@ -1968,6 +1968,30 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 			autoLoad: true,
 			remoteSort: true,
 	    	remoteFilter: true
+		},
+		storeClaseCondicion:{
+			model: 'HreRem.model.ComboBase',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'claseCondicion'}
+	    	}
+		},
+		storeDerechoArrendamiento:{
+			model: 'HreRem.model.ComboBase',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'derechoArrendamiento'}
+	    	}
+		},
+		storeRetencionImpuestos:{
+			model: 'HreRem.model.ComboBase',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'retencionImpuestos'}
+	    	}
 		}
 		
 	}	

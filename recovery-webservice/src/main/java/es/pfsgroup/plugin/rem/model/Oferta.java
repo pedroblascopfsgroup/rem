@@ -33,9 +33,11 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.model.dd.DDCanalPrescripcion;
+import es.pfsgroup.plugin.rem.model.dd.DDClaseCondicion;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseContratoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDClasificacionContratoAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDDerechoArrendamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadFinanciera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
@@ -44,6 +46,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
 import es.pfsgroup.plugin.rem.model.dd.DDResponsableDocumentacionCliente;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
+import es.pfsgroup.plugin.rem.model.dd.DDRetencionImpuestos;
 import es.pfsgroup.plugin.rem.model.dd.DDRiesgoOperacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSistemaOrigen;
@@ -538,6 +541,21 @@ public class Oferta implements Serializable, Auditable {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "CON_ID")
 	private Concurrencia concurrencia;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_CCD_ID")
+    private DDClaseCondicion claseCondicion;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_DAR_ID")
+    private DDDerechoArrendamiento derechoArrendamiento;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_RIM_ID")
+    private DDRetencionImpuestos retencionImpuestos;
+	
+	@Column(name = "OFR_GRUPO_CONTRATO_CBK")
+    private Boolean grupoContratoCBK;
 
 
 	public Date getFechaAlta() {
@@ -1704,5 +1722,39 @@ public class Oferta implements Serializable, Auditable {
 	public void setConcurrencia(Concurrencia concurrencia) {
 		this.concurrencia = concurrencia;
 	}
+
+	public DDClaseCondicion getClaseCondicion() {
+		return claseCondicion;
+	}
+
+	public void setClaseCondicion(DDClaseCondicion claseCondicion) {
+		this.claseCondicion = claseCondicion;
+	}
+
+	public DDDerechoArrendamiento getDerechoArrendamiento() {
+		return derechoArrendamiento;
+	}
+
+	public void setDerechoArrendamiento(DDDerechoArrendamiento derechoArrendamiento) {
+		this.derechoArrendamiento = derechoArrendamiento;
+	}
+
+	public DDRetencionImpuestos getRetencionImpuestos() {
+		return retencionImpuestos;
+	}
+
+	public void setRetencionImpuestos(DDRetencionImpuestos retencionImpuestos) {
+		this.retencionImpuestos = retencionImpuestos;
+	}
+
+	public Boolean getGrupoContratoCBK() {
+		return grupoContratoCBK;
+	}
+
+	public void setGrupoContratoCBK(Boolean grupoContratoCBK) {
+		this.grupoContratoCBK = grupoContratoCBK;
+	}
+	
+	
 	
 }

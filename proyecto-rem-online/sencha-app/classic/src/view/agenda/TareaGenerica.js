@@ -3938,6 +3938,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 	            } else {
 		    		me.desbloquearCampo(importe);
 		    		me.desbloquearCampo(ibanDevolucion);
+		    		me.borrarCampo(motivoFianzaExonerada);
 		    		me.campoNoObligatorio(motivoFianzaExonerada);
 		    		me.bloquearCampo(motivoFianzaExonerada);
 	
@@ -4981,6 +4982,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
             } else {
 	    		me.desbloquearCampo(importe);
 	    		me.desbloquearCampo(ibanDevolucion);
+	    		me.borrarCampo(motivoFianzaExonerada);
 	    		me.campoNoObligatorio(motivoFianzaExonerada);
 	    		me.bloquearCampo(motivoFianzaExonerada);
 

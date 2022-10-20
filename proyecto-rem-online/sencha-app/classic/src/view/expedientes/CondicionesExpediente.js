@@ -708,9 +708,15 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 									{
 										xtype : 'textfieldbase',
 										fieldLabel : HreRem.i18n('fieldlabel.documento'),
-										maxLength : 9,
+										setMaxLength: function (v) {
+                                            this.maxLength = v;
+                                        },
+                                        getMaxLength: function () {
+                                            return this.maxLength;
+                                        },
 										bind : {
-											value : '{condiciones.documentoFiador}'
+											value : '{condiciones.documentoFiador}',
+											maxLength: '{maxLengthDocumentoFiador}'
 										}
 									},
 									{

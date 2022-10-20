@@ -791,7 +791,11 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	 	habilitarForzadoCajamar: function(get){
          	return $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || get('datosbasicosoferta.modificarFormalizacionCajamar');
 
-         }
+        },
+
+        maxLengthDocumentoFiador: function(get){
+            return get('esBankiaAlquilerOAlquilerNoComercial') ? 9999 : 9;
+        }
 
 	 },
 	

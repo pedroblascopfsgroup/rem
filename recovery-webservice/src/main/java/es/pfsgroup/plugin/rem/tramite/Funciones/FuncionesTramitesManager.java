@@ -234,15 +234,12 @@ public class FuncionesTramitesManager implements FuncionesTramitesApi {
 	public boolean checkCuentasVirtualesAlquilerLibres(TareaExterna tareaExterna) {
 		boolean resultado = false;
 		ExpedienteComercial eco = expedienteComercialApi.tareaExternaToExpedienteComercial(tareaExterna);
+		
 		if (eco != null && eco.getOferta() != null) {
 			Oferta ofr = eco.getOferta();
 			if (ofr != null) {
-				Filter filterCva =  genericDao.createFilter(FilterType.EQUALS, "subcartera", ofr.getActivoPrincipal().getSubcartera());
-				Filter cuentaLibre = genericDao.createFilter(FilterType.NULL, "fechaInicio");
-				List <CuentasVirtualesAlquiler> cvaList = genericDao.getList(CuentasVirtualesAlquiler.class, filterCva, cuentaLibre);
-				if(cvaList != null && !cvaList.isEmpty()) {
-					resultado = true;
-				}
+				CuentasVirtualesAlquiler cuentaVirtualAlquiler = this.devolverCuentaVirtualAlquiler(ofr.getActivoPrincipal(), null, false);
+				resultado = cuentaVirtualAlquiler != null;
 			}
 		}
 			
@@ -427,6 +424,7 @@ public class FuncionesTramitesManager implements FuncionesTramitesApi {
 		List<CuentasVirtualesAlquiler> cuentasVirtualesAlquilerList = genericDao.getList(CuentasVirtualesAlquiler.class, filtroSubCartera,filtroFechaFin);
 		if(cuentasVirtualesAlquilerList != null && !cuentasVirtualesAlquilerList.isEmpty()) {
 			cuentasVirtual = cuentasVirtualesAlquilerList.get(0);
+			logger.error("ID DE CUENTA VIRTUAL: "+cuentasVirtual.getId());
 			if(vincular) {
 				this.vincularCuentaVirtual(cuentasVirtual, fianza);
 			}

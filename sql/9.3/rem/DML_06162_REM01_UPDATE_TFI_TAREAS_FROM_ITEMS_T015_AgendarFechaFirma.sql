@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Adrián Molina 
---## FECHA_CREACION=20221018
+--## AUTOR=Lara Pablo
+--## FECHA_CREACION=20221020
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-18839
@@ -47,12 +47,15 @@ DECLARE
       	T_TIPO_DATA2('T015_AgendarFechaFirma','datefield','2','fechaAgendacionIngreso','Debe indicar si el cliente acepta','false',null,'Agendación de ingreso'),
       	T_TIPO_DATA2('T015_AgendarFechaFirma','textfield','3','lugarFirma','Lugar donde se va a firmar','false',null,'Lugar de la firma'),
       	T_TIPO_DATA2('T015_AgendarFechaFirma','combobox','4','comboFianza','Fianza exonerada','false','DDSiNo','Fianza exonerada'),
-		T_TIPO_DATA2('T015_AgendarFechaFirma','numberfield','5','importe','Importe fianza','false',null,'Importe fianza'),	
-		T_TIPO_DATA2('T015_AgendarFechaFirma','textfield','6','ibanDev','IBAN de devolución','false',null,'IBAN de devolución'),
-		T_TIPO_DATA2('T015_AgendarFechaFirma','datefield','7','fechaReagendarIngreso',null,null,null,'Reagendación de ingreso'),
-		T_TIPO_DATA2('T015_AgendarFechaFirma','combobox','8','motivoFianzaExonerada',null,null,'DDMotivoExoneracionFianza','Motivo fianza exonerada'),
-		T_TIPO_DATA2('T015_AgendarFechaFirma','textarea','9','justificacion',null,null,null,'Justificación reagendación'),
-		T_TIPO_DATA2('T015_AgendarFechaFirma','textarea','10','observaciones',null,null,null,'Observaciones')
+      	T_TIPO_DATA2('T015_AgendarFechaFirma','combobox','5','motivoFianzaExonerada',null,null,'DDMotivoExoneracionFianza','Motivo fianza exonerada'),
+
+		T_TIPO_DATA2('T015_AgendarFechaFirma','numberfield','6','importe','Importe fianza','false',null,'Importe fianza'),	
+		T_TIPO_DATA2('T015_AgendarFechaFirma','numberfield','7','meses','Meses fianza','false',null,'Meses fianza'),	
+		
+		T_TIPO_DATA2('T015_AgendarFechaFirma','textfield','8','ibanDev','IBAN de devolución','false',null,'IBAN de devolución'),
+		T_TIPO_DATA2('T015_AgendarFechaFirma','datefield','9','fechaReagendarIngreso',null,null,null,'Reagendación de ingreso'),
+		T_TIPO_DATA2('T015_AgendarFechaFirma','textarea','10','justificacion',null,null,null,'Justificación reagendación'),
+		T_TIPO_DATA2('T015_AgendarFechaFirma','textarea','11','observaciones',null,null,null,'Observaciones')
       	
 
     ); 

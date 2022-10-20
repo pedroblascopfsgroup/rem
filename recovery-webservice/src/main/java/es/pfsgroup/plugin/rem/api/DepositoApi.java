@@ -53,6 +53,4 @@ public interface DepositoApi {
 
 	boolean isDepositoDecidido(Deposito deposito);
 
-	List<CuentasVirtualesAlquiler> vincularCuentaVirtualAlquiler(Activo activo, Fianzas fia);
-
 }

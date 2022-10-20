@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Adrián Molina
---## FECHA_CREACION=20221018
+--## AUTOR= Lara Pablo
+--## FECHA_CREACION=20221020
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-18839
@@ -48,13 +48,14 @@ DECLARE
       	T_TIPO_DATA2('T018_AgendarFirma'	,'datefield'	,'1'	,'fechaFirma' 				,'' 										,'false'   ,null          							,'Fecha Firma'),
 		T_TIPO_DATA2('T018_AgendarFirma'	,'textfield'	,'2'	,'lugarFirma' 				,'' 										,'false'   ,null          							,'Lugar Firma'),
 		T_TIPO_DATA2('T018_AgendarFirma'	,'combobox'		,'3'	,'comboResultado'	        ,'Debe indicar si se Aprueba o No'    		,'false'   ,'DDSiNo'	    						,'Fianza exonerada'),
-        T_TIPO_DATA2('T018_AgendarFirma'	,'datefield'    ,'4'	,'fechaAgendacionIngreso' 	,''                                         ,null      ,null	       							,'Agendación de ingreso'),
-        T_TIPO_DATA2('T018_AgendarFirma'	,'datefield'    ,'5'	,'fechaReagendarIngreso'  	,''                                         ,null      ,null            						,'Reagendación de ingreso'),
-        T_TIPO_DATA2('T018_AgendarFirma'	,'numberfield'  ,'6'	,'importe'      	        ,''                                         ,null      ,null            						,'Importe'),
-        T_TIPO_DATA2('T018_AgendarFirma'	,'textfield'    ,'7'	,'ibanDev'      	        ,''                                         ,null      ,null            						,'IBAN de devolución'),
-        T_TIPO_DATA2('T018_AgendarFirma'	,'combobox'    ,'8'		,'motivoFianzaExonerada'    ,''                                         ,null      ,'DDMotivoExoneracionFianza'             ,'Motivo fianza exonerada'),
-        T_TIPO_DATA2('T018_AgendarFirma'	,'textarea'     ,'9'	,'justificacion'	        ,''                                         ,null      ,null            						,'Justificación'),
-    	T_TIPO_DATA2('T018_AgendarFirma'	,'textarea'     ,'10'	,'observaciones'	        ,''                                         ,null      ,null            						,'Observaciones')
+		T_TIPO_DATA2('T018_AgendarFirma'	,'combobox'     ,'4'	,'motivoFianzaExonerada'    ,''                                         ,null      ,'DDMotivoExoneracionFianza'             ,'Motivo fianza exonerada'),
+  		T_TIPO_DATA2('T018_AgendarFirma'	,'numberfield'  ,'5'	,'importe'      	        ,''                                         ,null      ,null            						,'Importe'),
+        T_TIPO_DATA2('T018_AgendarFirma'	,'numberfield'  ,'6'	,'meses'      	        	,''                                         ,null      ,null            						,'Meses'),
+  		T_TIPO_DATA2('T018_AgendarFirma'	,'textfield'    ,'7'	,'ibanDev'      	        ,''                                         ,null      ,null            						,'IBAN de devolución'),
+        T_TIPO_DATA2('T018_AgendarFirma'	,'datefield'    ,'8'	,'fechaAgendacionIngreso' 	,''                                         ,null      ,null	       							,'Agendación de ingreso'),
+        T_TIPO_DATA2('T018_AgendarFirma'	,'datefield'    ,'9'	,'fechaReagendarIngreso'  	,''                                         ,null      ,null            						,'Reagendación de ingreso'),
+        T_TIPO_DATA2('T018_AgendarFirma'	,'textarea'     ,'10'	,'justificacion'	        ,''                                         ,null      ,null            						,'Justificación'),
+    	T_TIPO_DATA2('T018_AgendarFirma'	,'textarea'     ,'11'	,'observaciones'	        ,''                                         ,null      ,null            						,'Observaciones')
       	
 
     ); 

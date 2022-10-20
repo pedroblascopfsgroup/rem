@@ -372,15 +372,4 @@ public class DepositoManager extends BusinessOperationOverrider<DepositoApi> imp
 		dep.setFechaDevolucion(new Date());
 		return cambiaEstadoDeposito(dep, codDeposito);
 	}
-	
-	@Override
-	@Transactional
-	public synchronized List<CuentasVirtualesAlquiler> vincularCuentaVirtualAlquiler(Activo activo, Fianzas fia) {
-		List<CuentasVirtualesAlquiler> cuentasVirtualesAlquiler = null;
-		Filter filtroSubCartera = genericDao.createFilter(FilterType.EQUALS, "subcartera.codigo", activo.getSubcartera().getCodigo());
-		Filter filtroFechaFin = genericDao.createFilter(FilterType.NULL, "fechaInicio");
-		cuentasVirtualesAlquiler = genericDao.getList(CuentasVirtualesAlquiler.class, filtroSubCartera,filtroFechaFin);
-			
-		return cuentasVirtualesAlquiler;
-	}
 }

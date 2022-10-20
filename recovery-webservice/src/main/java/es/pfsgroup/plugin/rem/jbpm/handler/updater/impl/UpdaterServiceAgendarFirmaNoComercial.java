@@ -2,7 +2,6 @@ package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -10,28 +9,22 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import es.capgemini.pfs.core.api.usuario.UsuarioApi;
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
-import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.plugin.rem.api.DepositoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
-import es.pfsgroup.plugin.rem.api.GenericApi;
+import es.pfsgroup.plugin.rem.api.FuncionesTramitesApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
-import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
-import es.pfsgroup.plugin.rem.model.CuentasVirtualesAlquiler;
+import es.pfsgroup.plugin.rem.model.DtoTareasFormalizacion;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Fianzas;
 import es.pfsgroup.plugin.rem.model.HistoricoReagendacion;
 import es.pfsgroup.plugin.rem.model.Oferta;
-import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoExoneracionFianza;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
@@ -45,17 +38,8 @@ public class UpdaterServiceAgendarFirmaNoComercial implements UpdaterService {
     @Autowired
     private ExpedienteComercialApi expedienteComercialApi;
     
-    @Autowired
-    private ApiProxyFactory proxyFactory;
-    
-    @Autowired
-	private GenericApi genericApi;
-    
-    @Autowired
-    private DepositoApi depositoApi;
-	
-    @Autowired
-	private UsuarioApi usuarioApi;
+	@Autowired
+	private FuncionesTramitesApi funcionesTramitesApi;
     
     protected static final Log logger = LogFactory.getLog(UpdaterServiceAgendarFirmaNoComercial.class);
     
@@ -67,149 +51,66 @@ public class UpdaterServiceAgendarFirmaNoComercial implements UpdaterService {
 	private static final String IMPORTE = "importe";
 	private static final String IBAN_DEVOLUCION = "ibanDev";
 	private static final String MOTIVO_EXONERACION_FIANZA = "motivoFianzaExonerada";
+	private static final String MESES = "importe";
 
 	private static final String CODIGO_T018_AGENDAR_FIRMA = "T018_AgendarFirma";
 	
 	@SuppressWarnings("null")
 	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
-		boolean fianzaExonerada = false;
-		boolean fechaReagendacionRelleno = false;
-		String fechaAgendacionValor = null;
-		String fechaReagendarIngresoValor = null;
-		String importe = null;
-		String ibanDevolucion = null;
-		String motivoExoneracionFianza = null;
-		Fianzas fianza = null;
-		
-		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
-		CondicionanteExpediente condicionantesExpediente = expedienteComercial.getCondicionante();
-		Activo activo =tramite.getActivo();
-		Oferta oferta = expedienteComercial.getOferta();
-		Usuario usu = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
-		Filter filterOfr =  genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId());
-		Fianzas fia = genericDao.get(Fianzas.class, filterOfr);
-		
-		for(TareaExternaValor valor :  valores){
-			
-			if (DDCartera.CODIGO_CAIXA.equals(activo.getCartera().getCodigo())) {
-				if (COMBO_FIANZA_EXONERADA.equals(valor.getNombre()) && !Checks.esNulo(DDSinSiNo.cambioStringtoBooleano(valor.getValor())) && DDSinSiNo.cambioStringtoBooleano(valor.getValor())) {
-					fianzaExonerada = true;
-				}
-				if (FECHA_AGENDACION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-					fechaAgendacionValor = valor.getValor();
-				}
-				if (FECHA_REAGENDACION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-					fechaReagendacionRelleno = true;
-					fechaReagendarIngresoValor = valor.getValor();
-				}
-				if (IMPORTE.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-					importe = valor.getValor();
-				}
-				if (IBAN_DEVOLUCION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-					ibanDevolucion = valor.getValor();
-				}
-				if (MOTIVO_EXONERACION_FIANZA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-					motivoExoneracionFianza = valor.getValor();
-				}
-			}
-		}
-		
-		if(motivoExoneracionFianza != null) {
-			condicionantesExpediente.setMotivoExoneracionFianza(genericDao.get(DDMotivoExoneracionFianza.class, genericDao.createFilter(FilterType.EQUALS, "codigo", motivoExoneracionFianza)));
-		}
-		
-		if (fianzaExonerada) {
-			if (fia != null) {
-				fia.getAuditoria().setUsuarioBorrar(usu.getUsername());
-				fia.getAuditoria().setFechaBorrar(new Date());
-				fia.getAuditoria().setBorrado(true);
-				genericDao.save(Fianzas.class, fia);
-			}
-			
-		} else {
-			if (fia != null) {
-				if (oferta != null) {
-					fia.setOferta(oferta);
-				}
-				if (fechaAgendacionValor != null) {
-					try {
-						fia.setFechaAgendacionIngreso(ft.parse(fechaAgendacionValor));
-					} catch (ParseException e) {
-						logger.error("error en UpdaterServiceAgendarFirmaNoComercial", e);
-						e.printStackTrace();
-					}
-				}
-				if (importe != null) {
-					fia.setImporte(Double.parseDouble(importe));
-				}		
-				if (ibanDevolucion != null) {
-					fia.setIbanDevolucion(ibanDevolucion);
-				}
-				fianza = fia;
-				genericDao.save(Fianzas.class, fia);
-			} else {
-				Fianzas fiaN = new Fianzas();
-				if (oferta != null) {
-					fiaN.setOferta(oferta);
-				}
-				if (fechaAgendacionValor != null) {
-					try {
-						fiaN.setFechaAgendacionIngreso(ft.parse(fechaAgendacionValor));
-					} catch (ParseException e) {
-						logger.error("error en UpdaterServiceAgendarFirmaNoComercial", e);
-						e.printStackTrace();
-					}
-				}
-				if (importe != null) {
-					fiaN.setImporte(Double.parseDouble(importe));
-				}		
-				if (ibanDevolucion != null) {
-					fiaN.setIbanDevolucion(ibanDevolucion);
-				}
 
-				fianza = fiaN;
-				List<CuentasVirtualesAlquiler> cuentasVirtualesAlquiler = depositoApi.vincularCuentaVirtualAlquiler(activo, fiaN);
-				
-				CuentasVirtualesAlquiler cuentaVirtualAlquiler = null;
-				
-				if(cuentasVirtualesAlquiler != null && !cuentasVirtualesAlquiler.isEmpty()) {
-					cuentaVirtualAlquiler = cuentasVirtualesAlquiler.get(0);
-					cuentaVirtualAlquiler.setFechaInicio(new Date());
-					cuentaVirtualAlquiler.getAuditoria().setUsuarioModificar(usuarioApi.getUsuarioLogado().getUsername());
-					cuentaVirtualAlquiler.getAuditoria().setFechaModificar(new Date());
-					
-					fia.setCuentaVirtualAlquiler(cuentaVirtualAlquiler);
-
-					genericDao.update(CuentasVirtualesAlquiler.class, cuentaVirtualAlquiler);
-				}
-				genericDao.save(Fianzas.class, fiaN);
-			}
+		try {
+			DtoTareasFormalizacion dto = new DtoTareasFormalizacion();
 			
-			if (fechaReagendacionRelleno) {
-				HistoricoReagendacion histReagendacion = new HistoricoReagendacion();
-				histReagendacion.setFianza(fianza);
-				if (fechaReagendarIngresoValor != null) {
-					try {
-						histReagendacion.setFechaReagendacionIngreso(ft.parse(fechaReagendarIngresoValor));
-					} catch (ParseException e) {
-						logger.error("error en UpdaterServiceAgendarFirmaNoComercial", e);
-						e.printStackTrace();
+			ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
+			Oferta oferta = expedienteComercial.getOferta();
+			
+			for(TareaExternaValor valor :  valores){
+			
+					if (COMBO_FIANZA_EXONERADA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+						dto.setFianzaExonerada(DDSinSiNo.cambioStringaBooleanoNativo(valor.getValor()));
 					}
-				}
-				genericDao.save(HistoricoReagendacion.class, histReagendacion);
+					if (FECHA_AGENDACION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+						dto.setFechaAgendacion(ft.parse(valor.getValor()));
+					}
+					if (FECHA_REAGENDACION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+						dto.setFechaReagendarIngreso(ft.parse(valor.getValor()));
+					}
+					if (IMPORTE.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+						dto.setImporte(Double.parseDouble(valor.getValor()));
+					}
+					if (IBAN_DEVOLUCION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+						dto.setIbanDevolucion(valor.getValor());
+					}
+					if (MOTIVO_EXONERACION_FIANZA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+						dto.setMotivoExoneracionFianza(valor.getValor());
+					}
+					if (MESES.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+						dto.setMeses(Integer.parseInt(valor.getValor()));
+					}
 			}
 			
-		}	
-		
-		String estadoExpBC = this.devolverEstadoBC(fianzaExonerada, tareaExternaActual);
-		if(estadoExpBC != null) {
-			expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoExpBC)));
+			Fianzas fia = genericDao.get(Fianzas.class, genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId()));
+			
+			if(!Checks.esNulo(dto.getFianzaExonerada()) && dto.getFianzaExonerada()) {
+				if(fia != null) {
+					Auditoria.delete(fia);
+					genericDao.save(Fianzas.class, fia);
+				}
+			}else {
+				fia = this.updateOrCreateFianza(fia, oferta, dto);
+				this.crearRegistroEnHistorico(fia, dto);
+			}
+			
+			this.actualizarCondicionesExpediente(dto, expedienteComercial.getCondicionante());
+			
+			//expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoHaya)));
+			expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", this.devolverEstadoBC(dto.getFianzaExonerada()))));
+			genericDao.save(ExpedienteComercial.class, expedienteComercial);
+		}catch (ParseException e) {
+			logger.error("error en UpdaterServiceSancionOfertaAlquileresAgendarFirma", e);
+			e.printStackTrace();
 		}
-				
-		genericDao.save(ExpedienteComercial.class, expedienteComercial);
-		if(condicionantesExpediente != null) {
-			genericDao.save(CondicionanteExpediente.class, condicionantesExpediente);
-		}
+
 	}
 
 	public String[] getCodigoTarea() {
@@ -220,7 +121,7 @@ public class UpdaterServiceAgendarFirmaNoComercial implements UpdaterService {
 		return this.getCodigoTarea();
 	}
 	
-	private String devolverEstadoBC(Boolean fianzaExonerada,  TareaExterna tareaExterna) {
+	private String devolverEstadoBC(Boolean fianzaExonerada) {
 		String estadoExpBC = null;
 		if(fianzaExonerada != null) {
 			if(fianzaExonerada) {
@@ -231,6 +132,47 @@ public class UpdaterServiceAgendarFirmaNoComercial implements UpdaterService {
 		}
 		
 		return estadoExpBC;
+	}
+	
+	private Fianzas updateOrCreateFianza(Fianzas fia, Oferta oferta, DtoTareasFormalizacion dto) {
+		if(fia == null) {
+			fia = new Fianzas();
+			fia.setOferta(oferta);
+		}
+			
+		funcionesTramitesApi.devolverCuentaVirtualAlquiler(oferta.getActivoPrincipal(), fia, true);
+			
+		fia.setFechaAgendacionIngreso(dto.getFechaAgendacion());
+		fia.setImporte(dto.getImporte());
+
+		fia.setIbanDevolucion(dto.getIbanDevolucion());
+		genericDao.save(Fianzas.class, fia);
+		
+		return fia;
+	}
+	
+	private void crearRegistroEnHistorico(Fianzas fia, DtoTareasFormalizacion dto) {
+		if (!Checks.esNulo(dto.getFechaReagendarIngreso())) {
+			HistoricoReagendacion histReagendacion = new HistoricoReagendacion();
+			histReagendacion.setFianza(fia);
+			histReagendacion.setFechaReagendacionIngreso(dto.getFechaReagendarIngreso());
+			genericDao.save(HistoricoReagendacion.class, histReagendacion);
+		}
+	}
+	
+	private void actualizarCondicionesExpediente(DtoTareasFormalizacion dto, CondicionanteExpediente condicionantesExpediente) {
+		
+		condicionantesExpediente.setFianzaExonerada(dto.getFianzaExonerada());
+		
+		if(!dto.getFianzaExonerada()) {
+			condicionantesExpediente.setMesesFianza(dto.getMeses());
+			condicionantesExpediente.setImporteFianza(dto.getImporte());
+		}else {
+			if(dto.getMotivoExoneracionFianza() != null) {
+				condicionantesExpediente.setMotivoExoneracionFianza(genericDao.get(DDMotivoExoneracionFianza.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getMotivoExoneracionFianza())));
+			}
+		}
+		genericDao.save(CondicionanteExpediente.class, condicionantesExpediente);
 	}
 
 }

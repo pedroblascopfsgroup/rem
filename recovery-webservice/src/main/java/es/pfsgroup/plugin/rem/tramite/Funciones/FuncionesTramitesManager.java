@@ -281,6 +281,7 @@ public class FuncionesTramitesManager implements FuncionesTramitesApi {
 		DtoTabFianza dto = new DtoTabFianza();
 		ExpedienteComercial eco = expedienteComercialApi.findOne(idExpediente);
 		Oferta ofr = eco.getOferta();
+		CondicionanteExpediente coe = eco.getCondicionante();
 		if (ofr != null) {
 			
 			dto.setFechaAprobacionOferta(eco.getFechaSancionComite());
@@ -291,7 +292,16 @@ public class FuncionesTramitesManager implements FuncionesTramitesApi {
 				dto.setAgendacionIngreso(fia.getFechaAgendacionIngreso());
 				dto.setImporteFianza(fia.getImporte());
 				dto.setIbanDevolucion(fia.getIbanDevolucion());
-			}	
+	
+				if(coe != null){
+					dto.setMeses(coe.getMesesFianza());
+				}
+			}else if(coe != null) {
+				dto.setImporteFianza(coe.getImporteFianza());
+				dto.setFianzaExonerada(coe.getFianzaExonerada());
+				dto.setMeses(coe.getMesesFianza());
+			}
+			
 		}
 		
 		return dto;
@@ -408,4 +418,30 @@ public class FuncionesTramitesManager implements FuncionesTramitesApi {
 		}
 	}
 
+	@Override
+	@Transactional
+	public synchronized CuentasVirtualesAlquiler devolverCuentaVirtualAlquiler(Activo activo, Fianzas fianza, boolean vincular) {
+		CuentasVirtualesAlquiler cuentasVirtual = null;
+		Filter filtroSubCartera = genericDao.createFilter(FilterType.EQUALS, "subcartera.codigo", activo.getSubcartera().getCodigo());
+		Filter filtroFechaFin = genericDao.createFilter(FilterType.NULL, "fechaInicio");
+		List<CuentasVirtualesAlquiler> cuentasVirtualesAlquilerList = genericDao.getList(CuentasVirtualesAlquiler.class, filtroSubCartera,filtroFechaFin);
+		if(cuentasVirtualesAlquilerList != null && !cuentasVirtualesAlquilerList.isEmpty()) {
+			cuentasVirtual = cuentasVirtualesAlquilerList.get(0);
+			if(vincular) {
+				this.vincularCuentaVirtual(cuentasVirtual, fianza);
+			}
+		}
+		
+		return cuentasVirtual;
+	}
+	
+
+	private void vincularCuentaVirtual(CuentasVirtualesAlquiler cuentaVirtualAlquiler, Fianzas fianza) {
+		cuentaVirtualAlquiler.setFechaInicio(new Date());
+		fianza.setCuentaVirtualAlquiler(cuentaVirtualAlquiler);
+
+		genericDao.save(CuentasVirtualesAlquiler.class, cuentaVirtualAlquiler);
+		genericDao.save(Fianzas.class, fianza);
+		
+	}
 }

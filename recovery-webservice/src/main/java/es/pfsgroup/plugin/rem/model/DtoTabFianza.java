@@ -19,12 +19,12 @@ public class DtoTabFianza extends WebDto {
 	private String cuentaVirtual;
 	private String ibanDevolucion;
 	private Boolean entregaFianzaAapp;
-	
-
 	private Boolean fianzaExonerada;
 	private Date agendacionFechaIngreso;
-	
 	private Date fechaAprobacionOferta;
+	private Integer meses;
+	
+	
 	
 	public Long getId() {
 		return id;
@@ -93,7 +93,11 @@ public class DtoTabFianza extends WebDto {
 	public void setFechaAprobacionOferta(Date fechaAprobacionOferta) {
 		this.fechaAprobacionOferta = fechaAprobacionOferta;
 	}
-	
-	
+	public Integer getMeses() {
+		return meses;
+	}
+	public void setMeses(Integer meses) {
+		this.meses = meses;
+	}
 	
 }

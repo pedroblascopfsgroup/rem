@@ -27,6 +27,7 @@ public class DtoTareasFormalizacion {
 	private	Date fechaAgendacion;
 	private Date fechaReagendarIngreso;
 	private	Double importe;
+	private Integer meses;
 	private	String ibanDevolucion;
 	
 	private String tipoAdenda;
@@ -100,6 +101,12 @@ public class DtoTareasFormalizacion {
 	}
 	public void setImporte(Double importe) {
 		this.importe = importe;
+	}
+	public Integer getMeses() {
+		return meses;
+	}
+	public void setMeses(Integer meses) {
+		this.meses = meses;
 	}
 	public String getIbanDevolucion() {
 		return ibanDevolucion;

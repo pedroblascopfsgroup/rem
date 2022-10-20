@@ -3917,6 +3917,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		var ibanDevolucion = me.down('[name=ibanDev]');
 		var justificacion = me.down('[name=justificacion]');
 		var motivoFianzaExonerada = me.down('[name=motivoFianzaExonerada]');
+		var meses = me.down('[name=meses]');
 		
 		me.bloquearCampo(fechaAgendacionIngreso);
     	me.bloquearCampo(importe);
@@ -3924,19 +3925,23 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     	me.bloquearCampo(fechaReagendarIngreso);
     	me.bloquearCampo(justificacion);
     	me.bloquearCampo(motivoFianzaExonerada);
+    	me.bloquearCampo(meses);
 		
 		comboFianza.addListener('change', function(comboFianza) {
 			if(!fechaAgendacionIngreso.readOnly){
 	            if (comboFianza.value ==  CONST.COMBO_SIN_SINO['SI']) {
 	            	importe.reset();
+	            	meses.reset();
 	            	ibanDevolucion.reset();
 	            	me.bloquearCampo(importe);
+	            	me.bloquearCampo(meses);
 	            	me.bloquearCampo(ibanDevolucion);
 	            	me.desbloquearCampo(motivoFianzaExonerada);
 	            	me.campoObligatorio(motivoFianzaExonerada);
 	
 	            } else {
 		    		me.desbloquearCampo(importe);
+		    		me.desbloquearCampo(meses);
 		    		me.desbloquearCampo(ibanDevolucion);
 		    		me.borrarCampo(motivoFianzaExonerada);
 		    		me.campoNoObligatorio(motivoFianzaExonerada);
@@ -3971,10 +3976,14 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 							me.desbloquearCampo(fechaAgendacionIngreso);
 						}
 			    		me.desbloquearCampo(importe);
+			    		me.desbloquearCampo(meses);
 			    		me.desbloquearCampo(ibanDevolucion);
 			    		
 						if (!Ext.isEmpty(dto.importeFianza)) {
 							importe.setValue(dto.importeFianza);								
+						}
+						if (!Ext.isEmpty(dto.meses)) {
+							meses.setValue(dto.meses);								
 						}
 						if (!Ext.isEmpty(dto.ibanDevolucion)) {
 							ibanDevolucion.setValue(dto.ibanDevolucion);
@@ -4961,6 +4970,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		var ibanDevolucion = me.down('[name=ibanDev]');
 		var justificacion = me.down('[name=justificacion]');
 		var motivoFianzaExonerada = me.down('[name=motivoFianzaExonerada]');
+		var meses = me.down('[name=meses]');
 		
 		me.bloquearCampo(fechaAgendacionIngreso);
     	me.bloquearCampo(importe);
@@ -4968,6 +4978,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     	me.bloquearCampo(fechaReagendarIngreso);
     	me.bloquearCampo(justificacion);
     	me.bloquearCampo(motivoFianzaExonerada);
+    	me.bloquearCampo(meses);
     	
 		comboFianza.addListener('change', function(comboFianza) {
             if (comboFianza.value ==  CONST.COMBO_SIN_SINO['SI']) {
@@ -4977,7 +4988,9 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
             	me.bloquearCampo(importe);
             	me.bloquearCampo(ibanDevolucion);
             	me.desbloquearCampo(motivoFianzaExonerada);
-            	me.campoObligatorio(motivoFianzaExonerada)
+            	me.campoObligatorio(motivoFianzaExonerada);
+            	meses.reset();
+            	me.bloquearCampo(meses);
 
             } else {
 	    		me.desbloquearCampo(importe);
@@ -4985,6 +4998,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 	    		me.borrarCampo(motivoFianzaExonerada);
 	    		me.campoNoObligatorio(motivoFianzaExonerada);
 	    		me.bloquearCampo(motivoFianzaExonerada);
+	    		me.desbloquearCampo(meses);
 
             }
         });
@@ -5017,9 +5031,13 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 						}
 			    		me.desbloquearCampo(importe);
 			    		me.desbloquearCampo(ibanDevolucion);
+			    		me.desbloquearCampo(meses);
 			    		
 						if (!Ext.isEmpty(dto.importeFianza)) {
 							importe.setValue(dto.importeFianza);								
+						}
+						if (!Ext.isEmpty(dto.meses)) {
+							meses.setValue(dto.meses);								
 						}
 						if (!Ext.isEmpty(dto.ibanDevolucion)) {
 							ibanDevolucion.setValue(dto.ibanDevolucion);

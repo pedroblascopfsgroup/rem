@@ -23,11 +23,6 @@ public class CrearConductasInapropiadasDto {
 	private String tipoClase;
 	
 	/**
-	 * Clase de proveedor
-	 */
-	private String codClase;
-	
-	/**
 	 * Descripción del proveedor
 	 */
 	private String descripcionConductasInapropiadas;
@@ -35,7 +30,9 @@ public class CrearConductasInapropiadasDto {
 	/**
 	 * Objeto constituido por los metadatos para un proveedor
 	 */
-	private String operacionMetadatos;
+	private String metadata;
+	
+	private String metadataExtended;
 	
 
 	public String getUsuario() {
@@ -70,14 +67,6 @@ public class CrearConductasInapropiadasDto {
 		this.tipoClase = tipoClase;
 	}
 
-	public String getCodClase() {
-		return codClase;
-	}
-	
-	public void setCodClase(String codClase) {
-		this.codClase = codClase;
-	}
-
 	public String getDescripcionConductasInapropiadas() {
 		return descripcionConductasInapropiadas;
 	}
@@ -86,12 +75,20 @@ public class CrearConductasInapropiadasDto {
 		this.descripcionConductasInapropiadas = descripcionConductasInapropiadas;
 	}
 
-	public String getOperacionMetadatos() {
-		return operacionMetadatos;
+	public String getMetadata() {
+		return metadata;
 	}
 
-	public void setOperacionMetadatos(String operacionMetadatos) {
-		this.operacionMetadatos = operacionMetadatos;
+	public void setMetadata(String metadata) {
+		this.metadata = metadata;
+	}
+	
+	public String getMetadataExtended() {
+		return metadataExtended;
+	}
+
+	public void setMetadataExtended(String metadataExtended) {
+		this.metadataExtended = metadataExtended;
 	}
 	
 	

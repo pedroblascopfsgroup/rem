@@ -299,11 +299,11 @@ public class RecoveryToGestorExpAssembler {
 	
 		doc.setUsuario(USUARIO);
 		doc.setPassword(PASSWORD);
-		doc.setCodClase(codClase);
 		doc.setTipoClase(tipo);
 		doc.setUsuarioOperacional(userLogin);
 		doc.setDescripcionConductasInapropiadas(descripcionConductasInapropiadas);
-		doc.setOperacionMetadatos(rellenarConductasInapropiadasdMetadatos(id, nifProveedor, "Haya"));
+		doc.setMetadata(rellenarConductasInapropiadasdMetadatos(id, nifProveedor, "Haya Real Estate"));
+		doc.setMetadataExtended(rellenarConductasInapropiadasdMetadatosExtended());
 
 
 		
@@ -313,12 +313,27 @@ public class RecoveryToGestorExpAssembler {
 	private static String rellenarConductasInapropiadasdMetadatos (Long id, String idExterno, String cliente) {
         StringBuilder sb = new StringBuilder();
         sb.append("{");
-                sb.append(GestorDocumentalConstants.OPERACION).append("{");
-                        sb.append(GestorDocumentalConstants.metadataCrearContenedor[0]).append("\"").append(id).append("\"").append(",");
-                        sb.append(GestorDocumentalConstants.metadataCrearContenedor[1]).append("\"").append(idExterno).append("\"").append(",");
-                        sb.append(GestorDocumentalConstants.metadataCrearContenedor[2]).append("\"").append(cliente).append("\"");
+                sb.append(GestorDocumentalConstants.PROCESOS_CLASIFICADOS).append("{");
+                        sb.append(GestorDocumentalConstants.metadataCrearContenedorConductasInapropiadas[0]).append("\"").append(id).append("\"").append(",");
+                        sb.append(GestorDocumentalConstants.metadataCrearContenedorConductasInapropiadas[1]).append("\"").append(idExterno).append("\"").append(",");
+                        sb.append(GestorDocumentalConstants.metadataCrearContenedorConductasInapropiadas[2]).append("\"").append("").append("\"").append(",");
+                        sb.append(GestorDocumentalConstants.metadataCrearContenedorConductasInapropiadas[3]).append("\"").append("").append("\"").append(",");
+                        sb.append(GestorDocumentalConstants.metadataCrearContenedorConductasInapropiadas[4]).append("\"").append(cliente).append("\"");
                 sb.append("}");
         sb.append("}");
         return sb.toString();
-}
+	}
+	
+	private static String rellenarConductasInapropiadasdMetadatosExtended () {
+        StringBuilder sb = new StringBuilder();
+        sb.append("{");
+                sb.append(GestorDocumentalConstants.CONDUCTAS_INAPROPIADAS).append("{");
+                        sb.append(GestorDocumentalConstants.metadataCrearContenedorConductasInapropiadasExtendido[0]).append("\"").append("").append("\"").append(",");
+                        sb.append(GestorDocumentalConstants.metadataCrearContenedorConductasInapropiadasExtendido[1]).append("\"").append("").append("\"").append(",");
+                        sb.append(GestorDocumentalConstants.metadataCrearContenedorConductasInapropiadasExtendido[2]).append("\"").append("").append("\"").append(",");
+                        sb.append(GestorDocumentalConstants.metadataCrearContenedorConductasInapropiadasExtendido[3]).append("\"").append("").append("\"");
+                sb.append("}");
+        sb.append("}");
+        return sb.toString();
+	}
 }

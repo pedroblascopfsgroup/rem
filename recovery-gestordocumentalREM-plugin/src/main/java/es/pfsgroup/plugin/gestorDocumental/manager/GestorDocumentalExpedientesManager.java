@@ -508,7 +508,6 @@ public class GestorDocumentalExpedientesManager implements GestorDocumentalExped
 		ServerRequest serverRequest = new ServerRequest();
 		serverRequest.setMethod(RestClientManager.METHOD_POST);
 		serverRequest.setPath(getPathCrearConductasInapropiadas(crearConductasInapropiadasDto));
-		serverRequest.setMultipart(getMultiPartCrearConductasInapropiadas(crearConductasInapropiadasDto));
 		serverRequest.setResponseClass(RespuestaCrearExpediente.class);
 		RespuestaCrearExpediente respuesta = (RespuestaCrearExpediente) getResponse(serverRequest);
 		
@@ -529,21 +528,9 @@ public class GestorDocumentalExpedientesManager implements GestorDocumentalExped
 		sb.append("?").append(USUARIO_PATH).append(crearConductasInapropiadasDto.getUsuario());
 		sb.append("&").append(PASSWORD_PATH).append(crearConductasInapropiadasDto.getPassword());
 		sb.append("&").append(USUARIO_OPERACIONAL_PATH).append(crearConductasInapropiadasDto.getUsuarioOperacional());
-		sb.append("&").append(EXPEDIENTE_COMERCIAL_METADATOS_PATH).append(UriComponent.encode(crearConductasInapropiadasDto.getOperacionMetadatos(), UriComponent.Type.QUERY_PARAM_SPACE_ENCODED));
+		sb.append("&").append(EXPEDIENTE_COMERCIAL_METADATOS_PATH).append(UriComponent.encode(crearConductasInapropiadasDto.getMetadata(), UriComponent.Type.QUERY_PARAM_SPACE_ENCODED));
 		sb.append("&").append(TIPO_EXPEDIENTE_PATH).append(crearConductasInapropiadasDto.getTipoClase());
-		sb.append("&").append(CLASE_EXPEDIENTE_PATH).append(crearConductasInapropiadasDto.getCodClase());
 		return sb.toString();
-	}
-	
-	@SuppressWarnings("resource")
-	private MultiPart getMultiPartCrearConductasInapropiadas(CrearConductasInapropiadasDto crearConductasInapropiadasDto) {
-		final MultiPart multipart = new FormDataMultiPart()
-				.field(USUARIO, crearConductasInapropiadasDto.getUsuario())
-				.field(PASSWORD,  crearConductasInapropiadasDto.getPassword())
-				.field(DESCRIPCION_EXPEDIENTE, crearConductasInapropiadasDto.getDescripcionConductasInapropiadas())
-				.field(COD_CLASE, crearConductasInapropiadasDto.getCodClase().toString())
-				.field(EXPEDIENTE_COMERCIAL_METADATOS, crearConductasInapropiadasDto.getOperacionMetadatos());
-		return multipart;
 	}
 	
 }

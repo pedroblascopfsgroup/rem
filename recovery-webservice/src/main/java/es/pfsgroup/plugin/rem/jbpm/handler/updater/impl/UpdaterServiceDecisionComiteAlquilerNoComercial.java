@@ -1,6 +1,5 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -14,6 +13,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TramiteAlquilerNoComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
@@ -36,6 +36,9 @@ public class UpdaterServiceDecisionComiteAlquilerNoComercial implements UpdaterS
 	 
     @Autowired
     private TramiteAlquilerNoComercialApi tramiteAlquilerNoComercialApi;
+    
+    @Autowired
+	private OfertaApi ofertaApi;
 	
     protected static final Log logger = LogFactory.getLog(UpdaterServiceDecisionComiteAlquilerNoComercial.class);
     
@@ -62,12 +65,16 @@ public class UpdaterServiceDecisionComiteAlquilerNoComercial implements UpdaterS
 		if(DDDecisionComite.CODIGO_CANCELAR.equals(dto.getDecisionComite())) {
 			expedienteComercial.setMotivoAnulacion(genericDao.get(DDMotivoAnulacionExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoAnulacionExpediente.COD_CAIXA_JUDICIALIZADO)));
 			expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO)));
+			
+			if(oferta != null) {
+				ofertaApi.finalizarOferta(oferta);
+			}
 		}
 		
 		tramiteAlquilerNoComercialApi.saveHistoricoFirmaAdenda(dto, oferta);
 		
 		genericDao.save(ExpedienteComercial.class, expedienteComercial);
-		
+				
 	}
 
 	public String[] getCodigoTarea() {

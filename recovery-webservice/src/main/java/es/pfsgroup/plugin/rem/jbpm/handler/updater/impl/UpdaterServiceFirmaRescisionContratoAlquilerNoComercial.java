@@ -7,17 +7,18 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoTareasFormalizacion;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
@@ -31,6 +32,9 @@ public class UpdaterServiceFirmaRescisionContratoAlquilerNoComercial implements 
     @Autowired
     private ExpedienteComercialApi expedienteComercialApi;
     
+    @Autowired
+	private OfertaApi ofertaApi;
+    
     protected static final Log logger = LogFactory.getLog(UpdaterServiceFirmaRescisionContratoAlquilerNoComercial.class);
     
     private static final String COMBO_RESULTADO = "comboResultado";
@@ -40,6 +44,7 @@ public class UpdaterServiceFirmaRescisionContratoAlquilerNoComercial implements 
 	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
 
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
+		Oferta oferta = expedienteComercial.getOferta();
 		DtoTareasFormalizacion dto = new DtoTareasFormalizacion();
 
 		for(TareaExternaValor valor :  valores){
@@ -54,6 +59,10 @@ public class UpdaterServiceFirmaRescisionContratoAlquilerNoComercial implements 
 		
 		if(estadoExpBC != null) {
 			expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoExpBC)));
+		}
+		
+		if(oferta != null) {
+			ofertaApi.finalizarOferta(oferta);
 		}
 		
 		expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO)));

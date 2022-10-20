@@ -4,7 +4,6 @@ import java.util.List;
 
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.CuentasVirtualesAlquiler;
 import es.pfsgroup.plugin.rem.model.DtoCondicionantesExpediente;
 import es.pfsgroup.plugin.rem.model.DtoTabFianza;
@@ -56,5 +55,7 @@ public interface FuncionesTramitesApi {
 	void actualizarEstadosPublicacionActivos(ExpedienteComercial expedienteComercial);
 
 	CuentasVirtualesAlquiler devolverCuentaVirtualAlquiler(Activo activo, Fianzas fianza, boolean vincular) ;
+
+	boolean estanCamposRellenosParaFormalizacion(TareaExterna tareaExterna);
 }
 

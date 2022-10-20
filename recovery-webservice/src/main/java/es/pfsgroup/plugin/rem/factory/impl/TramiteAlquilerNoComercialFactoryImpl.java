@@ -7,7 +7,6 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.factory.TramiteAlquilerNoComercialFactory;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoOfertaAlquiler;
 import es.pfsgroup.plugin.rem.tramite.alquiler.no.comercial.TramiteAlquilerNoComercial;
 import es.pfsgroup.plugin.rem.tramite.alquiler.no.comercial.TramiteAlquilerNoComercialAlquilerSocialDacion;

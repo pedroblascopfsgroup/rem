@@ -1,7 +1,5 @@
 package es.pfsgroup.plugin.rem.tramite.alquiler.no.comercial;
 
-import java.util.List;
-
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.pfsgroup.plugin.rem.model.DtoTareasFormalizacion;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -16,5 +14,7 @@ public interface TramiteAlquilerNoComercial {
 	public void saveHistoricoFirmaAdenda(DtoTareasFormalizacion dto, Oferta oferta);
 
 	boolean modificarFianza(ExpedienteComercial eco);
+	
+	boolean estanCamposRellenosParaFormalizacion(ExpedienteComercial eco);
 
 }

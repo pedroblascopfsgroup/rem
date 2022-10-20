@@ -896,6 +896,10 @@
             	def tramiteAlquilerNoComercialManager = ctx.getBean("tramiteAlquilerNoComercialManager");
             	return tramiteAlquilerNoComercialManager.esRenovacion(tareaExterna);
             }
+            def estanCamposRellenosParaFormalizacion = {
+            	def funcionesTramitesManager = ctx.getBean("funcionesTramitesManager");
+				return funcionesTramitesManager.estanCamposRellenosParaFormalizacion(tareaExterna);
+			}
            
   			 ]]></value>
   		</list>

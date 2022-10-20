@@ -1,9 +1,7 @@
 package es.pfsgroup.plugin.rem.tramite.alquiler;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -15,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
 import es.capgemini.devon.message.MessageService;
-import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
@@ -33,7 +30,6 @@ import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.FuncionesApi;
 import es.pfsgroup.plugin.rem.api.TramiteAlquilerApi;
-import es.pfsgroup.plugin.rem.constants.TareaProcedimientoConstants;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -42,7 +38,6 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
-import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Fianzas;
@@ -467,5 +462,21 @@ public class TramiteAlquilerManager implements TramiteAlquilerApi {
 		for (ActivoAgrupacionActivo activoAgrupacionActivo : listaActivosAgrupacion) {	
 			activoAdapter.actualizarEstadoPublicacionActivo(activoAgrupacionActivo.getActivo().getId());
 		}
+	}
+	
+	@Override
+	public boolean estanCamposRellenosParaFormalizacion(ExpedienteComercial eco) {
+		
+		Oferta oferta = eco.getOferta();
+		CondicionanteExpediente condiciones = eco.getCondicionante();
+		if(oferta == null || condiciones == null)
+			return false;
+		
+		if(oferta.getClaseContratoAlquiler() == null || oferta.getAutoFirme() == null || oferta.getRetencionImpuestos() == null 
+				|| condiciones.getTipoImpuesto() == null || condiciones.getTipoAplicable() == null || condiciones.getTipoGrupoImpuesto() == null)
+			return false;
+		else
+			return true;
+		
 	}
 }

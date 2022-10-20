@@ -1,14 +1,13 @@
 package es.pfsgroup.plugin.rem.tramite.alquiler.no.comercial;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoTramiteDao;
+import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.DtoTareasFormalizacion;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
@@ -18,6 +17,9 @@ public abstract class TramiteAlquilerNoComercialAbstract implements TramiteAlqui
 	
 	@Autowired
 	private ActivoTramiteDao tramiteDao;
+	
+	@Autowired
+	ExpedienteComercialApi expedienteComercialApi;
 
 	public Boolean isAdendaVacio(TareaExterna tareaExterna) {
 		// TODO Auto-generated method stub
@@ -45,5 +47,20 @@ public abstract class TramiteAlquilerNoComercialAbstract implements TramiteAlqui
 	public boolean cumpleCondiciones(ActivoTramite tramite) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	public boolean estanCamposRellenosParaFormalizacion(ExpedienteComercial eco) {
+		
+		Oferta oferta = eco.getOferta();
+		CondicionanteExpediente condiciones = eco.getCondicionante();
+		if(oferta == null || condiciones == null)
+			return false;
+		
+		if(oferta.getClaseContratoAlquiler() == null || oferta.getAutoFirme() == null || oferta.getRetencionImpuestos() == null || oferta.getClaseCondicion() == null 
+				|| oferta.getGrupoContratoCBK() == null || condiciones.getTipoImpuesto() == null || condiciones.getTipoAplicable() == null || condiciones.getTipoGrupoImpuesto() == null)
+			return false;
+		else
+			return true;
+		
 	}
 }

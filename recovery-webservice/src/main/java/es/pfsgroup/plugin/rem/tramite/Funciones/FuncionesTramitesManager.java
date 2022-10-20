@@ -442,4 +442,20 @@ public class FuncionesTramitesManager implements FuncionesTramitesApi {
 		genericDao.save(Fianzas.class, fianza);
 		
 	}
+	
+	@Override
+	public boolean estanCamposRellenosParaFormalizacion(TareaExterna tareaExterna) {
+		
+		ExpedienteComercial eco = expedienteComercialApi.tareaExternaToExpedienteComercial(tareaExterna);
+		if(eco == null || eco.getOferta() == null || eco.getOferta().getTipoOferta() == null)
+			return false;
+		
+		if(DDTipoOferta.isTipoAlquilerNoComercial(eco.getOferta().getTipoOferta())) {
+			return tramiteAlquilerNoComercialApi.estanCamposRellenosParaFormalizacion(eco);
+		} else if(DDTipoOferta.isTipoAlquiler(eco.getOferta().getTipoOferta())) {
+			return tramiteAlquilerApi.estanCamposRellenosParaFormalizacion(eco);
+		}
+
+		return false;
+	}
 }

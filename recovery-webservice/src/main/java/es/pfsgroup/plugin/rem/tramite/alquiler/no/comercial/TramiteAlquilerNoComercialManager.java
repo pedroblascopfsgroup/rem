@@ -23,8 +23,6 @@ import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.DtoTareasFormalizacion;
 import es.pfsgroup.plugin.rem.model.DtoTiposAlquilerNoComercial;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.Fianzas;
-import es.pfsgroup.plugin.rem.model.HistoricoReagendacion;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
@@ -333,6 +331,17 @@ public class TramiteAlquilerNoComercialManager implements TramiteAlquilerNoComer
 	public boolean rechazaMenosTresVeces(TareaExterna tareaExterna) {
 		
 		return false;
+	}
+	
+	@Override
+	public boolean estanCamposRellenosParaFormalizacion(ExpedienteComercial eco) {
+		
+		if(eco.getOferta() == null || eco.getOferta().getSubtipoOfertaAlquiler() == null)
+			return false;
+		
+		TramiteAlquilerNoComercial tramiteNoComercial = tramiteNoComercialFactory.getTramiteAlquilerNoComercial(eco.getOferta().getSubtipoOfertaAlquiler().getCodigo());
+		
+		return tramiteNoComercial.estanCamposRellenosParaFormalizacion(eco);
 	}
 	
 	

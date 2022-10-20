@@ -5,7 +5,6 @@ import java.util.List;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
-import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 
 public interface TramiteAlquilerApi {
@@ -52,6 +51,8 @@ public interface TramiteAlquilerApi {
 
 	void actualizarEstadoPublicacionUAs(Activo activo);
 
-	boolean modificarFianza(ExpedienteComercial eco);	
+	boolean modificarFianza(ExpedienteComercial eco);
+
+	boolean estanCamposRellenosParaFormalizacion(ExpedienteComercial eco);	
 }
 

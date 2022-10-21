@@ -508,6 +508,7 @@ public class GestorDocumentalExpedientesManager implements GestorDocumentalExped
 		ServerRequest serverRequest = new ServerRequest();
 		serverRequest.setMethod(RestClientManager.METHOD_POST);
 		serverRequest.setPath(getPathCrearConductasInapropiadas(crearConductasInapropiadasDto));
+		serverRequest.setMultipart(getMultipartCrearConductasInapropiadas(crearConductasInapropiadasDto));
 		serverRequest.setResponseClass(RespuestaCrearExpediente.class);
 		RespuestaCrearExpediente respuesta = (RespuestaCrearExpediente) getResponse(serverRequest);
 		
@@ -531,6 +532,15 @@ public class GestorDocumentalExpedientesManager implements GestorDocumentalExped
 		sb.append("&").append(EXPEDIENTE_COMERCIAL_METADATOS_PATH).append(UriComponent.encode(crearConductasInapropiadasDto.getMetadata(), UriComponent.Type.QUERY_PARAM_SPACE_ENCODED));
 		sb.append("&").append(TIPO_EXPEDIENTE_PATH).append(crearConductasInapropiadasDto.getTipoClase());
 		return sb.toString();
+	}
+	
+	private MultiPart getMultipartCrearConductasInapropiadas(CrearConductasInapropiadasDto crearConductasInapropiadasDto){
+		final MultiPart multipart = new FormDataMultiPart()
+				.field(USUARIO, crearConductasInapropiadasDto.getUsuario())
+				.field(PASSWORD,  crearConductasInapropiadasDto.getPassword())
+				.field(EXPEDIENTE_COMERCIAL_METADATOS, crearConductasInapropiadasDto.getMetadata())
+				.field(DESCRIPCION_EXPEDIENTE, crearConductasInapropiadasDto.getDescripcionConductasInapropiadas());
+		return multipart;
 	}
 	
 }

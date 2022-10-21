@@ -56,6 +56,7 @@ public class GestorDocumentalExpedientesManager implements GestorDocumentalExped
 	private static final String DESCRIPCION_EXPEDIENTE = "descripcionExpediente";
 	private static final String GASTO_METADATOS="gastoMetadatos";
 	private static final String EXPEDIENTE_COMERCIAL_METADATOS = "operacionMetadatos";
+	private static final String EXPEDIENTE_CLASE = "clase_expediente";
 
 	
 	public static final String URL_REST_CLIENT_GESTOR_DOCUMENTAL_EXPEDIENTES = "rest.client.gestor.documental.expedientes";
@@ -528,6 +529,7 @@ public class GestorDocumentalExpedientesManager implements GestorDocumentalExped
 		sb.append("/CrearContenedor");
 		sb.append("?").append(USUARIO_PATH).append(crearConductasInapropiadasDto.getUsuario());
 		sb.append("&").append(PASSWORD_PATH).append(crearConductasInapropiadasDto.getPassword());
+		sb.append("&").append(CLASE_EXPEDIENTE_PATH).append("01");
 		sb.append("&").append(USUARIO_OPERACIONAL_PATH).append(crearConductasInapropiadasDto.getUsuarioOperacional());
 		sb.append("&").append(EXPEDIENTE_COMERCIAL_METADATOS_PATH).append(UriComponent.encode(crearConductasInapropiadasDto.getMetadata(), UriComponent.Type.QUERY_PARAM_SPACE_ENCODED));
 		sb.append("&").append(TIPO_EXPEDIENTE_PATH).append(crearConductasInapropiadasDto.getTipoClase());
@@ -538,6 +540,7 @@ public class GestorDocumentalExpedientesManager implements GestorDocumentalExped
 		final MultiPart multipart = new FormDataMultiPart()
 				.field(USUARIO, crearConductasInapropiadasDto.getUsuario())
 				.field(PASSWORD,  crearConductasInapropiadasDto.getPassword())
+				.field(EXPEDIENTE_CLASE, "01")
 				.field(EXPEDIENTE_COMERCIAL_METADATOS, crearConductasInapropiadasDto.getMetadata())
 				.field(DESCRIPCION_EXPEDIENTE, crearConductasInapropiadasDto.getDescripcionConductasInapropiadas());
 		return multipart;

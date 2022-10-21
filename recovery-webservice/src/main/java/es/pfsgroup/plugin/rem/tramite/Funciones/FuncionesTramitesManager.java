@@ -424,7 +424,6 @@ public class FuncionesTramitesManager implements FuncionesTramitesApi {
 		List<CuentasVirtualesAlquiler> cuentasVirtualesAlquilerList = genericDao.getList(CuentasVirtualesAlquiler.class, filtroSubCartera,filtroFechaFin);
 		if(cuentasVirtualesAlquilerList != null && !cuentasVirtualesAlquilerList.isEmpty()) {
 			cuentasVirtual = cuentasVirtualesAlquilerList.get(0);
-			logger.error("ID DE CUENTA VIRTUAL: "+cuentasVirtual.getId());
 			if(vincular) {
 				this.vincularCuentaVirtual(cuentasVirtual, fianza);
 			}

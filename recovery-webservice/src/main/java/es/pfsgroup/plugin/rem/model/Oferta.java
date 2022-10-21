@@ -44,6 +44,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoJustificacionOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
+import es.pfsgroup.plugin.rem.model.dd.DDOrigenContratoEcc;
 import es.pfsgroup.plugin.rem.model.dd.DDResponsableDocumentacionCliente;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
 import es.pfsgroup.plugin.rem.model.dd.DDRetencionImpuestos;
@@ -51,6 +52,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDRiesgoOperacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSistemaOrigen;
 import es.pfsgroup.plugin.rem.model.dd.DDSnsSiNoNosabe;
+import es.pfsgroup.plugin.rem.model.dd.DDSuborigenContratoEcc;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoOfertaAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTfnTipoFinanciacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAdenda;
@@ -557,6 +559,13 @@ public class Oferta implements Serializable, Auditable {
 	@Column(name = "OFR_GRUPO_CONTRATO_CBK")
     private Boolean grupoContratoCBK;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_OCN_ID")
+    private DDOrigenContratoEcc origenContratoEcc;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_SCN_ID")
+    private DDSuborigenContratoEcc suborigenContratoEcc;
 
 	public Date getFechaAlta() {
 		return fechaAlta;
@@ -1754,7 +1763,21 @@ public class Oferta implements Serializable, Auditable {
 	public void setGrupoContratoCBK(Boolean grupoContratoCBK) {
 		this.grupoContratoCBK = grupoContratoCBK;
 	}
-	
-	
+
+	public DDOrigenContratoEcc getOrigenContratoEcc() {
+		return origenContratoEcc;
+	}
+
+	public void setOrigenContratoEcc(DDOrigenContratoEcc origenContratoEcc) {
+		this.origenContratoEcc = origenContratoEcc;
+	}
+
+	public DDSuborigenContratoEcc getSuborigenContratoEcc() {
+		return suborigenContratoEcc;
+	}
+
+	public void setSuborigenContratoEcc(DDSuborigenContratoEcc suborigenContratoEcc) {
+		this.suborigenContratoEcc = suborigenContratoEcc;
+	}	
 	
 }

@@ -1996,6 +1996,24 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		        remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'retencionImpuestos'}
 	    	}
+		},
+		comboOrigenContratoEcc: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'origenContratoEcc'}
+			},
+			autoLoad: true
+		},
+		comboSuborigenContratoEcc: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'suborigenContratoEcc'}
+			},
+			autoLoad: true
 		}
 		
 	}	

@@ -22,6 +22,7 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoReagendacion;
 
 /**
  * Modelo que gestiona la tabla de cuentas virtuales 
@@ -49,6 +50,10 @@ public class HistoricoReagendacion implements Serializable, Auditable {
 	
 	@Column(name = "HRE_FECHA_REAGENDACION_INGRESO")
 	private Date fechaReagendacionIngreso;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_MRA_ID")
+	private DDMotivoReagendacion motivoReagendacion;
 	
 	@Version
 	private Long version;
@@ -78,6 +83,14 @@ public class HistoricoReagendacion implements Serializable, Auditable {
 
 	public void setFechaReagendacionIngreso(Date fechaReagendacionIngreso) {
 		this.fechaReagendacionIngreso = fechaReagendacionIngreso;
+	}
+	
+	public DDMotivoReagendacion getMotivoReagendacion() {
+		return motivoReagendacion;
+	}
+
+	public void setMotivoReagendacion(DDMotivoReagendacion motivoReagendacion) {
+		this.motivoReagendacion = motivoReagendacion;
 	}
 
 	public Long getVersion() {

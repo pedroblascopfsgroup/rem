@@ -3915,7 +3915,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		var fechaReagendarIngreso = me.down('[name=fechaReagendarIngreso]');
 		var importe = me.down('[name=importe]');
 		var ibanDevolucion = me.down('[name=ibanDev]');
-		var justificacion = me.down('[name=justificacion]');
+		var motivoReagendacion = me.down('[name=motivoReagendacion]');
 		var motivoFianzaExonerada = me.down('[name=motivoFianzaExonerada]');
 		var meses = me.down('[name=meses]');
 		
@@ -3923,7 +3923,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     	me.bloquearCampo(importe);
     	me.bloquearCampo(ibanDevolucion);
     	me.bloquearCampo(fechaReagendarIngreso);
-    	me.bloquearCampo(justificacion);
+    	me.bloquearCampo(motivoReagendacion);
     	me.bloquearCampo(motivoFianzaExonerada);
     	me.bloquearCampo(meses);
 		
@@ -3977,7 +3977,8 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 			    			me.bloquearObligatorio(comboFianza);
 			    			me.desbloquearCampo(fechaReagendarIngreso);
 			    			me.hacercampoObligatorio(fechaReagendarIngreso);
-			    			me.editableyNoObligatorio(justificacion);
+			    			me.desbloquearCampo(motivoReagendacion);
+			    			me.hacercampoObligatorio(motivoReagendacion);
 						}else{
 							me.desbloquearCampo(fechaAgendacionIngreso);
 						}
@@ -4974,7 +4975,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		var fechaReagendarIngreso = me.down('[name=fechaReagendarIngreso]');
 		var importe = me.down('[name=importe]');
 		var ibanDevolucion = me.down('[name=ibanDev]');
-		var justificacion = me.down('[name=justificacion]');
+		var motivoReagendacion = me.down('[name=motivoReagendacion]');
 		var motivoFianzaExonerada = me.down('[name=motivoFianzaExonerada]');
 		var meses = me.down('[name=meses]');
 		
@@ -4982,7 +4983,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     	me.bloquearCampo(importe);
     	me.bloquearCampo(ibanDevolucion);
     	me.bloquearCampo(fechaReagendarIngreso);
-    	me.bloquearCampo(justificacion);
+    	me.bloquearCampo(motivoReagendacion);
     	me.bloquearCampo(motivoFianzaExonerada);
     	me.bloquearCampo(meses);
     	
@@ -5034,10 +5035,12 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 			    			me.desbloquearCampo(fechaReagendarIngreso);
 			    			me.editableyNoObligatorio(justificacion);
 			    			fechaAgendacionIngreso.setValue(Ext.Date.format(new Date(dto.agendacionIngreso), 'd/m/Y'));
+			    			me.desbloquearCampo(motivoReagendacion);
+			    			me.campoObligatorio(motivoReagendacion);
 						}else{
 							me.desbloquearCampo(fechaAgendacionIngreso);
 							me.bloquearCampo(fechaReagendarIngreso);
-							me.bloquearCampo(justificacion);
+							me.bloquearCampo(motivoReagendacion);
 						}
 			    		me.desbloquearCampo(importe);
 			    		me.desbloquearCampo(ibanDevolucion);

@@ -31,6 +31,7 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoExoneracionFianza;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoReagendacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 
 @Component
@@ -57,6 +58,7 @@ public class UpdaterServiceSancionOfertaAlquileresAgendarFirma implements Update
 	private static final String IBAN_DEVOLUCION = "ibanDev";
 	private static final String MOTIVO_EXONERACION_FIANZA = "motivoFianzaExonerada";
 	private static final String MESES = "meses";
+	private static final String MOTIVO_REAGENDACION = "motivoReagendacion";
 	
 	private static final String CODIGO_T015_AGENDAR_FIRMA = "T015_AgendarFechaFirma";
 
@@ -94,6 +96,9 @@ public class UpdaterServiceSancionOfertaAlquileresAgendarFirma implements Update
 				}
 				if (MESES.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 					dto.setMeses(Integer.parseInt(valor.getValor()));
+				}
+				if(MOTIVO_REAGENDACION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+					dto.setMotivoReagendacion(valor.getValor());
 				}
 			}
 		
@@ -161,6 +166,7 @@ public class UpdaterServiceSancionOfertaAlquileresAgendarFirma implements Update
 			HistoricoReagendacion histReagendacion = new HistoricoReagendacion();
 			histReagendacion.setFianza(fia);
 			histReagendacion.setFechaReagendacionIngreso(dto.getFechaReagendarIngreso());
+			histReagendacion.setMotivoReagendacion(genericDao.get(DDMotivoReagendacion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getMotivoReagendacion())));
 			genericDao.save(HistoricoReagendacion.class, histReagendacion);
 		}
 	}

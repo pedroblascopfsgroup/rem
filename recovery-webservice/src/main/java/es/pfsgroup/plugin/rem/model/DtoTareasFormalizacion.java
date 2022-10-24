@@ -46,6 +46,7 @@ public class DtoTareasFormalizacion {
 	private String tipoActivoRescision;
 	
 	private String motivoExoneracionFianza;
+	private String motivoReagendacion;
 		
 
 		
@@ -181,6 +182,12 @@ public class DtoTareasFormalizacion {
 	}
 	public void setMotivoExoneracionFianza(String motivoExoneracionFianza) {
 		this.motivoExoneracionFianza = motivoExoneracionFianza;
+	}
+	public String getMotivoReagendacion() {
+		return motivoReagendacion;
+	}
+	public void setMotivoReagendacion(String motivoReagendacion) {
+		this.motivoReagendacion = motivoReagendacion;
 	}
 	
 }

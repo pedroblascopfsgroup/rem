@@ -2353,11 +2353,11 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			if (activo.getInfoComercial().getAnyoConstruccion() != null) {
 				dto.setDrAnyoConstruccionFase1(activo.getInfoComercial().getAnyoConstruccion().toString());
 			}
-			Filter infoComercialFilter = genericDao.createFilter(FilterType.EQUALS, "infoComercial.id",activo.getInfoComercial().getId());
-			ActivoEdificio edificio = genericDao.get(ActivoEdificio.class, infoComercialFilter);
-			if (!Checks.esNulo(edificio)) {
-				dto.setDrFase4Descripcion(edificio.getEdiDescripcion());
-			}			
+//			Filter infoComercialFilter = genericDao.createFilter(FilterType.EQUALS, "infoComercial.id",activo.getInfoComercial().getId());
+//			ActivoEdificio edificio = genericDao.get(ActivoEdificio.class, infoComercialFilter);
+//			if (!Checks.esNulo(edificio)) {
+//				dto.setDrFase4Descripcion(edificio.getEdiDescripcion());
+//			}			
 		}
 		if(activo.getVpo()!=null) {
 			if(activo.getVpo().equals(1)) {
@@ -2536,12 +2536,12 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 						Activo activoSub = activoAgrupacionActivo2.getActivo();
 						ActivoInfoComercial actInfoComercial = activoSub.getInfoComercial(); 
 						if(actInfoComercial != null) {
-							Filter infoComercialFilter = genericDao.createFilter(FilterType.EQUALS, "infoComercial.id", actInfoComercial.getId());
-							ActivoEdificio edificio = (ActivoEdificio) genericDao.get(ActivoEdificio.class, infoComercialFilter);
-							if (edificio != null) {
-								edificio.setEdiDescripcion(datoDq);
-								genericDao.save(ActivoEdificio.class, edificio);
-							} 
+//							Filter infoComercialFilter = genericDao.createFilter(FilterType.EQUALS, "infoComercial.id", actInfoComercial.getId());
+//							ActivoEdificio edificio = (ActivoEdificio) genericDao.get(ActivoEdificio.class, infoComercialFilter);
+//							if (edificio != null) {
+//								edificio.setEdiDescripcion(datoDq);
+//								genericDao.save(ActivoEdificio.class, edificio);
+//							} 
 						}	
 					}
 				}				
@@ -2553,12 +2553,11 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 				ActivoInfoComercial actInfoComercial = activo.getInfoComercial(); 
 				if(actInfoComercial != null) {
 					Filter infoComercialFilter = genericDao.createFilter(FilterType.EQUALS, "infoComercial.id", actInfoComercial.getId());
-					ActivoEdificio edificio = (ActivoEdificio) genericDao.get(ActivoEdificio.class, infoComercialFilter);
-					if (edificio != null) {
-						edificio.setEdiDescripcion(datoDq);
-						genericDao.save(ActivoEdificio.class, edificio);
-					} 
-					
+//					ActivoEdificio edificio = (ActivoEdificio) genericDao.get(ActivoEdificio.class, infoComercialFilter);
+//					if (edificio != null) {
+//						edificio.setEdiDescripcion(datoDq);
+//						genericDao.save(ActivoEdificio.class, edificio);
+//					} 
 				}			
 			}
 		}

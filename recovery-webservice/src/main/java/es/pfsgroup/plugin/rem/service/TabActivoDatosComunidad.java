@@ -18,10 +18,9 @@ import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.factory.TabActivoFactoryApi;
 import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoComunidadPropietarios;
+import es.pfsgroup.plugin.rem.model.ActivoGestion;
 import es.pfsgroup.plugin.rem.model.DtoComunidadpropietariosActivo;
-import es.pfsgroup.plugin.rem.model.GestionCCPP;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionActivo;
 
 @Component
@@ -113,25 +112,24 @@ public class TabActivoDatosComunidad implements TabActivoService {
 					}
 				}
 			}
-			
-			if(!Checks.esNulo(activo.getComunidadPropietarios())) {
-				Filter filtroComunidadPropietarios = genericDao.createFilter(FilterType.EQUALS, "comunidadPropietarios.id", activo.getComunidadPropietarios().getId());
-				Filter filtroFechaFin = genericDao.createFilter(FilterType.NULL, "fechaFin");
-				
-				GestionCCPP gestionAnterior  = genericDao.get(GestionCCPP.class, filtroComunidadPropietarios, filtroFechaFin );
-				
-				if(!Checks.esNulo(gestionAnterior)) {
-					if(!Checks.esNulo(gestionAnterior.getEstadoLocalizacion())) {
-						datosComunidad.setEstadoLocalizacion(gestionAnterior.getEstadoLocalizacion().getCodigo());
-						datosComunidad.setEstadoLocalizacionDescripcion(gestionAnterior.getEstadoLocalizacion().getDescripcion());
-					}
-					if(!Checks.esNulo(gestionAnterior.getSubestadoGestion())) {
-						datosComunidad.setSubestadoGestion(gestionAnterior.getSubestadoGestion().getCodigo());
-						datosComunidad.setSubestadoGestionDescripcion(gestionAnterior.getSubestadoGestion().getDescripcion());
-					}
+
+			Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+			Filter filtroFechaFin = genericDao.createFilter(FilterType.NULL, "fechaFin");
+
+			ActivoGestion activoGestion = genericDao.get(ActivoGestion.class, filtroActivo, filtroFechaFin);
+
+			if(activoGestion != null) {
+				if(activoGestion.getEstadoLocalizacion() != null) {
+					datosComunidad.setEstadoLocalizacion(activoGestion.getEstadoLocalizacion().getCodigo());
+					datosComunidad.setEstadoLocalizacionDescripcion(activoGestion.getEstadoLocalizacion().getDescripcion());
+				}
+
+				if(activoGestion.getSubestadoGestion() != null) {
+					datosComunidad.setSubestadoGestion(activoGestion.getSubestadoGestion().getCodigo());
+					datosComunidad.setSubestadoGestionDescripcion(activoGestion.getSubestadoGestion().getDescripcion());
 				}
 			}
-			
+
 			if(activoDao.isUnidadAlquilable(activo.getId())) {    
 				datosComunidad.setUnidadAlquilable(true);
 			}else {

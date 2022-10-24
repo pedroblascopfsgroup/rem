@@ -48,7 +48,7 @@ CREATE TABLE '||V_ESQUEMA_1||'.'||V_TABLA||' AS
 (
 select 
      FAC_ID_REM
-    ,gpv.dd_ega_id
+    ,dd_ega_id
 from (
 WITH PROPIETARIOS_ACTIVOS AS(
     SELECT /*+ MATERIALIZE */ GLD.GPV_ID, PRO.PRO_ID 

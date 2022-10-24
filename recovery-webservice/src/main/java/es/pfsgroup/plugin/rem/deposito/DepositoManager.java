@@ -306,6 +306,11 @@ public class DepositoManager extends BusinessOperationOverrider<DepositoApi> imp
 		Oferta oferta = expediente.getOferta();
 		Filter filterOferta =  genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId());
 		Deposito deposito = genericDao.get(Deposito.class, filterOferta);
+		DDEstadoDeposito estado = null;
+		
+		if (!Checks.esNulo(dto.getEstadoCodigo())) {
+			estado = genericDao.get(DDEstadoDeposito.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getEstadoCodigo()));
+		}
 
 		if (Checks.esNulo(deposito)) {
 			deposito = new Deposito();
@@ -313,6 +318,7 @@ public class DepositoManager extends BusinessOperationOverrider<DepositoApi> imp
 			deposito.setIbanDevolucion(dto.getIbanDevolucionDeposito());
 			deposito.setAuditoria(Auditoria.getNewInstance());
 			deposito.setOferta(oferta);
+			deposito.setEstadoDeposito(estado);
 			
 			genericDao.save(Deposito.class, deposito);
 		}
@@ -323,6 +329,9 @@ public class DepositoManager extends BusinessOperationOverrider<DepositoApi> imp
 			}
 			if (dto.getIbanDevolucionDeposito() != null) {
 				deposito.setIbanDevolucion(dto.getIbanDevolucionDeposito());
+			}
+			if (!Checks.esNulo(estado)) {
+				deposito.setEstadoDeposito(estado);
 			}
 			
 			genericDao.update(Deposito.class, deposito);

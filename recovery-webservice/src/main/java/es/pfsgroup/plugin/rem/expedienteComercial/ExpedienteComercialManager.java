@@ -173,6 +173,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivosDesbloqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivosEstadoBC;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
+import es.pfsgroup.plugin.rem.model.dd.DDOrigenContratoEcc;
 import es.pfsgroup.plugin.rem.model.dd.DDPaises;
 import es.pfsgroup.plugin.rem.model.dd.DDRatingScoringServicer;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenFianzaCCAA;
@@ -189,6 +190,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
 import es.pfsgroup.plugin.rem.model.dd.DDSnsSiNoNosabe;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubestadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDSuborigenContratoEcc;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoOfertaAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTfnTipoFinanciacion;
@@ -1579,6 +1581,16 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			genericDao.save(ExpedienteComercial.class, expedienteComercial);
 		}
 		
+		if(dto.getOrigenContratoEccCodigo() != null) {
+			DDOrigenContratoEcc origenContratoEcc = (DDOrigenContratoEcc) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadosVisitaOferta.class, dto.getOrigenContratoEccCodigo());
+			oferta.setOrigenContratoEcc(origenContratoEcc);
+		}
+		
+		if(dto.getSuborigenContratoEccCodigo() != null) {
+			DDSuborigenContratoEcc suborigenContratoEcc = (DDSuborigenContratoEcc) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadosVisitaOferta.class, dto.getSuborigenContratoEccCodigo());
+			oferta.setSuborigenContratoEcc(suborigenContratoEcc);
+		}
+		
 		if(cambioEstadoOferta) {
 			ofertaApi.llamaReplicarCambioEstado(oferta.getId(), oferta.getEstadoOferta().getCodigo());
 		}
@@ -2529,6 +2541,16 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		if (oferta.getGrupoContratoCBK() != null) {
 			dto.setCodigoGrupoContratoCBK(oferta.getGrupoContratoCBK() ? DDSinSiNo.CODIGO_SI : DDSinSiNo.CODIGO_NO);
+		}
+		
+		if (oferta.getOrigenContratoEcc() != null) {
+			dto.setOrigenContratoEccCodigo(oferta.getOrigenContratoEcc().getCodigo());
+			dto.setOrigenContratoEccDescripcion(oferta.getOrigenContratoEcc().getDescripcion());
+		}
+		
+		if (oferta.getSuborigenContratoEcc() != null) {
+			dto.setSuborigenContratoEccCodigo(oferta.getSuborigenContratoEcc().getCodigo());
+			dto.setSuborigenContratoEccDescripcion(oferta.getSuborigenContratoEcc().getDescripcion());
 		}
 		
 		return dto;

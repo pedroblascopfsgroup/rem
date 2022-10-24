@@ -207,6 +207,11 @@ public class DtoDatosBasicosOferta extends WebDto {
 	
 	private String codigoGrupoContratoCBK;
 	
+	private String origenContratoEccCodigo;
+	private String origenContratoEccDescripcion;
+	private String suborigenContratoEccCodigo;
+	private String suborigenContratoEccDescripcion;
+	
 	public Boolean getEstadoAprobadoLbk() {
 		return estadoAprobadoLbk;
 	}
@@ -1018,7 +1023,37 @@ public class DtoDatosBasicosOferta extends WebDto {
 	public void setCodigoGrupoContratoCBK(String codigoGrupoContratoCBK) {
 		this.codigoGrupoContratoCBK = codigoGrupoContratoCBK;
 	}
-	
-	
+
+	public String getOrigenContratoEccCodigo() {
+		return origenContratoEccCodigo;
+	}
+
+	public void setOrigenContratoEccCodigo(String origenContratoEccCodigo) {
+		this.origenContratoEccCodigo = origenContratoEccCodigo;
+	}
+
+	public String getOrigenContratoEccDescripcion() {
+		return origenContratoEccDescripcion;
+	}
+
+	public void setOrigenContratoEccDescripcion(String origenContratoEccDescripcion) {
+		this.origenContratoEccDescripcion = origenContratoEccDescripcion;
+	}
+
+	public String getSuborigenContratoEccCodigo() {
+		return suborigenContratoEccCodigo;
+	}
+
+	public void setSuborigenContratoEccCodigo(String suborigenContratoEccCodigo) {
+		this.suborigenContratoEccCodigo = suborigenContratoEccCodigo;
+	}
+
+	public String getSuborigenContratoEccDescripcion() {
+		return suborigenContratoEccDescripcion;
+	}
+
+	public void setSuborigenContratoEccDescripcion(String suborigenContratoEccDescripcion) {
+		this.suborigenContratoEccDescripcion = suborigenContratoEccDescripcion;
+	}
 	
 }

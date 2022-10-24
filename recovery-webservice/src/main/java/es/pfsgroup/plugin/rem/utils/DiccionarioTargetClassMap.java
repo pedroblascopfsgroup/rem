@@ -405,6 +405,8 @@ public class DiccionarioTargetClassMap{
 		mapa.put("claseCondicion", DDClaseCondicion.class);
 		mapa.put("derechoArrendamiento", DDDerechoArrendamiento.class);
 		mapa.put("retencionImpuestos", DDRetencionImpuestos.class);
+		mapa.put("origenContratoEcc", DDOrigenContratoEcc.class);
+		mapa.put("suborigenContratoEcc", DDSuborigenContratoEcc.class);
 
 		return Collections.unmodifiableMap(mapa);
 	}

@@ -368,6 +368,18 @@ Ext.define('HreRem.model.DatosBasicosOferta', {
 			},
 			{
 				name: 'codigoGrupoContratoCBK'
+			},
+			{
+				name: 'origenContratoEccCodigo'
+			},
+			{
+				name: 'origenContratoEccDescripcion'
+			},
+			{
+				name: 'suborigenContratoEccCodigo'
+			},
+			{
+				name: 'suborigenContratoEccDescripcion'
 			}
     		
     ],

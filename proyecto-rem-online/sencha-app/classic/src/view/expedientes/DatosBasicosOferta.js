@@ -544,7 +544,47 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 							}
 						]
 					},											
-					
+					{
+						xtype : 'fieldsettable',
+						defaultType : 'displayfieldbase',
+						collapsible: false,
+						border: false,
+						colspan: 3,
+						layout: {
+					        type: 'table',
+					        columns: 3,
+					        tdAttrs: {
+					        	width: '33%',
+					        	style: 'vertical-align: top'
+					        },
+					        tableAttrs: {
+					            style: {
+					                width: '100%'
+								}
+					        }
+						},
+						bind : {
+							hidden : '{!esBankia}' 
+						},
+						items : [
+							{
+								xtype : "comboboxfieldbase",
+								fieldLabel : HreRem.i18n('fieldlabel.origen.contrato.ecc'),
+								bind : {
+									store : '{comboOrigenContratoEcc}',
+									value : '{datosbasicosoferta.origenContratoEccCodigo}'
+								}
+							},
+							{
+								xtype : "comboboxfieldbase",
+								fieldLabel : HreRem.i18n('fieldlabel.suborigen.contrato.ecc'),
+								bind : {
+									store : '{comboSuborigenContratoEcc}',
+									value : '{datosbasicosoferta.suborigenContratoEccCodigo}'
+								}
+							}
+						]
+					},
 					{
 						xtype : 'fieldsettable',	
 						colspan: 3,	

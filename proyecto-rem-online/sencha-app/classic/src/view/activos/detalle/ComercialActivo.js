@@ -530,7 +530,7 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 				&& (CONST.SUBCARTERA['DIVARIANARROW'] == activo.get('subcarteraCodigo') || CONST.SUBCARTERA['DIVARIANREMAINING'] == activo.get('subcarteraCodigo'))){
 			me.up('activosdetallemain').lookupReference('ofertascomercialactivolistref').setTopBar(false);
 		}else{
-			me.up('activosdetallemain').lookupReference('ofertascomercialactivolistref').setTopBar(true);
+			me.up('activosdetallemain').lookupReference('ofertascomercialactivolistref').evaluarEdicion();
 		}		
    }
 });

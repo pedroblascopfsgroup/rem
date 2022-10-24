@@ -33,13 +33,27 @@ Ext.define('HreRem.view.trabajos.detalle.AgendaTrabajoGrid', {
 		        {
 		            dataIndex: 'gestorAgenda',
 		            reference: 'gestorAgenda',
-		            text: HreRem.i18n('header.gestor'),
+		            text: HreRem.i18n('header.gestor.proveedor.tipo'),
 		            editor: 
 		            	{
 							xtype: 'textfield',
 							cls: 'grid-no-seleccionable-field-editor',
-							readOnly: true,
-							value: $AU.getUser().userName
+							readOnly: true
+							//,value: $AU.getUser().userName
+						},
+					
+		            flex: 1
+		        },
+		        {
+		            dataIndex: 'nombreGestorOrProveedor',
+		            reference: 'nombreGestorOrProveedor',
+		            text: HreRem.i18n('header.usuario.nombre'),
+		            editor: 
+		            	{
+							xtype: 'textfield',
+							cls: 'grid-no-seleccionable-field-editor',
+							readOnly: true
+							//,value: $AU.getUser().userName
 						},
 					
 		            flex: 1

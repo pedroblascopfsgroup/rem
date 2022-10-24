@@ -2006,6 +2006,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				} else {
 					dto.setTieneTramiteComercial(false);
 				}
+				
+				dto.setFechaLiquida(oferta.getFechaLiquida());
 			}
 			
 			if(expediente.getEstadoBc() != null) {

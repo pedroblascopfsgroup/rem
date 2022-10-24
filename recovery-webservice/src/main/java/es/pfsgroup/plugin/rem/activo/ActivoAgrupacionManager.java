@@ -32,6 +32,7 @@ import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
@@ -126,6 +127,9 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 
 	@Autowired
 	private ActivoAgrupacionActivoApi activoAgrupacionActivoApi;
+
+	@Autowired
+	private HibernateUtils hibernateUtils;
 
 	@Resource(name = "entityTransactionManager")
 	private PlatformTransactionManager transactionManager;
@@ -1214,5 +1218,34 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 			return messageServices.getMessage("msg.operacion.ko.check.idON");		
 		}
 		return messageServices.getMessage("msg.operacion.ko.check.idON.error.agrupacion");
+	}
+
+	@Transactional(readOnly = false)	
+	public boolean reloadFotosAgrupacionById(Long id) {
+
+		if (gestorDocumentalFotos.isActive()) {
+			FileListResponse fileListResponse = null;
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", id);
+			ActivoAgrupacion agrupacion = genericDao.get(ActivoAgrupacion.class, filtro);
+			try {
+				if (agrupacion != null) {
+					fileListResponse = gestorDocumentalFotos.get(PROPIEDAD.AGRUPACION, agrupacion.getNumAgrupRem());
+
+					if (fileListResponse.getError() == null || fileListResponse.getError().isEmpty()) {
+						for (es.pfsgroup.plugin.rem.rest.dto.File fileGD : fileListResponse.getData()) {
+							uploadFoto(fileGD);
+						}
+		
+						hibernateUtils.flushSession();
+					}
+				}
+			} catch (Exception e) {
+				logger.error("Error obteniendo las fotos del CDN", e);
+				return false;
+			}
+
+		}
+		
+		return true;
 	}
 }

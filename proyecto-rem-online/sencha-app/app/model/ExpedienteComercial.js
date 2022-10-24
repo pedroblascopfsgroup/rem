@@ -388,6 +388,11 @@ Ext.define('HreRem.model.ExpedienteComercial', {
             	type: 'boolean'
             },
             {
+    			name: 'fechaLiquida',
+    			type:'date', 
+        		dateFormat: 'c'
+            },
+            {
     			name: 'ofertaConDeposito',
        			type: 'boolean'
     		},

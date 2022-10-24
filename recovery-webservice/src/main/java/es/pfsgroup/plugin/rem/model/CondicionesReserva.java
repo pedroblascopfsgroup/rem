@@ -32,8 +32,8 @@ public class CondicionesReserva implements Serializable, Auditable {
 
 	@Id
     @Column(name = "COR_ID")
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "FechaArrasExpedienteGenerator")
-    @SequenceGenerator(name = "FechaArrasExpedienteGenerator", sequenceName = "S_COR_CONDICIONES_RESERVA")
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "CondicionesReservaGenerator")
+    @SequenceGenerator(name = "CondicionesReservaGenerator", sequenceName = "S_COR_CONDICIONES_RESERVA")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

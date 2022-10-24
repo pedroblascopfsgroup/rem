@@ -197,4 +197,6 @@ public interface ActivoAgrupacionApi {
 	Long numAgrupacionONDnd(ActivoAgrupacion agrupacion);
 
 	String checkIdON(Long idAgrupacion,Long numAgrupacionON);
+
+	boolean reloadFotosAgrupacionById(Long id);
 }

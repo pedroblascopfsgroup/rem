@@ -1513,6 +1513,14 @@ public interface ParticularValidatorApi {
 
 	Boolean isActivoAgrupacionONDnd(Long numAgrupacion, Long numActivo);
 
+	Boolean existeOrganismo(String codOrganismo);
+
+	Boolean existeComunidadAutonoma(String codComunidadAutonoma);
+
+	Boolean existeActuacion(String codActuacion);
+
+	Boolean existeRelacionCodLocCodSubGes(String codEstadoLoc, String codSubestadoGestion);
+
 	boolean isActivoEnConcurrencia(String numActivo);
 
 	boolean isActivoConOfertaEnConcurrencia(String numActivo);

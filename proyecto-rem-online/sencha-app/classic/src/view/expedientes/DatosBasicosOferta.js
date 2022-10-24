@@ -225,7 +225,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 						title : 'Bulk Advisory Note',
 						collapsible: false,
 						bind: {
-							hidden: '{!esCarteraAppleOrRemainingOrJaguar}'
+							hidden: '{!esCarteraAppleOrRemainingOrIndustrialOrJaguar}'
 						},
 						colspan: 3,
 						layout: {
@@ -249,7 +249,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 									store: '{comboSiNoExclusionBulk}',
 									value : '{datosbasicosoferta.exclusionBulk}',
 									readOnly : '{!requisitosEdicionExclusionBulk}',
-									hidden : '{!esCarteraAppleOrRemainingOrJaguar}'
+									hidden : '{!esCarteraAppleOrRemainingOrIndustrialOrJaguar}'
 								}
 							},
 								{
@@ -258,7 +258,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 								bind : {
 									value : '{datosbasicosoferta.idAdvisoryNote}',
 									readOnly : '{!requisitosEdicionIdAdvisoryNote}',
-									hidden : '{!esCarteraAppleOrRemainingOrJaguar}'
+									hidden : '{!esCarteraAppleOrRemainingOrIndustrialOrJaguar}'
 								}
 							},	{
 								xtype : 'comboboxfieldbase',

@@ -179,7 +179,7 @@ function sdk_war_java_only () {
 
 	find . -maxdepth 2 -type d -exec echo {} \; | grep target | awk '{ print "rm -rf "$0" && "}' | xargs | sed -e 's/.$//' | sed -e 's/.$//' | source /dev/stdin
 
-	mvn clean package -P rem,java7,ora12 -Dmaven.test.skip=true -pl pfs-commons-java,plugins,proyecto-rem-online,recovery-webservice,paradise-framework,recovery-gestordocumentalREM-plugin,rem-logs,rem-web && \
+	mvn clean package -P rem,java7,ora12 -pl pfs-commons-java,plugins,proyecto-rem-online,recovery-webservice,paradise-framework,recovery-gestordocumentalREM-plugin,rem-logs,rem-web && \
 	docker cp ./rem-web/target/pfs-3.0.0-REM.war ${SDK_DOCKER_CONTAINER_NAME}:/recovery/app-server && \
 	docker exec -d ${SDK_DOCKER_CONTAINER_NAME} /recovery/app-server/stopAndUpdateWar.sh && \
 	sdk_appserver_log

@@ -15,7 +15,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	'HreRem.model.HistoricoTramitacionTituloAdicionalModel', 'HreRem.model.CalidadDatoFasesGridModel','HreRem.model.SituacionOcupacionalGridModel',
 	'HreRem.model.DetalleOfertaModel', 'HreRem.model.ActivoInformacionAdministrativa', 'HreRem.view.activos.detalle.CatastroGrid',
 	'HreRem.model.ComparativaReferenciaCatastralGridModel', 'HreRem.model.ReferenciaCatastralGridModel','HreRem.model.ReferenciaCatastralComboModel',
-	'HreRem.model.TestigosOpcionales','HreRem.model.DetalleOfertaModel', 'HreRem.model.ActivoInformacionAdministrativa', 'HreRem.model.Pujas',
+	'HreRem.model.TestigosOpcionales', 'HreRem.model.Organismos', 'HreRem.model.DetalleOfertaModel', 'HreRem.model.ActivoInformacionAdministrativa', 'HreRem.model.Pujas',
 	'HreRem.model.PujasActivo', 'HreRem.model.HistoricoConcurrenciaGridModel'],
 
     data: {
@@ -762,9 +762,12 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 					return false;
 				}
 				return true; 
+			}else if (CONST.COMBO_ESTADO_ALQUILER["ALQUILADO"] == estadoAlquilerCodigo) {
+				return !($AU.userIsRol(CONST.PERFILES['GESTOR_ACTIVOS']) 
+					|| ($AU.userIsRol(CONST.PERFILES['ASSET_MANAGEMENT']) && ('03' === tipoTituloCodigo || '04' === tipoTituloCodigo))
+				    || $AU.userIsRol(CONST.PERFILES['HAYASUPER']));
 			}else{
-				return CONST.COMBO_ESTADO_ALQUILER["ALQUILADO"] == estadoAlquilerCodigo
-					&& !($AU.userIsRol(CONST.PERFILES['GESTOR_ACTIVOS']) 
+				return !($AU.userIsRol(CONST.PERFILES['GESTOR_ACTIVOS']) 
 					|| ($AU.userIsRol(CONST.PERFILES['ASSET_MANAGEMENT']) && ('03' === tipoTituloCodigo || '04' === tipoTituloCodigo))
 					|| $AU.userIsRol(CONST.PERFILES['HAYASUPER']));
 			}
@@ -2041,6 +2044,24 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	    		|| isJaguar){
 	    	return true;
 	    	}
+	    	return false;
+	    },
+	    
+	    isCarteraCajamar: function(get){
+			 var isCajamar = get('activo.isCarteraCajamar');
+			 if(isCajamar){
+				 return true;
+			 }
+			 return false;
+		 },
+	    
+	    isCamposEnabledByTipoAlquiler: function(get) {
+	    	var me = this,
+	    	tipoAlquiler = get('patrimonio.tipoAlquilerCodigo');
+	    	
+	    	if (CONST.TIPO_ALQUILER['CON_OPCION_COMPRA'] === tipoAlquiler) {
+				return true;
+			}
 	    	return false;
 	    },
 
@@ -4636,15 +4657,37 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {diccionario: 'tasadoraCaixa'}
 			},
 			autoLoad: true
+		},			
+		
+		storeActivoBbvaUic : {
+			model : 'HreRem.model.ActivoBbvaUicGridModel',
+			proxy : {
+				type : 'uxproxy',
+				remoteUrl : 'activo/getActivoBbvaUic',				
+				extraParams : {
+					id : '{activo.id}'
+				}
+			}
 		},
 
+		comboSuborigenContrato: {   
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'suborigenContrato'}
+			},
+			autoLoad: true
+		},
+		
 		comboBajasContablesBBVA: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'bajaContableBBVA'}
-			}
+			},
+			autoLoad: true
 		},
 		
       	storePuja: {
@@ -4666,7 +4709,44 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'segmentacionCartera'}
-			}
+			},
+			autoLoad: true
+		},
+		comboTipoOrganismo: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoOrganismo'}
+			},
+			autoLoad: true
+		},
+		comboTipoActuacion: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoActuacion'}
+			},
+			autoLoad: true
+		},
+		comboComunidadAutonoma: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'comunidadAutonoma'}
+			},
+			autoLoad: true
+		},
+		storeOrganismos: {
+			model: 'HreRem.model.Organismos',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'activo/getOrganismosByActivo',
+				extraParams: {idActivo: '{activo.id}'}
+			},
+			autoLoad: true
 		},
 		storeComparativaRefCatastral:{
 			model: 'HreRem.model.ComparativaReferenciaCatastralGridModel',
@@ -4698,7 +4778,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				load: 'cargarReferenciaCatastral'
 			}
         },
-
 		storeTextosComercialActivo: {
     		 pageSize: $AC.getDefaultPageSize(),
     		 model: 'HreRem.model.TextosOferta',
@@ -4718,4 +4797,5 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	    	 }
     	}
 	 }
+
 });

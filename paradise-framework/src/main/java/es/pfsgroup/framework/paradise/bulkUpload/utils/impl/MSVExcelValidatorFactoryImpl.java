@@ -268,6 +268,9 @@ public class MSVExcelValidatorFactoryImpl {
 	
 	@Autowired
 	private MSVConfiguracionRecomendacionValidator msvConfigRecomendacion;
+	
+	@Autowired
+	private MSVMasivaOrganismosValidator msvOrganismos;
 
 	@Autowired
 	private MSVEstadosGastoValidator msvEstadosGastoValidator;
@@ -462,6 +465,8 @@ public class MSVExcelValidatorFactoryImpl {
 			return msvConfigRecomendacion;
 		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_ESTADOS_GASTOS.equals(codTipoOperacion)){
 			return msvEstadosGastoValidator;
+		} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_DE_ORGANISMOS.equals(codTipoOperacion)) {
+			return msvOrganismos;
 		}
 
 		return null;

@@ -1507,6 +1507,14 @@ public interface ParticularValidatorApi {
 	
 	Boolean existeRecomendacionByCod(String recomendacion);
 
+	Boolean existeOrganismo(String codOrganismo);
+
+	Boolean existeComunidadAutonoma(String codComunidadAutonoma);
+
+	Boolean existeActuacion(String codActuacion);
+
+	Boolean existeRelacionCodLocCodSubGes(String codEstadoLoc, String codSubestadoGestion);
+
 	boolean isActivoEnConcurrencia(String numActivo);
 
 	boolean isActivoConOfertaEnConcurrencia(String numActivo);

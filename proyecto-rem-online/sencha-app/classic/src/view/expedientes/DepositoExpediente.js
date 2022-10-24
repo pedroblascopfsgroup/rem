@@ -58,7 +58,7 @@ Ext.define('HreRem.view.expedientes.DepositoExpediente', {
 						bind : {
 							store : '{comboEstadoDeposito}',
 							value : '{deposito.estadoCodigo}',
-							readOnly: true
+							readOnly: !$AU.userIsRol("HAYASUPER")
 						}
 	    			},
 	    			{

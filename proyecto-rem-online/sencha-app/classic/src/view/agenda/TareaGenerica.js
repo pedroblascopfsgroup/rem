@@ -3948,7 +3948,6 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		    		me.borrarCampo(motivoFianzaExonerada);
 		    		me.bloquearCampo(motivoFianzaExonerada);
 		    		me.campoNoObligatorio(motivoFianzaExonerada);
-		    		motivoFianzaExonerada.setAllowBlank(true);
 		    		me.campoObligatorio(importe);
 		    		me.campoObligatorio(meses);
 
@@ -5008,7 +5007,6 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 	    		me.bloquearCampo(motivoFianzaExonerada);
 	    		me.campoNoObligatorio(motivoFianzaExonerada);
 	    		me.desbloquearCampo(meses);
-	    		motivoFianzaExonerada.setAllowBlank(true);
 	    		me.campoObligatorio(importe);
 	    		me.campoObligatorio(meses);
             }

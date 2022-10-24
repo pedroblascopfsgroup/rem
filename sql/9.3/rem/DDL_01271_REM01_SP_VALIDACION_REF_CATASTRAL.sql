@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Santi Monzó
---## FECHA_CREACION=20220203
+--## FECHA_CREACION=20220808
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-16737
@@ -37,6 +37,7 @@ CREATE OR REPLACE PROCEDURE SP_VALIDACION_REF_CATASTRAL AS
     valorCaracter number := NULL;
     sumaDigitos number := 0;
     var_LONGREF number;
+    var_commit number :=0;
     CURSOR c_product
   IS
      SELECT AUX.CAT_ID,AUX.CAT_ID2,AUX.CAT_CATASTRO,AUX.CAD1,AUX.CAD2,AUX.CAD3,AUX.LONGREF
@@ -79,6 +80,7 @@ CREATE OR REPLACE PROCEDURE SP_VALIDACION_REF_CATASTRAL AS
             FROM REM01.ACT_CAT_CATASTRO ACT_CAT
             LEFT JOIN REM01.CAT_CATASTRO CAT ON CAT.CAT_ID = ACT_CAT.CAT_CATASTRO
             WHERE ACT_CAT.BORRADO=0
+            AND NVL(ACT_CAT.CAT_CORRECTO,0) = 0
                                    
             ) AUX           
             JOIN REM01.AUX_CAT_CATASTRO AUX_CAT ON AUX_CAT.CAT_REF_CATASTRAL = AUX.CAT_REF_CATASTRAL;
@@ -191,6 +193,12 @@ dcCalculado := '';
            
         end if;
 
+        var_commit := var_commit+1;
+
+        IF (var_commit=10000) THEN
+            var_commit :=0;
+            COMMIT;
+        END IF;
 
 END LOOP;
 

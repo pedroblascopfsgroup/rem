@@ -56,6 +56,7 @@ public class MSVSituacionComunidadesPropietariosExcelValidator extends MSVExcelV
 	public static final String ESTADO_LOC_EXISTS = "No se ha encontrado ningun estado de localización para el idendificador = ";
 	public static final String SUBESTADO_GESTION_EXISTS = "No se ha encontrado ningun subestado de gestión para el idendificador = ";
 	public static final String FECHA_EMVIO = "EL formato de la fecha de envio de la carta comunicando vta a la comunidad no es correcto ";
+	public static final String RELATION_ESTADO_LOC_SUBESTADO_GESTION_EXISTS = "No se ha encontrado ninguna relación entre estado de localización y subestado de gestión para los identificadores = ";
 
 
 	// Posicion fija de Columnas excel, para cualquier referencia por posicion
@@ -135,10 +136,13 @@ public class MSVSituacionComunidadesPropietariosExcelValidator extends MSVExcelV
 			mapaValores.put(ESTADO_LOC_EXISTS, dameValorEstadoLoc(exc));
 			mapaErrores.put(SUBESTADO_GESTION_EXISTS, isSubestadoGestionExists(exc));
 			mapaValores.put(SUBESTADO_GESTION_EXISTS, dameValorSubestadoGestion(exc));
+			mapaErrores.put(RELATION_ESTADO_LOC_SUBESTADO_GESTION_EXISTS, existeRelacionCodLocCodSubGes(exc));
+			mapaValores.put(RELATION_ESTADO_LOC_SUBESTADO_GESTION_EXISTS, dameValorRelacionCodLocCodSubGes(exc));
 				if (!mapaErrores.get(ACTIVE_EXISTS).isEmpty() || !mapaErrores.get(PROPIETARIOS_EXISTS).isEmpty()
 						|| !mapaErrores.get(FECHA_EMVIO).isEmpty()
 						|| !mapaErrores.get(ESTADO_LOC_EXISTS).isEmpty() || !mapaErrores.get(ACTIVE_CPR_ID).isEmpty() 
-						|| !mapaErrores.get(SUBESTADO_GESTION_EXISTS).isEmpty()) 
+						|| !mapaErrores.get(SUBESTADO_GESTION_EXISTS).isEmpty() 
+						|| !mapaErrores.get(RELATION_ESTADO_LOC_SUBESTADO_GESTION_EXISTS).isEmpty()) 
 			 {
 
 					dtoValidacionContenido.setFicheroTieneErrores(true);
@@ -352,11 +356,59 @@ public class MSVSituacionComunidadesPropietariosExcelValidator extends MSVExcelV
 		return listaFilas;
 	}
 	
+	private List<Integer> existeRelacionCodLocCodSubGes(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+
+		int i = 0;
+		try {
+			for (i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
+				if (!particularValidator.existeRelacionCodLocCodSubGes(exc.dameCelda(i, COL_NUM.ESTADO_LOC),exc.dameCelda(i, COL_NUM.SUBESTADO_GESTION)))
+					listaFilas.add(i);
+					
+			}
+		} catch (IllegalArgumentException e) {
+			logger.error(e.getMessage(),e);
+			e.printStackTrace();
+		} catch (IOException e) {
+			logger.error(e.getMessage(),e);
+			e.printStackTrace();
+		} catch (ParseException e) {
+			logger.error(e.getMessage(),e);
+			listaFilas.add(i);
+		}
+
+		return listaFilas;
+	}
 	
-	
-	
-	
-	
+	private List<String> dameValorRelacionCodLocCodSubGes(MSVHojaExcel exc) {
+		List<String> listaFilas = new ArrayList<String>();
+
+		int i = 0;
+		try {
+			for (i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
+				if (!particularValidator.existeRelacionCodLocCodSubGes(exc.dameCelda(i, COL_NUM.ESTADO_LOC),exc.dameCelda(i, COL_NUM.SUBESTADO_GESTION))) {
+					List<String> listaValoresErrores = new ArrayList<String>();
+					listaValoresErrores.add(exc.dameCelda(i, COL_NUM.ESTADO_LOC));
+					listaValoresErrores.add(exc.dameCelda(i, COL_NUM.SUBESTADO_GESTION));
+					String valorLoc = listaValoresErrores.get(0).toString();
+					String valoSubEstGes = listaValoresErrores.get(1).toString();
+					String error = valorLoc + " y " + valoSubEstGes;
+					listaFilas.add(error);
+				}
+			}
+		} catch (IllegalArgumentException e) {
+			logger.error(e.getMessage(),e);
+			e.printStackTrace();
+		} catch (IOException e) {
+			logger.error(e.getMessage(),e);
+			e.printStackTrace();
+		} catch (ParseException e) {
+			logger.error(e.getMessage(),e);
+			listaFilas.add("0");
+		}
+
+		return listaFilas;
+	}
 	
 	private List<Integer> isActiveExistsRows(MSVHojaExcel exc) {
 		List<Integer> listaFilas = new ArrayList<Integer>();

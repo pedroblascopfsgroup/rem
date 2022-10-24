@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -39,6 +40,12 @@ public class LocalizacionSubestadoGestion implements Serializable {
 
     @Column(name = "DD_SEG_ID", nullable = false, updatable = false, insertable = false)
     private Long subestadoGestion;
+    
+	@Version   
+	private Integer version;
+	
+	@Embedded
+	private Auditoria auditoria;
 	
 	public Long getEstadoLocalizacion() {
 		return estadoLocalizacion;
@@ -64,11 +71,15 @@ public class LocalizacionSubestadoGestion implements Serializable {
 		this.primaryKey = primaryKey;
 	}
 
+    public Auditoria getAuditoria() {
+		return auditoria;
+	}
 
-	@Version
-    private Integer version;
+	public void setAuditoria(Auditoria auditoria) {
+		this.auditoria = auditoria;
+	}
 
-    /**
+	/**
      * defualt contructor.
      */
     public LocalizacionSubestadoGestion() {

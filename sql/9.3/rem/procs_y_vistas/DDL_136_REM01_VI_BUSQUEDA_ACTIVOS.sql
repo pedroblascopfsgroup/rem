@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR= Lara Pablo 
---## FECHA_CREACION=20211226
+--## AUTOR=Ivan Rubio
+--## FECHA_CREACION=20220629
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-16798
+--## INCIDENCIA_LINK=HREOS-18201
 --## PRODUCTO=NO
 --## Finalidad:
 --##           
@@ -21,6 +21,7 @@
 --##		0.9 Juan Bautista Alfonso - - REMVIP-7935 - Modificado fecha posesion para que cargue de la vista V_FECHA_POSESION_ACTIVO
 --##		0.10 Juan Bautista Alfonso -- REMVIP-7935 - Añadido alias para el campo de fecha posesion FPA.FECHA_POSESION
 --##		0.3 Lara Pablo - - HREOS-16798 - Recuperación del catastro
+--##		0.4 HREOS-16798 - Nuevo campo motivo necesidad arras
 --##########################################
 --*/
 
@@ -147,7 +148,7 @@ BEGIN
 			TIPOSEG.DD_TS_CODIGO AS DD_TS_CODIGO,
 			ACT.ACT_PERIMETRO_MACC,
 			EQG.DD_EQG_CODIGO AS DD_EQG_EQUIPO_GESTION
-  
+  			,CAI.MOT_NECESIDAD_ARRAS AS MOT_NECESIDAD_ARRAS
 		FROM ' || V_ESQUEMA || '.ACT_ACTIVO ACT 
 		LEFT JOIN ' || V_ESQUEMA || '.ACT_LOC_LOCALIZACION ACT_LOC ON ACT_LOC.ACT_ID = ACT.ACT_ID
 		LEFT JOIN ' || V_ESQUEMA || '.BIE_LOCALIZACION BIE_LOC ON ACT.BIE_ID = BIE_LOC.BIE_ID
@@ -209,6 +210,7 @@ BEGIN
 				  JOIN ' || V_ESQUEMA || '.DD_TPC_TIPO_PRECIO TPC ON VAL.DD_TPC_ID = TPC.DD_TPC_ID
 		  		  WHERE TPC.DD_TPC_CODIGO IN (''03'') AND SYSDATE BETWEEN VAL.VAL_FECHA_INICIO AND NVL(VAL.VAL_FECHA_FIN,SYSDATE + 1)
 				  AND VAL.BORRADO = 0) VAL_03 ON VAL_03.ACT_ID = ACT.ACT_ID AND VAL_03.RN = 1
+		LEFT JOIN ' || V_ESQUEMA || '.ACT_ACTIVO_CAIXA CAI ON CAI.ACT_ID = ACT.ACT_ID 
 		WHERE ACT.BORRADO = 0';
 		
 

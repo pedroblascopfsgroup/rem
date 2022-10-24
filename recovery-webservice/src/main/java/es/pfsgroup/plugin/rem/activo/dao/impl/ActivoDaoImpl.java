@@ -2582,4 +2582,21 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 
 		return descripcionComunidadAutonoma;
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<LocalizacionSubestadoGestion> getLocalizacionSubestadoGestionByIdEstadoLocalizacion(Long idEstadoLocalizacion) {
+
+		HQLBuilder hb = new HQLBuilder(" from LocalizacionSubestadoGestion lsg");
+
+		hb.appendWhere("lsg.primaryKey.estadoLocalizacion.id = :idEstadoLocalizacion");
+		hb.appendWhere("lsg.auditoria.borrado = 0");
+
+		Query q = this.getSessionFactory().getCurrentSession().createQuery(hb.toString());
+
+		if(idEstadoLocalizacion != null)
+			q.setParameter("idEstadoLocalizacion", idEstadoLocalizacion);
+
+		return (List<LocalizacionSubestadoGestion>) q.list();
+	}
 }

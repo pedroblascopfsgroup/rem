@@ -195,6 +195,7 @@ public class BulkAdvisoryNoteAdapter {
 				&& !Checks.esNulo(actOfr.getPrimaryKey().getActivo().getSubcartera()) 
 				&& (DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(actOfr.getPrimaryKey().getActivo().getSubcartera().getCodigo())
 						|| DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(actOfr.getPrimaryKey().getActivo().getSubcartera().getCodigo())
+						|| DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(actOfr.getPrimaryKey().getActivo().getSubcartera().getCodigo())
 						|| DDSubcartera.CODIGO_JAGUAR.equals(actOfr.getPrimaryKey().getActivo().getSubcartera().getCodigo()))
 				&& bulkOferta != null && !Checks.esNulo(bulkOferta.getPrimaryKey().getBulkAdvisoryNote())) {
 

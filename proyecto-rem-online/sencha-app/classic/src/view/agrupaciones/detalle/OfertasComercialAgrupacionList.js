@@ -317,7 +317,7 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 					idAgrupacion : agrupacion.id
 				},
 				success: function (response){
-					var data = JSON.parse(response.responseText);
+					var data = Ext.decode(response.responseText);
 					if(data.agrupacionEpaAlquilado == '1'){
 						msg = HreRem.i18n('msg.activo.epa');
 					}

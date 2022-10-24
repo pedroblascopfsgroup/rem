@@ -187,4 +187,6 @@ public interface ActivoAgrupacionApi {
 	Long getIdByNumAgrupacion(Long numAgrupacion);
 
     boolean estaActivoEnAgrupacionRestringidaObRem(Activo activo);
+
+	boolean reloadFotosAgrupacionById(Long id);
 }

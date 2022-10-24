@@ -388,8 +388,11 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tipoClimatizacion", DDTipoClimatizacion.class);
 		mapa.put("activoAccesibilidad", DDActivoAccesibilidad.class);
 		mapa.put("tasadoraCaixa", DDTasadoraCaixa.class);
+		mapa.put("suborigenContrato", DDSuborigenContrato.class);
 		mapa.put("bajaContableBBVA", DDBajaContableBBVA.class);
 		mapa.put("comunidadAutonoma", DDComunidadAutonoma.class);
+		mapa.put("tipoActuacion", DDTAUTipoActuacion.class);
+		mapa.put("tipoOrganismo", DDOrganismos.class);
 		mapa.put("tipoConducta", DDTipoConductaInapropiada.class);
 		mapa.put("nivelConducta", DDNivelConductaInapropiada.class);
 		mapa.put("categoriaConducta", DDCategoriaConductaInapropiada.class);
@@ -400,7 +403,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("motivoExoneracionCee", DDMotivoExoneracionCee.class);
 		mapa.put("incidenciaCee", DDIncidenciaCee.class);
 		mapa.put("estadoDeposito", DDEstadoDeposito.class);
-		
+
 		return Collections.unmodifiableMap(mapa);
 	}
 	

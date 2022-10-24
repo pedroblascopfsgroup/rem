@@ -24,6 +24,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.activo.exception.HistoricoTramitacionException;
 import es.pfsgroup.plugin.rem.activo.exception.PlusvaliaActivoException;
 //import es.pfsgroup.plugin.rem.activo.DtoCalificacionNegativa;
+import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
@@ -37,6 +38,7 @@ import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.AdjuntoComprador;
+import es.pfsgroup.plugin.rem.model.DtoActivoBbvaUic;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargas;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargasTab;
 import es.pfsgroup.plugin.rem.model.DtoActivoComplementoTitulo;
@@ -1317,7 +1319,7 @@ public interface ActivoApi {
 
 	List<DtoHistoricoDiarioGestion> getHistoricoDiarioGestion(Long idActivo);
 
-	Boolean crearHistoricoDiarioGestion(DtoComunidadpropietariosActivo activoDto, Long idActivo);
+	void crearHistoricoDiarioGestion(DtoComunidadpropietariosActivo activoDto, Long idActivo);
 
 	@BusinessOperationDefinition("activoManager.deleteAdjuntoPlusvalia")
 	boolean deleteAdjuntoPlusvalia(DtoAdjunto dtoAdjunto);
@@ -1499,6 +1501,20 @@ public interface ActivoApi {
     void anyadirCanalDistribucionOfertaCaixa(Long idActivo, OfertaCaixa ofertaCaixa, String tipoOferta);
 
 	boolean isPermiteOfertaNoComercialActivoAlquilado(Activo activo, String codTipoOferta);
+		
+	Boolean destroyActivoBbvaUic(Long idActivo, String uicBbva) throws Exception;
 
+	Boolean createOrUpdateActivoBbvaUic(DtoActivoBbvaUic dto)throws Exception;
+	
+	Boolean updateActivoBbvaUicProp(DtoActivoBbvaUic dto)throws Exception;
+
+	List<DtoOrganismos> getOrganismosByActivo(Long idActivo);
+
+	void deleteOrganismoById(Long idOrganismo);
+
+	void saveOrUpdateOrganismo(Long idActivo, DtoOrganismos dto);
+	
 	Activo getActivoMatrizIfIsUA(Long idActivo);
+
+	boolean reloadFotosActivoById(Long id);
 }

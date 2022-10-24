@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Joaquin Arnal
---## FECHA_CREACION=20220412
+--## AUTOR=Javier Esbri
+--## FECHA_CREACION=20221005
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=REMVIP-11493
+--## INCIDENCIA_LINK=HREOS-17818
 --## PRODUCTO=NO
 --## Finalidad: Vista para filtrar por los activos BBVA
 --##           
@@ -17,8 +17,11 @@
 --##        0.5 REMVIP-8960 - VRO - se pone LEFT en dd_eca_estado_carga_activos y se mete tabla BIE_DATOS_REGISTRALES
 --##        0.6 REMVIP-9399 - VRO - se corrige calculo campos DEP_JURIDICAMENTE y FECHA_DEP_JURIDICA
 --##        0.7 REMVIP-10156 - JAC - se modifican errores en la query y logica de calculo de algunos campos
---##        0.8 REMVIP-9459 - JAC - se modifica logica tipologia inmueble
---##        0.9 REMVIP-11493 - JAC - Se modifica case when tipologia inmueble para añadir condicion
+--##        0.8 HREOS-17051 - JEG - cambio uic bbva y añadir nueva tabla act_bbva_uic
+--##        0.9 REMVIP-9459 - JAC - se modifica logica tipologia inmueble
+--##        1.0 REMVIP-11493 - JAC - Se modifica case when tipologia inmueble para añadir condicion
+--##        1.1 HREOS-17818 - JEG - Se modifica BBVA_CEXPER para aprovisionarlo de la nueva tabla act_bbva_uic
+--##        1.2 REMVIP-12483 - VRO - Se corrige join por left con tabla ACT_BBVA_UIC UIC por que hay activos que no salen 
 --##########################################
 --*/
 
@@ -63,7 +66,7 @@ BEGIN
 	AS
        SELECT DISTINCT
         ACT.ACT_ID AS ACT_ID
-        , COALESCE(BBVA.BBVA_CEXPER,''NULL'') AS CEXPER_MORA
+        , COALESCE(UIC.BBVA_CEXPER,''NULL'') AS CEXPER_MORA
         , CASE
             WHEN COALESCE(PRO.PRO_TITULIZADO,PRO2.PRO_TITULIZADO) IS NOT NULL
             THEN ''0182''
@@ -141,7 +144,7 @@ BEGIN
             THEN COALESCE(PRO.PRO_DOCIDENTIF,CPR.CPR_DOCIDENTIF)
             ELSE ''NULL''
         END AS NIF_EMPRESA_TITULIZADORA
-        ,COALESCE(BBVA.BBVA_UIC,''NULL'') AS IUC
+        ,COALESCE(UIC.BBVA_UIC,''NULL'') AS IUC
         ,COALESCE(REG.REG_IDUFIR,''NULL'') AS IDUFIR
         ,''NULL'' AS REST_IDUFIR
         ,CASE
@@ -276,6 +279,7 @@ BEGIN
         GROUP BY ID_AAII
     ) CANCEL 
     ON act.act_num_activo = CANCEL.ID_AAII
+    LEFT JOIN '||V_ESQUEMA||'.ACT_BBVA_UIC UIC ON UIC.ACT_ID = BBVA.ACT_ID AND UIC.BORRADO = 0
     WHERE ACT.BORRADO = 0 AND COALESCE(PRO.PRO_DOCIDENTIF,CPR.CPR_DOCIDENTIF) IS NOT NULL
     ';
 		

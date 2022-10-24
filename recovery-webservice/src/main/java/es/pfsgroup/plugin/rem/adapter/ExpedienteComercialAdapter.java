@@ -469,6 +469,7 @@ public class ExpedienteComercialAdapter {
 						DDCartera.CODIGO_CARTERA_CERBERUS.equals(expedienteComercial.getOferta().getActivoPrincipal().getCartera().getCodigo()) && 
 						(DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(expedienteComercial.getOferta().getActivoPrincipal().getSubcartera().getCodigo()) 
 								|| DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(expedienteComercial.getOferta().getActivoPrincipal().getSubcartera().getCodigo())
+								|| DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(expedienteComercial.getOferta().getActivoPrincipal().getSubcartera().getCodigo())
 								|| DDSubcartera.CODIGO_JAGUAR.equals(expedienteComercial.getOferta().getActivoPrincipal().getSubcartera().getCodigo())  )) {
 					//Comprobamos que tengan lo subtipos de documentos apropiados.
 					BulkOferta blkOfr = bulkOfertaDao.findOne(null, expedienteComercial.getOferta().getId(), false);

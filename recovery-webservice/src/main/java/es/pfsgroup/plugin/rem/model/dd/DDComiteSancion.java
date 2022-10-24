@@ -98,7 +98,7 @@ public class DDComiteSancion implements Auditable, Dictionary {
 
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_SCR_ID")
-	private DDSubcartera Subcartera;
+	private DDSubcartera subcartera;
     
     @Transient
     private String carteraCodigo;
@@ -150,11 +150,11 @@ public class DDComiteSancion implements Auditable, Dictionary {
 	}
 
 	public DDSubcartera getSubcartera() {
-		return Subcartera;
+		return subcartera;
 	}
 
-	public void setSubcartera(DDSubcartera Subcartera) {
-		this.Subcartera = Subcartera;
+	public void setSubcartera(DDSubcartera subcartera) {
+		this.subcartera = subcartera;
 	}
 
 	public String getCarteraCodigo() {

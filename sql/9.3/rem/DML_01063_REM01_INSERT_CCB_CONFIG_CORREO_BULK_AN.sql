@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Santi Monzó
---## FECHA_CREACION=20220617
+--## AUTOR=Lara Pablo
+--## FECHA_CREACION=20221020
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-17983
@@ -28,7 +28,7 @@ DECLARE
     V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.   
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
-    V_MAIL VARCHAR2(25 CHAR):= 'pruebashrem@gmail.com';
+    V_MAIL VARCHAR2(50 CHAR):= 'pruebashrem@gmail.com';
     V_ENTORNO NUMBER(16);
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
     V_ENTIDAD_ID NUMBER(16);

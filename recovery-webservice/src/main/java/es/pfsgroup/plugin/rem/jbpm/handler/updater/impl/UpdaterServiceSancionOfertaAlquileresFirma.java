@@ -120,6 +120,8 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
 			if(activoDao.isActivoMatriz(activo.getId())){
 				tramiteAlquilerApi.actualizarEstadoPublicacionUAs(activo);
 			}
+			
+			genericDao.save(Oferta.class, oferta);
 		}
 		
 		expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", this.devolverEstadoEco(activo, anular))));

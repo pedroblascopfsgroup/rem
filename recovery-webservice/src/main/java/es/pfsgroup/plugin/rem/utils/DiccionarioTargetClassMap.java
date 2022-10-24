@@ -391,6 +391,8 @@ public class DiccionarioTargetClassMap{
 		mapa.put("suborigenContrato", DDSuborigenContrato.class);
 		mapa.put("bajaContableBBVA", DDBajaContableBBVA.class);
 		mapa.put("comunidadAutonoma", DDComunidadAutonoma.class);
+		mapa.put("tipoActuacion", DDTAUTipoActuacion.class);
+		mapa.put("tipoOrganismo", DDOrganismos.class);
 		mapa.put("tipoConducta", DDTipoConductaInapropiada.class);
 		mapa.put("nivelConducta", DDNivelConductaInapropiada.class);
 		mapa.put("categoriaConducta", DDCategoriaConductaInapropiada.class);

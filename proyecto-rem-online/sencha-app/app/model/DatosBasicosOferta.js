@@ -355,7 +355,7 @@ Ext.define('HreRem.model.DatosBasicosOferta', {
             {
             	name:'autoFirme',
     			type: 'boolean'   	
-						},
+			},
 			
 			{
 				name: 'codigoClaseCondicion'
@@ -380,8 +380,12 @@ Ext.define('HreRem.model.DatosBasicosOferta', {
 			},
 			{
 				name: 'suborigenContratoEccDescripcion'
-			}
-    		
+			},
+            {
+    			name: 'fechaLiquida',
+    			type:'date', 
+        		dateFormat: 'c'
+    		}
     ],
 
 	proxy: {

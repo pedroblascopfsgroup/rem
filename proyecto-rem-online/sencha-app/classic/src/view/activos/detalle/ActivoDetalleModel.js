@@ -15,7 +15,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	'HreRem.model.HistoricoTramitacionTituloAdicionalModel', 'HreRem.model.CalidadDatoFasesGridModel','HreRem.model.SituacionOcupacionalGridModel',
 	'HreRem.model.DetalleOfertaModel', 'HreRem.model.ActivoInformacionAdministrativa', 'HreRem.view.activos.detalle.CatastroGrid',
 	'HreRem.model.ComparativaReferenciaCatastralGridModel', 'HreRem.model.ReferenciaCatastralGridModel','HreRem.model.ReferenciaCatastralComboModel',
-	'HreRem.model.TestigosOpcionales','HreRem.model.DetalleOfertaModel', 'HreRem.model.ActivoInformacionAdministrativa', 'HreRem.model.Pujas',
+	'HreRem.model.TestigosOpcionales', 'HreRem.model.Organismos', 'HreRem.model.DetalleOfertaModel', 'HreRem.model.ActivoInformacionAdministrativa', 'HreRem.model.Pujas',
 	'HreRem.model.PujasActivo', 'HreRem.model.HistoricoConcurrenciaGridModel'],
 
     data: {
@@ -4715,6 +4715,42 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			},
 			autoLoad: true
 		},
+		comboTipoOrganismo: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoOrganismo'}
+			},
+			autoLoad: true
+		},
+		comboTipoActuacion: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoActuacion'}
+			},
+			autoLoad: true
+		},
+		comboComunidadAutonoma: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'comunidadAutonoma'}
+			},
+			autoLoad: true
+		},
+		storeOrganismos: {
+			model: 'HreRem.model.Organismos',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'activo/getOrganismosByActivo',
+				extraParams: {idActivo: '{activo.id}'}
+			},
+			autoLoad: true
+		},
 		storeComparativaRefCatastral:{
 			model: 'HreRem.model.ComparativaReferenciaCatastralGridModel',
 			proxy: {
@@ -4745,7 +4781,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				load: 'cargarReferenciaCatastral'
 			}
         },
-
 		storeTextosComercialActivo: {
     		 pageSize: $AC.getDefaultPageSize(),
     		 model: 'HreRem.model.TextosOferta',
@@ -4765,4 +4800,5 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	    	 }
     	}
 	 }
+
 });

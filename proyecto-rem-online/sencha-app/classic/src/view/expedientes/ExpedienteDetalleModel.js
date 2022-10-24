@@ -177,11 +177,12 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 			  CONST.SUBCARTERA['DIVARIANARROW'] == subcarteraCodigo || CONST.SUBCARTERA['DIVARIANREMAINING'] == subcarteraCodigo || CONST.SUBCARTERA['JAGUAR'] == subcarteraCodigo) ;
 		 },
 
-		 esCarteraAppleOrRemainingOrJaguar: function(get) {
+		 esCarteraAppleOrRemainingOrIndustrialOrJaguar: function(get) {
 			 var carteraCodigo = get('expediente.entidadPropietariaCodigo');
 			 var subcarteraCodigo = get('expediente.subcarteraCodigo');
 			 return CONST.CARTERA['CERBERUS'] == carteraCodigo && (CONST.SUBCARTERA['APPLEINMOBILIARIO'] == subcarteraCodigo ||
-			  CONST.SUBCARTERA['DIVARIANREMAINING'] == subcarteraCodigo || CONST.SUBCARTERA['JAGUAR'] == subcarteraCodigo) ;
+			  CONST.SUBCARTERA['DIVARIANREMAINING'] == subcarteraCodigo || CONST.SUBCARTERA['JAGUAR'] == subcarteraCodigo || 
+			  CONST.SUBCARTERA['DIVARIANARROW'] == subcarteraCodigo);
 		 },
 		 
 		 esCarteraAppleOAgora: function(get) {

@@ -11,7 +11,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 	
 	recordClass: "HreRem.model.Activo",
     
-    requires: ['HreRem.model.Activo','HreRem.view.activos.detalle.HistoricoDestinoComercialActivo', 'HreRem.view.common.ComboBoxFieldBaseDD', 'HreRem.view.activos.detalle.CatastroGrid'],
+    requires: ['HreRem.model.Activo','HreRem.view.activos.detalle.HistoricoDestinoComercialActivo', 'HreRem.view.common.ComboBoxFieldBaseDD', 'HreRem.view.activos.detalle.CatastroGrid', 'HreRem.view.activos.detalle.OrganismosGrid'],
     
     initComponent: function () {
 
@@ -1832,7 +1832,18 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						xtype: 'historicodestinocomercialactivoform'
 					}
 					]
-			} // Fin Histórico Destino Comercial
+			}, // Fin Histórico Destino Comercial
+			{	// Registro Comunicación organismos ---------------------------------------------------------
+				xtype:'fieldsettable',
+				defaultType: 'textfieldbase',
+				title: HreRem.i18n('title.historico.comunicacion.organismos'),
+				items :
+					[
+						{
+							xtype: 'organismosGrid'
+						}
+					]
+			} //Registro Comunicación organismos
             
      ];
 	me.addPlugin({ptype: 'lazyitems', items: items });

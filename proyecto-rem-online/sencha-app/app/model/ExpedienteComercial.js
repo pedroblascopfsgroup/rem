@@ -384,6 +384,11 @@ Ext.define('HreRem.model.ExpedienteComercial', {
             	name: 'peticionarioAnulacion'
             },
             {
+    			name: 'fechaLiquida',
+    			type:'date', 
+        		dateFormat: 'c'
+            },
+            {
     			name: 'ofertaConDeposito',
        			type: 'boolean'
     		},

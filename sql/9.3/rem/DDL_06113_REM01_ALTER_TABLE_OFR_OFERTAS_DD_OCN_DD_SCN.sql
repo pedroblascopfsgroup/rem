@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alejandro Valverde
---## FECHA_CREACION=20221021
+--## FECHA_CREACION=20221025
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-18839
@@ -63,7 +63,7 @@ BEGIN
           IF V_NUM_TABLAS = 1 THEN
               DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||' '||TRIM(V_TMP_TIPO_DATA(1))||'''... Ya existe, la modificamos');
               
-              V_MSQL := 'SELECT COUNT(*) FROM ALL_CONSTRAINTS WHERE OWNER = '''||V_ESQUEMA||''' AND TABLE_NAME = UPPER('''||V_TEXT_TABLA||''') AND CONSTRAINT_NAME = ''FK_'||TRIM(V_TMP_TIPO_DATA(1))||'''';
+              V_MSQL := 'SELECT COUNT(*) FROM ALL_CONSTRAINTS WHERE OWNER = '''||V_ESQUEMA||''' AND TABLE_NAME = UPPER('''||V_TEXT_TABLA||''') AND CONSTRAINT_NAME = ''FK_'||V_TMP_TIPO_DATA(5)||'_'||TRIM(V_TMP_TIPO_DATA(1))||'''';
               EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
               
               IF V_NUM_TABLAS = 0 THEN

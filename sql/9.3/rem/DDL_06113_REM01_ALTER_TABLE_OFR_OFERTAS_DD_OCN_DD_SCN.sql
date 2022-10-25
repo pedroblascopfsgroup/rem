@@ -38,7 +38,7 @@ DECLARE
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(	
     			
 		T_TIPO_DATA('DD_OCN_ID', 'NUMBER(16,0)', 'Tipo de origen contrato ECC', 'DD_OCN_ID', 'OFR', 'DD_OCN_ORIGEN_CONTRATO_ECC'),
-		T_TIPO_DATA('DD_SOC_ID', 'NUMBER(16,0)', 'Tipo de suborigen contrato ECC', 'DD_SOC_ID', 'OFR', 'DD_SCN_SUBORIGEN_CNT_ECC')
+		T_TIPO_DATA('DD_SCN_ID', 'NUMBER(16,0)', 'Tipo de suborigen contrato ECC', 'DD_SCN_ID', 'OFR', 'DD_SCN_SUBORIGEN_CNT_ECC')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

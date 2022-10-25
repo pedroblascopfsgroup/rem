@@ -39,7 +39,7 @@ if test ! -f ${OUTPUT_PATH}/RUFACTUCP_??????????????.sem ; then
    exit 1
 fi
 
-mv $OUTPUT_PATH/RUFACTU*.* $PREVALIDADO_PATH/.
+mv $OUTPUT_PATH/RUFACTU*_?????_*.* $PREVALIDADO_PATH/.
 
 
 if [ -f $MAINSH ]; then

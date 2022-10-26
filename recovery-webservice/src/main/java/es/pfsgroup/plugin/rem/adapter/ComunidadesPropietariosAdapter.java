@@ -48,7 +48,7 @@ public class ComunidadesPropietariosAdapter {
 
 
 	@Transactional(readOnly = false)
-	public void updateComunidad(Long idActivo, String idComunidadPropietarios, String fechaEnvioCarta, String codEstadoLocalizacion, String codSubestadoGestion) {
+	public void updateComunidad(Long idActivo, String fechaEnvioCarta, String codEstadoLocalizacion, String codSubestadoGestion) {
 
 		Filter filter = genericDao.createFilter(FilterType.EQUALS, "numActivo", idActivo);
 		Activo activo = genericDao.get(Activo.class, filter);

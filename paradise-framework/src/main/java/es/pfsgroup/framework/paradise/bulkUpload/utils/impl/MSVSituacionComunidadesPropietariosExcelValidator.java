@@ -51,8 +51,6 @@ public class MSVSituacionComunidadesPropietariosExcelValidator extends MSVExcelV
 
 	// Textos con errores de validacion
 	public static final String ACTIVE_EXISTS = "El activo propuesto no existe = ";
-	public static final String ACTIVE_CPR_ID = "No se ha encontrado ninguna COMUNIDAD DE PROPIETARIOS asociada al activo = ";
-	public static final String PROPIETARIOS_EXISTS = "No se ha encontrado ninguna comunidad de propietarios para el identificador = ";
 	public static final String ESTADO_LOC_EXISTS = "No se ha encontrado ningun estado de localización para el idendificador = ";
 	public static final String SUBESTADO_GESTION_EXISTS = "No se ha encontrado ningun subestado de gestión para el idendificador = ";
 	public static final String FECHA_EMVIO = "EL formato de la fecha de envio de la carta comunicando vta a la comunidad no es correcto ";
@@ -65,10 +63,9 @@ public class MSVSituacionComunidadesPropietariosExcelValidator extends MSVExcelV
 		static final int DATOS_PRIMERA_FILA = 1;
 
 		static final int NUM_ACTIVO_HAYA = 0;
-		static final int ID_COMUNIDAD_PROPIETARIOS = 1;
-		static final int FECHA_ENVIO_CARTA = 2;
-		static final int ESTADO_LOC = 3;
-		static final int SUBESTADO_GESTION = 4;
+		static final int FECHA_ENVIO_CARTA = 1;
+		static final int ESTADO_LOC = 2;
+		static final int SUBESTADO_GESTION = 3;
 		
 	}
 	@Autowired
@@ -121,15 +118,8 @@ public class MSVSituacionComunidadesPropietariosExcelValidator extends MSVExcelV
 			Map<String, List<String>> mapaValores= new HashMap<String, List<String>>();
 
 
-			mapaErrores.put(ACTIVE_CPR_ID , noExisteActivoEnPropietarios(exc));
 			mapaErrores.put(ACTIVE_EXISTS , isActiveExistsRows(exc));
-
 			mapaValores.put(ACTIVE_EXISTS , dameValorActivo(exc));
-			mapaValores.put(ACTIVE_CPR_ID , dameValorActivoPropietario(exc));
-
-
-			mapaErrores.put(PROPIETARIOS_EXISTS, isComunidadPropietariosExists(exc));
-			mapaValores.put(PROPIETARIOS_EXISTS, dameValorPropietarios(exc));
 
 			mapaErrores.put(FECHA_EMVIO, isColumnNotDateByRows(exc, COL_NUM.FECHA_ENVIO_CARTA));
 			mapaErrores.put(ESTADO_LOC_EXISTS, isEstadoLocExists(exc));
@@ -138,9 +128,9 @@ public class MSVSituacionComunidadesPropietariosExcelValidator extends MSVExcelV
 			mapaValores.put(SUBESTADO_GESTION_EXISTS, dameValorSubestadoGestion(exc));
 			mapaErrores.put(RELATION_ESTADO_LOC_SUBESTADO_GESTION_EXISTS, existeRelacionCodLocCodSubGes(exc));
 			mapaValores.put(RELATION_ESTADO_LOC_SUBESTADO_GESTION_EXISTS, dameValorRelacionCodLocCodSubGes(exc));
-				if (!mapaErrores.get(ACTIVE_EXISTS).isEmpty() || !mapaErrores.get(PROPIETARIOS_EXISTS).isEmpty()
+				if (!mapaErrores.get(ACTIVE_EXISTS).isEmpty()
 						|| !mapaErrores.get(FECHA_EMVIO).isEmpty()
-						|| !mapaErrores.get(ESTADO_LOC_EXISTS).isEmpty() || !mapaErrores.get(ACTIVE_CPR_ID).isEmpty() 
+						|| !mapaErrores.get(ESTADO_LOC_EXISTS).isEmpty()
 						|| !mapaErrores.get(SUBESTADO_GESTION_EXISTS).isEmpty() 
 						|| !mapaErrores.get(RELATION_ESTADO_LOC_SUBESTADO_GESTION_EXISTS).isEmpty()) 
 			 {
@@ -209,55 +199,6 @@ public class MSVSituacionComunidadesPropietariosExcelValidator extends MSVExcelV
 		}
 
 		return resultado;
-	}
-
-	private List<Integer> isComunidadPropietariosExists(MSVHojaExcel exc) {
-		List<Integer> listaFilas = new ArrayList<Integer>();
-
-		int i = 0;
-		try {
-			for (i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
-				if (!particularValidator.existeComunidadPropietarios(exc.dameCelda(i, COL_NUM.ID_COMUNIDAD_PROPIETARIOS)))
-					listaFilas.add(i);
-						
-			}
-		} catch (IllegalArgumentException e) {
-			logger.error(e.getMessage(),e);
-			e.printStackTrace();
-		} catch (IOException e) {
-			logger.error(e.getMessage(),e);
-			e.printStackTrace();
-		} catch (ParseException e) {
-			logger.error(e.getMessage(),e);
-			listaFilas.add(i);
-		}
-
-		return listaFilas;
-	}
-	
-	private List<String> dameValorPropietarios(MSVHojaExcel exc) {
-		List<String> listaFilas = new ArrayList<String>();
-
-		int i = 0;
-		try {
-			for (i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
-				if (!particularValidator.existeComunidadPropietarios(exc.dameCelda(i, COL_NUM.ID_COMUNIDAD_PROPIETARIOS)))
-					listaFilas.add(exc.dameCelda(i, COL_NUM.ID_COMUNIDAD_PROPIETARIOS));
-		
-			
-			}
-		} catch (IllegalArgumentException e) {
-			logger.error(e.getMessage(),e);
-			e.printStackTrace();
-		} catch (IOException e) {
-			logger.error(e.getMessage(),e);
-			e.printStackTrace();
-		} catch (ParseException e) {
-			logger.error(e.getMessage(),e);
-			listaFilas.add("error");
-		}
-
-		return listaFilas;
 	}
 	
 	
@@ -433,29 +374,6 @@ public class MSVSituacionComunidadesPropietariosExcelValidator extends MSVExcelV
 		return listaFilas;
 	}
 	
-	private List<Integer> noExisteActivoEnPropietarios(MSVHojaExcel exc) {
-		List<Integer> listaFilas = new ArrayList<Integer>();
-
-		int i = 0;
-		try {
-			for (i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
-				if (!particularValidator.existeActivoEnPropietarios(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA),exc.dameCelda(i, COL_NUM.ID_COMUNIDAD_PROPIETARIOS)))
-					listaFilas.add(i);
-			}
-		} catch (IllegalArgumentException e) {
-			logger.error(e.getMessage(),e);
-			e.printStackTrace();
-		} catch (IOException e) {
-			logger.error(e.getMessage(),e);
-			e.printStackTrace();
-		} catch (ParseException e) {
-			logger.error(e.getMessage(),e);
-			listaFilas.add(i);
-		}
-
-		return listaFilas;
-	}
-	
 	
 	private List<String> dameValorActivo(MSVHojaExcel exc) {
 		List<String> listaFilas = new ArrayList<String>();
@@ -464,35 +382,6 @@ public class MSVSituacionComunidadesPropietariosExcelValidator extends MSVExcelV
 		try {
 			for (i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
 				if (!particularValidator.existeActivo(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)))
-					listaFilas.add(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA));
-			
-					
-				
-			}
-		} catch (IllegalArgumentException e) {
-			logger.error(e.getMessage(),e);
-			e.printStackTrace();
-		} catch (IOException e) {
-			logger.error(e.getMessage(),e);
-			e.printStackTrace();
-		} catch (ParseException e) {
-			logger.error(e.getMessage(),e);
-			listaFilas.add("0");
-		}
-		
-		
-	
-		
-
-		return listaFilas;
-	}
-	private List<String> dameValorActivoPropietario(MSVHojaExcel exc) {
-		List<String> listaFilas = new ArrayList<String>();
-
-		int i = 0;
-		try {
-			for (i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
-				if (!particularValidator.existeActivoEnPropietarios(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA),exc.dameCelda(i, COL_NUM.ID_COMUNIDAD_PROPIETARIOS)))
 					listaFilas.add(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA));
 			
 					

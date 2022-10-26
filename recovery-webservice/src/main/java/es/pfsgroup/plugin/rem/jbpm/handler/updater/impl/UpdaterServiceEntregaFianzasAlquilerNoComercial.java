@@ -19,6 +19,7 @@ import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 
 @Component
 public class UpdaterServiceEntregaFianzasAlquilerNoComercial implements UpdaterService {
@@ -41,7 +42,6 @@ public class UpdaterServiceEntregaFianzasAlquilerNoComercial implements UpdaterS
 		
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
 		boolean fianzaAbonada = false;
-		String estadoBC;
  		
  		for(TareaExternaValor valor :  valores){
 			
@@ -52,17 +52,18 @@ public class UpdaterServiceEntregaFianzasAlquilerNoComercial implements UpdaterS
 			}
 		}
  		
- 		if (fianzaAbonada) {
- 			estadoBC = DDEstadoExpedienteBc.CODIGO_FIRMA_DE_CONTRATO_AGENDADO;
-		} else {
-			if(funcionesTramitesApi.seHaReagendado2VecesOMas(tareaExternaActual)) {
-				estadoBC = DDEstadoExpedienteBc.CODIGO_VALIDACION_DE_FIRMA_DE_CONTRATO_POR_BC;
-			}else {
-				estadoBC = DDEstadoExpedienteBc.CODIGO_BORRADOR_ACEPTADO;
-			}
+ 		String estadoBC = this.devolverEstadoBC(fianzaAbonada, tareaExternaActual);
+		
+		if(estadoBC != null) {
+			expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoBC)));
+		}
+		
+		String estadoEco = this.devolverEstadoEco(fianzaAbonada, tareaExternaActual);
+		
+		if(estadoEco != null) {
+			expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoEco)));
 		}
  		
- 		expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class,genericDao.createFilter(FilterType.EQUALS, "codigo", estadoBC)));
 		genericDao.save(ExpedienteComercial.class, expedienteComercial);			
 	}
 
@@ -72,6 +73,36 @@ public class UpdaterServiceEntregaFianzasAlquilerNoComercial implements UpdaterS
 
 	public String[] getKeys() {
 		return this.getCodigoTarea();
+	}
+	
+	private String devolverEstadoBC(Boolean fianzaAbonada, TareaExterna tareaExternaActual) {
+		String estadoExpBC = null;
+		if (fianzaAbonada) {
+			estadoExpBC = DDEstadoExpedienteBc.CODIGO_FIRMA_DE_CONTRATO_AGENDADO;
+		} else {
+			if(funcionesTramitesApi.seHaReagendado2VecesOMas(tareaExternaActual)) {
+				estadoExpBC = DDEstadoExpedienteBc.CODIGO_VALIDACION_DE_FIRMA_DE_CONTRATO_POR_BC;
+			}else {
+				estadoExpBC = DDEstadoExpedienteBc.CODIGO_BORRADOR_ACEPTADO;
+			}
+		}
+		
+		return estadoExpBC;
+	}
+	
+	private String devolverEstadoEco(Boolean fianzaAbonada, TareaExterna tareaExternaActual) {
+		String estadoEco = null;
+		if (fianzaAbonada) {
+			estadoEco = DDEstadosExpedienteComercial.PTE_FIRMA;
+		} else {
+			if(funcionesTramitesApi.seHaReagendado2VecesOMas(tareaExternaActual)) {
+				estadoEco = DDEstadosExpedienteComercial.PTE_AGENDAR_FIRMA;
+			}else {
+				estadoEco = DDEstadosExpedienteComercial.PTE_RESPUESTA_BC;
+			}
+		}
+		
+		return estadoEco;
 	}
 
 }

@@ -22,6 +22,7 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoActivoRescision;
 
 @Component
 public class UpdaterServiceFirmaRescisionContratoAlquilerNoComercial implements UpdaterService {
@@ -61,12 +62,16 @@ public class UpdaterServiceFirmaRescisionContratoAlquilerNoComercial implements 
 			expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoExpBC)));
 		}
 		
+		String estadoEco = this.devolverEstadoEco(dto.getComboResultado(), tareaExternaActual);
+		
+		if(estadoEco != null) {
+			expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoEco)));
+		}
+		
 		if(oferta != null) {
 			ofertaApi.finalizarOferta(oferta);
 		}
-		
-		expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO)));
-		
+				
 		genericDao.save(ExpedienteComercial.class, expedienteComercial);
 			
 	}
@@ -88,6 +93,18 @@ public class UpdaterServiceFirmaRescisionContratoAlquilerNoComercial implements 
 		}
 		
 		return estadoExpBC;
+	}
+	
+	private String devolverEstadoEco(Boolean comboResultado, TareaExterna tareaExterna) {
+		String estadoEco = null;
+		
+		if(comboResultado != null) {
+			if(comboResultado) {
+				estadoEco = DDEstadosExpedienteComercial.ANULADO;
+			}
+		}
+		
+		return estadoEco;
 	}
 
 }

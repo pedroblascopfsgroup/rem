@@ -58,13 +58,19 @@ public class UpdaterServiceDecisionComiteAlquilerNoComercial implements UpdaterS
 		}
 		
 		String estadoExpBC = this.devolverEstadoBC(dto.getDecisionComite(), tareaExternaActual);
+		
 		if(estadoExpBC != null) {
 			expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoExpBC)));
 		}
 		
+		String estadoEco = this.devolverEstadoEco(dto.getDecisionComite(), tareaExternaActual);
+		
+		if(estadoEco != null) {
+			expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoEco)));
+		}
+		
 		if(DDDecisionComite.CODIGO_CANCELAR.equals(dto.getDecisionComite())) {
 			expedienteComercial.setMotivoAnulacion(genericDao.get(DDMotivoAnulacionExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoAnulacionExpediente.COD_CAIXA_JUDICIALIZADO)));
-			expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO)));
 			
 			if(oferta != null) {
 				ofertaApi.finalizarOferta(oferta);
@@ -99,5 +105,21 @@ public class UpdaterServiceDecisionComiteAlquilerNoComercial implements UpdaterS
 		}
 		
 		return estadoExpBC;
+	}
+	
+	private String devolverEstadoEco(String decisionComite,  TareaExterna tareaExterna) {
+		String estadoEco = null;
+		
+		if(decisionComite != null) {
+			if(DDDecisionComite.CODIGO_NUEVAS_CONDICIONES.equals(decisionComite)) {
+				estadoEco = DDEstadosExpedienteComercial.PTE_RESPUESTA_BC;
+			}else if(DDDecisionComite.CODIGO_REAGENDAR.equals(decisionComite)) {
+				estadoEco = DDEstadosExpedienteComercial.PTE_AGENDAR_FIRMA;
+			}else if(DDDecisionComite.CODIGO_CANCELAR.equals(decisionComite)) {
+				estadoEco = DDEstadosExpedienteComercial.ANULADO;
+			}
+		}
+		
+		return estadoEco;
 	}
 }

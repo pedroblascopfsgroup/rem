@@ -26,6 +26,7 @@ import es.pfsgroup.plugin.rem.model.Fianzas;
 import es.pfsgroup.plugin.rem.model.HistoricoReagendacion;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoExoneracionFianza;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoReagendacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
@@ -108,7 +109,12 @@ public class UpdaterServiceAgendarFirmaNoComercial implements UpdaterService {
 			
 			this.actualizarCondicionesExpediente(dto, expedienteComercial.getCondicionante());
 			
-			//expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoHaya)));
+			String estadoEco = this.devolverEstadoEco(dto.getFianzaExonerada());
+			
+			if(estadoEco != null) {
+				expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoEco)));
+			}
+			
 			expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", this.devolverEstadoBC(dto.getFianzaExonerada()))));
 			genericDao.save(ExpedienteComercial.class, expedienteComercial);
 		}catch (ParseException e) {
@@ -179,6 +185,19 @@ public class UpdaterServiceAgendarFirmaNoComercial implements UpdaterService {
 			}
 		}
 		genericDao.save(CondicionanteExpediente.class, condicionantesExpediente);
+	}
+	
+	private String devolverEstadoEco(Boolean fianzaExonerada) {
+		String estadoEco = null;
+		if(fianzaExonerada != null) {
+			if(fianzaExonerada) {
+				estadoEco = DDEstadosExpedienteComercial.PTE_FIRMA;
+			}else {
+				estadoEco = DDEstadosExpedienteComercial.PTE_INGRESO_FIANZA;
+			}
+		}
+		
+		return estadoEco;
 	}
 
 }

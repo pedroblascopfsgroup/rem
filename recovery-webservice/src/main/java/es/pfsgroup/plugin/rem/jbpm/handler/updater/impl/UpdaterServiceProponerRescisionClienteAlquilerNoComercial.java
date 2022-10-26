@@ -67,9 +67,17 @@ public class UpdaterServiceProponerRescisionClienteAlquilerNoComercial implement
 			expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoExpBC)));
 		}
 		
-		if(!dto.getComboResultado() && DDTipoActivoRescision.CODIGO_TERCIARIA.equals(dto.getTipoActivoRescision())) {
-			if(oferta != null) {
-				ofertaApi.finalizarOferta(oferta);
+		String estadoEco = this.devolverEstadoEco(dto.getComboResultado(), dto.getTipoActivoRescision(), tareaExternaActual);
+		
+		if(estadoEco != null) {
+			expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoEco)));
+		}
+		
+		if(!dto.getComboResultado()) {
+			if(DDTipoActivoRescision.CODIGO_TERCIARIA.equals(dto.getTipoActivoRescision())){
+				if(oferta != null) {
+					ofertaApi.finalizarOferta(oferta);
+				}
 			}
 		}
 		
@@ -103,6 +111,24 @@ public class UpdaterServiceProponerRescisionClienteAlquilerNoComercial implement
 		}
 		
 		return estadoExpBC;
+	}
+	
+	private String devolverEstadoEco(Boolean comboResultado, String activoRescion, TareaExterna tareaExterna) {
+		String estadoEco = null;
+		
+		if(comboResultado != null) {
+			if(comboResultado) {
+				estadoEco = DDEstadosExpedienteComercial.PTE_FIRMA_RESCISION;
+			}else {
+				if(DDTipoActivoRescision.CODIGO_TERCIARIA.equals(activoRescion)) {
+					estadoEco = DDEstadosExpedienteComercial.ANULADO;
+				}else {
+					estadoEco = DDEstadosExpedienteComercial.PTE_COMITE;
+				}
+			}
+		}
+		
+		return estadoEco;
 	}
 
 }

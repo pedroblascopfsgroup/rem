@@ -126,10 +126,10 @@ public class UpdaterServiceAprobacionOfertaAlquilerNoComercial implements Update
 		}else {
 			if(dto.getClienteAcepta() != null && dto.getClienteAcepta()) {
 				dtoEstados.setCodigoEstadoExpedienteBc(DDEstadoExpedienteBc.CODIGO_BORRADOR_ACEPTADO);
-				dtoEstados.setCodigoEstadoExpediente(DDEstadosExpedienteComercial.EN_TRAMITACION);				
+				dtoEstados.setCodigoEstadoExpediente(DDEstadosExpedienteComercial.PTE_AGENDAR_FIRMA);				
 			}else {
 				dtoEstados.setCodigoEstadoExpedienteBc(DDEstadoExpedienteBc.CODIGO_GESTION_ADECUCIONES_CERTIFICACIONES_CLIENTE);
-				dtoEstados.setCodigoEstadoExpediente(DDEstadosExpedienteComercial.EN_TRAMITACION);
+				dtoEstados.setCodigoEstadoExpediente(DDEstadosExpedienteComercial.PTE_RESPUESTA_BC);
 			}
 		}
 		

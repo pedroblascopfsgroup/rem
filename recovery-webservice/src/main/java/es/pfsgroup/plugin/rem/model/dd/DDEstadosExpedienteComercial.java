@@ -98,6 +98,9 @@ public class DDEstadosExpedienteComercial implements Auditable, Dictionary {
 	public static final String PTE_RESPUESTA_BC = "63";
 	public static final String PTE_AGENDAR_FIRMA_ADENDA = "64";
 	public static final String PTE_FIRMAR_ADENDA = "65";
+	public static final String PTE_COMITE = "66";
+	public static final String PTE_PROPONER_RESCISION = "67";
+	public static final String PTE_FIRMA_RESCISION = "68";
 	
 	//Estados Alquiler HayaHome
 	public static final String PENDIENTE_SANCION = "144";

@@ -19,6 +19,7 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoTareasFormalizacion;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 
 @Component
@@ -55,6 +56,12 @@ public class UpdaterServiceRespuestaContraofertaBCAlquilerNoComercial implements
 		if(estadoExpBC != null) {
 			expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoExpBC)));
 		}
+		
+		String estadoEco = this.devolverEstadoEco(dto.getComboResultado(), alquilerSocial, novacionRenovacion, tareaExternaActual);
+		
+		if(estadoEco != null) {
+			expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoEco)));
+		}
 
 		genericDao.save(ExpedienteComercial.class, expedienteComercial);
 	}
@@ -75,13 +82,30 @@ public class UpdaterServiceRespuestaContraofertaBCAlquilerNoComercial implements
 			}else if(novacionRenovacion) {
 				estadoExpBC = DDEstadoExpedienteBc.CODIGO_BORRADOR_ACEPTADO;
 			}
-		}else if(!comboResultado) {
+		}else {
 			if(alquilerSocial) {
 				estadoExpBC = DDEstadoExpedienteBc.CODIGO_PENDIENTE_CP_GED;
 			}
 		}
 		
 		return estadoExpBC;
+	}
+	
+	private String devolverEstadoEco(Boolean comboResultado, Boolean alquilerSocial, Boolean novacionRenovacion, TareaExterna tareaExterna) {
+		String estadoEco = null;
+		if(comboResultado) {
+			if(alquilerSocial || novacionRenovacion) {
+				estadoEco = DDEstadosExpedienteComercial.PTE_TRASLADAR_OFERTA_AL_CLIENTE;
+			}
+		}else {
+			if(alquilerSocial) {
+				estadoEco = DDEstadosExpedienteComercial.PTE_COMITE;
+			}else if(novacionRenovacion) {
+				estadoEco = DDEstadosExpedienteComercial.PTE_PROPONER_RESCISION;
+			}
+		}
+		
+		return estadoEco;
 	}
 
 }

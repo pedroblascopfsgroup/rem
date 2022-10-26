@@ -15,6 +15,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.TramiteAlquilerNoComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -31,6 +32,9 @@ public class UpdaterServiceRespuestaOfertaBCAlquilerNoComercial implements Updat
     @Autowired
     private ExpedienteComercialApi expedienteComercialApi;
     
+    @Autowired
+	private TramiteAlquilerNoComercialApi tramiteAlquilerNoComercialApi;
+    
     protected static final Log logger = LogFactory.getLog(UpdaterServiceRespuestaOfertaBCAlquilerNoComercial.class);
     
     private static final String COMBO_RESULTADO = "comboResultado";
@@ -43,6 +47,7 @@ public class UpdaterServiceRespuestaOfertaBCAlquilerNoComercial implements Updat
 		boolean realizaOfertaAlquiler = false;
 		boolean estadoBcModificado = false;
 		boolean estadoModificado = false;
+		boolean novacionRenovacion = tramiteAlquilerNoComercialApi.esRenovacion(tareaExternaActual);
  		DDEstadoExpedienteBc estadoExpBC = null;
  		DDEstadosExpedienteComercial estadoExpComercial = null;
 
@@ -59,13 +64,19 @@ public class UpdaterServiceRespuestaOfertaBCAlquilerNoComercial implements Updat
 		if (realizaOfertaAlquiler) {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigoC4C", "120");
 			estadoExpBC = genericDao.get(DDEstadoExpedienteBc.class,filtro);
-//			Filter filtroEstadoExpComer = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PDTE_FIRMA);
-//			estadoExpComercial = genericDao.get(DDEstadosExpedienteComercial.class,filtroEstadoExpComer);
+			Filter filtroEstadoExpComer = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PTE_AGENDAR_FIRMA);
+			estadoExpComercial = genericDao.get(DDEstadosExpedienteComercial.class,filtroEstadoExpComer);
 		} else {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigoC4C", "600");
 			estadoExpBC = genericDao.get(DDEstadoExpedienteBc.class,filtro);
-//			Filter filtroEstadoExpComer = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PDTE_FIRMA);
-//			estadoExpComercial = genericDao.get(DDEstadosExpedienteComercial.class,filtroEstadoExpComer);
+			if(novacionRenovacion) {
+				Filter filtroEstadoExpComer = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PTE_PROPONER_RESCISION);
+				estadoExpComercial = genericDao.get(DDEstadosExpedienteComercial.class,filtroEstadoExpComer);
+			}else {
+				Filter filtroEstadoExpComer = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PTE_COMITE);
+				estadoExpComercial = genericDao.get(DDEstadosExpedienteComercial.class,filtroEstadoExpComer);
+			}
+			
 		}
 		
 		expedienteComercial.setEstadoBc(estadoExpBC);

@@ -18,6 +18,7 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoTareasFormalizacion;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 
 @Component
@@ -49,6 +50,12 @@ public class UpdaterServiceEsperaComitePosesionesAlquilerNoComercial implements 
 		if(estadoExpBC != null) {
 			expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigoC4C", estadoExpBC)));
 		}
+		
+		String estadoEco = this.devolverEstadoEco(dto.getComboResultado(), tareaExternaActual);
+		
+		if(estadoEco != null) {
+			expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoEco)));
+		}
 				
 		genericDao.save(ExpedienteComercial.class, expedienteComercial);
 		
@@ -74,5 +81,18 @@ public class UpdaterServiceEsperaComitePosesionesAlquilerNoComercial implements 
 		}
 		
 		return estadoExpBC;
+	}
+	
+	private String devolverEstadoEco(Boolean comboResultado, TareaExterna tareaExterna) {
+		String estadoEco = null;
+		if(comboResultado != null) {
+			if(comboResultado) {
+				estadoEco = DDEstadosExpedienteComercial.PTE_TRASLADAR_OFERTA_AL_CLIENTE;
+			}else {
+				estadoEco = DDEstadosExpedienteComercial.ANULADO;
+			}
+		}
+		
+		return estadoEco;
 	}
 }

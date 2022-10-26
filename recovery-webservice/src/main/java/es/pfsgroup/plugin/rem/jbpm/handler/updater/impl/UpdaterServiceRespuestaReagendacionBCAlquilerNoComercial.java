@@ -15,6 +15,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.TramiteAlquilerNoComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -29,6 +30,9 @@ public class UpdaterServiceRespuestaReagendacionBCAlquilerNoComercial implements
 
     @Autowired
     private ExpedienteComercialApi expedienteComercialApi;
+    
+    @Autowired
+	private TramiteAlquilerNoComercialApi tramiteAlquilerNoComercialApi;
 	
     protected static final Log logger = LogFactory.getLog(UpdaterServiceRespuestaReagendacionBCAlquilerNoComercial.class);
     
@@ -41,8 +45,8 @@ public class UpdaterServiceRespuestaReagendacionBCAlquilerNoComercial implements
 		boolean reagendacion = false;
 		boolean estadoBcModificado = false;
 		boolean estadoModificado = false;
- 		DDEstadoExpedienteBc estadoExpBC = null;
- 		DDEstadosExpedienteComercial estadoExpComercial = null;
+ 		boolean novacionRenovacion = tramiteAlquilerNoComercialApi.esRenovacion(tareaExternaActual);
+		boolean alquilerSocial = tramiteAlquilerNoComercialApi.esAlquilerSocial(tareaExternaActual);
  		
  		for(TareaExternaValor valor :  valores){
 			
@@ -53,21 +57,19 @@ public class UpdaterServiceRespuestaReagendacionBCAlquilerNoComercial implements
 			}
 		}
  		
- 		if (reagendacion) {
- 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigoC4C", "730");
-			estadoExpBC = genericDao.get(DDEstadoExpedienteBc.class,filtro);
-//			Filter filtroEstadoExpComer = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.FIRMADO);
-//			estadoExpComercial = genericDao.get(DDEstadosExpedienteComercial.class,filtroEstadoExpComer);
-		} else {
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigoC4C", "600");
-			estadoExpBC = genericDao.get(DDEstadoExpedienteBc.class,filtro);
-//			Filter filtroEstadoExpComer = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.FIRMADO);
-//			estadoExpComercial = genericDao.get(DDEstadosExpedienteComercial.class,filtroEstadoExpComer);
+ 		String estadoBC = this.devolverEstadoBC(reagendacion);
+		
+		if(estadoBC != null) {
+			expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoBC)));
+		}
+		
+		String estadoEco = this.devolverEstadoEco(reagendacion, novacionRenovacion, alquilerSocial);
+		
+		if(estadoEco != null) {
+			expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoEco)));
 		}
  		
- 		expedienteComercial.setEstadoBc(estadoExpBC);
 		estadoBcModificado = true;
-		expedienteComercial.setEstado(estadoExpComercial);
 		estadoModificado = true;
 		genericDao.save(ExpedienteComercial.class, expedienteComercial);
 	}
@@ -78,6 +80,31 @@ public class UpdaterServiceRespuestaReagendacionBCAlquilerNoComercial implements
 
 	public String[] getKeys() {
 		return this.getCodigoTarea();
+	}
+	
+	private String devolverEstadoBC(Boolean reagendacion) {
+		String estadoExpBC = null;
+		if (reagendacion) {
+			estadoExpBC = DDEstadoExpedienteBc.CODIGO_BORRADOR_ACEPTADO;
+		} else {
+			estadoExpBC = DDEstadoExpedienteBc.CODIGO_RECESION_CONTRATO;
+		}
+		
+		return estadoExpBC;
+	}
+	
+	private String devolverEstadoEco(Boolean reagendacion, Boolean novacionRenovacion, Boolean alquilerSocial) {
+		String estadoEco = null;
+		
+		if(novacionRenovacion) {
+			if (reagendacion) {
+				estadoEco = DDEstadosExpedienteComercial.PTE_AGENDAR_FIRMA;
+			} else {
+				estadoEco = DDEstadosExpedienteComercial.PTE_PROPONER_RESCISION;
+			}
+		}
+		
+		return estadoEco;
 	}
 
 }

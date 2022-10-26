@@ -23,6 +23,7 @@ import es.pfsgroup.plugin.rem.api.FuncionesTramitesApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
+import es.pfsgroup.plugin.rem.model.DtoEstados;
 import es.pfsgroup.plugin.rem.model.DtoTareasFormalizacion;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Fianzas;
@@ -33,6 +34,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoExoneracionFianza;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoReagendacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAdenda;
 
 @Component
 public class UpdaterServiceSancionOfertaAlquileresAgendarFirma implements UpdaterService {
@@ -66,10 +68,7 @@ public class UpdaterServiceSancionOfertaAlquileresAgendarFirma implements Update
 	
 	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
 		
-
 		DtoTareasFormalizacion dto = new DtoTareasFormalizacion();
-		String estadoBC = null;
-		String estadoHaya = null;
 		
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
 		Oferta oferta = expedienteComercial.getOferta();		
@@ -105,25 +104,20 @@ public class UpdaterServiceSancionOfertaAlquileresAgendarFirma implements Update
 		
 			Fianzas fia = genericDao.get(Fianzas.class, genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId()));
 			
-			if(!Checks.esNulo(dto.getFianzaExonerada()) && dto.getFianzaExonerada()) {
+			if(dto.getFianzaExonerada()) {
 				if(fia != null) {
 					Auditoria.delete(fia);
 					genericDao.save(Fianzas.class, fia);
 				}
-				estadoBC = DDEstadoExpedienteBc.CODIGO_FIRMA_DE_CONTRATO_AGENDADO;
-				estadoHaya = DDEstadosExpedienteComercial.PTE_FIRMA;
 			}else {
-				estadoBC = DDEstadoExpedienteBc.CODIGO_ENTREGA_GARANTIAS_FIANZAS_AVAL;
-				estadoHaya = DDEstadosExpedienteComercial.PTE_INGRESO_FIANZA;
-
 				fia = this.updateOrCreateFianza(fia, oferta, dto);
 				this.crearRegistroEnHistorico(fia, dto);
 			}
 			
 			this.actualizarCondicionesExpediente(dto, expedienteComercial.getCondicionante());
 			
-			expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoHaya)));
-			expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoBC)));
+			expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", this.devolverEstadoBC(dto.getFianzaExonerada()))));
+			expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", this.devolverEstadoExpediente(dto.getFianzaExonerada()))));
 			genericDao.save(ExpedienteComercial.class, expedienteComercial);
 			
 			
@@ -185,5 +179,24 @@ public class UpdaterServiceSancionOfertaAlquileresAgendarFirma implements Update
 		}
 		genericDao.save(CondicionanteExpediente.class, condicionantesExpediente);
 	}
-
+	private String devolverEstadoBC(boolean fianzaExonerada) {
+		String 	estadoBC = DDEstadoExpedienteBc.CODIGO_FIRMA_DE_CONTRATO_AGENDADO;
+		
+		if(fianzaExonerada) {
+			estadoBC = DDEstadoExpedienteBc.CODIGO_ENTREGA_GARANTIAS_FIANZAS_AVAL;
+		}
+		
+		return estadoBC;
+	}
+	
+	private String devolverEstadoExpediente(boolean fianzaExonerada) {
+		String 	estado = DDEstadosExpedienteComercial.PTE_FIRMA;
+		
+		if(fianzaExonerada) {
+			estado = DDEstadosExpedienteComercial.PTE_INGRESO_FIANZA;
+		}
+		
+		return estado;
+	}
+	
 }

@@ -193,21 +193,6 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 							}
 						},
 						{
-		    				xtype : 'comboboxfieldbase',
-							fieldLabel : HreRem.i18n('fieldlabel.tipo.adenda'),
-							reference: 'estadoAdenda',
-							readOnly : true,
-							bind : {
-								store : '{comboEstadoAdenda}',
-								value : '{datosbasicosoferta.codigoTipoAdenda}',
-								hidden: '{!datosbasicosoferta.codigoTipoAdenda}'
-							}/*,
-							readOnly: false,
-							width: 410,
-		    				colspan: 2
-		    				*/
-		    			},
-						{
 							xtype : 'comboboxfieldbase',
 							fieldLabel : HreRem.i18n('fieldlabel.detalle.oferta.alquiler.documentacion.completa'),
 							reference: 'checkDocumentacionCompletaRef',
@@ -547,6 +532,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 					{
 						xtype : 'fieldsettable',
 						defaultType : 'displayfieldbase',
+						title : HreRem.i18n('fieldlabel.no.comercial'),
 						collapsible: false,
 						border: false,
 						colspan: 3,
@@ -564,9 +550,38 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 					        }
 						},
 						bind : {
-							hidden : '{!esBankia}' 
+							hidden : '{!esAlquilerNoComercial}' 
 						},
 						items : [
+							{
+			    				xtype : 'comboboxfieldbase',
+								fieldLabel : HreRem.i18n('fieldlabel.tipo.adenda'),
+								reference: 'estadoAdenda',
+								readOnly : true,
+								bind : {
+									store : '{comboEstadoAdenda}',
+									value : '{datosbasicosoferta.codigoTipoAdenda}',
+									hidden: '{!datosbasicosoferta.codigoTipoAdenda}'
+								}
+			    			},
+							{
+								xtype: 'comboboxfieldbase',
+								fieldLabel:  HreRem.i18n('fieldlabel.clase.condicion'),
+								bind:{
+									store:'{storeClaseCondicion}',
+									value:'{datosbasicosoferta.codigoClaseCondicion}',
+									hidden: '{!esBankiaAlquilerOAlquilerNoComercial}' 
+								}
+							},
+							{
+								xtype: 'comboboxfieldbase',
+								fieldLabel:  HreRem.i18n('fieldlabel.grupo.contrato.cbk'),
+								bind:{
+									store:'{comboSiNoExclusionBulk}',
+									value:'{datosbasicosoferta.codigoGrupoContratoCBK}',
+									hidden: '{!esBankiaAlquilerOAlquilerNoComercial}'
+								}
+							},
 							{
 								xtype : "comboboxfieldbase",
 								fieldLabel : HreRem.i18n('fieldlabel.origen.contrato.ecc'),

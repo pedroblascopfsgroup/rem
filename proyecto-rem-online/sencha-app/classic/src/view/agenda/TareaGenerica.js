@@ -4562,33 +4562,39 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		var comboAcepta = me.down('[name=comboAcepta]');
 		var fechaFirma = me.down('[name=fecha]');
 		var comboContraoferta = me.down('[name=comboContraoferta]');
-		var comboMotivo = me.down('[name=justificacion]');
+		var motivoNoAcepta = me.down('[name=justificacion]');
+		var observaciones = me.down('[name=obervaciones]');
 		
 		if(Ext.isEmpty(comboAcepta.value) || comboAcepta.value == CONST.COMBO_SIN_SINO['NO']){
             me.deshabilitarCampo(comboContraoferta);
             me.campoNoObligatorio(comboContraoferta);
-            me.deshabilitarCampo(comboMotivo);
-            me.campoNoObligatorio(comboMotivo);
+            me.deshabilitarCampo(motivoNoAcepta);
+            me.campoNoObligatorio(motivoNoAcepta);
 		}
 		
 		comboAcepta.addListener('change', function(combo) {
             if (combo.value == CONST.COMBO_SIN_SINO['SI']) {
             	comboContraoferta.reset();
+            	motivoNoAcepta.reset();
                 me.deshabilitarCampo(comboContraoferta);
                 me.campoNoObligatorio(comboContraoferta);
-                comboMotivo.reset();
-                me.deshabilitarCampo(comboMotivo);
-                me.campoNoObligatorio(comboMotivo);
+                me.campoNoObligatorio(observaciones);
             } else {
-            	comboContraoferta.reset();
             	me.habilitarCampo(comboContraoferta);
                 me.campoObligatorio(comboContraoferta);
-                comboMotivo.reset();
-            	me.habilitarCampo(comboMotivo);
-                me.campoObligatorio(comboMotivo);
+                me.campoObligatorio(observaciones);
             }
         });
 			
+		comboContraoferta.addListener('change', function(combo) {
+			  if (combo.value == CONST.COMBO_SIN_SINO['NO']) {
+				  me.habilitarCampo(motivoNoAcepta);
+	              me.campoObligatorio(motivoNoAcepta);
+			  }else{
+				  me.habilitarCampo(motivoNoAcepta);
+	              me.campoObligatorio(motivoNoAcepta);
+			  }
+		});
 		
 	},
 	

@@ -57,10 +57,8 @@ public class UpdaterServiceSancionOfertaAlquilerAprobacionClienteClausulas imple
 		boolean contraoferta = false;
 		boolean acepta = false;
 		boolean anula = false;
-		String estadoBc = null;
 		String codigoMotivo = null;
-		String observaciones = null;
-		String estadoHaya = null;
+
 		
 		for(TareaExternaValor valor :  valores) {
 			
@@ -70,10 +68,6 @@ public class UpdaterServiceSancionOfertaAlquilerAprobacionClienteClausulas imple
 			
 			if(COMBO_CONTRAOFERTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 				contraoferta = DDSinSiNo.cambioStringaBooleanoNativo(valor.getValor());
-			}
-			
-			if(CAMPO_OBSERVACIONES.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-				observaciones = valor.getValor();
 			}
 			
 			if(CAMPO_JUSTIFICACION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
@@ -88,7 +82,7 @@ public class UpdaterServiceSancionOfertaAlquilerAprobacionClienteClausulas imple
 			Oferta oferta = expedienteComercial.getOferta();
 			expedienteComercial.setFechaAnulacion(new Date());
 			expedienteComercial.setMotivoAnulacion(genericDao.get(DDMotivoAnulacionExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoAnulacionExpediente.COD_CAIXA_MOD_CLAUSULAS)));
-			expedienteComercial.setDetalleAnulacionCntAlquiler(observaciones);
+			expedienteComercial.setDetalleAnulacionCntAlquiler(codigoMotivo);
 			
 			if(oferta != null) {
 				ofertaApi.finalizarOferta(oferta);

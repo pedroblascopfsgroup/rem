@@ -21,7 +21,7 @@ if [ $? -ne 0 ] ; then
    exit 1
 fi
 
-if [ -z "$FECHA_PARAMETRO" ] && [ -z "$FECHA_EJECUCION_ACTUAL" ] ;
+if [ -z "$FECHA_PARAMETRO" ] && [ -z "$FECHA_EJECUCION_ACTUAL" ] ; then
 	echo "$(basename $0) ERROR, No se ha indicado fecha ni por parametro ni por variable"
  	exit 1
 fi

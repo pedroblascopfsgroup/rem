@@ -697,7 +697,7 @@
 		<transition to="Fin" name="Fin"></transition>
 	</state> 
 	<decision name ="T018_FirmaContratoDecision" expression="#{T018_FirmaContratoDecision}">
-		<transition to="T018_CierreContrato" name="acepta"></transition>
+		<transition to="Fin" name="acepta"></transition>
 		<transition to="Fin" name="rechaza"></transition>
 	</decision>
 	

@@ -1,17 +1,18 @@
 --/*
---#########################################
---## AUTOR=PIER GOTTA
---## FECHA_CREACION=20220727
+--######################################### 
+--## AUTOR=Alejandra García
+--## FECHA_CREACION=20221026
 --## ARTEFACTO=batch
---## VERSION_ARTEFACTO=0.11
---## INCIDENCIA_LINK=HREOS-18797
+--## VERSION_ARTEFACTO=0.1
+--## INCIDENCIA_LINK=HREOS-18893
 --## PRODUCTO=NO
 --## 
---## Finalidad:
---## 
---## INSTRUCCIONES:
+--## Finalidad: Cerrar tramites en venta.
+--##                    
+--## INSTRUCCIONES:  
 --## VERSIONES:
---## 		0.1 Versión inicial
+--##        0.1 Versión inicial - [HREOS-18797] - PIER GOTTA
+--##        0.2 Correción tarea distinta subrogada - [HREOS-18893] - Alejandra García
 --#########################################
 --*/
 
@@ -47,7 +48,7 @@ V_SENTENCIA := 'TRUNCATE TABLE '||V_ESQUEMA||'.APR_AUX_HREOS_18797_2';
    FROM (SELECT DISTINCT OFR.OFR_NUM_OFERTA, ATR.TBJ_ID, ECO.ECO_ID, TAP.TAP_CODIGO, TAC.USU_ID, TAC.SUP_ID, TAR.TAR_TAREA, CASE 
 			WHEN TAP.TAP_CODIGO IN (''T018_TrasladarOfertaCliente'', ''T018_RevisionBcYCondiciones'') THEN ''T018_DatosPBC'' 
 			WHEN TAP.TAP_CODIGO = ''T018_AgendarYFirmar'' AND TOA.DD_TOA_CODIGO = ''SUB'' THEN NULL 
-			WHEN TAP.TAP_CODIGO = ''T018_AgendarYFirmar'' AND TOA.DD_TOA_CODIGO != ''SUB'' THEN ''T018_AgendarYFirmar''
+			WHEN TAP.TAP_CODIGO = ''T018_AgendarYFirmar'' AND TOA.DD_TOA_CODIGO != ''SUB'' THEN ''T018_AgendarFirma''
 			WHEN TAP.TAP_CODIGO = ''T018_CierreContrato'' THEN NULL 
 			END AS NUEVA_TAREA, ATR.TRA_ID, TAR.TAR_ID, TEX.TEX_ID FROM '||V_ESQUEMA||'.OFR_OFERTAS OFR
                     INNER JOIN '||V_ESQUEMA||'.ACT_OFR ACO ON ACO.OFR_ID = OFR.OFR_ID

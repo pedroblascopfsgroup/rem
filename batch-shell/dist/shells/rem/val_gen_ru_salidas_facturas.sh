@@ -12,6 +12,8 @@ export CFG_FILE=config.ini
 export MAINSH="$nameETL"_run.sh
 export OUTPUT_PATH=`cat $DIR_CONFIG$CFG_FILE | grep 'output_dir;' | cut -d';' -f2`
 export PREVALIDADO_PATH=$OUTPUT_PATH/prevalidado
+export FECHA_EJECUCION_ACTUAL=`date +%Y%m%d`
+export FECHA_PARAMETRO=$1
 
 cd "$DIR_ETL" &> /dev/null
 if [ $? -ne 0 ] ; then
@@ -19,27 +21,60 @@ if [ $? -ne 0 ] ; then
    exit 1
 fi
 
-if test ! -f ${OUTPUT_PATH}/RUFACTUSP_??????????????.txt ; then
-   echo "$(basename $0) Error ${OUTPUT_PATH}/RUFACTUSP_??????????????.txt inexistente"
-   exit 1
+if [ -z "$FECHA_PARAMETRO" ] && [ -z "$FECHA_EJECUCION_ACTUAL" ] ;
+	echo "$(basename $0) ERROR, No se ha indicado fecha ni por parametro ni por variable"
+ 	exit 1
 fi
 
-if test ! -f ${OUTPUT_PATH}/RUFACTUCP_??????????????.txt ; then
-   echo "$(basename $0) Error ${OUTPUT_PATH}/RUFACTUCP_??????????????.txt inexistente"
-   exit 1
+if [ ! -z "$FECHA_PARAMETRO" ] ; then
+
+	if test ! -f ${OUTPUT_PATH}/RUFACTUSP_?????_$FECHA_PARAMETRO.txt ; then
+	   echo "$(basename $0) Error ${OUTPUT_PATH}/RUFACTUSP_?????_$FECHA_PARAMETRO.txt inexistente"
+	   exit 1
+	fi
+
+	if test ! -f ${OUTPUT_PATH}/RUFACTUCP_?????_$FECHA_PARAMETRO.txt ; then
+	   echo "$(basename $0) Error ${OUTPUT_PATH}/RUFACTUCP_?????_$FECHA_PARAMETRO.txt inexistente"
+	   exit 1
+	fi
+
+	if test ! -f ${OUTPUT_PATH}/RUFACTUSP_?????_$FECHA_PARAMETRO.sem ; then
+	   echo "$(basename $0) Error ${OUTPUT_PATH}/RUFACTUSP_?????_$FECHA_PARAMETRO.sem inexistente"
+	   exit 1
+	fi
+
+	if test ! -f ${OUTPUT_PATH}/RUFACTUCP_?????_$FECHA_PARAMETRO.sem ; then
+	   echo "$(basename $0) Error ${OUTPUT_PATH}/RUFACTUCP_?????_$FECHA_PARAMETRO.sem inexistente"
+	   exit 1
+	fi
+	mv $OUTPUT_PATH/RUFACTU*_?????_$FECHA_PARAMETRO.* $PREVALIDADO_PATH/
+	
+elif [ ! -z "$FECHA_EJECUCION_ACTUAL" ] ; then
+
+	if test ! -f ${OUTPUT_PATH}/RUFACTUSP_?????_$FECHA_EJECUCION_ACTUAL.txt ; then
+	   echo "$(basename $0) Error ${OUTPUT_PATH}/RUFACTUSP_?????_$FECHA_EJECUCION_ACTUAL.txt inexistente"
+	   exit 1
+	fi
+
+	if test ! -f ${OUTPUT_PATH}/RUFACTUCP_?????_$FECHA_EJECUCION_ACTUAL.txt ; then
+	   echo "$(basename $0) Error ${OUTPUT_PATH}/RUFACTUCP_?????_$FECHA_EJECUCION_ACTUAL.txt inexistente"
+	   exit 1
+	fi
+
+	if test ! -f ${OUTPUT_PATH}/RUFACTUSP_?????_$FECHA_EJECUCION_ACTUAL.sem ; then
+	   echo "$(basename $0) Error ${OUTPUT_PATH}/RUFACTUSP_?????_$FECHA_EJECUCION_ACTUAL.sem inexistente"
+	   exit 1
+	fi
+
+	if test ! -f ${OUTPUT_PATH}/RUFACTUCP_?????_$FECHA_EJECUCION_ACTUAL.sem ; then
+	   echo "$(basename $0) Error ${OUTPUT_PATH}/RUFACTUCP_?????_$FECHA_EJECUCION_ACTUAL.sem inexistente"
+	   exit 1
+	fi
+	mv $OUTPUT_PATH/RUFACTU*_?????_$FECHA_EJECUCION_ACTUAL.* $PREVALIDADO_PATH/
 fi
 
-if test ! -f ${OUTPUT_PATH}/RUFACTUSP_??????????????.sem ; then
-   echo "$(basename $0) Error ${OUTPUT_PATH}/RUFACTUSP_??????????????.sem inexistente"
-   exit 1
-fi
 
-if test ! -f ${OUTPUT_PATH}/RUFACTUCP_??????????????.sem ; then
-   echo "$(basename $0) Error ${OUTPUT_PATH}/RUFACTUCP_??????????????.sem inexistente"
-   exit 1
-fi
 
-mv $OUTPUT_PATH/RUFACTU*_?????_*.* $PREVALIDADO_PATH/.
 
 
 if [ -f $MAINSH ]; then

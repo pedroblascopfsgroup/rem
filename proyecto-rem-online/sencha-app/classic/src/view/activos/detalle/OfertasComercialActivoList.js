@@ -526,7 +526,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 				
 			}
 			
-			if (activo.get('tipoComercializacionCodigo') == CONST.TIPOS_COMERCIALIZACION['SOLO_ALQUILER'] && activo.get('perimetroMacc')=="1"){
+			if (activo.get('esHayaHome')) {
 				me.fireEvent("errorToast", HreRem.i18n("msg.oferta.haya.home"));
 				me.up('activosdetalle').lookupController().refrescarActivo(true);
 				return false;

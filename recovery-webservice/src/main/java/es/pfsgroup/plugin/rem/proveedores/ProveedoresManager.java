@@ -2135,9 +2135,15 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 		tipoDocConductasInapropiadas = genericDao.get(DDTipoDocumentoConductasInapropiadas.class, filtro);
 		if(tipoDocConductasInapropiadas != null) {
 			if(gestorDocumentalActivado) {
-				gestorDocumentalAdapterApi.crearContenedorConductasInapropiadas(coi, username);
-				idDocRestClient = gestorDocumentalAdapterApi.uploadDocumentoConductasInapropiadas(coi.getProveedor().getDocIdentificativo(), webFileItem, username, tipoDocConductasInapropiadas.getCodigoMatricula(), null);
-				this.uploadAdjuntoConductasInapropiadas(webFileItem, idDocRestClient, coi, tipoDocConductasInapropiadas);
+				try{
+					gestorDocumentalAdapterApi.crearContenedorConductasInapropiadas(coi, username);
+				}catch(GestorDocumentalException gex){
+					if (GestorDocumentalException.CODIGO_ERROR_CONTENEDOR_NO_EXISTE.equals(gex.getCodigoError())
+							&& gex.getMessage().contains("already exists")) {
+						idDocRestClient = gestorDocumentalAdapterApi.uploadDocumentoConductasInapropiadas(coi.getProveedor().getDocIdentificativo(), webFileItem, username, tipoDocConductasInapropiadas.getCodigoMatricula(), null);
+						this.uploadAdjuntoConductasInapropiadas(webFileItem, idDocRestClient, coi, tipoDocConductasInapropiadas);
+					}
+				}
 			}else {
 				this.uploadAdjuntoConductasInapropiadas(webFileItem, null, coi, tipoDocConductasInapropiadas);
 			}

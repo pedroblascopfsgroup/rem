@@ -4563,7 +4563,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		var fechaFirma = me.down('[name=fecha]');
 		var comboContraoferta = me.down('[name=comboContraoferta]');
 		var motivoNoAcepta = me.down('[name=justificacion]');
-		var observaciones = me.down('[name=obervaciones]');
+		var observaciones = me.down('[name=observaciones]');
 		
 		if(Ext.isEmpty(comboAcepta.value) || comboAcepta.value == CONST.COMBO_SIN_SINO['NO']){
             me.deshabilitarCampo(comboContraoferta);

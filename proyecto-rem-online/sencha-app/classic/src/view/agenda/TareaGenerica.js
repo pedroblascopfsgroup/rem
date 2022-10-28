@@ -4591,8 +4591,8 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 				  me.habilitarCampo(motivoNoAcepta);
 	              me.campoObligatorio(motivoNoAcepta);
 			  }else{
-				  me.habilitarCampo(motivoNoAcepta);
-	              me.campoObligatorio(motivoNoAcepta);
+				  me.deshabilitarCampo(motivoNoAcepta);
+	              me.campoNoObligatorio(motivoNoAcepta);
 			  }
 		});
 		

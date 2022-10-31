@@ -4650,6 +4650,9 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		var tituloObtenido = me.down('[name=tituloObtenido]');
 		var fechaTitulo = me.down('[name=fechaTitulo]');
 		var observaciones = me.down('[name=observaciones]');
+		var fechaInicioContrato = me.down('[name=observaciones]');
+		var fechaFinContrato = me.down('[name=observaciones]');
+
 		
 		tituloObtenido.addListener('change', function(combo) {
 			if (combo.value == CONST.COMBO_SIN_SINO['SI']) { 
@@ -4684,6 +4687,10 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 	    			}else{
 	    				me.campoObligatorio(clienteAcepta);
 	    				fecha.allowBlank = false;
+	    				me.campoNoObligatorio(fechaInicioContrato);
+	    				me.campoNoObligatorio(fechaFinContrato);
+	    				me.ocultarCampo(fechaInicioContrato);
+	    				me.ocultarCampo(fechaFinContrato);
 	    			}
 	    			if(CONST.SUBTIPO_OFERTA_ALQUILER_NO_COMERCIAL['CODIGO_SUBROGACION_EJECUCION'] === dto.codSubtipoAlquiler){
 	    				me.campoObligatorio(tipoAdenda);
@@ -4834,24 +4841,17 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 	
 	T018_RespuestaContraofertaBCValidacion: function(){
 		var me = this;
-		var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
 		var idExpediente = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
 		
 		var comboResultado = me.down('[name=comboResultado]');
 		var fechaAlta = me.down('[name=fechaAlta]');
 		
-		if (CONST.CARTERA['BANKIA'] == codigoCartera) {
-			me.habilitarCampo(comboResultado);
-			me.campoObligatorio(comboResultado);
-			me.habilitarCampo(fechaAlta);
-			me.campoObligatorio(fechaAlta);
+		me.habilitarCampo(comboResultado);
+		me.campoObligatorio(comboResultado);
+		me.habilitarCampo(fechaAlta);
+		me.campoObligatorio(fechaAlta);
 			
-		} else {
-			me.deshabilitarCampo(comboResultado);
-			me.ocultarCampo(comboResultado);
-			me.deshabilitarCampo(fechaAlta);
-			me.ocultarCampo(fechaAlta);
-		}
+		
 	},
 	
 	T018_EntregaFianzasValidacion: function(){

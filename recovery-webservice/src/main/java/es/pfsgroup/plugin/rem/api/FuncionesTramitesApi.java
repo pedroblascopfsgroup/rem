@@ -57,5 +57,7 @@ public interface FuncionesTramitesApi {
 	CuentasVirtualesAlquiler devolverCuentaVirtualAlquiler(Activo activo, Fianzas fianza, boolean vincular) ;
 
 	boolean estanCamposRellenosParaFormalizacion(TareaExterna tareaExterna);
+
+	boolean estanCamposParaDefinicionOfertaRellenos(TareaExterna tareaExterna);
 }
 

@@ -457,4 +457,17 @@ public class FuncionesTramitesManager implements FuncionesTramitesApi {
 
 		return false;
 	}
+	
+	@Override
+	public boolean estanCamposParaDefinicionOfertaRellenos(TareaExterna tareaExterna) {
+		ExpedienteComercial eco = expedienteComercialApi.tareaExternaToExpedienteComercial(tareaExterna);
+		if(eco == null || eco.getOferta() == null || eco.getOferta().getTipoOferta() == null)
+			return false;
+		
+		if(DDTipoOferta.isTipoAlquilerNoComercial(eco.getOferta().getTipoOferta())) {
+			return tramiteAlquilerNoComercialApi.estanCamposParaDefinicionOfertaRellenos(eco);
+		}
+		
+		return true;
+	}
 }

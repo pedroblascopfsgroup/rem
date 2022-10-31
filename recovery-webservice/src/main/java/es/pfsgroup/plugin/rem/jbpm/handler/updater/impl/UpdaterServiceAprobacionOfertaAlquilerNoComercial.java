@@ -21,6 +21,7 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoEstados;
 import es.pfsgroup.plugin.rem.model.DtoTareasFormalizacion;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
@@ -49,6 +50,8 @@ public class UpdaterServiceAprobacionOfertaAlquilerNoComercial implements Update
 	private static final String FECHA_LLAMADA = "fechaLlamada";
 	private static final String FECHA_BUROFAX = "fechaBurofax";
 	private static final String TIPO_ADENDA = "tipoAdenda";
+	private static final String FECHA_INICIO = "fechaInicioAlquiler";
+	private static final String FECHA_FIN = "fechaFinAlquiler";
 	
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 	
@@ -80,6 +83,12 @@ public class UpdaterServiceAprobacionOfertaAlquilerNoComercial implements Update
 				if(FECHA_BUROFAX.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {					
 					dto.setFechaBurofaxEnviado(ft.parse(valor.getValor()));
 				}
+				if(FECHA_INICIO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+					dto.setFechaInicioAlquiler(ft.parse(valor.getValor()));
+				}
+				if(FECHA_FIN.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+					dto.setFechaFinAlquiler(ft.parse(valor.getValor()));
+				}
  			}
  			
  			if(dto.getTipoAdenda() != null) {
@@ -93,7 +102,17 @@ public class UpdaterServiceAprobacionOfertaAlquilerNoComercial implements Update
  			expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dtoEstados.getCodigoEstadoExpediente())));
  			
  			if(DDEstadosExpedienteComercial.isFirmado(expedienteComercial.getEstado())) {
+ 				Oferta oferta = expedienteComercial.getOferta();
+ 				expedienteComercial.setFechaFirmaContrato(dto.getFechaFirma());
+ 				expedienteComercial.setFechaVenta(dto.getFechaFirma());
+ 				expedienteComercial.setFechaFinAlquiler(dto.getFechaInicioAlquiler());
+ 				oferta.setFechaFinContrato(dto.getFechaInicioAlquiler());
+ 				expedienteComercial.setFechaFinAlquiler(dto.getFechaFinAlquiler());
+ 				oferta.setFechaFinContrato(dto.getFechaFinAlquiler());
+ 				
  				funcionesTramitesApi.actualizarEstadosPublicacionActivos(expedienteComercial);
+ 				
+ 				genericDao.save(Oferta.class, oferta);
  			}
  			
  			genericDao.save(ExpedienteComercial.class, expedienteComercial);

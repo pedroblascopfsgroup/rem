@@ -344,5 +344,23 @@ public class TramiteAlquilerNoComercialManager implements TramiteAlquilerNoComer
 		return tramiteNoComercial.estanCamposRellenosParaFormalizacion(eco);
 	}
 	
+	@Override
+	public boolean estanCamposParaDefinicionOfertaRellenos(ExpedienteComercial eco) {
+		Oferta oferta = eco.getOferta();
+		if(oferta == null) {
+			return false;
+		}
+		
+		if(oferta.getOrigenContratoEcc() == null || oferta.getSuborigenContratoEcc() == null || oferta.getClasificacion() == null) {
+			return false;
+		}
+		
+		if(eco.getCondicionante() != null && eco.getCondicionante().getMetodoActualizacionRenta() == null) {
+			return false;
+		}
+		
+		return true;
+	}
+	
 	
 }

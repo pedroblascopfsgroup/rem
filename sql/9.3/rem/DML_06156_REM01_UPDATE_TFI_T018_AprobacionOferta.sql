@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR= Lara Pablo
---## FECHA_CREACION=20220926
+--## FECHA_CREACION=20221031
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-18804
@@ -61,8 +61,10 @@ DECLARE
     	T_TIPO_DATA2('T018_AprobacionOferta','datefield','6'	,'fechaTitulo'			,null											,null			,null				,'Fecha obtención'),
 		T_TIPO_DATA2('T018_AprobacionOferta','combobox'	,'7'	,'comboAprobadoApi'	   	,'Debe indicar si se Aprueba o No'   			,'false'   		,'DDSiNo'  			,'Cliente acepta'),
         T_TIPO_DATA2('T018_AprobacionOferta','datefield','8'	,'fecha'		       	,null       									,'false'   		,null          		,'Fecha'),
-		T_TIPO_DATA2('T018_AprobacionOferta','combobox', '9'	,'tipoAdenda'			,null											,'false'		,'DDTipoAdenda'		,'Tipo adenda'),
-    	T_TIPO_DATA2('T018_AprobacionOferta','textarea','10'	,'observaciones'		,null											,null			,null				,'Observaciones')
+        T_TIPO_DATA2('T018_AprobacionOferta','datefield','9'	,'fechaInicioAlquiler'	,'Debe indicar una fecha de inicio'    			,'false'   		,null	    	 ,'Fecha inicio alquiler'),
+		T_TIPO_DATA2('T018_AprobacionOferta','datefield','10'	,'fechaFinAlquiler'    	,'Debe indicar una fecha de fin'            	,'false'   		,null             ,'Fecha fin alquiler'),
+		T_TIPO_DATA2('T018_AprobacionOferta','combobox','11'	,'tipoAdenda'			,null											,'false'		,'DDTipoAdenda'		,'Tipo adenda'),
+    	T_TIPO_DATA2('T018_AprobacionOferta','textarea','12'	,'observaciones'		,null											,null			,null				,'Observaciones')
     ); 
     V_TMP_TIPO_DATA2 T_TIPO_DATA2;
 BEGIN

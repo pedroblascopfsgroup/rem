@@ -900,6 +900,10 @@
             	def funcionesTramitesManager = ctx.getBean("funcionesTramitesManager");
 				return funcionesTramitesManager.estanCamposRellenosParaFormalizacion(tareaExterna);
 			}
+			def estanCamposParaDefinicionOfertaRellenos = {
+            	def funcionesTramitesManager = ctx.getBean("funcionesTramitesManager");
+				return funcionesTramitesManager.estanCamposParaDefinicionOfertaRellenos(tareaExterna);
+			}
            
   			 ]]></value>
   		</list>

@@ -48,7 +48,7 @@ public class UpdaterServiceRespuestaContraofertaBCAlquilerNoComercial implements
 		
 		for(TareaExternaValor valor :  valores){
 			if(COMBO_RESULTADO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-				dto.setComboResultado(DDSinSiNo.cambioStringtoBooleano(valor.getValor()));
+				dto.setComboResultado(DDSinSiNo.cambioStringaBooleanoNativo(valor.getValor()));
 			}
 		}
 		
@@ -74,7 +74,7 @@ public class UpdaterServiceRespuestaContraofertaBCAlquilerNoComercial implements
 		return this.getCodigoTarea();
 	}
 	
-	private String devolverEstadoBC(Boolean comboResultado, Boolean alquilerSocial, Boolean novacionRenovacion, TareaExterna tareaExterna) {
+	private String devolverEstadoBC(boolean comboResultado, Boolean alquilerSocial, Boolean novacionRenovacion, TareaExterna tareaExterna) {
 		String estadoExpBC = null;
 		if(comboResultado) {
 			if(alquilerSocial) {
@@ -91,7 +91,7 @@ public class UpdaterServiceRespuestaContraofertaBCAlquilerNoComercial implements
 		return estadoExpBC;
 	}
 	
-	private String devolverEstadoEco(Boolean comboResultado, Boolean alquilerSocial, Boolean novacionRenovacion, TareaExterna tareaExterna) {
+	private String devolverEstadoEco(boolean comboResultado, Boolean alquilerSocial, Boolean novacionRenovacion, TareaExterna tareaExterna) {
 		String estadoEco = null;
 		if(comboResultado) {
 			if(alquilerSocial || novacionRenovacion) {

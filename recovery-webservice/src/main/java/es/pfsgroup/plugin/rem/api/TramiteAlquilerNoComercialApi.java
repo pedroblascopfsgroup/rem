@@ -57,5 +57,7 @@ public interface TramiteAlquilerNoComercialApi {
 	boolean rechazaMenosTresVeces(TareaExterna tareaExterna);
 
 	boolean estanCamposRellenosParaFormalizacion(ExpedienteComercial eco);
+
+	boolean estanCamposParaDefinicionOfertaRellenos(ExpedienteComercial eco);
 }
 

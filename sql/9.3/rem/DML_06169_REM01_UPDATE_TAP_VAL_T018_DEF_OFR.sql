@@ -43,7 +43,7 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(800);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-    	T_TIPO_DATA('T018_DefinicionOferta', '(checkBankia() == true && checkExpedienteBloqueadoPorFuncion() == true) ? '''' El expediente est&aacute; bloqueado '''' : checkInquilinos() ? estanCamposParaDefinicionOfertaRellenos() ? null : ''''Los campos "Clasificaci&oacuten", "Origen", "Suborigen" o "Me&aacutetodo de actualización" no est&aacuten rellenos'''' : ''''Falta completar algunos datos obligatorios del inquilino''''')
+    	T_TIPO_DATA('T018_DefinicionOferta', '(checkBankia() == true && checkExpedienteBloqueadoPorFuncion() == true) ? '''' El expediente est&aacute; bloqueado '''' : checkInquilinos() ? estanCamposParaDefinicionOfertaRellenos() ? null : ''''Los campos "Clasificaci&oacuten", "Origen", "Suborigen" o "M&eacutetodo de actualizaci&oacuten" no est&aacuten rellenos'''' : ''''Falta completar algunos datos obligatorios del inquilino''''')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 BEGIN

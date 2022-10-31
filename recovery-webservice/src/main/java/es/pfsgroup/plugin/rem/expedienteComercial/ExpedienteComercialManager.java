@@ -1550,6 +1550,16 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			oferta.setTipoAdenda(tipoAdenda);
 		}
 		
+		if(dto.getOrigenContratoEccCodigo() != null) {
+			DDOrigenContratoEcc origenContratoEcc = (DDOrigenContratoEcc) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadosVisitaOferta.class, dto.getOrigenContratoEccCodigo());
+			oferta.setOrigenContratoEcc(origenContratoEcc);
+		}
+		
+		if(dto.getSuborigenContratoEccCodigo() != null) {
+			DDSuborigenContratoEcc suborigenContratoEcc = (DDSuborigenContratoEcc) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadosVisitaOferta.class, dto.getSuborigenContratoEccCodigo());
+			oferta.setSuborigenContratoEcc(suborigenContratoEcc);
+		}
+		
 		genericDao.save(ExpedienteComercial.class, expedienteComercial);
 		genericDao.save(Oferta.class, oferta);
 		// Si se ha modificado el importe de la oferta o de la contraoferta actualizamos
@@ -1581,15 +1591,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			genericDao.save(ExpedienteComercial.class, expedienteComercial);
 		}
 		
-		if(dto.getOrigenContratoEccCodigo() != null) {
-			DDOrigenContratoEcc origenContratoEcc = (DDOrigenContratoEcc) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadosVisitaOferta.class, dto.getOrigenContratoEccCodigo());
-			oferta.setOrigenContratoEcc(origenContratoEcc);
-		}
 		
-		if(dto.getSuborigenContratoEccCodigo() != null) {
-			DDSuborigenContratoEcc suborigenContratoEcc = (DDSuborigenContratoEcc) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadosVisitaOferta.class, dto.getSuborigenContratoEccCodigo());
-			oferta.setSuborigenContratoEcc(suborigenContratoEcc);
-		}
+		
+		
 		
 		if(cambioEstadoOferta) {
 			ofertaApi.llamaReplicarCambioEstado(oferta.getId(), oferta.getEstadoOferta().getCodigo());

@@ -53,7 +53,7 @@ public class UpdaterServiceAgendarFirmaNoComercial implements UpdaterService {
 	private static final String IMPORTE = "importe";
 	private static final String IBAN_DEVOLUCION = "ibanDev";
 	private static final String MOTIVO_EXONERACION_FIANZA = "motivoFianzaExonerada";
-	private static final String MESES = "importe";
+	private static final String MESES = "meses";
 	private static final String MOTIVO_REAGENDACION = "motivoReagendacion";
 
 	private static final String CODIGO_T018_AGENDAR_FIRMA = "T018_AgendarFirma";

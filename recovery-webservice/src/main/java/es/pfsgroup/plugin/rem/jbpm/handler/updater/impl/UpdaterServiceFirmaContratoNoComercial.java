@@ -103,7 +103,7 @@ public class UpdaterServiceFirmaContratoNoComercial implements UpdaterService {
 			
 			expedienteComercial.setFechaFirmaContrato(dto.getFechaFirma());
 			expedienteComercial.setFechaVenta(dto.getFechaFirma());
-			expedienteComercial.setFechaFinAlquiler(dto.getFechaInicioAlquiler());
+			expedienteComercial.setFechaInicioAlquiler(dto.getFechaInicioAlquiler());
 			oferta.setFechaFinContrato(dto.getFechaInicioAlquiler());
 			expedienteComercial.setFechaFinAlquiler(dto.getFechaFinAlquiler());
 			oferta.setFechaFinContrato(dto.getFechaFinAlquiler());

@@ -1551,12 +1551,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		
 		if(dto.getOrigenContratoEccCodigo() != null) {
-			DDOrigenContratoEcc origenContratoEcc = (DDOrigenContratoEcc) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadosVisitaOferta.class, dto.getOrigenContratoEccCodigo());
+			DDOrigenContratoEcc origenContratoEcc = (DDOrigenContratoEcc) utilDiccionarioApi.dameValorDiccionarioByCod(DDOrigenContratoEcc.class, dto.getOrigenContratoEccCodigo());
 			oferta.setOrigenContratoEcc(origenContratoEcc);
 		}
 		
 		if(dto.getSuborigenContratoEccCodigo() != null) {
-			DDSuborigenContratoEcc suborigenContratoEcc = (DDSuborigenContratoEcc) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadosVisitaOferta.class, dto.getSuborigenContratoEccCodigo());
+			DDSuborigenContratoEcc suborigenContratoEcc = (DDSuborigenContratoEcc) utilDiccionarioApi.dameValorDiccionarioByCod(DDSuborigenContratoEcc.class, dto.getSuborigenContratoEccCodigo());
 			oferta.setSuborigenContratoEcc(suborigenContratoEcc);
 		}
 		

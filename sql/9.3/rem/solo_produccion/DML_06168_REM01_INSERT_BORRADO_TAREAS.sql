@@ -1,7 +1,7 @@
 --/*
 --######################################### 
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20221026
+--## FECHA_CREACION=20221102
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=0.1
 --## INCIDENCIA_LINK=HREOS-18833
@@ -13,6 +13,7 @@
 --## VERSIONES:
 --##        0.1 Versión inicial - [HREOS-18797] - PIER GOTTA
 --##        0.2 Correción estados BC y añadir estados Haya - [HREOS-18833] - Alejandra García
+--##        0.3 Modificar Estado Haya de la tarea Envío COntrato- [HREOS-18833] - Alejandra García
 --#########################################
 --*/
 
@@ -120,7 +121,7 @@ BEGIN
 		WHEN AUX.TAREA_ANTIGUA_TRAMITE = ''T015_AgendarFechaFirma'' THEN ''48''
 		WHEN AUX.TAREA_ANTIGUA_TRAMITE = ''T015_CierreContrato'' THEN ''03''
 		WHEN AUX.TAREA_ANTIGUA_TRAMITE = ''T015_SancionPatrimonio'' THEN ''56''
-		WHEN AUX.TAREA_ANTIGUA_TRAMITE = ''T015_EnvioContrato'' THEN ''58''
+		WHEN AUX.TAREA_ANTIGUA_TRAMITE = ''T015_EnvioContrato'' THEN ''52''
     END AS DD_EEC_CODIGO 
 	FROM '||V_ESQUEMA||'.OFR_OFERTAS OFR
 	JOIN '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.OFR_ID = OFR.OFR_ID

@@ -526,7 +526,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 				
 			}
 			
-			if (activo.get('esHayaHome')) {
+			if (activo.get('esHayaHome') == "true") {
 				me.fireEvent("errorToast", HreRem.i18n("msg.oferta.haya.home"));
 				me.up('activosdetalle').lookupController().refrescarActivo(true);
 				return false;

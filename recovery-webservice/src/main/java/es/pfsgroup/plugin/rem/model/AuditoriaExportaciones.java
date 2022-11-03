@@ -57,6 +57,9 @@ public class AuditoriaExportaciones implements Serializable, Auditable {
 	@Column(name = "AEX_FILTROS")
 	private String filtros;
 	
+	@Column(name = "AEX_INDICA_BUSQUEDA")
+	private Boolean isBusqueda;
+	
 	@Version   
 	private Long version;
 
@@ -133,5 +136,13 @@ public class AuditoriaExportaciones implements Serializable, Auditable {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public Boolean getIsBusqueda() {
+		return isBusqueda;
+	}
+
+	public void setIsBusqueda(Boolean isBusqueda) {
+		this.isBusqueda = isBusqueda;
 	}
 }

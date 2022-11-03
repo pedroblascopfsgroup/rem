@@ -2414,7 +2414,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				modificado = true;
 			}
 			
-			if(ofertaDto.getImporte() != oferta.getImporteOferta() && oferta.getIsEnConcurrencia() != null && oferta.getIsEnConcurrencia()) {
+			if(ofertaDto.getImporte() != null && ofertaDto.getImporte() != oferta.getImporteOferta() && oferta.getIsEnConcurrencia() != null && oferta.getIsEnConcurrencia()) {
 				ActivoAgrupacion agrConc = null;
 				Activo activoConc  = null;
 				boolean isOfertaConActivoEnConcurrenciaViva = false;
@@ -2848,6 +2848,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if (ofertaCaixa != null && oferta.getEstadoOferta() != null && DDEstadoOferta.isCaducada(oferta.getEstadoOferta())){
 					ofertaCaixa.setEstadoOfertaBc(genericDao.get(DDEstadoOfertaBC.class,genericDao.createFilter(FilterType.EQUALS,"codigo",DDEstadoOfertaBC.CODIGO_CANCELADA)));
 					genericDao.save(OfertaCaixa.class,ofertaCaixa);
+					
+					if (!Checks.esNulo(oferta.getDeposito())) {
+						Deposito deposito = oferta.getDeposito();
+						deposito.setEstadoDeposito(genericDao.get(DDEstadoDeposito.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoDeposito.CODIGO_PDTE_DECISION_DEVOLUCION_INCAUTACION)));
+						genericDao.save(Deposito.class, deposito);
+					}
 			}
 
 			if(DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION.equals(oferta.getEstadoOferta().getCodigo()) && ofertaCaixa != null){

@@ -26,15 +26,16 @@ public class TramiteAlquilerNoComercialAlquilerSocialDacion extends TramiteAlqui
 	@Override
 	public boolean cumpleCondiciones(ActivoTramite tramite){
 		boolean resultado = false;
-		Set<String> tareasActivas = tramite.getTareasExternasActivasCodigo(); 
-		List<String> tareasNoEditableList = this.devolverTareasNoModificarFianza();
-		List<String> tareasActivasList = new ArrayList<String>(); 
-		tareasActivasList.addAll(tareasActivas);
-		
-		if(CollectionUtils.containsAny(tareasActivasList, tareasNoEditableList)) {
-			resultado = true;
+		if(tramite != null) {
+			Set<String> tareasActivas = tramite.getTareasExternasActivasCodigo(); 
+			List<String> tareasNoEditableList = this.devolverTareasNoModificarFianza();
+			List<String> tareasActivasList = new ArrayList<String>(); 
+			tareasActivasList.addAll(tareasActivas);
+			
+			if(CollectionUtils.containsAny(tareasActivasList, tareasNoEditableList)) {
+				resultado = true;
+			}
 		}
-		
 		return resultado;
 	}
 	

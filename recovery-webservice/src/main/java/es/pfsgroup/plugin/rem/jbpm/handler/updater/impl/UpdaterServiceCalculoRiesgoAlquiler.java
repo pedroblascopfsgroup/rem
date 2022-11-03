@@ -60,7 +60,7 @@ public class UpdaterServiceCalculoRiesgoAlquiler implements UpdaterService {
 				
 				
 				if(DDRiesgoOperacion.CODIGO_ROP_NO_APLICA.equals(comboResultado)) {
-					estadoCodigo = DDEstadosExpedienteComercial.PTE_TRASLADAR_OFERTA_AL_CLIENTE;
+					estadoCodigo = DDEstadosExpedienteComercial.PTE_ENVIO;
 				}else {
 					estadoCodigo = DDEstadosExpedienteComercial.PTE_PBC;
 				}

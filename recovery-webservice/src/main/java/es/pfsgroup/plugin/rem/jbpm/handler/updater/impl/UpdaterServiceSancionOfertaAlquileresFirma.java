@@ -108,7 +108,7 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
 			expedienteComercial.setFechaFirmaContrato(dto.getFechaFirma());
 			expedienteComercial.setFechaVenta(dto.getFechaFirma());
 			expedienteComercial.setFechaInicioAlquiler(dto.getFechaInicioAlquiler());
-			oferta.setFechaFinContrato(dto.getFechaInicioAlquiler());
+			oferta.setFechaInicioContrato(dto.getFechaInicioAlquiler());
 			expedienteComercial.setFechaFinAlquiler(dto.getFechaFinAlquiler());
 			oferta.setFechaFinContrato(dto.getFechaFinAlquiler());
 			

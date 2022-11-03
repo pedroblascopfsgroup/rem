@@ -4700,6 +4700,14 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		    	}
 		    }
 		});
+		
+		tipoAdenda.addListener('change', function(combo) {
+			if (combo.value == CONST.CODIGO_TIPO_ADENDA['CODIGO_NO_APLICA_ADENDA']) { 
+				me.campoNoObligatorio(observaciones);
+			} else { 
+				me.campoObligatorio(observaciones);
+			}
+		});
 	},
 	
 	T018_ComunicarSubrogacionValidacion: function(){

@@ -105,8 +105,8 @@ public class UpdaterServiceAprobacionOfertaAlquilerNoComercial implements Update
  				Oferta oferta = expedienteComercial.getOferta();
  				expedienteComercial.setFechaFirmaContrato(dto.getFechaFirma());
  				expedienteComercial.setFechaVenta(dto.getFechaFirma());
- 				expedienteComercial.setFechaFinAlquiler(dto.getFechaInicioAlquiler());
- 				oferta.setFechaFinContrato(dto.getFechaInicioAlquiler());
+ 				expedienteComercial.setFechaInicioAlquiler(dto.getFechaInicioAlquiler());
+ 				oferta.setFechaInicioContrato(dto.getFechaInicioAlquiler());
  				expedienteComercial.setFechaFinAlquiler(dto.getFechaFinAlquiler());
  				oferta.setFechaFinContrato(dto.getFechaFinAlquiler());
  				

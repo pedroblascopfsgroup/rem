@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alejandro Valverde
---## FECHA_CREACION=20221020
+--## FECHA_CREACION=20221021
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-18839
@@ -43,8 +43,8 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(800);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-    	T_TIPO_DATA('T015_EnvioContrato', '(checkBankia() == true && checkExpedienteBloqueadoPorFuncion() == true) ? ''''El expediente est&aacute; bloqueado'''' : estanCamposRellenosParaFormalizacion() ? null : ''''Alguno o varios de los siguientes campos no estan rellenos: Clase contrato, Derecho firme, Retencion de impuestos, Tipo impuesto, Grupo impuesto, Tipo aplicable'''''),
-    	T_TIPO_DATA('T018_AprobacionOferta', '(checkBankia() == true && checkExpedienteBloqueadoPorFuncion() == true) ? ''''El expediente est&aacute; bloqueado'''' : estanCamposRellenosParaFormalizacion() ? null : ''''Alguno o varios de los siguientes campos no estan rellenos: Clase contrato, Derecho firme, Retencion de impuestos, Clase condicion, Grupo CBK, Tipo impuesto, Grupo impuesto, Tipo aplicable''''')
+    	T_TIPO_DATA('T015_EnvioContrato', '(checkBankia() == true && checkExpedienteBloqueadoPorFuncion() == true) ? ''''El expediente est&aacute; bloqueado'''' : estanCamposRellenosParaFormalizacion() ? null : ''''Alguno o varios de los siguientes campos no estan rellenos: Clase contrato, Retencion de impuestos, Tipo impuesto, Grupo impuesto, Tipo aplicable'''''),
+    	T_TIPO_DATA('T018_AprobacionOferta', '(checkBankia() == true && checkExpedienteBloqueadoPorFuncion() == true) ? ''''El expediente est&aacute; bloqueado'''' : estanCamposRellenosParaFormalizacion() ? null : ''''Alguno o varios de los siguientes campos no estan rellenos: Clase contrato, Derecho arrendamiento, Retencion de impuestos, Clase condicion, Grupo CBK, Tipo impuesto, Grupo impuesto, Tipo aplicable''''')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 BEGIN

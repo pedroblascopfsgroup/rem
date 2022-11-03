@@ -238,19 +238,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 		                	}
 		                
 		                },
-						{
-							bind : {hidden : '{!esTipoAlquiler}'}
-						},
-						{
-							xtype: 'comboboxfieldbase',
-							fieldLabel:  HreRem.i18n('fieldlabel.derecho.arrendamiento'),
-							bind:{
-								store:'{storeDerechoArrendamiento}',
-								value:'{datosbasicosoferta.codigoDerechoArrendamiento}',
-								hidden: '{!esBankiaAlquilerOAlquilerNoComercial}'
-							}
-						},
-						{
+		                {
 							xtype: 'comboboxfieldbase',
 							fieldLabel:  HreRem.i18n('fieldlabel.retencion.impuesto'),
 							bind:{
@@ -258,7 +246,11 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 								value:'{datosbasicosoferta.codigoRetenciondeImpuestos}',
 								hidden: '{!esBankiaAlquilerOAlquilerNoComercial}'
 							}
+						},
+						{
+							bind : {hidden : '{!esTipoAlquiler}'}
 						}
+						
 					]},
 					{
 						xtype : 'fieldsettable',
@@ -578,6 +570,15 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 								bind : {
 									store : '{comboSuborigenContratoEcc}',
 									value : '{datosbasicosoferta.suborigenContratoEccCodigo}'
+								}
+							},
+							{
+								xtype: 'comboboxfieldbase',
+								fieldLabel:  HreRem.i18n('fieldlabel.derecho.arrendamiento'),
+								bind:{
+									store:'{storeDerechoArrendamiento}',
+									value:'{datosbasicosoferta.codigoDerechoArrendamiento}',
+									hidden: '{!esBankiaAlquilerOAlquilerNoComercial}'
 								}
 							}
 						]

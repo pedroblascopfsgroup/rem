@@ -116,8 +116,8 @@ public class UpdaterServiceSancionOfertaAlquileresAgendarFirma implements Update
 			
 			this.actualizarCondicionesExpediente(dto, expedienteComercial.getCondicionante());
 			
-			expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", this.devolverEstadoBC(dto.getFianzaExonerada()))));
-			expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", this.devolverEstadoExpediente(dto.getFianzaExonerada()))));
+			expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", this.devolverEstadoExpediente(dto.getFianzaExonerada()))));
+			expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", this.devolverEstadoBC(dto.getFianzaExonerada()))));
 			genericDao.save(ExpedienteComercial.class, expedienteComercial);
 			
 			

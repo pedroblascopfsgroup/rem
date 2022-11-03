@@ -56,8 +56,8 @@ public abstract class TramiteAlquilerNoComercialAbstract implements TramiteAlqui
 		if(oferta == null || condiciones == null)
 			return false;
 		
-		if(oferta.getClaseContratoAlquiler() == null || oferta.getDerechoArrendamiento() == null || oferta.getRetencionImpuestos() == null || oferta.getClaseCondicion() == null 
-				|| oferta.getGrupoContratoCBK() == null || condiciones.getTipoImpuesto() == null || condiciones.getTipoAplicable() == null || condiciones.getTipoGrupoImpuesto() == null)
+		if(oferta.getClaseContratoAlquiler() == null || oferta.getGrupoContratoCBK() == null || condiciones.getTipoImpuesto() == null 
+				|| condiciones.getTipoAplicable() == null || condiciones.getTipoGrupoImpuesto() == null)
 			return false;
 		else
 			return true;

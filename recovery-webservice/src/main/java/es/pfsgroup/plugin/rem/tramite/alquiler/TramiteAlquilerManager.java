@@ -472,8 +472,7 @@ public class TramiteAlquilerManager implements TramiteAlquilerApi {
 		if(oferta == null || condiciones == null)
 			return false;
 		
-		if(oferta.getClaseContratoAlquiler() == null ||  oferta.getRetencionImpuestos() == null 
-			|| condiciones.getTipoImpuesto() == null || condiciones.getTipoAplicable() == null || condiciones.getTipoGrupoImpuesto() == null)
+		if(oferta.getClaseContratoAlquiler() == null || condiciones.getTipoImpuesto() == null || condiciones.getTipoAplicable() == null || condiciones.getTipoGrupoImpuesto() == null)
 			return false;
 		else
 			return true;

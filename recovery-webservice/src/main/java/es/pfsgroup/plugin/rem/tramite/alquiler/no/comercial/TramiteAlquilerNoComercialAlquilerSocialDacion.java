@@ -7,21 +7,17 @@ import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import es.pfsgroup.plugin.rem.activo.dao.ActivoTramiteDao;
 import es.pfsgroup.plugin.rem.constants.TareaProcedimientoConstants;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
-import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+
 
 @Component
 public class TramiteAlquilerNoComercialAlquilerSocialDacion extends TramiteAlquilerNoComercialAbstract implements TramiteAlquilerNoComercial {
 
 	private final Log logger = LogFactory.getLog(TramiteAlquilerNoComercialAlquilerSocialDacion.class);
 	
-	@Autowired
-	private ActivoTramiteDao tramiteDao;
 	
 	@Override
 	public boolean cumpleCondiciones(ActivoTramite tramite){

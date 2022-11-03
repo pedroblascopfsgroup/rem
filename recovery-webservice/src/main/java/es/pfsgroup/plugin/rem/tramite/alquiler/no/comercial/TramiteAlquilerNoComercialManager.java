@@ -324,7 +324,11 @@ public class TramiteAlquilerNoComercialManager implements TramiteAlquilerNoComer
 		}
 		
 		TramiteAlquilerNoComercial tramiteNoComercial = tramiteNoComercialFactory.getTramiteAlquilerNoComercial(eco.getOferta().getSubtipoOfertaAlquiler().getCodigo());
-		return tramiteNoComercial.modificarFianza(eco);
+		if(tramiteNoComercial != null) {
+			return tramiteNoComercial.modificarFianza(eco);
+		}else {
+			return false;
+		}
 	}
 
 	@Override

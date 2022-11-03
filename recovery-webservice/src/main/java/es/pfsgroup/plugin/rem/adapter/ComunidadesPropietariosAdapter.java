@@ -1,79 +1,36 @@
 package es.pfsgroup.plugin.rem.adapter;
 
-import es.capgemini.devon.beans.Service;
-import es.capgemini.devon.message.MessageService;
-import es.capgemini.pfs.procesosJudiciales.TipoProcedimientoManager;
-import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.api.ApiProxyFactory;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.framework.paradise.bulkUpload.adapter.ProcessAdapter;
-import es.pfsgroup.framework.paradise.bulkUpload.api.MSVProcesoApi;
-import es.pfsgroup.framework.paradise.bulkUpload.dao.MSVFicheroDao;
-import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberatorsFactory;
-import es.pfsgroup.framework.paradise.jbpm.JBPMProcessManagerApi;
-import es.pfsgroup.framework.paradise.utils.JsonViewerException;
-import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
-import es.pfsgroup.plugin.rem.activo.ActivoManager;
-import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
-import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
-import es.pfsgroup.plugin.rem.api.*;
-import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceSancionOfertaAceptacionYRechazo;
-import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoComunidadPropietarios;
-import es.pfsgroup.plugin.rem.model.GestionCCPP;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoLocalizacion;
-import es.pfsgroup.plugin.rem.model.dd.DDSubestadoGestion;
-import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
-import es.pfsgroup.plugin.rem.rest.api.RestApi;
-import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
-import es.pfsgroup.plugin.rem.validate.AgrupacionValidatorFactoryApi;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import javax.annotation.Resource;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
+import es.capgemini.devon.beans.Service;
+import es.capgemini.devon.message.MessageService;
+import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.procesosJudiciales.TipoProcedimientoManager;
+import es.capgemini.pfs.users.UsuarioManager;
+import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.framework.paradise.jbpm.JBPMProcessManagerApi;
+import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoComunidadPropietarios;
+import es.pfsgroup.plugin.rem.model.ActivoGestion;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoLocalizacion;
+import es.pfsgroup.plugin.rem.model.dd.DDSubestadoGestion;
 
 @Service
 public class ComunidadesPropietariosAdapter {
 
 	@Autowired
-	private ApiProxyFactory proxyFactory;
-
-	@Autowired
 	private GenericABMDao genericDao;
-
-	@Autowired
-	private MSVFicheroDao ficheroDao;
-
-	@Autowired
-	private ActivoDao activoDao;
-
-	@Autowired
-	private ActivoAdapter activoAdapter;
-
-	@Autowired
-	private ActivoAgrupacionActivoDao activoAgrupacionActivoDao;
-
-	@Autowired
-	private ActivoManager activoManager;
-
-	@Autowired
-	private ActivoEstadoPublicacionApi activoEstadoPublicacionApi;
-
-	@Autowired
-	private ActivoApi activoApi;
-
-	@Autowired
-	private ActivoAgrupacionApi activoAgrupacionApi;
-
-	@Autowired
-	private ActivoAgrupacionActivoApi activoAgrupacionActivoApi;
 
 	@Autowired
 	protected JBPMProcessManagerApi jbpmProcessManagerApi;
@@ -81,96 +38,70 @@ public class ComunidadesPropietariosAdapter {
 	@Autowired
 	protected TipoProcedimientoManager tipoProcedimiento;
 
-	@Autowired
-	private ProveedoresApi proveedoresApi;
-
-	@Autowired
-	private UtilDiccionarioApi utilDiccionarioApi;
-
-	@Autowired
-	private List<AgrupacionAvisadorApi> avisadores;
-
-	@Autowired
-	private MSVLiberatorsFactory factoriaLiberators;
-
-	@Autowired
-	private AgrupacionValidatorFactoryApi agrupacionValidatorFactory;
-
-	@Autowired
-	private TrabajoApi trabajoApi;
-
-	@Autowired
-	private UpdaterStateApi updaterState;
-
-	@Autowired
-	private OfertaApi ofertaApi;
-
-	@Autowired
-	private ExpedienteComercialApi expedienteComercialApi;
-
-	@Autowired
-	private NotificationOfertaManager notificationOfertaManager;
-
 	@Resource
 	private MessageService messageServices;
-
-	@Autowired
-	private NotificatorServiceSancionOfertaAceptacionYRechazo notificatorServiceSancionOfertaAceptacionYRechazo;
-
-	@Autowired
-	private RestApi restApi;
 	
 	@Autowired
-	private ProcessAdapter processAdapter;
-	
-	@Autowired
-	private MSVProcesoApi msvProcesoApi;
+	private UsuarioManager usuarioApi;
 
 	private final Log logger = LogFactory.getLog(getClass());
 
 
 	@Transactional(readOnly = false)
-	public void updateComunidad(Long idActivo, String idComunidadPropietarios, String fechaEnvioCarta, String codEstadoLocalizacion, String codSubestadoGestion)
-			throws JsonViewerException {
+	public void updateComunidad(Long idActivo, String idComunidadPropietarios, String fechaEnvioCarta, String codEstadoLocalizacion, String codSubestadoGestion) {
 
 		Filter filter = genericDao.createFilter(FilterType.EQUALS, "numActivo", idActivo);
 		Activo activo = genericDao.get(Activo.class, filter);
-		ActivoComunidadPropietarios  activoComunidadPropietarios = new ActivoComunidadPropietarios();
 
-		try {
-			if (Checks.esNulo(activo)) {
-				throw new JsonViewerException("El activo no existe");
-			}
-			
-			Filter filtroComunidadPropietarios = genericDao.createFilter(FilterType.EQUALS, "comunidadPropietarios.id", activo.getComunidadPropietarios().getId());
+		try {			
+			Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 			Filter filtroFechaFin = genericDao.createFilter(FilterType.NULL, "fechaFin");
-			
-			GestionCCPP gestionAnterior  = genericDao.get(GestionCCPP.class, filtroComunidadPropietarios, filtroFechaFin );
-			
-			if(!Checks.esNulo(gestionAnterior)) {				
-				
-				 activoComunidadPropietarios = genericDao.get(ActivoComunidadPropietarios.class, genericDao.createFilter(FilterType.EQUALS,"id",activo.getComunidadPropietarios().getId()),
-						genericDao.createFilter(FilterType.EQUALS,"codigoComPropUvem", idComunidadPropietarios));
-				 DDEstadoLocalizacion estadoLocalizacion = genericDao.get(DDEstadoLocalizacion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codEstadoLocalizacion));
-				 DDSubestadoGestion subestadoGestion = genericDao.get(DDSubestadoGestion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codSubestadoGestion));
-				 
-				 if(!Checks.esNulo(estadoLocalizacion)) {
-					 gestionAnterior.setEstadoLocalizacion(estadoLocalizacion);
-				 }
-				 if(!Checks.esNulo(subestadoGestion)) {
-					 gestionAnterior.setSubestadoGestion(subestadoGestion);
-				 }
-				 genericDao.save(GestionCCPP.class, gestionAnterior);
-			} 
-			
-			if (!Checks.esNulo(activoComunidadPropietarios)) 
-			{				
-			    Date date1=new SimpleDateFormat("dd/MM/yyyy").parse(fechaEnvioCarta);  
-				activoComunidadPropietarios.setFechaEnvioCarta(date1);
-				genericDao.save(ActivoComunidadPropietarios.class, activoComunidadPropietarios);
+
+			ActivoGestion gestionAnterior = genericDao.get(ActivoGestion.class, filtroActivo, filtroFechaFin);
+
+			if(gestionAnterior != null) {
+				gestionAnterior.setFechaFin(new Date());
+				gestionAnterior.getAuditoria().setUsuarioModificar(usuarioApi.getUsuarioLogado().getUsername());
+				gestionAnterior.getAuditoria().setFechaModificar(new Date());
+				genericDao.save(ActivoGestion.class, gestionAnterior);
+			}			
+	
+			ActivoGestion nuevaGestion = new ActivoGestion();
+
+			nuevaGestion.setActivo(activo);
+
+			if(codEstadoLocalizacion != null) {
+				DDEstadoLocalizacion estadoLocalizacion = genericDao.get(DDEstadoLocalizacion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codEstadoLocalizacion));
+				if(estadoLocalizacion != null)
+					nuevaGestion.setEstadoLocalizacion(estadoLocalizacion);
 			}
-		} catch (JsonViewerException jve) {
-			throw jve;
+
+			if(codSubestadoGestion != null) {
+				DDSubestadoGestion subestadoGestion = genericDao.get(DDSubestadoGestion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codSubestadoGestion));
+				if(subestadoGestion != null)
+					nuevaGestion.setSubestadoGestion(subestadoGestion);
+			}			
+ 
+			nuevaGestion.setFechaInicio(new Date());
+			nuevaGestion.setUsuario(usuarioApi.getUsuarioLogado());
+
+			Auditoria auditoria = new Auditoria();
+			auditoria.setFechaCrear(new Date());
+			auditoria.setUsuarioCrear(usuarioApi.getUsuarioLogado().getUsername());
+			auditoria.setBorrado(false);
+
+			nuevaGestion.setAuditoria(auditoria);
+			 
+			genericDao.save(ActivoGestion.class, nuevaGestion);
+
+			ActivoComunidadPropietarios activoComunidadPropietarios = activo.getComunidadPropietarios();
+
+			if (activoComunidadPropietarios != null && !Checks.isFechaNula(fechaEnvioCarta)) {
+				 Date dateEnvioCarta = new SimpleDateFormat("dd/MM/yyyy").parse(fechaEnvioCarta);  
+				 activoComunidadPropietarios.setFechaEnvioCarta(dateEnvioCarta);
+				 genericDao.save(ActivoComunidadPropietarios.class, activoComunidadPropietarios);
+			}
+
 		} catch (Exception e) {
 			logger.error(e);
 			e.printStackTrace();

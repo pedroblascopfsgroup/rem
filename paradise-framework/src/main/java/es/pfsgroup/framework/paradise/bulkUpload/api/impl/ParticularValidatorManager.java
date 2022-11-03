@@ -1,10 +1,30 @@
 package es.pfsgroup.framework.paradise.bulkUpload.api.impl;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
+import java.util.zip.Checksum;
+
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import es.capgemini.devon.beans.Service;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
+import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
+import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVMasivaAltaBBVAValidator;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -7090,16 +7110,18 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean relacionEstadoSubestadoAdmisionValido(String codEstadoAdmision, String codSubestadoAdmision) {
-		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("codEstadoAdmision", codEstadoAdmision);
-		params.put("codSubestadoAdmision", codSubestadoAdmision);
-		rawDao.addParams(params);
 		
 		if(codEstadoAdmision == null) {
 			return false;
 		}
 		
 		if(estadoConSubestadosAdmisionValido(codEstadoAdmision)) {
+		
+			Map<String, Object> params = new HashMap<String, Object>();
+			params.put("codEstadoAdmision", codEstadoAdmision);
+			params.put("codSubestadoAdmision", codSubestadoAdmision);
+			rawDao.addParams(params);
+			
 			String resultado = rawDao.getExecuteSQL(
 					"SELECT COUNT(1) FROM DD_SAA_SUBESTADO_ACT_ADMISION SAA "
 					+ "JOIN DD_EAA_ESTADO_ACT_ADMISION EAA ON SAA.DD_EAA_ID = EAA.DD_EAA_ID " 
@@ -9406,6 +9428,75 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
     }
 	
 	@Override
+	public Boolean existeOrganismo(String codOrganismo){
+		if(Checks.esNulo(codOrganismo) || !StringUtils.isAlphanumeric(codOrganismo))
+			return false;
+
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codOrganismo", codOrganismo);
+		
+		rawDao.addParams(params);
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM DD_ORG_ORGANISMOS WHERE"
+				+ "		 DD_ORG_CODIGO = :codOrganismo "
+				+ "		 	AND BORRADO = 0");
+		return "0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean existeComunidadAutonoma(String codComunidadAutonoma){
+		if(Checks.esNulo(codComunidadAutonoma) || !StringUtils.isAlphanumeric(codComunidadAutonoma))
+			return false;
+
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codComunidadAutonoma", codComunidadAutonoma);
+		
+		rawDao.addParams(params);
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM REMMASTER.DD_CCA_COMUNIDAD WHERE"
+				+ "		 DD_CCA_CODIGO = :codComunidadAutonoma "
+				+ "		 	AND BORRADO = 0");
+		return "0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean existeActuacion(String codActuacion){
+		if(Checks.esNulo(codActuacion) || !StringUtils.isAlphanumeric(codActuacion))
+			return false;
+
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codActuacion", codActuacion);
+		
+		rawDao.addParams(params);
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM DD_TAU_TIPO_ACTUACION WHERE"
+				+ "		 DD_TAU_CODIGO = :codActuacion "
+				+ "		 	AND BORRADO = 0");
+		return "0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean existeRelacionCodLocCodSubGes(String codEstadoLoc, String codSubestadoGestion) {
+		String resultado = "0";
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codEstadoLoc", codEstadoLoc);
+		params.put("codSubestadoGestion", codSubestadoGestion);
+		rawDao.addParams(params);
+	
+		if(codEstadoLoc == null || codSubestadoGestion == null) {
+			return false;
+		}
+		
+			resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+					+ "		 FROM ACT_LGE_LOCALIZACION_GEST LGE WHERE "
+					+ "		 LGE.DD_ELO_ID IN (SELECT DD_ELO_ID FROM DD_ELO_ESTADO_LOCALIZACION WHERE DD_ELO_CODIGO = :codEstadoLoc AND BORRADO = 0) AND "
+					+ " 	 LGE.DD_SEG_ID IN (SELECT DD_SEG_ID FROM DD_SEG_SUBESTADO_GESTION WHERE DD_SEG_CODIGO = :codSubestadoGestion AND BORRADO = 0) "
+					+ "		 AND LGE.BORRADO = 0");
+
+			return !"0".equals(resultado);
+	}
+	
+	@Override
 	public boolean isActivoEnConcurrencia(String numActivo) {
 		
 		String resultados = rawDao.getExecuteSQL("SELECT count(*) FROM act_activo act \n" + 
@@ -9455,6 +9546,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return !"0".equals(resultados);
 	}
 
+	@Override
 	public Boolean apiBloqueadoProvincia(String numActivo, String codProveedor) {
 		String resultado = "0";
 
@@ -9516,6 +9608,9 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		
 		return !"0".equals(resultado);
 	}
+
+	
+	@Override
 	public Boolean isActivoMaccMarina(String numActivo) {
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("numActivo", numActivo);
@@ -9601,6 +9696,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return !"0".equals(resultado);
 	}
 	
+	@Override
 	public Boolean isFasePublicacionVySubfaseExcluidoPublicacionEstrategiaCliente(String numActivo) {
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("numActivo", numActivo);

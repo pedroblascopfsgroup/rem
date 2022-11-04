@@ -50,7 +50,7 @@ public class TramiteAlquilerNoComercialSubrogacionEjecucionHipotecaria extends T
 
 		List<HistoricoFirmaAdenda> historicosFirmasAdendas = genericDao.getList(HistoricoFirmaAdenda.class, genericDao.createFilter(FilterType.EQUALS, "oferta", eco.getOferta()));
 		
-		if(historicosFirmasAdendas != null && !historicosFirmasAdendas.isEmpty() && historicosFirmasAdendas.size() > 2) {
+		if(historicosFirmasAdendas != null && !historicosFirmasAdendas.isEmpty() && historicosFirmasAdendas.size() > 1) {
 			firmaMenosTresVeces =  false;
 		}	
 		

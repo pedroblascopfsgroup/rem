@@ -60,7 +60,7 @@ public class UpdaterServiceAprobacionOfertaAlquilerNoComercial implements Update
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
  		DtoTareasFormalizacion dto = new DtoTareasFormalizacion();
  		boolean isSubrogacion = DDTipoOfertaAlquiler.isSubrogacion(expedienteComercial.getOferta().getTipoOfertaAlquiler());
- 		
+ 		Oferta oferta = expedienteComercial.getOferta();
 		
  		try {
  			for(TareaExternaValor valor :  valores) {
@@ -101,15 +101,16 @@ public class UpdaterServiceAprobacionOfertaAlquilerNoComercial implements Update
  			expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dtoEstados.getCodigoEstadoExpedienteBc())));
  			expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dtoEstados.getCodigoEstadoExpediente())));
  			
- 			if(DDEstadosExpedienteComercial.isFirmado(expedienteComercial.getEstado())) {
- 				Oferta oferta = expedienteComercial.getOferta();
+ 			if(isSubrogacion) {
  				expedienteComercial.setFechaFirmaContrato(dto.getFechaFirma());
  				expedienteComercial.setFechaVenta(dto.getFechaFirma());
  				expedienteComercial.setFechaInicioAlquiler(dto.getFechaInicioAlquiler());
  				oferta.setFechaInicioContrato(dto.getFechaInicioAlquiler());
  				expedienteComercial.setFechaFinAlquiler(dto.getFechaFinAlquiler());
  				oferta.setFechaFinContrato(dto.getFechaFinAlquiler());
- 				
+ 			}
+ 			
+ 			if(DDEstadosExpedienteComercial.isFirmado(expedienteComercial.getEstado())) {
  				funcionesTramitesApi.actualizarEstadosPublicacionActivos(expedienteComercial);
  				
  				genericDao.save(Oferta.class, oferta);

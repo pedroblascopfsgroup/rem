@@ -4005,6 +4005,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		    			if (Ext.isEmpty(dto.agendacionIngreso)) {
 		    				fechaAgendacionIngreso.setValue(Ext.Date.format(new Date(dto.agendacionIngreso), 'd/m/Y'));
 			    			fechaAgendacionIngreso.setReadOnly(false);
+			    			me.desbloquearCampo(fechaAgendacionIngreso);
 			    			me.desbloquearCampo(motivoFianzaExonerada);
 			            	me.campoObligatorio(motivoFianzaExonerada);
 		    			}

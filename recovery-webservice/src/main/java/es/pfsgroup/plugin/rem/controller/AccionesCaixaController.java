@@ -66,6 +66,8 @@ public class AccionesCaixaController extends ParadiseJsonController {
     public static final String ACCION_DESBLOQUEO_SCORING = "043";
     public static final String ACCION_RESCINDIR_CONTRATO = "048";
     public static final String ACCION_APROBADO_CONTRAOFERTA = "049";
+    public static final String ACCION_IMPOSIBILIDAD_FIRMA_FIRMAR = "060";
+    public static final String ACCION_IMPOSIBILIDAD_FIRMA_CANCELAR = "061";
 
 
     private final Log logger = LogFactory.getLog(getClass());

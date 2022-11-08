@@ -180,20 +180,20 @@ public class UpdaterServiceSancionOfertaAlquileresAgendarFirma implements Update
 		genericDao.save(CondicionanteExpediente.class, condicionantesExpediente);
 	}
 	private String devolverEstadoBC(boolean fianzaExonerada) {
-		String 	estadoBC = DDEstadoExpedienteBc.CODIGO_FIRMA_DE_CONTRATO_AGENDADO;
+		String 	estadoBC = DDEstadoExpedienteBc.CODIGO_ENTREGA_GARANTIAS_FIANZAS_AVAL;
 		
 		if(fianzaExonerada) {
-			estadoBC = DDEstadoExpedienteBc.CODIGO_ENTREGA_GARANTIAS_FIANZAS_AVAL;
+			estadoBC = DDEstadoExpedienteBc.CODIGO_FIRMA_DE_CONTRATO_AGENDADO;
 		}
 		
 		return estadoBC;
 	}
 	
 	private String devolverEstadoExpediente(boolean fianzaExonerada) {
-		String 	estado = DDEstadosExpedienteComercial.PTE_FIRMA;
+		String 	estado = DDEstadosExpedienteComercial.PTE_INGRESO_FIANZA;
 		
 		if(fianzaExonerada) {
-			estado = DDEstadosExpedienteComercial.PTE_INGRESO_FIANZA;
+			estado = DDEstadosExpedienteComercial.PTE_FIRMA;
 		}
 		
 		return estado;

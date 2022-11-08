@@ -444,6 +444,16 @@ Ext.define('HreRem.model.CondicionesExpediente', {
 		{
 			name:'fianzaExoneradaEditable',
 			type: 'boolean'
+		},
+		{
+			name: 'fechaInicioBonificacion',
+			type:'date',
+    		dateFormat: 'c'
+		},
+		{
+			name: 'fechaFinBonificacion',
+			type:'date',
+    		dateFormat: 'c'
 		}
 	    
     ],

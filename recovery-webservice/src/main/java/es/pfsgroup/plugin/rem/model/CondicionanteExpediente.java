@@ -446,6 +446,12 @@ public class CondicionanteExpediente implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_MEF_ID")
 	private DDMotivoExoneracionFianza motivoExoneracionFianza;
+    
+    @Column(name = "COE_FECHA_INI_BONIFICACION")
+	private Date fechaInicioBonificacion;
+    
+    @Column(name = "COE_FECHA_FIN_BONIFICACION")
+	private Date fechaFinBonificacion;
 
 	@Version   
 	private Long version;
@@ -1420,4 +1426,20 @@ public class CondicionanteExpediente implements Serializable, Auditable {
 		this.motivoExoneracionFianza = motivoExoneracionFianza;
 	}
 
+	public Date getFechaInicioBonificacion() {
+		return fechaInicioBonificacion;
+	}
+
+	public void setFechaInicioBonificacion(Date fechaInicioBonificacion) {
+		this.fechaInicioBonificacion = fechaInicioBonificacion;
+	}
+
+	public Date getFechaFinBonificacion() {
+		return fechaFinBonificacion;
+	}
+
+	public void setFechaFinBonificacion(Date fechaFinBonificacion) {
+		this.fechaFinBonificacion = fechaFinBonificacion;
+	}
+	
 }

@@ -1022,23 +1022,8 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 								reference : 'bonificacionBk',
 								margin : '5 0 0 0',
 								fieldLabel : HreRem.i18n('fieldlabel.bonificacion'),
-								colspan: 2,
 								bind : {
 									value : '{condiciones.bonificacion}'
-								},
-								listeners : {
-									change : 'onChangeBonificacion'
-								}
-							},
-							{
-								xtype : 'numberfieldbase',
-								reference : 'mesesBonificacionBk',
-								name : 'mesesBonificacion',
-								margin : '5 0 0 0',
-								fieldLabel : HreRem.i18n('fieldlabel.duracion.meses'),
-								bind : {
-									value : '{condiciones.mesesBonificacion}',
-									disabled : true
 								}
 							},
 							{
@@ -1050,6 +1035,30 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 								symbol : HreRem.i18n('symbol.euro'),
 								bind : {
 									value : '{condiciones.importeBonificacion}',
+									disabled : '{!condiciones.bonificacion}'
+								}
+							},
+							{
+								xtype : 'datefieldbase',
+								reference : 'fechaInicioBonificacionBk',
+								name : 'fechaInicioBonificacionBk',
+								margin : '5 0 0 0',
+								maxValue: null,
+								minValue: $AC.getCurrentDate(),
+								bind : {
+									value : '{condiciones.fechaInicioBonificacion}',
+									disabled : '{!condiciones.bonificacion}'
+								}
+							},
+							{
+								xtype : 'numberfieldbase',
+								reference : 'fechaFinBonificacionBk',
+								name : 'fechaFinBonificacionBk',
+								margin : '5 0 0 0',
+								maxValue: null,
+								minValue: $AC.getCurrentDate(),
+								bind : {
+									value : '{condiciones.fechaFinBonificacion}',
 									disabled : '{!condiciones.bonificacion}'
 								}
 							} 

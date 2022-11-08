@@ -3735,6 +3735,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				String duracionBonificacion = String.valueOf(aux);
 				dto.setDuracionBonificacion(duracionBonificacion);
 			}
+			
+			dto.setFechaInicioBonificacion(condiciones.getFechaInicioBonificacion());
+			dto.setFechaFinBonificacion(condiciones.getFechaFinBonificacion());
 
 			if (!Checks.esNulo(condiciones.getGastosRepercutibles())) {
 				dto.setGastosRepercutibles(condiciones.getGastosRepercutibles());
@@ -4395,6 +4398,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			 * condiciones.setDuracionBonificacion(duracionBonificacion); }
 			 */
 
+			condiciones.setFechaInicioBonificacion(dto.getFechaInicioBonificacion());
+			condiciones.setFechaFinBonificacion(dto.getFechaFinBonificacion());
+
+			
 			if (!Checks.esNulo(dto.getRenunciaTanteo())) {
 				condiciones.setRenunciaTanteo(dto.getRenunciaTanteo());
 			}

@@ -36,8 +36,8 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-  		T_TIPO_DATA('60', 'Imposibilidad de firma - firmar','Imposibilidad de firma - firmar'),
-  	  	T_TIPO_DATA('61', 'Imposibilidad de firma - cancelar','Imposibilidad de firma - cancelar')
+  		T_TIPO_DATA('060', 'Imposibilidad de firma - firmar','Imposibilidad de firma - firmar'),
+  	  	T_TIPO_DATA('061', 'Imposibilidad de firma - cancelar','Imposibilidad de firma - cancelar')
 
   ); 
 

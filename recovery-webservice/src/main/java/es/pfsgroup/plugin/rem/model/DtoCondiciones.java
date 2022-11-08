@@ -154,6 +154,8 @@ public class DtoCondiciones extends WebDto {
 	private Integer mesesDuracion;
 	
 	private Boolean fianzaExoneradaEditable;
+	private Date fechaInicioBonificacion;
+	private Date fechaFinBonificacion;
 	
 	public Integer getMesesFianza() {
 		return mesesFianza;
@@ -1117,6 +1119,23 @@ public class DtoCondiciones extends WebDto {
 
 	public void setFianzaExoneradaEditable(Boolean fianzaExoneradaEditable) {
 		this.fianzaExoneradaEditable = fianzaExoneradaEditable;
+	}
+
+	public Date getFechaInicioBonificacion() {
+		return fechaInicioBonificacion;
+	}
+
+	public void setFechaInicioBonificacion(Date fechaInicioBonificacion) {
+		this.fechaInicioBonificacion = fechaInicioBonificacion;
+	}
+
+	public Date getFechaFinBonificacion() {
+		return fechaFinBonificacion;
+	}
+
+	public void setFechaFinBonificacion(Date fechaFinBonificacion) {
+		this.fechaFinBonificacion = fechaFinBonificacion;
 	}	
+	
 	
 }

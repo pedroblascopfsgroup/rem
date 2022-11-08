@@ -4008,6 +4008,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 			    			me.desbloquearCampo(fechaAgendacionIngreso);
 			    			me.desbloquearCampo(motivoFianzaExonerada);
 			            	me.campoObligatorio(motivoFianzaExonerada);
+			            	me.campoObligatorio(fechaAgendacionIngreso);
 		    			}
 		    		}
 		    	}

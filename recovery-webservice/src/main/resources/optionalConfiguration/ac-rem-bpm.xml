@@ -904,6 +904,10 @@
             	def funcionesTramitesManager = ctx.getBean("funcionesTramitesManager");
 				return funcionesTramitesManager.estanCamposParaDefinicionOfertaRellenos(tareaExterna);
 			}
+			def estaPermitidoClaseCondicion = {
+            	def funcionesTramitesManager = ctx.getBean("funcionesTramitesManager");
+				return funcionesTramitesManager.estaPermitidoClaseCondicion(tareaExterna);
+			}
            
   			 ]]></value>
   		</list>

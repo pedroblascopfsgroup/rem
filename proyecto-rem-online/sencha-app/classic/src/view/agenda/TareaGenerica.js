@@ -4664,8 +4664,8 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		var tituloObtenido = me.down('[name=tituloObtenido]');
 		var fechaTitulo = me.down('[name=fechaTitulo]');
 		var observaciones = me.down('[name=observaciones]');
-		var fechaInicioContrato = me.down('[name=observaciones]');
-		var fechaFinContrato = me.down('[name=observaciones]');
+		var fechaInicioContrato = me.down('[name=fechaInicioAlquiler]');
+		var fechaFinContrato = me.down('[name=fechaFinAlquiler]');
 
 		
 		tituloObtenido.addListener('change', function(combo) {
@@ -5011,6 +5011,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		var meses = me.down('[name=meses]');
 		
 		me.bloquearCampo(fechaAgendacionIngreso);
+		me.campoObligatorio(fechaAgendacionIngreso);
     	me.bloquearCampo(importe);
     	me.bloquearCampo(ibanDevolucion);
     	me.bloquearCampo(fechaReagendarIngreso);
@@ -5020,7 +5021,6 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     	
 		comboFianza.addListener('change', function(comboFianza) {
             if (comboFianza.value ==  CONST.COMBO_SIN_SINO['SI']) {
-            	fechaAgendacionIngreso.reset();
             	importe.reset();
             	ibanDevolucion.reset();
             	me.bloquearCampo(importe);

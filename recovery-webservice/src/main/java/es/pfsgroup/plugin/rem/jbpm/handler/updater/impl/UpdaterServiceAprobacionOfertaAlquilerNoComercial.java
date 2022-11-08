@@ -54,8 +54,8 @@ public class UpdaterServiceAprobacionOfertaAlquilerNoComercial implements Update
 	private static final String TIPO_ADENDA = "tipoAdenda";
 	private static final String FECHA_INICIO = "fechaInicioAlquiler";
 	private static final String FECHA_FIN = "fechaFinAlquiler";
-	private static final String FECHA_TITULO_OBTENIDO = "";
-	private static final String TITULO_OBTENIDO = "";
+	private static final String FECHA_TITULO_OBTENIDO = "fechaTitulo";
+	private static final String TITULO_OBTENIDO = "tituloObtenido";
 	
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 	
@@ -105,15 +105,16 @@ public class UpdaterServiceAprobacionOfertaAlquilerNoComercial implements Update
  				expedienteComercial.getOferta().setTipoAdenda(genericDao.get(DDTipoAdenda.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getTipoAdenda())));
  			}
  			
- 			if(dto.getTituloObtenido()) {
-	 			ActivoAdjudicacionJudicial activoAdjudicacionJudicial = oferta.getActivoPrincipal().getAdjJudicial();
-	            if (activoAdjudicacionJudicial != null){
-	                 if(activoAdjudicacionJudicial.getAdjudicacionBien() != null){
-	                	 NMBAdjudicacionBien adjBien =  activoAdjudicacionJudicial.getAdjudicacionBien();
-	                	 adjBien.setFechaDecretoFirme(dto.getFechaTituloObtenido());
-	                	 genericDao.save(NMBAdjudicacionBien.class, adjBien);
-	                 }
-	             }
+ 			
+ 			ActivoAdjudicacionJudicial activoAdjudicacionJudicial = oferta.getActivoPrincipal().getAdjJudicial();
+ 			 if (activoAdjudicacionJudicial != null && activoAdjudicacionJudicial.getAdjudicacionBien() != null){
+				 NMBAdjudicacionBien adjBien =  activoAdjudicacionJudicial.getAdjudicacionBien();
+				 if(dto.getTituloObtenido()) {
+					 adjBien.setFechaDecretoFirme(dto.getFechaTituloObtenido());
+                 }else {
+					 adjBien.setFechaDecretoFirme(null);
+                 }
+				genericDao.save(NMBAdjudicacionBien.class, adjBien);
  			}
  			
  			funcionesTramitesApi.createOrUpdateComunicacionApi(expedienteComercial, dto);

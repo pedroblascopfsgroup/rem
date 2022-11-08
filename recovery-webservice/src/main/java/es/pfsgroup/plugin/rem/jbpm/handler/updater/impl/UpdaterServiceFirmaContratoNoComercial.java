@@ -81,7 +81,7 @@ public class UpdaterServiceFirmaContratoNoComercial implements UpdaterService {
 					dto.setFechaFirma(ft.parse(valor.getValor()));
 				}
 				if(COMBO_RESULTADO.equals(valor.getNombre())) {
-					aprueba = DDSinSiNo.cambioStringaBooleanoNativo(valor.getNombre());
+					aprueba = DDSinSiNo.cambioStringaBooleanoNativo(valor.getValor());
 				}
 				if(FECHA_INICIO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 					dto.setFechaInicioAlquiler(ft.parse(valor.getValor()));

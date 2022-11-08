@@ -17,4 +17,6 @@ public interface TramiteAlquilerNoComercial {
 	
 	boolean estanCamposRellenosParaFormalizacion(ExpedienteComercial eco);
 
+	public boolean permiteClaseCondicion();
+
 }

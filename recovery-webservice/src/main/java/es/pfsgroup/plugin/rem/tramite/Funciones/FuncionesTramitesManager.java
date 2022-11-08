@@ -47,6 +47,7 @@ import es.pfsgroup.plugin.rem.model.HistoricoReagendacion;
 import es.pfsgroup.plugin.rem.model.HistoricoTareaPbc;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.VGridHistoricoReagendaciones;
+import es.pfsgroup.plugin.rem.model.dd.DDClaseCondicion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTareaPbc;
 
@@ -469,5 +470,24 @@ public class FuncionesTramitesManager implements FuncionesTramitesApi {
 		}
 		
 		return true;
+	}
+	
+	@Override
+	public boolean estaPermitidoClaseCondicion(TareaExterna tareaExterna) {
+		boolean estaPermitido = false;
+		ExpedienteComercial eco = expedienteComercialApi.tareaExternaToExpedienteComercial(tareaExterna);
+		if(eco == null || eco.getOferta() == null || eco.getOferta().getTipoOferta() == null) {
+			return estaPermitido;
+		}
+		
+		Oferta oferta = eco.getOferta();
+		
+		if(DDTipoOferta.isTipoAlquilerNoComercial(eco.getOferta().getTipoOferta())) {
+			if(tramiteAlquilerNoComercialApi.permiteClaseCondicion(eco) ||  (!tramiteAlquilerNoComercialApi.permiteClaseCondicion(eco) && DDClaseCondicion.isNoAplica(oferta.getClaseCondicion()))){
+				estaPermitido = true;
+			}
+		}
+
+		return estaPermitido;
 	}
 }

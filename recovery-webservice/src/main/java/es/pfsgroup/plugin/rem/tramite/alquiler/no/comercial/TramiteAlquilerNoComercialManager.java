@@ -366,5 +366,15 @@ public class TramiteAlquilerNoComercialManager implements TramiteAlquilerNoComer
 		return true;
 	}
 	
+	@Override
+	public boolean permiteClaseCondicion(ExpedienteComercial eco) {
+		if(eco.getOferta() == null || eco.getOferta().getSubtipoOfertaAlquiler() == null) {
+			return false;
+		}
+		
+		TramiteAlquilerNoComercial tramiteNoComercial = tramiteNoComercialFactory.getTramiteAlquilerNoComercial(eco.getOferta().getSubtipoOfertaAlquiler().getCodigo());
+		return tramiteNoComercial.permiteClaseCondicion();
+	}
+	
 	
 }

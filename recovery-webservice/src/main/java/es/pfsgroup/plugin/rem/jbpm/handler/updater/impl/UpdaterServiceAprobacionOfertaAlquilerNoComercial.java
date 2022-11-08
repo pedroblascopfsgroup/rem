@@ -14,9 +14,11 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBAdjudicacionBien;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.FuncionesTramitesApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
+import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionJudicial;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoEstados;
 import es.pfsgroup.plugin.rem.model.DtoTareasFormalizacion;
@@ -52,6 +54,8 @@ public class UpdaterServiceAprobacionOfertaAlquilerNoComercial implements Update
 	private static final String TIPO_ADENDA = "tipoAdenda";
 	private static final String FECHA_INICIO = "fechaInicioAlquiler";
 	private static final String FECHA_FIN = "fechaFinAlquiler";
+	private static final String FECHA_TITULO_OBTENIDO = "";
+	private static final String TITULO_OBTENIDO = "";
 	
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 	
@@ -89,10 +93,27 @@ public class UpdaterServiceAprobacionOfertaAlquilerNoComercial implements Update
 				if(FECHA_FIN.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 					dto.setFechaFinAlquiler(ft.parse(valor.getValor()));
 				}
+				if(TITULO_OBTENIDO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+					dto.setTituloObtenido(DDSinSiNo.cambioStringaBooleanoNativo(valor.getValor()));
+				}
+				if(FECHA_TITULO_OBTENIDO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+					dto.setFechaTituloObtenido(ft.parse(valor.getValor()));
+				}
  			}
  			
  			if(dto.getTipoAdenda() != null) {
  				expedienteComercial.getOferta().setTipoAdenda(genericDao.get(DDTipoAdenda.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getTipoAdenda())));
+ 			}
+ 			
+ 			if(dto.getTituloObtenido()) {
+	 			ActivoAdjudicacionJudicial activoAdjudicacionJudicial = oferta.getActivoPrincipal().getAdjJudicial();
+	            if (activoAdjudicacionJudicial != null){
+	                 if(activoAdjudicacionJudicial.getAdjudicacionBien() != null){
+	                	 NMBAdjudicacionBien adjBien =  activoAdjudicacionJudicial.getAdjudicacionBien();
+	                	 adjBien.setFechaDecretoFirme(dto.getFechaTituloObtenido());
+	                	 genericDao.save(NMBAdjudicacionBien.class, adjBien);
+	                 }
+	             }
  			}
  			
  			funcionesTramitesApi.createOrUpdateComunicacionApi(expedienteComercial, dto);
@@ -112,7 +133,6 @@ public class UpdaterServiceAprobacionOfertaAlquilerNoComercial implements Update
  			
  			if(DDEstadosExpedienteComercial.isFirmado(expedienteComercial.getEstado())) {
  				funcionesTramitesApi.actualizarEstadosPublicacionActivos(expedienteComercial);
- 				
  				genericDao.save(Oferta.class, oferta);
  			}
  			

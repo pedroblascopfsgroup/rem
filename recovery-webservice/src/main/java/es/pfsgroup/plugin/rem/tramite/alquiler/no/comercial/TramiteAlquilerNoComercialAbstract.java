@@ -63,4 +63,8 @@ public abstract class TramiteAlquilerNoComercialAbstract implements TramiteAlqui
 			return true;
 		
 	}
+	
+	public boolean permiteClaseCondicion() {
+		return true;
+	}
 }

@@ -69,7 +69,7 @@ public class UpdaterServiceFirmaContratoNoComercial implements UpdaterService {
 	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
 
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
-		boolean anular = false;
+		boolean aprueba = false;
 		DtoTareasFormalizacion dto = new DtoTareasFormalizacion();
 		Activo activo =tramite.getActivo();
 		Oferta oferta = expedienteComercial.getOferta();
@@ -81,7 +81,7 @@ public class UpdaterServiceFirmaContratoNoComercial implements UpdaterService {
 					dto.setFechaFirma(ft.parse(valor.getValor()));
 				}
 				if(COMBO_RESULTADO.equals(valor.getNombre())) {
-					anular = !DDSinSiNo.cambioStringaBooleanoNativo(valor.getNombre());
+					aprueba = DDSinSiNo.cambioStringaBooleanoNativo(valor.getNombre());
 				}
 				if(FECHA_INICIO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 					dto.setFechaInicioAlquiler(ft.parse(valor.getValor()));
@@ -97,7 +97,7 @@ public class UpdaterServiceFirmaContratoNoComercial implements UpdaterService {
 		
 
 		
-		if(anular) {
+		if(!aprueba) {
 			ofertaApi.finalizarOferta(oferta);
 		}else {
 			
@@ -120,7 +120,7 @@ public class UpdaterServiceFirmaContratoNoComercial implements UpdaterService {
 			genericDao.save(Oferta.class, oferta);
 		}
 		
-		DtoEstados dtoEstados = this.devolverEstadosExpediente(anular);
+		DtoEstados dtoEstados = this.devolverEstadosExpediente(aprueba);
 		expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class,genericDao.createFilter(FilterType.EQUALS, "codigo", dtoEstados.getCodigoEstadoExpedienteBc())));
 		expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS, "codigo", dtoEstados.getCodigoEstadoExpediente())));
 		recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expedienteComercial.getOferta(), expedienteComercial.getEstado());
@@ -138,11 +138,11 @@ public class UpdaterServiceFirmaContratoNoComercial implements UpdaterService {
 	}
 
 	
-	private DtoEstados devolverEstadosExpediente(boolean anular) {
+	private DtoEstados devolverEstadosExpediente(boolean aprueba) {
 		DtoEstados dto = new DtoEstados();
 		dto.setCodigoEstadoExpedienteBc(DDEstadoExpedienteBc.CODIGO_CONTRATO_FIRMADO);
 		dto.setCodigoEstadoExpediente(DDEstadosExpedienteComercial.FIRMADO);
-		if(anular) {
+		if(!aprueba) {
 			dto.setCodigoEstadoExpedienteBc(DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO);
 			dto.setCodigoEstadoExpediente(DDEstadosExpedienteComercial.ANULADO);
 		}

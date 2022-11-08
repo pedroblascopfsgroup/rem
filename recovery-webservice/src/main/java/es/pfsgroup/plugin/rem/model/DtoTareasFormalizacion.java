@@ -48,7 +48,8 @@ public class DtoTareasFormalizacion {
 	private String motivoExoneracionFianza;
 	private String motivoReagendacion;
 		
-
+	private Boolean tituloObtenido;
+	private Date fechaTituloObtenido;
 		
 
 	
@@ -188,6 +189,18 @@ public class DtoTareasFormalizacion {
 	}
 	public void setMotivoReagendacion(String motivoReagendacion) {
 		this.motivoReagendacion = motivoReagendacion;
+	}
+	public Boolean getTituloObtenido() {
+		return tituloObtenido;
+	}
+	public void setTituloObtenido(Boolean tituloObtenido) {
+		this.tituloObtenido = tituloObtenido;
+	}
+	public Date getFechaTituloObtenido() {
+		return fechaTituloObtenido;
+	}
+	public void setFechaTituloObtenido(Date fechaTituloObtenido) {
+		this.fechaTituloObtenido = fechaTituloObtenido;
 	}
 	
 }

@@ -33,6 +33,9 @@ public class DDClaseCondicion implements Auditable, Dictionary {
 
 	private static final long serialVersionUID = 1L;
 
+	
+	public static final String NO_APLICA = "151";
+	
 	@Id
 	@Column(name = "DD_CCD_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDClaseCondicionGenerator")
@@ -113,4 +116,12 @@ public class DDClaseCondicion implements Auditable, Dictionary {
 		this.codigoC4C = codigoC4C;
 	}
 
+	public static boolean isNoAplica (DDClaseCondicion clase) {
+		boolean is = false;
+		if(clase != null && NO_APLICA.equals(clase.getCodigo())) {
+			is = true;
+		}
+		
+		return is;
+	}
 }

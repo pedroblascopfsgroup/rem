@@ -43,4 +43,9 @@ public class TramiteAlquilerNoComercialAlquilerSocialDacion extends TramiteAlqui
 		
 		return listaTareas;
 	}
+	
+	@Override
+	public boolean permiteClaseCondicion() {
+		return false;
+	}
 }

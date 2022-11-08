@@ -59,5 +59,7 @@ public interface TramiteAlquilerNoComercialApi {
 	boolean estanCamposRellenosParaFormalizacion(ExpedienteComercial eco);
 
 	boolean estanCamposParaDefinicionOfertaRellenos(ExpedienteComercial eco);
+
+	boolean permiteClaseCondicion(ExpedienteComercial eco);
 }
 

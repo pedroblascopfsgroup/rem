@@ -1042,6 +1042,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 								xtype : 'datefieldbase',
 								reference : 'fechaInicioBonificacionBk',
 								name : 'fechaInicioBonificacionBk',
+								fieldLabel : HreRem.i18n('fieldlabel.fecha.inicio.bonificacion'),
 								margin : '5 0 0 0',
 								maxValue: null,
 								minValue: $AC.getCurrentDate(),
@@ -1051,9 +1052,10 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 								}
 							},
 							{
-								xtype : 'numberfieldbase',
+								xtype : 'datefieldbase',
 								reference : 'fechaFinBonificacionBk',
 								name : 'fechaFinBonificacionBk',
+								fieldLabel : HreRem.i18n('fieldlabel.fecha.fin.bonificacion'),
 								margin : '5 0 0 0',
 								maxValue: null,
 								minValue: $AC.getCurrentDate(),

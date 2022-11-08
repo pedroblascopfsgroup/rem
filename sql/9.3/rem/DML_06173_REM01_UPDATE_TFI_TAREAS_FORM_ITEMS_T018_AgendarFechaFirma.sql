@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Lara Pablo
---## FECHA_CREACION=20220921
+--## FECHA_CREACION=20221108
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-18727
@@ -45,7 +45,7 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
     	-- Registros a borrar
-	    T_TIPO_DATA('T015_AgendarFechaFirma','datefield','fechaFirma')
+	    T_TIPO_DATA('T018_AgendarFirma','datefield','fechaFirma')
  
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;

@@ -24,8 +24,8 @@ public class DtoProveedorFilter extends WebDto {
 	private String estadoProveedorDescripcion;
 	private String estadoProveedorCodigo;
 	private String observaciones;
-	private String fechaAlta;
-	private String fechaBaja;
+	private String fechaAltaDesde;
+	private String fechaAltaHasta;
 	private String tipoPersonaCodigo;
 	private String cartera;
 	private String ambitoProveedor;
@@ -119,17 +119,17 @@ public class DtoProveedorFilter extends WebDto {
 	public void setObservaciones(String observaciones) {
 		this.observaciones = observaciones;
 	}
-	public String getFechaAlta() {
-		return fechaAlta;
+	public String getFechaAltaDesde() {
+		return fechaAltaDesde;
 	}
-	public void setFechaAlta(String fechaAlta) {
-		this.fechaAlta = fechaAlta;
+	public void setFechaAltaDesde(String fechaAltaDesde) {
+		this.fechaAltaDesde = fechaAltaDesde;
 	}
-	public String getFechaBaja() {
-		return fechaBaja;
+	public String getFechaAltaHasta() {
+		return fechaAltaHasta;
 	}
-	public void setFechaBaja(String fechaBaja) {
-		this.fechaBaja = fechaBaja;
+	public void setFechaAltaHasta(String fechaAltaHasta) {
+		this.fechaAltaHasta = fechaAltaHasta;
 	}
 	public String getTipoPersonaCodigo() {
 		return tipoPersonaCodigo;

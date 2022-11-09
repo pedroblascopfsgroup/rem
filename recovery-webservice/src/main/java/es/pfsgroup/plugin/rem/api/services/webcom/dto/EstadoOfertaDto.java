@@ -63,6 +63,7 @@ public class EstadoOfertaDto implements WebcomRESTDto{
 	private StringDataType cuentaVirtual;
 
 	private LongDataType idPeriodoConcurrencia;
+	private StringDataType codEstadoDeposito;
 
 
 	public LongDataType getIdUsuarioRemAccion() {
@@ -338,5 +339,11 @@ public class EstadoOfertaDto implements WebcomRESTDto{
 
 	public void setIdPeriodoConcurrencia(LongDataType idPeriodoConcurrencia) {
 		this.idPeriodoConcurrencia = idPeriodoConcurrencia;
+	}
+	public StringDataType getCodEstadoDeposito() {
+		return codEstadoDeposito;
+	}
+	public void setCodEstadoDeposito(StringDataType codEstadoDeposito) {
+		this.codEstadoDeposito = codEstadoDeposito;
 	}
 }

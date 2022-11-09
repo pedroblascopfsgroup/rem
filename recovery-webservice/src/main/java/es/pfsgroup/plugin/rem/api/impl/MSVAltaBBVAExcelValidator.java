@@ -327,6 +327,7 @@ public class MSVAltaBBVAExcelValidator extends AbstractMSVActualizador implement
 			
 			if(activo!=null) {
 				activoBBVA.setActivo(activo);
+				activoBbvaUic.setActivo(activo);
 			}			
 	
 			activoBBVA.setNumActivoBbva(activoDao.getNextBbvaNumActivo().toString());
@@ -402,8 +403,8 @@ public class MSVAltaBBVAExcelValidator extends AbstractMSVActualizador implement
 			if(colTipoDeAlta!=null && !colTipoDeAlta.isEmpty()) {
 				activoBBVA.setTipoAlta(tipoAlta);
 			}
+
 			if(colIuc !=null && !colIuc.isEmpty()) {
-				activoBbvaUic.setActivo(activo);
 				activoBbvaUic.setUicBbva(colIuc);	
 			}			
 			if(colCexper!=null && !colCexper.isEmpty()) {

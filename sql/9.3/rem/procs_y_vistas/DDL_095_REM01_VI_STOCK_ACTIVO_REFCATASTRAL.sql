@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=ANAHUAC DE VICENTE
---## FECHA_CREACION=20211215
+--## FECHA_CREACION=20221013
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-16549
@@ -12,6 +12,7 @@
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##        0.2 Versión Julián Dolz - Añadir campo CAT_CORRECTO
+--##        0.3 [REMVIP-12572] IRC - Filtro borrado
 --##########################################
 --*/
 
@@ -60,7 +61,7 @@ BEGIN
 		SELECT AUX.ACT_ID, AUX.CAT_REF_CATASTRAL, AUX.CAT_CORRECTO FROM (
 			SELECT CAT.ACT_ID, CAT.CAT_REF_CATASTRAL, CAT.CAT_CORRECTO,
 			ROW_NUMBER() OVER (PARTITION BY CAT.ACT_ID ORDER BY CAT.CAT_ID DESC) REF
-			FROM '||V_ESQUEMA||'.ACT_CAT_CATASTRO CAT) AUX
+			FROM '||V_ESQUEMA||'.ACT_CAT_CATASTRO CAT WHERE CAT.BORRADO = 0) AUX
 		WHERE AUX.REF = 1';
 				
 

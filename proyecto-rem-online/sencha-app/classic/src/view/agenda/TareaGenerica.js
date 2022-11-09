@@ -4627,9 +4627,12 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		var comboFianza = me.down('[name=comboFianza]');
 		var fechaAbono = me.down('[name=fechaAbono]');
 
+		me.bloquearCampo(comboFianza);
+		me.campoObligatorio(comboFianza);
+		
 		if($AU.userHasFunction('FUNC_AVANZA_FORMALIZACION_ALQUILER_BC')){
-			me.bloquearCampo(comboFianza);
-			me.campoObligatorio(comboFianza);
+			me.desbloquearCampo(comboFianza);
+			
 		}
 		
 		comboFianza.addListener('change', function(comboFianza) {
@@ -4881,9 +4884,11 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		var comboResultado = me.down('[name=comboResultado]');
 		var fechaAbono = me.down('[name=fechaAbono]');
 		
+		me.bloquearCampo(comboResultado);
+		me.campoObligatorio(comboResultado);
+		
 		if($AU.userHasFunction('FUNC_AVANZA_FORMALIZACION_ALQUILER_BC')){
-			me.bloquearCampo(comboResultado);
-			me.campoObligatorio(comboResultado);
+			me.desbloquearCampo(comboResultado);
 		}
 
 		comboResultado.addListener('change', function(comboResultado) {

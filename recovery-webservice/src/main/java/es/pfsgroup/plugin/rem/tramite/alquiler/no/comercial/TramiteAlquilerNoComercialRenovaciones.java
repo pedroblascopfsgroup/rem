@@ -40,4 +40,9 @@ public class TramiteAlquilerNoComercialRenovaciones extends TramiteAlquilerNoCom
 		
 		return listaTareas;
 	}
+	
+	@Override
+	public boolean permiteClaseCondicion() {
+		return true;
+	}
 }

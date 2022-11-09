@@ -483,7 +483,8 @@ public class FuncionesTramitesManager implements FuncionesTramitesApi {
 		Oferta oferta = eco.getOferta();
 		
 		if(DDTipoOferta.isTipoAlquilerNoComercial(eco.getOferta().getTipoOferta())) {
-			if(tramiteAlquilerNoComercialApi.permiteClaseCondicion(eco) ||  (!tramiteAlquilerNoComercialApi.permiteClaseCondicion(eco) && DDClaseCondicion.isNoAplica(oferta.getClaseCondicion()))){
+			boolean estaPermitidoByTramite = tramiteAlquilerNoComercialApi.permiteClaseCondicion(eco);
+			if(estaPermitidoByTramite||  (!estaPermitidoByTramite && DDClaseCondicion.isNoAplica(oferta.getClaseCondicion()))){
 				estaPermitido = true;
 			}
 		}

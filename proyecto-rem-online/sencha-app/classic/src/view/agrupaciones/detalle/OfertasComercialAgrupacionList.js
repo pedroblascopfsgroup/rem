@@ -413,7 +413,7 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 				
 			} 
 			
-			if (agrupacion.get('tipoComercializacionCodigo') == CONST.TIPOS_COMERCIALIZACION['SOLO_ALQUILER'] && agrupacion.get('perimetroMacc')){
+			if (agrupacion.get('esHayaHome') == "true") {
 				me.fireEvent("errorToast", HreRem.i18n("msg.oferta.haya.home"));
 				me.lookupController().lookupReference('activosagrupacion').lookupController().refrescarAgrupacion(true);
 				return false;

@@ -9730,6 +9730,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		boolean esMacc = false;
 		boolean esActivoAlquiler = false;	
 		boolean es1to1 = false;
+		boolean esBbva = false;
+		boolean esCerberus = false;
+		boolean esCajamar = false;
 		
 		Activo activoFinal = null;
 		if (!Checks.esNulo(agrupacion)) {
@@ -9748,9 +9751,15 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					&& DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(activoFinal.getActivoPublicacion().getTipoComercializacion().getCodigo());
 			es1to1 = !Checks.esNulo(activoFinal.getSubcartera())  && !Checks.esNulo(activoFinal.getSubcartera().getCodigo()) 
 					&& DDSubcartera.CODIGO_THIRD_PARTIES_1_TO_1.equals(activoFinal.getSubcartera().getCodigo());
+			esBbva = !Checks.esNulo(activoFinal.getCartera()) && !Checks.esNulo(activoFinal.getCartera().getCodigo()) 
+					&& DDCartera.isCarteraBBVA(activoFinal.getCartera());
+			esCerberus = !Checks.esNulo(activoFinal.getCartera()) && !Checks.esNulo(activoFinal.getCartera().getCodigo()) 
+					&& DDCartera.isCarteraCerberus(activoFinal.getCartera());			
+			esCajamar = !Checks.esNulo(activoFinal.getCartera()) && !Checks.esNulo(activoFinal.getCartera().getCodigo()) 
+					&& DDCartera.isCarteraCajamar(activoFinal.getCartera());
 		}		
 		
-		boolean esActivoHayaHome = esActivoAlquiler && esMacc && !es1to1 ? true : false; 
+		boolean esActivoHayaHome = esActivoAlquiler && ((esMacc && !es1to1) || (esBbva || esCerberus || esCajamar)) ? true : false;
 
 		return esActivoHayaHome;
 	}

@@ -891,8 +891,11 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 				
 			}
 			
+			Object importeOferta = oferta.getImporteOferta() != null && !oferta.getIsEnConcurrencia() 
+					? NumberFormat.getNumberInstance(new Locale("es", "ES")).format(oferta.getImporteOferta()) : "*****";
+			
 			String contenido = String.format("<p>Ha recibido una nueva oferta con número identificador %s, a nombre de %s con identificador %s %s con teléfono %s y e-mail %s, por importe de %s €. Prescriptor: %s %s.</p>",
-							oferta.getNumOferta().toString(), oferta.getCliente().getNombreCompleto(),tipoDocIndentificacion,docIdentificacion, oferta.getCliente().getTelefono1(), oferta.getCliente().getEmail(), NumberFormat.getNumberInstance(new Locale("es", "ES")).format(oferta.getImporteOferta()),codigoPrescriptor,nombrePrescriptor );
+							oferta.getNumOferta().toString(), oferta.getCliente().getNombreCompleto(),tipoDocIndentificacion,docIdentificacion, oferta.getCliente().getTelefono1(), oferta.getCliente().getEmail(), importeOferta,codigoPrescriptor,nombrePrescriptor );
 						
 			
 			if (!Checks.esNulo(oferta.getCliente())) {
@@ -908,7 +911,7 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 				contenido += "</ul></p>";
 			}
 			
-			contenido += String.format("<br><p>Estado de la oferta: %s. Importe inicial: %s €.", oferta.getEstadoOferta().getDescripcion(), NumberFormat.getNumberInstance(new Locale("es", "ES")).format(oferta.getImporteOferta()));
+			contenido += String.format("<br><p>Estado de la oferta: %s. Importe inicial: %s €.", oferta.getEstadoOferta().getDescripcion(), importeOferta);
 			
 			contenido += String.format("<br><p>Activo: %s", activo.getNumActivo());
 			

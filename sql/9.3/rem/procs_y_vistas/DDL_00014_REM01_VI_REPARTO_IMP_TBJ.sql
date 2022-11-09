@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=DAP
---## FECHA_CREACION=20210723
+--## FECHA_CREACION=20221027
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-8708
@@ -12,6 +12,7 @@
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##        0.2 REMVIP-9941 - Carlos Santos Vílchez
+--##        0.3 REMVIP-11984 - IRC - Registros con mismo GLD_ENT_ID se machaca participacion y descuadra
 --##########################################
 --*/
 
@@ -37,6 +38,7 @@ BEGIN
 
   DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_REPARTO_IMP_TBJ...');
   EXECUTE IMMEDIATE 'CREATE OR REPLACE VIEW ' || V_ESQUEMA || '.V_REPARTO_IMP_TBJ AS
+  	SELECT GPV_ID, GLD_ID, GLD_ENT_ID, SUM(PARTICIPACION_PVE) PARTICIPACION_PVE, SUM(PARTICIPACION_CLI) PARTICIPACION_CLI FROM (
 	WITH SUPLIDOS AS (
 	    SELECT PSU.TBJ_ID
 	            , NVL(
@@ -115,7 +117,8 @@ BEGIN
 	FROM RN_1
 	UNION
 	SELECT GPV_ID, GLD_ID, GLD_ENT_ID, PARTICIPACION_PVE, PARTICIPACION_CLI
-	FROM RN_RESTO';
+	FROM RN_RESTO) 
+	GROUP BY GPV_ID, GLD_ID, GLD_ENT_ID';
 
   DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_REPARTO_IMP_TBJ...Creada OK');
 

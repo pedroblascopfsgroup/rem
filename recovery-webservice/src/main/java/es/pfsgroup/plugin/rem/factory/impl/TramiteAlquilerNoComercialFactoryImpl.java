@@ -57,7 +57,7 @@ public class TramiteAlquilerNoComercialFactoryImpl implements TramiteAlquilerNoC
 	public TramiteAlquilerNoComercial getTramiteAlquilerNoComercial(String codigo) {
 		
 	
-		if (DDSubtipoOfertaAlquiler.CODIGO_SUBROGACION_DACION.equals(codigo))
+		if (DDSubtipoOfertaAlquiler.CODIGO_ALQUILER_SOCIAL_DACION.equals(codigo))
 			return tncAlquilerSocialDacion;
 		else if (DDSubtipoOfertaAlquiler.CODIGO_ALQUILER_SOCIAL_EJECUCION.equals(codigo))
 			return tncAlquilerSocialEjecucion;

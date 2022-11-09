@@ -955,65 +955,6 @@ class AccionesCaixaControllerDispachableMethods {
             }
         });
         
-        dispachableMethods.put(DDTipoOfertaAcciones.ACCION_RESCINDIR_CONTRATO, new AccionesCaixaControllerDispachableMethods.DispachableMethod<JSONObject>() {
-            @Override
-            public Class<JSONObject> getArgumentType() {
-                return JSONObject.class;
-            }
-
-            @Override
-            public Boolean execute(JSONObject dto) {
-                if (dto != null) {
-                    ModelAndView mm = this.controller.accionRespuestaBcOfertaAlquiler(dto);
-                    if ("false".equals(mm.getModel().get("success").toString())
-                            && !Checks.esNulo(mm.getModel().get("msgError"))) {
-                        throw new JsonViewerException(mm.getModel().get("msgError").toString());
-                    }  return true;
-                }
-
-                return false;
-            }
-        });
-        
-//        dispachableMethods.put(DDTipoOfertaAcciones.ACCION_RESCINDIR_CONTRATO, new AccionesCaixaControllerDispachableMethods.DispachableMethod<JSONObject>() {
-//            @Override
-//            public Class<JSONObject> getArgumentType() {
-//                return JSONObject.class;
-//            }
-//
-//            @Override
-//            public Boolean execute(JSONObject dto) {
-//                if (dto != null) {
-//                    ModelAndView mm = this.controller.accionRespuestaBcOfertaAlquiler(dto);
-//                    if ("false".equals(mm.getModel().get("success").toString())
-//                            && !Checks.esNulo(mm.getModel().get("msgError"))) {
-//                        throw new JsonViewerException(mm.getModel().get("msgError").toString());
-//                    }  return true;
-//                }
-//
-//                return false;
-//            }
-//        });
-        
-        dispachableMethods.put(DDTipoOfertaAcciones.ACCION_RESCINDIR_CONTRATO, new AccionesCaixaControllerDispachableMethods.DispachableMethod<JSONObject>() {
-            @Override
-            public Class<JSONObject> getArgumentType() {
-                return JSONObject.class;
-            }
-
-            @Override
-            public Boolean execute(JSONObject dto) {
-                if (dto != null) {
-                    ModelAndView mm = this.controller.accionRespuestaBcReagendacion(dto);
-                    if ("false".equals(mm.getModel().get("success").toString())
-                            && !Checks.esNulo(mm.getModel().get("msgError"))) {
-                        throw new JsonViewerException(mm.getModel().get("msgError").toString());
-                    }  return true;
-                }
-
-                return false;
-            }
-        });
         
         
         dispachableMethods.put(DDTipoOfertaAcciones.CODIGO_COMUNICAR_CONTRAOFERTA_CLIENTE, new AccionesCaixaControllerDispachableMethods.DispachableMethod<JSONObject>() {

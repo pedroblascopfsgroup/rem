@@ -510,7 +510,9 @@
 	</state> 
 	<decision name ="T018_RespuestaReagendacionBCDecision" expression="#{T018_RespuestaReagendacionBCDecision}">
 		<transition to="T018_AgendarFirma" name="acepta"></transition>
-		<transition to="T018_ProponerRescisionCliente" name="rechaza"></transition>
+		<transition to="T018_ProponerRescisionCliente" name="rechazaRenovacion"></transition>
+		<transition to="T018_EsperaComitePosesiones" name="irComiteAlqSocial"></transition>
+		<transition to="Fin" name="rechazaAlqSocial"></transition>
 	</decision>
 	
 	<state name="T018_FirmaAdenda">

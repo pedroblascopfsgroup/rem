@@ -4902,25 +4902,44 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 	
 	T018_RespuestaReagendacionBCValidacion: function(){
 		var me = this;
-		var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
 		var idExpediente = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
-		
 		var comboResultado = me.down('[name=comboResultado]');
+		var comboComite = me.down('[name=comboComite]');
 		
-		if (CONST.CARTERA['BANKIA'] == codigoCartera) {
-			me.habilitarCampo(comboResultado);
-			me.campoObligatorio(comboResultado);
-			
-			if($AU.userHasFunction('FUNC_AVANZA_FORMALIZACION_ALQUILER_NC_BC')){
-				me.desbloquearCampo(comboResultado);
-			} else {
-				me.bloquearCampo(comboResultado);
-			}
-			
-		} else {
-			me.deshabilitarCampo(comboResultado);
-			me.ocultarCampo(comboResultado);
+		me.bloquearCampo(comboResultado);
+		me.campoObligatorio(comboResultado);
+		me.bloquearCampo(comboComite);
+		me.campoObligatorio(comboComite);
+	
+		if($AU.userHasFunction('FUNC_AVANZA_FORMALIZACION_ALQUILER_NC_BC')){
+			me.desbloquearCampo(comboResultado);
+			me.desbloquearCampo(comboComite);
 		}
+		
+		Ext.Ajax.request({
+			url: $AC.getRemoteUrl('expedientecomercial/getDtoTipoAlquiler'),
+			params: {idExpediente : idExpediente},
+		    success: function(response, opts) {
+		    	var data = Ext.decode(response.responseText);
+		    	var dto = data.data;
+		    	if(!Ext.isEmpty(dto)){
+	    			if(CONST.TIPO_OFERTA_ALQUILER_NO_COMERCIAL['CODIGO_RENOVACION'] === dto.codTipoAlquiler){
+	    				me.ocultarCampo(comboComite);
+	    				me.campoNoObligatorio(comboComite);
+	    			}
+		    	}
+		    }
+		});
+		
+		comboResultado.addListener('change', function(comboResultado) {
+			if (comboResultado.value == CONST.COMBO_SIN_SINO['SI']) { 
+				me.campoNoObligatorio(comboComite);
+			} else if(comboResultado.value == CONST.COMBO_SIN_SINO['NO'] && comboComite.visible == true) {
+				me.campoObligatorio(comboComite);
+			}
+		});
+			
+		
 	},
 	
 	T018_ProponerRescisionClienteValidacion: function(){

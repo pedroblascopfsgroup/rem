@@ -43,7 +43,7 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(800);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-    	T_TIPO_DATA('T018_RespuestaReagendacionBC','valores[''''T018_RespuestaReagendacionBC''''][''''comboResultado''''] == DDSiNo.SI  ?  ''''acepta'''' : esRenovacion() ? ''''rechazaRenovacion'''' : valores[''''T018_ResolucionComite''''][''''comboComite''''] == DDSiNo.SI  ? ''''irComiteAlqSocial'''' : ''''rechazaAlqSocial''''')
+    	T_TIPO_DATA('T018_RespuestaReagendacionBC','valores[''''T018_RespuestaReagendacionBC''''][''''comboResultado''''] == DDSiNo.SI  ?  ''''acepta'''' : esRenovacion() ? ''''rechazaRenovacion'''' : valores[''''T018_RespuestaReagendacionBC''''][''''comboComite''''] == DDSiNo.SI  ? ''''irComiteAlqSocial'''' : ''''rechazaAlqSocial''''')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 BEGIN

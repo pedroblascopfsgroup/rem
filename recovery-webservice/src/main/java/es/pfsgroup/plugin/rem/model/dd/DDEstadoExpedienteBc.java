@@ -199,4 +199,12 @@ public class DDEstadoExpedienteBc implements Auditable, Dictionary {
 		this.codigoC4C = codigoC4C;
 	}
 
+	public static boolean isCompromisoCancelado (DDEstadoExpedienteBc estado) {
+		boolean is = false;
+		if(estado != null && CODIGO_COMPROMISO_CANCELADO.equals(estado.getCodigo())) {
+			is = true;
+		}
+		
+		return is;
+	}
 }

@@ -13,6 +13,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoTareasFormalizacion;
@@ -29,6 +30,9 @@ public class UpdaterServiceEsperaComitePosesionesAlquilerNoComercial implements 
 	
 	@Autowired
 	private GenericABMDao genericDao;
+	
+	@Autowired
+    private OfertaApi ofertaApi;
 	
     protected static final Log logger = LogFactory.getLog(UpdaterServiceEsperaComitePosesionesAlquilerNoComercial.class);
     
@@ -57,6 +61,9 @@ public class UpdaterServiceEsperaComitePosesionesAlquilerNoComercial implements 
 			expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoEco)));
 		}
 				
+		if(DDEstadoExpedienteBc.isCompromisoCancelado(expedienteComercial.getEstadoBc())) {
+ 			ofertaApi.finalizarOferta(expedienteComercial.getOferta());
+ 		}
 		genericDao.save(ExpedienteComercial.class, expedienteComercial);
 		
 	}

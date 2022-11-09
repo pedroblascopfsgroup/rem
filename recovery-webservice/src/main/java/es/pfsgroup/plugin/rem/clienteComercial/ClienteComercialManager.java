@@ -665,7 +665,7 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 				cliente.setTipoDocumentoRepresentante(null);
 			}
 		}
-		if (((JSONObject) jsonFields).containsKey("documentoRepresentante")) {
+		if (((JSONObject) jsonFields).containsKey("documentoRepresentante") && clienteDto.getDocumentoRepresentante() != null) {
 			documentoRteModificado = !clienteDto.getDocumentoRepresentante().equals(cliente.getDocumentoRepresentante());
 			if (cliente.getDocumentoRepresentante() == null && cliente.getIdPersonaHayaCaixa() != null)
 				newRepresentanteImplicadoCaixa = true;

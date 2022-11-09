@@ -70,6 +70,7 @@ import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoPropagacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
+import es.pfsgroup.plugin.rem.api.AuditoriaExportacionesApi;
 import es.pfsgroup.plugin.rem.api.CatastroApi;
 import es.pfsgroup.plugin.rem.api.ConcurrenciaApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
@@ -258,6 +259,9 @@ public class ActivoController extends ParadiseJsonController {
 
 	@Autowired
 	private CatastroApi catastroApi;
+	
+	@Autowired 
+	private AuditoriaExportacionesApi auditoriaExportacionesApi;
 
 	@Resource
 	private Properties appProperties;
@@ -4617,6 +4621,24 @@ public class ActivoController extends ParadiseJsonController {
 	public ModelAndView getListCambiosPeriodoConcurenciaByIdConcurrencia(Long idConcurrencia, ModelMap model) {
 		model.put(RESPONSE_DATA_KEY, concurrenciaApi.getListCambiosPeriodoConcurenciaByIdConcurrencia(idConcurrencia));
 
+		return createModelAndViewJson(model);
+	}
+	
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView registrarBusqueda(DtoActivoGridFilter dto, String buscador){
+		ModelMap model = new ModelMap();		 
+		Usuario user = usuarioManager.getUsuarioLogado();
+		
+		try {
+			boolean success = auditoriaExportacionesApi.permiteBusqueda(dto, user, buscador);
+			
+			model.put(RESPONSE_SUCCESS_KEY, success);
+			model.put(RESPONSE_ERROR_KEY, success ? "" : "tiempo");
+		}catch(Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+			logger.error("error en activoController::registrarBusqueda", e);
+		}
 		return createModelAndViewJson(model);
 	}
 }

@@ -112,15 +112,10 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "pve.estadoProveedorCodigo", dto.getEstadoProveedorCodigo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "pve.tipoProveedorCodigo", dto.getTipoProveedorCodigo());
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "pve.nombreComercialProveedor", dto.getNombreComercialProveedor(), true);
-		try {
-			if (!Checks.esNulo(dto.getFechaAlta())) {
-				Date fechaAlta = DateFormat.toDate(dto.getFechaAlta());
-				HQLBuilder.addFiltroIgualQueSiNotNull(hb, "pve.fechaAltaProveedor", fechaAlta);
-			}
-			if (!Checks.esNulo(dto.getFechaBaja())) {
-				Date fechaBaja = DateFormat.toDate(dto.getFechaBaja());
-				HQLBuilder.addFiltroIgualQueSiNotNull(hb, "pve.fechaBajaProveedor", fechaBaja);
-			}
+		try {			
+			Date fechaAltaDesde = dto.getFechaAltaDesde() != null ? DateFormat.toDate(dto.getFechaAltaDesde()) : null;
+			Date fechaAltaHasta = dto.getFechaAltaHasta() != null ? DateFormat.toDate(dto.getFechaAltaHasta()) : null;			
+			HQLBuilder.addFiltroBetweenSiNotNull(hb, "pve.fechaAltaProveedor", fechaAltaDesde, fechaAltaHasta);
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}

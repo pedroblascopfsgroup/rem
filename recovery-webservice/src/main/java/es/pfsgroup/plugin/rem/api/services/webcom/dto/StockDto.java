@@ -387,6 +387,8 @@ public class StockDto implements WebcomRESTDto{
 	private DateDataType hastaPeriodoConcurrencia;
 	private LongDataType idPeriodoConcurrencia;
 	
+	private StringDataType codEstadoRegistralActivo;
+	
 	public LongDataType getIdActivoHaya() {
 		return idActivoHaya;
 	}
@@ -1278,5 +1280,11 @@ public class StockDto implements WebcomRESTDto{
 
 	public void setIdPeriodoConcurrencia(LongDataType idPeriodoConcurrencia) {
 		this.idPeriodoConcurrencia = idPeriodoConcurrencia;
+	}
+	public StringDataType getCodEstadoRegistralActivo() {
+		return codEstadoRegistralActivo;
+	}
+	public void setCodEstadoRegistralActivo(StringDataType codEstadoRegistralActivo) {
+		this.codEstadoRegistralActivo = codEstadoRegistralActivo;
 	}
 }

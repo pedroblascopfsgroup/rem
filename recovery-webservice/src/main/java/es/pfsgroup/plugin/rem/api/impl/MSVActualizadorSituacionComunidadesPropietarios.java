@@ -45,7 +45,7 @@ public class MSVActualizadorSituacionComunidadesPropietarios extends AbstractMSV
 	@Override
 	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken) throws IOException, ParseException, JsonViewerException, SQLException {
 
-		comunidadesPropietariosAdapter.updateComunidad(new Long(exc.dameCelda(fila, 0)), exc.dameCelda(fila, 1), exc.dameCelda(fila, 2), exc.dameCelda(fila, 3), exc.dameCelda(fila, 4));	
+		comunidadesPropietariosAdapter.updateComunidad(new Long(exc.dameCelda(fila, 0)), exc.dameCelda(fila, 1), exc.dameCelda(fila, 2), exc.dameCelda(fila, 3));	
 		return new ResultadoProcesarFila();
 	}
 	

@@ -87,7 +87,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.ConfiguracionPr
 												{ 
 													xtype: 'datefield',
 													fieldLabel: HreRem.i18n('fieldlabel.proveedores.fechadesde'),
-													name:		'fechaAlta'
+													name:		'fechaAltaDesde'
 												},
 												// fila 2
 												{							
@@ -109,7 +109,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.ConfiguracionPr
 												{ 
 													xtype: 'datefield',
 													fieldLabel:  HreRem.i18n('fieldlabel.proveedores.fechahasta'),
-													name:		'fechaBaja'
+													name:		'fechaAltaHasta'
 												},
 												// fila 3
 												{

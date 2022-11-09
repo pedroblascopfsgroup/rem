@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Vicente Martinez
---## FECHA_CREACION=20220713
+--## FECHA_CREACION=20221013
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-18353
@@ -43,6 +43,7 @@
 --##		0.26 Versión IRC -> REMVIP-11188 - Añadimos gestor comercial de alquiler
 --##		0.26 Versión Jesus J -> REMVIP-11865 - Eliminar campos WS Activo
 --##        0.27 Añadir campos concurrencia - Vicente Martinez - [HREOS-18353]
+--##		0.28 Versión IRC -> REMVIP-12573 - Añadimos codEstadoRegistralActivo del activo
 --##########################################
 --*/
 
@@ -445,8 +446,8 @@ BEGIN/*Versión 0.18*/
 				''YYYY-MM-DD"T"HH24:MM:SS'') AS VARCHAR2(50 CHAR))
 			ELSE NULL
 		END                                                                          				HASTA_PERIODO_CONCURRENCIA,
-        ACO.CON_ID                                                                                  AS ID_PERIODO_CONCURRENCIA
-
+        ACO.CON_ID                                                                                  AS ID_PERIODO_CONCURRENCIA,
+		CAST(DDERA.DD_ERA_CODIGO AS VARCHAR2(10 CHAR))	 											AS COD_ESTADO_REGISTRAL_ACTIVO
 
     	FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
 		INNER JOIN '||V_ESQUEMA||'.ACT_LOC_LOCALIZACION LOC ON LOC.ACT_ID = ACT.ACT_ID
@@ -627,6 +628,7 @@ BEGIN/*Versión 0.18*/
 		LEFT JOIN '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO PRO on PAC.PRO_ID = PRO.PRO_ID 
 		LEFT JOIN GCALQ GALQ ON GALQ.ACT_ID = ACT.ACT_ID
 		LEFT JOIN CONCURRENCIA_ULTIMA ACO ON ACT.ACT_ID = ACO.ACT_ID
+		LEFT JOIN '||V_ESQUEMA||'.DD_ERA_ESTADO_REG_ACTIVO DDERA ON DDERA.DD_ERA_ID = ACT.DD_ERA_ID AND DDERA.BORRADO = 0
 		where act.borrado = 0';
 
 

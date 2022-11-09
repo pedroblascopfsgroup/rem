@@ -2080,6 +2080,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		
 	}
 
+	@SuppressWarnings("static-access")
 	@Override
 	public List<DDTipoOferta> getDiccionarioTipoOfertas(String codCartera, Long idActivo, Long idAgrupacion) {
 		List<DDTipoOferta> tiposOferta = genericDao.getList(DDTipoOferta.class);
@@ -2117,6 +2118,15 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 					}
 				}
 			}
+		}
+		
+		if(DDCartera.CODIGO_CARTERA_CERBERUS.equals(codigoCartera) || DDCartera.CODIGO_CARTERA_CAJAMAR.equals(codigoCartera) || DDCartera.CODIGO_CARTERA_BBVA.equals(codigoCartera)) {
+			for (DDTipoOferta tipoOferta : tiposOferta) {
+				if (tipoOferta.isTipoAlquiler(tipoOferta)) {
+					tiposOferta.remove(tipoOferta);
+					break;
+				}
+			}				
 		}
 		
 		return tiposOferta;

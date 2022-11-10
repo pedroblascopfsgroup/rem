@@ -52,7 +52,7 @@ public class UpdaterServiceEsperaComitePosesionesAlquilerNoComercial implements 
 		
 		String estadoExpBC = this.devolverEstadoBC(dto.getComboResultado(), tareaExternaActual);
 		if(estadoExpBC != null) {
-			expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigoC4C", estadoExpBC)));
+			expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoExpBC)));
 		}
 		
 		String estadoEco = this.devolverEstadoEco(dto.getComboResultado(), tareaExternaActual);

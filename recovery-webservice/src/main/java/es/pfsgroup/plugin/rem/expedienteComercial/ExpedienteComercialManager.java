@@ -4398,9 +4398,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			 * condiciones.setDuracionBonificacion(duracionBonificacion); }
 			 */
 
-			condiciones.setFechaInicioBonificacion(dto.getFechaInicioBonificacion());
-			condiciones.setFechaFinBonificacion(dto.getFechaFinBonificacion());
-
+			if(dto.getFechaInicioBonificacion() != null) {
+				condiciones.setFechaInicioBonificacion(dto.getFechaInicioBonificacion());
+			}
+			
+			if(dto.getFechaFinBonificacion() != null) {
+				condiciones.setFechaFinBonificacion(dto.getFechaFinBonificacion());
+			}
 			
 			if (!Checks.esNulo(dto.getRenunciaTanteo())) {
 				condiciones.setRenunciaTanteo(dto.getRenunciaTanteo());

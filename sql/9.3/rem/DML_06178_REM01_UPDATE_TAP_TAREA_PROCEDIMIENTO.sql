@@ -44,7 +44,7 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
     	T_TIPO_DATA('T015_AprobacionClienteClausulas', 'valores[''''T015_AprobacionClienteClausulas''''][''''comboAcepta''''] == DDSiNo.SI ? ''''Acepta'''' : valores[''''T015_AprobacionClienteClausulas''''][''''comboContraoferta''''] == DDSiNo.NO || checkEstadoBcClausuladoNoComerciable() ? ''''NoAceptaSinContraoferta'''' : ''''NoAceptaConContraoferta'''''),
-        T_TIPO_DATA('T015_AgendarFechaFirma', 'valores[''''T015_AgendarFechaFirma''''][''''comboFianza''''] != null ? valores[''''T015_AgendarFechaFirma''''][''''comboFianza''''] == DDSiNo.NO ? checkIBANValido(valores[''''T015_AgendarFechaFirma''''][''''ibanDev'''']) ? seNecesitaCuentaVirtualAlquiler() ? checkCuentasVirtualesAlquilerLibres() ? null : ''''No existen cuentas virtuales libres'''' : null : ''''El formato del IBAN no es v&aacute;lido'''' : null : ''''Fin''''')
+        T_TIPO_DATA('T015_AgendarFechaFirma', 'valores[''''T015_AgendarFechaFirma''''][''''comboFianza''''] == DDSiNo.SI ? ''''AceptaFirma'''' : ''''AceptaFianza''''')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 BEGIN

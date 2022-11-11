@@ -288,7 +288,7 @@ public class FuncionesTramitesManager implements FuncionesTramitesApi {
 				dto.setMeses(coe.getMesesFianza());
 			}
 
-			if(ofertaCaixa != null && dto.getIbanDevolucion() != null){
+			if(ofertaCaixa != null && dto.getIbanDevolucion() == null){
 				dto.setIbanDevolucion(ofertaCaixa.getIbanDevolucionClienteAlq());
 			}
 			

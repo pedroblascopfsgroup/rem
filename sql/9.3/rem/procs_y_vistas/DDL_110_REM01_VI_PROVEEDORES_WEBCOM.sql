@@ -20,6 +20,7 @@
 --##		0.8 VRO [REMVIP-10495] - Modificar para que no duplique delegaciones
 --##		0.8 IRC [HREOS-17602] - Nuevos campos gestion APIs
 --##		0.9 PBO [HREOS-17602] - Corrección campos gestion APIs
+--##		0.10 IRC [REMVIP-12717] - Ampliación caracteres campo
 --##########################################
 --*/
 
@@ -283,7 +284,7 @@ BEGIN
 	    CAST(COI.DD_TCI_CODIGO AS VARCHAR2(20 CHAR))                                         	AS CONDUCTAS_INAPROPIADAS_COD_TIPOLOGIA,
 	    CAST(COI.DD_CCI_CODIGO AS VARCHAR2(20 CHAR))                                     		AS CONDUCTAS_INAPROPIADAS_COD_CATEGORIA,
 	    CAST(COI.DD_NCI_CODIGO AS VARCHAR2(20 CHAR))                                       		AS CONDUCTAS_INAPROPIADAS_COD_NIVEL,
-	    CAST(COI.COI_COMENTARIOS AS VARCHAR2(250 CHAR))                                         AS CONDUCTAS_INAPROPIADAS_COMENTARIOS,
+	    CAST(COI.COI_COMENTARIOS AS VARCHAR2(500 CHAR))                                         AS CONDUCTAS_INAPROPIADAS_COMENTARIOS,
 	    CAST(COI.COI_DELEGACION AS NUMBER(16,0))                                   			    AS CONDUCTAS_INAPROPIADAS_ID_DELEGACION,
 		CAST(TO_CHAR(PVE.PVE_FECHA_ALTA, 
                     ''YYYY-MM-DD"T"HH24:MM:SS'') AS VARCHAR2 (50 CHAR)) 		                AS FECHA_ALTA,

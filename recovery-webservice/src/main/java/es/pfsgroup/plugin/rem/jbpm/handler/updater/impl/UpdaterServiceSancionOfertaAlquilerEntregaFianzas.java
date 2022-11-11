@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -8,7 +9,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
@@ -18,7 +18,9 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.FuncionesTramitesApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.Fianzas;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
@@ -62,6 +64,7 @@ public class UpdaterServiceSancionOfertaAlquilerEntregaFianzas implements Update
  		if (fianzaAbonada) {
  			estadoBC = DDEstadoExpedienteBc.CODIGO_FIRMA_DE_CONTRATO_AGENDADO;
  			estadoHaya = DDEstadosExpedienteComercial.PTE_FIRMA;
+ 			this.saveFechaIngresoFianza(expedienteComercial);
 		} else {
 			if(funcionesTramitesApi.seHaReagendado2VecesOMas(tareaExternaActual)) {
 				estadoBC = DDEstadoExpedienteBc.CODIGO_VALIDACION_DE_FIRMA_DE_CONTRATO_POR_BC;
@@ -86,4 +89,16 @@ public class UpdaterServiceSancionOfertaAlquilerEntregaFianzas implements Update
 		return this.getCodigoTarea();
 	}
 	
+	private void saveFechaIngresoFianza(ExpedienteComercial expedienteComercial) {
+		Fianzas fianza = genericDao.get(Fianzas.class, genericDao.createFilter(FilterType.EQUALS, "oferta.id", expedienteComercial.getOferta().getId()));
+		CondicionanteExpediente coe = expedienteComercial.getCondicionante();
+		if(fianza != null) {
+			fianza.setFechaIngreso(new Date());
+			genericDao.save(Fianzas.class, fianza);
+		}
+		if(coe != null) {
+			coe.setFechaIngresoFianzaArrendatario(new Date());
+			genericDao.save(CondicionanteExpediente.class, coe);
+		}	
+	}
 }

@@ -98,7 +98,8 @@ Ext.define('HreRem.view.expedientes.FormalizacionAlquilerExpediente', {
                     editOnSelect: true,
                     bind : {
                         store : '{storePosicionamientos}',
-                        topBar : '{!esExpedienteBloqueado}'
+                        topBar : '{!esExpedienteBloqueado}',
+                        hidden: '{esBankia}'
                     },
                     listeners : {
                         rowdblclick : 'comprobacionesDobleClickAlquiler',

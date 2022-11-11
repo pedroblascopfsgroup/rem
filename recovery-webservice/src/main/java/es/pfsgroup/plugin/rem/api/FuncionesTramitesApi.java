@@ -61,5 +61,7 @@ public interface FuncionesTramitesApi {
 	boolean estanCamposParaDefinicionOfertaRellenos(TareaExterna tareaExterna);
 
 	boolean estaPermitidoClaseCondicion(TareaExterna tareaExterna);
+
+    boolean tieneIbanInformado(TareaExterna tareaExterna);
 }
 

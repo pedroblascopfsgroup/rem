@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import es.pfsgroup.plugin.rem.model.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -33,20 +34,6 @@ import es.pfsgroup.plugin.rem.api.TramiteAlquilerNoComercialApi;
 import es.pfsgroup.plugin.rem.api.TramiteVentaApi;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
-import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ComunicarFormalizacionApi;
-import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
-import es.pfsgroup.plugin.rem.model.CuentasVirtualesAlquiler;
-import es.pfsgroup.plugin.rem.model.DtoCondicionantesExpediente;
-import es.pfsgroup.plugin.rem.model.DtoTabFianza;
-import es.pfsgroup.plugin.rem.model.DtoTareasFormalizacion;
-import es.pfsgroup.plugin.rem.model.DtoTipoAlquiler;
-import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.Fianzas;
-import es.pfsgroup.plugin.rem.model.HistoricoReagendacion;
-import es.pfsgroup.plugin.rem.model.HistoricoTareaPbc;
-import es.pfsgroup.plugin.rem.model.Oferta;
-import es.pfsgroup.plugin.rem.model.VGridHistoricoReagendaciones;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseCondicion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTareaPbc;
@@ -281,7 +268,8 @@ public class FuncionesTramitesManager implements FuncionesTramitesApi {
 		Oferta ofr = eco.getOferta();
 		CondicionanteExpediente coe = eco.getCondicionante();
 		if (ofr != null) {
-			
+
+			OfertaCaixa ofertaCaixa = ofr.getOfertaCaixa();
 			dto.setFechaAprobacionOferta(eco.getFechaSancionComite());
 			dto.setFianzaExonerada(eco.getCondicionante().getFianzaExonerada());
 			Fianzas fia = genericDao.get(Fianzas.class, genericDao.createFilter(FilterType.EQUALS, "oferta.id", ofr.getId()));
@@ -298,6 +286,10 @@ public class FuncionesTramitesManager implements FuncionesTramitesApi {
 				dto.setImporteFianza(coe.getImporteFianza());
 				dto.setFianzaExonerada(coe.getFianzaExonerada());
 				dto.setMeses(coe.getMesesFianza());
+			}
+
+			if(ofertaCaixa != null && dto.getIbanDevolucion() != null){
+				dto.setIbanDevolucion(ofertaCaixa.getIbanDevolucionClienteAlq());
 			}
 			
 		}
@@ -490,5 +482,23 @@ public class FuncionesTramitesManager implements FuncionesTramitesApi {
 		}
 
 		return estaPermitido;
+	}
+
+	@Override
+	public boolean tieneIbanInformado(TareaExterna tareaExterna) {
+		boolean resultado = false;
+		ExpedienteComercial eco = expedienteComercialApi.tareaExternaToExpedienteComercial(tareaExterna);
+
+		if (eco != null) {
+			Oferta ofr = eco.getOferta();
+			if (ofr != null) {
+				OfertaCaixa ofrCaixa = ofr.getOfertaCaixa();
+				if(ofrCaixa != null && ofrCaixa.getIbanDevolucionClienteAlq() != null){
+					resultado = true;
+				}
+			}
+		}
+
+		return resultado;
 	}
 }

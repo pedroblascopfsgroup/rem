@@ -248,6 +248,17 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 							}
 						},
 						{
+                            xtype: 'textfieldbase',
+                            fieldLabel:  HreRem.i18n('fieldlabel.iban.devolucion.cliente'),
+                            bind:{
+                                value:'{datosbasicosoferta.ibanDevolucionCliente}',
+                                hidden: '{!esBankiaAlquilerOAlquilerNoComercial}'
+                            },
+                            listeners: {
+                                'focusleave': 'checkIbanDevolucion'
+                            }
+                        },
+						{
 							bind : {hidden : '{!esTipoAlquiler}'}
 						}
 						

@@ -211,6 +211,7 @@ public class DtoDatosBasicosOferta extends WebDto {
 	private String origenContratoEccDescripcion;
 	private String suborigenContratoEccCodigo;
 	private String suborigenContratoEccDescripcion;
+	private String ibanDevolucionCliente;
 	
 	public Boolean getEstadoAprobadoLbk() {
 		return estadoAprobadoLbk;
@@ -1054,6 +1055,14 @@ public class DtoDatosBasicosOferta extends WebDto {
 
 	public void setSuborigenContratoEccDescripcion(String suborigenContratoEccDescripcion) {
 		this.suborigenContratoEccDescripcion = suborigenContratoEccDescripcion;
+	}
+
+	public String getIbanDevolucionCliente() {
+		return ibanDevolucionCliente;
+	}
+
+	public void setIbanDevolucionCliente(String ibanDevolucionCliente) {
+		this.ibanDevolucionCliente = ibanDevolucionCliente;
 	}
 	
 }

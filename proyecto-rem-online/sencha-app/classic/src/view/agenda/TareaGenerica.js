@@ -5172,15 +5172,8 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 	
 	T018_EsperaComitePosesionesValidacion: function(){
 		var me = this;
-		
-		var aprueba = me.down('[name=aprueba]');
-			
-		if($AU.userHasFunction('FUNC_AVANZA_FORMALIZACION_ALQUILER_NC_BC')){
-			me.desbloquearCampo(aprueba);
-		} else {
-			me.bloquearCampo(aprueba);
-		}
-
+		var justificacion = me.down('[name=justificacion]');
+        me.campoObligatorio(justificacion);
 	},
 	
 	T018_ConfirmacionBCValidacion: function(){

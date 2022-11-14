@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20220922
+--## FECHA_CREACION=20221114
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-18692
@@ -13,6 +13,7 @@
 --##        0.1 Versión inicial - [HREOS-18692] - Alejandra García
 --##        0.2 Eliminar campo AGA_FECHA_ESCRITURACION al insertar en la ACT_AGA_AGRUPACION_ACTIVO - [HREOS-18692] - Alejandra García
 --##        0.3 Modificar el ROW_NUMBER del 7.2 y las consultas de cuando no viene el AM o la UA - [HREOS-18692] - Alejandra García
+--##        0.4 Cambio de cálculo de comprobación de PAs creadas
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -90,10 +91,10 @@ SALIDA := SALIDA ||'[INFO] 1.2 RELLENAR EL CAMPO PROMOCIÓN_NUEVA EN FUNCIÓN DE
                      FROM '||V_ESQUEMA||'.AUX_BCR_PROM_ALQUI_STOCK AUX
                   )
                   SELECT 
-                        AM.NUM_UNIDAD 
+                     DISTINCT AM.NUM_UNIDAD 
                      ,CASE
-                           WHEN AGR.AGR_ID IS NULL THEN 1
-                           ELSE 0
+                           WHEN AGR.AGR_ID IS NOT NULL AND TAG.DD_TAG_CODIGO = ''16'' AND AGR.AGR_FECHA_BAJA IS NULL AND AGA.AGA_PRINCIPAL = 1 THEN 0
+                           ELSE 1
                         END PROMOCION_NUEVA
                   FROM ACTIVOS_MATRIZ AM
                   JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = AM.NUM_UNIDAD
@@ -104,12 +105,6 @@ SALIDA := SALIDA ||'[INFO] 1.2 RELLENAR EL CAMPO PROMOCIÓN_NUEVA EN FUNCIÓN DE
                      AND AGR.BORRADO = 0
                   LEFT JOIN '||V_ESQUEMA||'.DD_TAG_TIPO_AGRUPACION TAG ON TAG.DD_TAG_ID = AGR.DD_TAG_ID
                      AND TAG.BORRADO = 0
-                  WHERE AGR.AGR_ID IS NULL
-                  OR
-                  (AGR.AGR_ID IS NOT NULL
-                  AND TAG.DD_TAG_CODIGO = ''16''
-                  AND AGR.AGR_FECHA_BAJA IS NULL
-                  AND AGA.AGA_PRINCIPAL = 1)
                ) T2 ON (T1.NUM_UNIDAD = T2.NUM_UNIDAD)
                WHEN MATCHED THEN UPDATE SET
                   T1.PROMOCION_NUEVA = T2.PROMOCION_NUEVA';

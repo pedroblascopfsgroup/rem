@@ -385,6 +385,9 @@ Ext.define('HreRem.model.DatosBasicosOferta', {
     			name: 'fechaLiquida',
     			type:'date', 
         		dateFormat: 'c'
+    		},
+    		{
+    		    name: 'ibanDevolucionCliente'
     		}
     ],
 

@@ -1503,6 +1503,18 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					ofrCx.setRiesgoOperacion(riesgoOperacion);
 				}
 			}
+			if(dto.getIbanDevolucionCliente() != null){
+				ofrCx.setIbanDevolucionClienteAlq(dto.getIbanDevolucionCliente());
+			}
+			Fianzas fianza = genericDao.get(Fianzas.class, genericDao.createFilter(FilterType.EQUALS,"oferta.id",oferta.getId()));
+
+			if(fianza != null){
+				if(dto.getIbanDevolucionCliente() != null){
+					fianza.setIbanDevolucion(dto.getIbanDevolucionCliente());
+					genericDao.save(Fianzas.class, fianza);
+				}
+			}
+
 		}
 		
 		if(dto.getClasificacionCodigo() != null) {
@@ -1529,7 +1541,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			DDRetencionImpuestos retencionImpuestos = genericDao.get(DDRetencionImpuestos.class, genericDao.createFilter(FilterType.EQUALS,"codigo",  dto.getCodigoRetenciondeImpuestos()));
 			oferta.setRetencionImpuestos(retencionImpuestos);;
 		}
-		
+
 		if(dto.getCodigoGrupoContratoCBK() != null){
 			oferta.setGrupoContratoCBK(DDSinSiNo.CODIGO_SI.equals(dto.getCodigoGrupoContratoCBK()));
 		}
@@ -2450,6 +2462,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				if (ofrCaixa.getRiesgoOperacion() != null) {
 					dto.setRiesgoOperacionBcCodigo(ofrCaixa.getRiesgoOperacion().getCodigo());
 					dto.setRiesgoOperacionBcDescripcion(ofrCaixa.getRiesgoOperacion().getDescripcion());
+				}
+				if(ofrCaixa.getIbanDevolucionClienteAlq() != null){
+					dto.setIbanDevolucionCliente(ofrCaixa.getIbanDevolucionClienteAlq());
 				}
 			}
 

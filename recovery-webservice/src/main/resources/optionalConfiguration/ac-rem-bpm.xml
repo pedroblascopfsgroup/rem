@@ -908,6 +908,10 @@
             	def funcionesTramitesManager = ctx.getBean("funcionesTramitesManager");
 				return funcionesTramitesManager.estaPermitidoClaseCondicion(tareaExterna);
 			}
+			def tieneIbanInformado = {
+            	def funcionesTramitesManager = ctx.getBean("funcionesTramitesManager");
+				return funcionesTramitesManager.tieneIbanInformado(tareaExterna);
+			}
            
   			 ]]></value>
   		</list>

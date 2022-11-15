@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20221026
+--## FECHA_CREACION=20221115
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-18793
@@ -11,6 +11,7 @@
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial - [HREOS-18793] - Alejandra García
+--##        0.2 Añadir nuevos campos - [HREOS-18793] - Alejandra García
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -497,6 +498,10 @@ SALIDA := SALIDA || '[INFO] 6º BIE_DATOS_REGISTRALES'||CHR(10);
                            ,BIE.BIE_DREG_TOMO
                            ,BIE.BIE_DREG_LIBRO
                            ,BIE.BIE_DREG_FOLIO
+                           ,BIE.BIE_DREG_INSCRIPCION
+                           ,BIE.BIE_DREG_FECHA_INSCRIPCION
+                           ,BIE.BIE_DREG_NUM_REGISTRO
+                           ,BIE.BIE_DREG_MUNICIPIO_LIBRO
                      FROM ACTIVOS_MATRIZ AM 
                      JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = AM.NUM_IDENTIFICATIVO  
                            AND ACT.BORRADO = 0
@@ -513,6 +518,10 @@ SALIDA := SALIDA || '[INFO] 6º BIE_DATOS_REGISTRALES'||CHR(10);
                            ,BAM.BIE_DREG_TOMO
                            ,BAM.BIE_DREG_LIBRO
                            ,BAM.BIE_DREG_FOLIO
+                           ,BAM.BIE_DREG_INSCRIPCION
+                           ,BAM.BIE_DREG_FECHA_INSCRIPCION
+                           ,BAM.BIE_DREG_NUM_REGISTRO
+                           ,BAM.BIE_DREG_MUNICIPIO_LIBRO
                      FROM BIE_ACTIVO_MATRIZ BAM        
                      JOIN '||V_ESQUEMA||'.AUX_APR_BCR_STOCK AUX ON AUX.NUM_UNIDAD = BAM.NUM_IDENTIFICATIVO   
                      JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = AUX.NUM_IDENTIFICATIVO  
@@ -525,6 +534,10 @@ SALIDA := SALIDA || '[INFO] 6º BIE_DATOS_REGISTRALES'||CHR(10);
                   ,T1.BIE_DREG_TOMO = T2.BIE_DREG_TOMO
                   ,T1.BIE_DREG_LIBRO = T2.BIE_DREG_LIBRO
                   ,T1.BIE_DREG_FOLIO = T2.BIE_DREG_FOLIO
+                  ,T1.BIE_DREG_INSCRIPCION = T2.BIE_DREG_INSCRIPCION
+                  ,T1.BIE_DREG_FECHA_INSCRIPCION = T2.BIE_DREG_FECHA_INSCRIPCION
+                  ,T1.BIE_DREG_NUM_REGISTRO = T2.BIE_DREG_NUM_REGISTRO
+                  ,T1.BIE_DREG_MUNICIPIO_LIBRO = T2.BIE_DREG_MUNICIPIO_LIBRO
                   ,T1.USUARIOMODIFICAR = ''SP_COPIA_DATOS_ACT_MATRIZ''
                   ,T1.FECHAMODIFICAR = SYSDATE';
    EXECUTE IMMEDIATE V_MSQL;
@@ -560,6 +573,8 @@ SALIDA := SALIDA || '[INFO] 7º ACT_REG_INFO_REGISTRAL'||CHR(10);
                            ,REG.TIENE_ANEJOS_REGISTRALES
                            ,0 REG_SUPERFICIE_ELEM_COMUN
                            ,0 REG_SUPERFICIE_PARCELA
+                           ,REG.REG_NOMBRE_REGISTRO
+                           ,REG.REG_NUMERO_REGISTRO
                      FROM ACTIVOS_MATRIZ AM 
                      JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = AM.NUM_IDENTIFICATIVO  
                            AND ACT.BORRADO = 0
@@ -582,6 +597,8 @@ SALIDA := SALIDA || '[INFO] 7º ACT_REG_INFO_REGISTRAL'||CHR(10);
                            ,RAM.TIENE_ANEJOS_REGISTRALES
                            ,RAM.REG_SUPERFICIE_ELEM_COMUN
                            ,RAM.REG_SUPERFICIE_PARCELA
+                           ,RAM.REG_NOMBRE_REGISTRO
+                           ,RAM.REG_NUMERO_REGISTRO
                      FROM REG_ACTIVO_MATRIZ RAM        
                      JOIN '||V_ESQUEMA||'.AUX_APR_BCR_STOCK AUX ON AUX.NUM_UNIDAD = RAM.NUM_IDENTIFICATIVO   
                      JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = AUX.NUM_IDENTIFICATIVO  
@@ -600,6 +617,8 @@ SALIDA := SALIDA || '[INFO] 7º ACT_REG_INFO_REGISTRAL'||CHR(10);
                   ,T1.TIENE_ANEJOS_REGISTRALES = T2.TIENE_ANEJOS_REGISTRALES
                   ,T1.REG_SUPERFICIE_ELEM_COMUN = T2.REG_SUPERFICIE_ELEM_COMUN
                   ,T1.REG_SUPERFICIE_PARCELA = T2.REG_SUPERFICIE_PARCELA
+                  ,T1.REG_NOMBRE_REGISTRO = T2.REG_NOMBRE_REGISTRO
+                  ,T1.REG_NUMERO_REGISTRO = T2.REG_NUMERO_REGISTRO
                   ,T1.USUARIOMODIFICAR = ''SP_COPIA_DATOS_ACT_MATRIZ''
                   ,T1.FECHAMODIFICAR = SYSDATE';
    EXECUTE IMMEDIATE V_MSQL;
@@ -733,7 +752,43 @@ SALIDA := SALIDA || '[INFO] 9º ACT_AJD_ADJJUDICIAL'||CHR(10);
                   ,T1.DD_PLA_ID = T2.DD_PLA_ID
                   ,T1.AJD_PROCURADOR = T2.AJD_PROCURADOR
                   ,T1.USUARIOMODIFICAR = ''SP_COPIA_DATOS_ACT_MATRIZ''
-                  ,T1.FECHAMODIFICAR = SYSDATE';
+                  ,T1.FECHAMODIFICAR = SYSDATE
+               WHEN NOT MATCHED THEN 
+               INSERT(
+                   AJD_ID
+                  ,BIE_ADJ_ID
+                  ,AJD_EXP_DEF_TESTI
+                  ,DD_EEJ_ID
+                  ,DD_EDJ_ID
+                  ,AJD_FECHA_ADJUDICACION
+                  ,AJD_ID_ASUNTO
+                  ,DD_JUZ_ID
+                  ,AJD_LETRADO
+                  ,AJD_NUM_AUTO
+                  ,DD_PLA_ID
+                  ,AJD_PROCURADOR
+                  ,VERSION
+                  ,USUARIOCREAR
+                  ,FECHACREAR
+                  ,BORRADO
+               )VALUES(
+                  '||V_ESQUEMA||'.S_ACT_AJD_ADJJUDICIAL.NEXTVAL  
+                  ,T2.BIE_ADJ_ID
+                  ,T2.AJD_EXP_DEF_TESTI
+                  ,T2.DD_EEJ_ID
+                  ,T2.DD_EDJ_ID
+                  ,T2.AJD_FECHA_ADJUDICACION
+                  ,T2.AJD_ID_ASUNTO
+                  ,T2.DD_JUZ_ID
+                  ,T2.AJD_LETRADO
+                  ,T2.AJD_NUM_AUTO
+                  ,T2.DD_PLA_ID
+                  ,T2.AJD_PROCURADOR
+                  ,0
+                  ,''SP_COPIA_DATOS_ACT_MATRIZ''
+                  ,SYSDATE
+                  ,0
+               )';
    EXECUTE IMMEDIATE V_MSQL;
 
 DBMS_OUTPUT.PUT_LINE('[INFO] '||SQL%ROWCOUNT||' REGISTROS MODIFICADOS EN ACT_AJD_ADJJUDICIAL');  
@@ -794,7 +849,34 @@ SALIDA := SALIDA || '[INFO] 10º ACT_ADN_ADJNOJUDICIAL'||CHR(10);
                   ,T1.ADN_TRAMITADOR_TITULO = T2.ADN_TRAMITADOR_TITULO
                   ,T1.ADN_VALOR_ADQUISICION = T2.ADN_VALOR_ADQUISICION
                   ,T1.USUARIOMODIFICAR = ''SP_COPIA_DATOS_ACT_MATRIZ''
-                  ,T1.FECHAMODIFICAR = SYSDATE';
+                  ,T1.FECHAMODIFICAR = SYSDATE
+               WHEN NOT MATCHED THEN 
+               INSERT(
+                   ADN_ID
+                  ,ADN_EXP_DEF_TESTI
+                  ,DD_EEJ_ID
+                  ,ADN_FECHA_FIRMA_TITULO
+                  ,ADN_FECHA_TITULO
+                  ,ADN_NUM_REFERENCIA
+                  ,ADN_TRAMITADOR_TITULO
+                  ,ADN_VALOR_ADQUISICION
+                  ,VERSION
+                  ,USUARIOCREAR
+                  ,FECHACREAR
+                  ,BORRADO
+               )VALUES(
+                  '||V_ESQUEMA||'.S_ACT_ADN_ADJNOJUDICIAL.NEXTVAL  
+                  ,T2.ADN_EXP_DEF_TESTI
+                  ,T2.DD_EEJ_ID
+                  ,T2.ADN_FECHA_FIRMA_TITULO
+                  ,T2.ADN_FECHA_TITULO
+                  ,T2.ADN_NUM_REFERENCIA
+                  ,T2.ADN_TRAMITADOR_TITULO
+                  ,T2.ADN_VALOR_ADQUISICION
+                  ,0
+                  ,''SP_COPIA_DATOS_ACT_MATRIZ''
+                  ,SYSDATE
+                  ,0)';
    EXECUTE IMMEDIATE V_MSQL;
 
 DBMS_OUTPUT.PUT_LINE('[INFO] '||SQL%ROWCOUNT||' REGISTROS MODIFICADOS EN ACT_ADN_ADJNOJUDICIAL');  
@@ -1698,6 +1780,9 @@ SALIDA := SALIDA || '[INFO] 24º ACT_ACTIVO_CAIXA'||CHR(10);
                            AM.NUM_IDENTIFICATIVO 
                            ,CAIXA.DD_ETP_ID
                            ,CAIXA.FEC_EST_POSESORIO_BC
+                           ,CAIXA.DD_SOR_ID
+                           ,CAIXA.DD_BOR_ID
+                           ,CAIXA.DD_CBC_ID
                      FROM ACTIVOS_MATRIZ AM 
                      JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = AM.NUM_IDENTIFICATIVO  
                            AND ACT.BORRADO = 0
@@ -1710,6 +1795,9 @@ SALIDA := SALIDA || '[INFO] 24º ACT_ACTIVO_CAIXA'||CHR(10);
                            ,ACT.ACT_ID
                            ,CAM.DD_ETP_ID
                            ,CAM.FEC_EST_POSESORIO_BC
+                           ,CAM.DD_SOR_ID
+                           ,CAM.DD_BOR_ID
+                           ,CAM.DD_CBC_ID
                      FROM CAIXA_ACTIVO_MATRIZ CAM        
                      JOIN '||V_ESQUEMA||'.AUX_APR_BCR_STOCK AUX ON AUX.NUM_UNIDAD = CAM.NUM_IDENTIFICATIVO
                      JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = AUX.NUM_IDENTIFICATIVO  
@@ -1718,6 +1806,9 @@ SALIDA := SALIDA || '[INFO] 24º ACT_ACTIVO_CAIXA'||CHR(10);
                WHEN MATCHED THEN UPDATE SET
                   T1.DD_ETP_ID = T2.DD_ETP_ID
                   ,T1.FEC_EST_POSESORIO_BC = T2.FEC_EST_POSESORIO_BC
+                  ,T1.DD_SOR_ID = T2.DD_SOR_ID
+                  ,T1.DD_BOR_ID = T2.DD_BOR_ID
+                  ,T1.DD_CBC_ID = T2.DD_CBC_ID
                   ,T1.USUARIOMODIFICAR = ''SP_COPIA_DATOS_ACT_MATRIZ''
                   ,T1.FECHAMODIFICAR = SYSDATE';
    EXECUTE IMMEDIATE V_MSQL;
@@ -1778,6 +1869,57 @@ SALIDA := SALIDA || '[INFO] 25º ACT_HOT_HIST_OCUPADO_TITULO'||CHR(10);
 
 DBMS_OUTPUT.PUT_LINE('[INFO] '||SQL%ROWCOUNT||' REGISTROS MODIFICADOS EN ACT_HOT_HIST_OCUPADO_TITULO');  
 SALIDA := SALIDA || '   [INFO] REGISTROS MODIFICADOS EN ACT_HOT_HIST_OCUPADO_TITULO: '|| SQL%ROWCOUNT|| CHR(10);
+SALIDA := SALIDA ||' '||CHR(10);
+
+
+--26º ACT_PAC_PROPIETARIO_ACTIVO
+DBMS_OUTPUT.PUT_LINE('[INFO] 26º ACT_PAC_PROPIETARIO_ACTIVO');  
+SALIDA := '[INICIO]'||CHR(10);
+SALIDA := SALIDA || '[INFO] 26º ACT_PAC_PROPIETARIO_ACTIVO'||CHR(10);
+
+   V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.ACT_PAC_PROPIETARIO_ACTIVO T1
+               USING (
+                  WITH ACTIVOS_MATRIZ AS (
+                     SELECT DISTINCT
+                           AM.NUM_UNIDAD NUM_IDENTIFICATIVO
+                     FROM '||V_ESQUEMA||'.AUX_BCR_PROM_ALQUI_STOCK AM
+                  ), PAC_ACTIVO_MATRIZ AS ( 
+                     SELECT 
+                           AM.NUM_IDENTIFICATIVO 
+                           ,PAC.DD_TGP_ID
+                           ,PAC.PAC_PORC_PROPIEDAD
+                           ,PAC.PAC_ANYO_CONCES
+                           ,PAC.PAC_FEC_FIN_CONCES
+                     FROM ACTIVOS_MATRIZ AM 
+                     JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = AM.NUM_IDENTIFICATIVO  
+                           AND ACT.BORRADO = 0
+                     JOIN '||V_ESQUEMA||'.ACT_PAC_PROPIETARIO_ACTIVO PAC ON PAC.ACT_ID = ACT.ACT_ID   
+                           AND PAC.BORRADO = 0
+                  )
+                     SELECT 
+                           AUX.NUM_IDENTIFICATIVO 
+                           ,AUX.NUM_UNIDAD 
+                           ,ACT.ACT_ID
+                           ,PAM.DD_TGP_ID
+                           ,PAM.PAC_PORC_PROPIEDAD
+                           ,PAM.PAC_ANYO_CONCES
+                           ,PAM.PAC_FEC_FIN_CONCES
+                     FROM PAC_ACTIVO_MATRIZ PAM        
+                     JOIN '||V_ESQUEMA||'.AUX_APR_BCR_STOCK AUX ON AUX.NUM_UNIDAD = PAM.NUM_IDENTIFICATIVO
+                     JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = AUX.NUM_IDENTIFICATIVO  
+                           AND ACT.BORRADO = 0  
+               ) T2 ON (T1.ACT_ID = T2.ACT_ID)
+               WHEN MATCHED THEN UPDATE SET
+                   T1.DD_TGP_ID = T2.DD_TGP_ID
+                  ,T1.PAC_PORC_PROPIEDAD = T2.PAC_PORC_PROPIEDAD
+                  ,T1.PAC_ANYO_CONCES = T2.PAC_ANYO_CONCES
+                  ,T1.PAC_FEC_FIN_CONCES = T2.PAC_FEC_FIN_CONCES
+                  ,T1.USUARIOMODIFICAR = ''SP_COPIA_DATOS_ACT_MATRIZ''
+                  ,T1.FECHAMODIFICAR = SYSDATE';
+   EXECUTE IMMEDIATE V_MSQL;
+
+DBMS_OUTPUT.PUT_LINE('[INFO] '||SQL%ROWCOUNT||' REGISTROS MODIFICADOS EN ACT_PAC_PROPIETARIO_ACTIVO');  
+SALIDA := SALIDA || '   [INFO] REGISTROS MODIFICADOS EN ACT_PAC_PROPIETARIO_ACTIVO: '|| SQL%ROWCOUNT|| CHR(10);
 SALIDA := SALIDA ||' '||CHR(10);
 
 COMMIT;

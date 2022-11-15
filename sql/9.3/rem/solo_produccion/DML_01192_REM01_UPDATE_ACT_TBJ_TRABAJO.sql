@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Juan Bautista Alfonso
---## FECHA_CREACION=20221116
+--## FECHA_CREACION=20221114
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-12523
@@ -128,7 +128,16 @@ and TBJ.tbj_id not in (992358,
 985008,
 1124082,
 885868,
-988229)
+988229,
+1002658,
+990192,
+989726,
+883078,
+981149,
+944022,
+985190,
+1001820
+)
 
                             ) T2
                         ON (T1.TBJ_ID = T2.TBJ_ID)

@@ -757,6 +757,7 @@ SALIDA := SALIDA || '[INFO] 9º ACT_AJD_ADJJUDICIAL'||CHR(10);
                INSERT(
                    AJD_ID
                   ,BIE_ADJ_ID
+                  ,ACT_ID
                   ,AJD_EXP_DEF_TESTI
                   ,DD_EEJ_ID
                   ,DD_EDJ_ID
@@ -774,6 +775,7 @@ SALIDA := SALIDA || '[INFO] 9º ACT_AJD_ADJJUDICIAL'||CHR(10);
                )VALUES(
                   '||V_ESQUEMA||'.S_ACT_AJD_ADJJUDICIAL.NEXTVAL  
                   ,T2.BIE_ADJ_ID
+                  ,T2.ACT_ID
                   ,T2.AJD_EXP_DEF_TESTI
                   ,T2.DD_EEJ_ID
                   ,T2.DD_EDJ_ID
@@ -853,6 +855,7 @@ SALIDA := SALIDA || '[INFO] 10º ACT_ADN_ADJNOJUDICIAL'||CHR(10);
                WHEN NOT MATCHED THEN 
                INSERT(
                    ADN_ID
+                  ,ACT_ID
                   ,ADN_EXP_DEF_TESTI
                   ,DD_EEJ_ID
                   ,ADN_FECHA_FIRMA_TITULO
@@ -866,6 +869,7 @@ SALIDA := SALIDA || '[INFO] 10º ACT_ADN_ADJNOJUDICIAL'||CHR(10);
                   ,BORRADO
                )VALUES(
                   '||V_ESQUEMA||'.S_ACT_ADN_ADJNOJUDICIAL.NEXTVAL  
+                  ,T2.ACT_ID
                   ,T2.ADN_EXP_DEF_TESTI
                   ,T2.DD_EEJ_ID
                   ,T2.ADN_FECHA_FIRMA_TITULO

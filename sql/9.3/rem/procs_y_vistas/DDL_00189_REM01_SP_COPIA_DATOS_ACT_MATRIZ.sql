@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20221115
+--## FECHA_CREACION=20221116
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-18793
@@ -1518,7 +1518,7 @@ DBMS_OUTPUT.PUT_LINE('[INFO] 20º BIE_LOCALIZACION');
 SALIDA := '[INICIO]'||CHR(10);
 SALIDA := SALIDA || '[INFO] 20º BIE_LOCALIZACION'||CHR(10);
 
-   V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.BIE_LOCALIZACION T1
+/*   V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.BIE_LOCALIZACION T1
                USING (
                   WITH ACTIVOS_MATRIZ AS (
                      SELECT DISTINCT
@@ -1584,7 +1584,7 @@ SALIDA := SALIDA || '[INFO] 20º BIE_LOCALIZACION'||CHR(10);
                   ,T1.DD_UPO_ID = T2.DD_UPO_ID
                   ,T1.USUARIOMODIFICAR = ''SP_COPIA_DATOS_ACT_MATRIZ''
                   ,T1.FECHAMODIFICAR = SYSDATE';
-   EXECUTE IMMEDIATE V_MSQL;
+   EXECUTE IMMEDIATE V_MSQL;*/
 
 DBMS_OUTPUT.PUT_LINE('[INFO] '||SQL%ROWCOUNT||' REGISTROS MODIFICADOS EN BIE_LOCALIZACION');  
 SALIDA := SALIDA || '   [INFO] REGISTROS MODIFICADOS EN BIE_LOCALIZACION: '|| SQL%ROWCOUNT|| CHR(10);
@@ -1606,8 +1606,8 @@ SALIDA := SALIDA || '[INFO] 21º ACT_LOC_LOCALIZACION'||CHR(10);
                      SELECT 
                            AM.NUM_IDENTIFICATIVO  
                            ,LOC.BIE_LOC_ID
-                           ,LOC.LOC_LONGITUD
-                           ,LOC.LOC_LATITUD
+                           --,LOC.LOC_LONGITUD
+                           --,LOC.LOC_LATITUD
                            ,LOC.LOC_DIST_PLAYA
                            ,LOC.DD_TUB_ID
                      FROM ACTIVOS_MATRIZ AM 
@@ -1621,8 +1621,8 @@ SALIDA := SALIDA || '[INFO] 21º ACT_LOC_LOCALIZACION'||CHR(10);
                            ,AUX.NUM_UNIDAD  
                            ,ACT.ACT_ID
                            ,LAM.BIE_LOC_ID
-                           ,LAM.LOC_LONGITUD
-                           ,LAM.LOC_LATITUD
+                           --,LAM.LOC_LONGITUD
+                           --,LAM.LOC_LATITUD
                            ,LAM.LOC_DIST_PLAYA
                            ,LAM.DD_TUB_ID
                      FROM LOC_ACTIVO_MATRIZ LAM        
@@ -1632,8 +1632,8 @@ SALIDA := SALIDA || '[INFO] 21º ACT_LOC_LOCALIZACION'||CHR(10);
                ) T2 ON (T1.ACT_ID = T2.ACT_ID)
                WHEN MATCHED THEN UPDATE SET
                   T1.BIE_LOC_ID = T2.BIE_LOC_ID
-                  ,T1.LOC_LONGITUD = T2.LOC_LONGITUD
-                  ,T1.LOC_LATITUD = T2.LOC_LATITUD
+                  --,T1.LOC_LONGITUD = T2.LOC_LONGITUD
+                  --,T1.LOC_LATITUD = T2.LOC_LATITUD
                   ,T1.LOC_DIST_PLAYA = T2.LOC_DIST_PLAYA
                   ,T1.DD_TUB_ID = T2.DD_TUB_ID
                   ,T1.USUARIOMODIFICAR = ''SP_COPIA_DATOS_ACT_MATRIZ''

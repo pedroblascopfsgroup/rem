@@ -1605,7 +1605,7 @@ SALIDA := SALIDA || '[INFO] 21º ACT_LOC_LOCALIZACION'||CHR(10);
                   ), LOC_ACTIVO_MATRIZ AS ( 
                      SELECT 
                            AM.NUM_IDENTIFICATIVO  
-                           ,LOC.BIE_LOC_ID
+                           --,LOC.BIE_LOC_ID
                            --,LOC.LOC_LONGITUD
                            --,LOC.LOC_LATITUD
                            ,LOC.LOC_DIST_PLAYA
@@ -1620,7 +1620,7 @@ SALIDA := SALIDA || '[INFO] 21º ACT_LOC_LOCALIZACION'||CHR(10);
                            AUX.NUM_IDENTIFICATIVO BIE_NUMERO_ACTIVO
                            ,AUX.NUM_UNIDAD  
                            ,ACT.ACT_ID
-                           ,LAM.BIE_LOC_ID
+                           --,LAM.BIE_LOC_ID
                            --,LAM.LOC_LONGITUD
                            --,LAM.LOC_LATITUD
                            ,LAM.LOC_DIST_PLAYA
@@ -1631,10 +1631,10 @@ SALIDA := SALIDA || '[INFO] 21º ACT_LOC_LOCALIZACION'||CHR(10);
                            AND ACT.BORRADO = 0    
                ) T2 ON (T1.ACT_ID = T2.ACT_ID)
                WHEN MATCHED THEN UPDATE SET
-                  T1.BIE_LOC_ID = T2.BIE_LOC_ID
+                  --T1.BIE_LOC_ID = T2.BIE_LOC_ID
                   --,T1.LOC_LONGITUD = T2.LOC_LONGITUD
                   --,T1.LOC_LATITUD = T2.LOC_LATITUD
-                  ,T1.LOC_DIST_PLAYA = T2.LOC_DIST_PLAYA
+                  T1.LOC_DIST_PLAYA = T2.LOC_DIST_PLAYA
                   ,T1.DD_TUB_ID = T2.DD_TUB_ID
                   ,T1.USUARIOMODIFICAR = ''SP_COPIA_DATOS_ACT_MATRIZ''
                   ,T1.FECHAMODIFICAR = SYSDATE';

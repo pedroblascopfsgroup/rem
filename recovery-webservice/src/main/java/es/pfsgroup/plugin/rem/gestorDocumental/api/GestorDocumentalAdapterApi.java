@@ -151,6 +151,6 @@ public interface GestorDocumentalAdapterApi {
 	
 	public Integer crearContenedorConductasInapropiadas(ConductasInapropiadas coi, String username) throws GestorDocumentalException;
 	
-	Long uploadDocumentoConductasInapropiadas(String proveedorCIF, WebFileItem webFileItem, String userLogin, String matricula, DtoMetadatosEspecificos dtoMetadatos) throws Exception;
+	Long uploadDocumentoConductasInapropiadas(Long id, WebFileItem webFileItem, String userLogin, String matricula, DtoMetadatosEspecificos dtoMetadatos) throws Exception;
 
 }

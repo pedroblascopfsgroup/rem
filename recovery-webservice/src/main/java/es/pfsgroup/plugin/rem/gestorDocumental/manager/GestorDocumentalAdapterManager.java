@@ -1861,11 +1861,11 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 	}
 
 	@Override
-	public Long uploadDocumentoConductasInapropiadas(String proveedorCIF, WebFileItem webFileItem, String userLogin,
+	public Long uploadDocumentoConductasInapropiadas(Long id, WebFileItem webFileItem, String userLogin,
 			String matricula, DtoMetadatosEspecificos dtoMetadatos) throws Exception, GestorDocumentalException {
 		
 		RecoveryToGestorDocAssembler recoveryToGestorDocAssembler = new RecoveryToGestorDocAssembler(appProperties);
-		CabeceraPeticionRestClientDto cabecera = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(proveedorCIF, GestorDocumentalConstants.CODIGO_TIPO_CONDUCTAS_INAPROPIADAS, GestorDocumentalConstants.CODIGO_CLASE_EXPEDIENTE_PROYECTO);
+		CabeceraPeticionRestClientDto cabecera = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(id.toString(), GestorDocumentalConstants.CODIGO_TIPO_CONDUCTAS_INAPROPIADAS, GestorDocumentalConstants.CODIGO_CLASE_EXPEDIENTE_PROYECTO);
 		CrearDocumentoDto crearDoc = recoveryToGestorDocAssembler.getCrearDocumentoDto(webFileItem, userLogin, matricula);
 		RespuestaCrearDocumento respuestaCrearDocumento = gestorDocumentalApi.crearDocumento(cabecera, crearDoc);
 		

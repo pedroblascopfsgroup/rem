@@ -30,6 +30,7 @@ import es.pfsgroup.plugin.rem.model.DtoPersonaContacto;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.VHistoricoBloqueosApis;
 import es.pfsgroup.plugin.rem.model.dd.DDCodigoPostal;
+import org.springframework.transaction.annotation.Transactional;
 
 public interface ProveedoresApi {
 	
@@ -337,4 +338,6 @@ public interface ProveedoresApi {
 	
 	List<DtoCodigoPostalCombo> getComboCodigoPostalMultiple(String codigoMunicipio);
 
+    @Transactional(readOnly = false)
+    boolean deleteAdjuntoConductasInapropiadas(DtoAdjunto dtoAdjunto);
 }

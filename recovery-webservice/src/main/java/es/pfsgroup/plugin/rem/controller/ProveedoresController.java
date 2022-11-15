@@ -929,4 +929,19 @@ public class ProveedoresController extends ParadiseJsonController {
 	public ModelAndView getComboCodigoPostalMultiple(String codigoMunicipio){
 		return createModelAndViewJson(new ModelMap("data", proveedoresApi.getComboCodigoPostalMultiple(codigoMunicipio)));
 	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView deleteAdjuntoConductasInapropiadas(DtoAdjunto dtoAdjunto, ModelMap model) {
+		try {
+			boolean success = proveedoresApi.deleteAdjuntoConductasInapropiadas(dtoAdjunto);
+			model.put("success", success);
+
+		} catch (Exception e) {
+			logger.error("Error en ProveedoresController", e);
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+	}
 }

@@ -32,8 +32,6 @@ import es.capgemini.pfs.persona.model.DDTipoPersona;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.HQLBuilder;
-import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
@@ -45,7 +43,6 @@ import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
-import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
@@ -112,7 +109,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDResultadoProcesoBlanqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivosCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoBloqueoApi;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDireccionProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoConductasInapropiadas;
@@ -2137,12 +2133,11 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 			if(gestorDocumentalActivado) {
 				try{
 					gestorDocumentalAdapterApi.crearContenedorConductasInapropiadas(coi, username);
-					idDocRestClient = gestorDocumentalAdapterApi.uploadDocumentoConductasInapropiadas(coi.getProveedor().getDocIdentificativo(), webFileItem, username, tipoDocConductasInapropiadas.getCodigoMatricula(), null);
+					idDocRestClient = gestorDocumentalAdapterApi.uploadDocumentoConductasInapropiadas(coi.getId(), webFileItem, username, tipoDocConductasInapropiadas.getCodigoMatricula(), null);
 					this.uploadAdjuntoConductasInapropiadas(webFileItem, idDocRestClient, coi, tipoDocConductasInapropiadas);
 				}catch(GestorDocumentalException gex){
-					if (GestorDocumentalException.CODIGO_ERROR_CONTENEDOR_NO_EXISTE.equals(gex.getCodigoError())
-							&& gex.getMessage().contains("already exists")) {
-						idDocRestClient = gestorDocumentalAdapterApi.uploadDocumentoConductasInapropiadas(coi.getProveedor().getDocIdentificativo(), webFileItem, username, tipoDocConductasInapropiadas.getCodigoMatricula(), null);
+					if (gex.getMessage().contains("already exists")) {
+						idDocRestClient = gestorDocumentalAdapterApi.uploadDocumentoConductasInapropiadas(coi.getId(), webFileItem, username, tipoDocConductasInapropiadas.getCodigoMatricula(), null);
 						this.uploadAdjuntoConductasInapropiadas(webFileItem, idDocRestClient, coi, tipoDocConductasInapropiadas);
 					}
 				}
@@ -2611,11 +2606,49 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 				adjuntoConductasInapropiadas.setNombre(webFileItem.getFileItem().getFileName());
 				adjuntoConductasInapropiadas.setDescripcion(webFileItem.getParameter("descripcion"));
 				adjuntoConductasInapropiadas.setFechaDocumento(new Date());
+
+				genericDao.save(AdjuntoConductasInapropiadas.class, adjuntoConductasInapropiadas);
+
+				coi.setAdjunto(adjuntoConductasInapropiadas);
+				genericDao.save(ConductasInapropiadas.class, coi);
 			}
 		} catch (Exception e) {
 			logger.error("Error en ProveedoresManager", e);
 		}
 		
 		return null;
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public boolean deleteAdjuntoConductasInapropiadas(DtoAdjunto dtoAdjunto) {
+		boolean borrado = true;
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+
+		Filter filtroAdjuntoConductas = genericDao.createFilter(FilterType.EQUALS, "adjunto.id", dtoAdjunto.getId());
+		ConductasInapropiadas conductaInapropiada = genericDao.get(ConductasInapropiadas.class, filtroAdjuntoConductas);
+
+		AdjuntoConductasInapropiadas adjunto = null;
+
+		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
+			try {
+				adjunto = genericDao.get(AdjuntoConductasInapropiadas.class, genericDao.createFilter(FilterType.EQUALS, "idDocRestClient", dtoAdjunto.getId()));
+				borrado = gestorDocumentalAdapterApi.borrarAdjunto(adjunto.getIdDocRestClient(), usuarioLogado.getUsername());
+			} catch (Exception e) {
+				logger.error(e.getMessage());
+			}
+		} else {
+			adjunto = genericDao.get(AdjuntoConductasInapropiadas.class, genericDao.createFilter(FilterType.EQUALS, "id", dtoAdjunto.getId()));
+		}
+
+		if (borrado) {
+			if (adjunto == null) { borrado = false; }
+			conductaInapropiada.setAdjunto(null);
+			genericDao.save(ConductasInapropiadas.class, conductaInapropiada);
+			genericDao.delete(AdjuntoConductasInapropiadas.class, genericDao.createFilter(FilterType.EQUALS, "id", dtoAdjunto.getId()));
+
+		}
+
+		return borrado;
 	}
 }

@@ -48,7 +48,7 @@ echo -e "\e[92m\e[1m[INFO]\e[0m Delete compiled content from the output director
 rm -Rf $EXTJS_OUT_FOLDER/*
 
 echo -e "\e[92m\e[1m[INFO]\e[0m Launch Docker container with a process request"
-docker run -u $(id -u):$(id -g) --rm -t -v $EXTJS_IN_FOLDER:/input -v $EXTJS_OUT_FOLDER:/output docker-repo.pfsgroup.es:5000/extjs/cmd-6.0.1.76:1.0 sencha-build.sh $(id -u) $(id -g) $BUILD_MODE $DEBUG_MODE
+docker run -u $(id -u):$(id -g) --rm --ulimit nofile=122880:122880 -t -v $EXTJS_IN_FOLDER:/input -v $EXTJS_OUT_FOLDER:/output docker-repo.pfsgroup.es:5000/extjs/cmd-6.0.1.76:1.0 sencha-build.sh $(id -u) $(id -g) $BUILD_MODE $DEBUG_MODE
 
 echo -e "\e[92m\e[1m[INFO]\e[0m Copy front resources"
 mkdir $EXTJS_OUT_FOLDER/email-attachment

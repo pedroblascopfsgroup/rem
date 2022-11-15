@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Alejandro Valverde
---## FECHA_CREACION=20221111
+--## AUTOR=Alvaro Valero
+--## FECHA_CREACION=20221112
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-18941
+--## INCIDENCIA_LINK=HREOS-18997
 --## PRODUCTO=NO
 --##
 --## Finalidad:
@@ -39,7 +39,7 @@ DECLARE
     V_ENTIDAD_ID NUMBER(16);
 	V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'TAP_TAREA_PROCEDIMIENTO'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
     V_TEXT_CHARS VARCHAR2(2400 CHAR) := 'TAP'; -- Vble. auxiliar para almacenar las 3 letras orientativas de la tabla de ref.
-	V_USUARIO VARCHAR2(50 CHAR) := 'HREOS-18941';
+	V_USUARIO VARCHAR2(50 CHAR) := 'HREOS-18997';
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(800);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(

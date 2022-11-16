@@ -98,12 +98,14 @@ BEGIN
                                  WHEN NOT MATCHED THEN
                                  INSERT  (
                                           NUM_INMUEBLE,
+                                          NUM_UNIDAD,
                                           NUM_IDENTIFICATIVO,                                                                          
                                           STATUS_USUARIO,                                       
                                           INMUEBLE_VACACIONAL
                                           )
                                  VALUES (
                                           us.NUM_INMUEBLE,
+                                          us.NUM_UNIDAD,
                                           us.NUM_IDENTIFICATIVO,                                       
                                           us.STATUS_USUARIO,                                      
                                           us.INMUEBLE_VACACIONAL)';

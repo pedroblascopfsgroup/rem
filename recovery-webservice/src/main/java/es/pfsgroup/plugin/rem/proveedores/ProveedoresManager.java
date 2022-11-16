@@ -2625,27 +2625,30 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 		boolean borrado = true;
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 
-		Filter filtroAdjuntoConductas = genericDao.createFilter(FilterType.EQUALS, "adjunto.id", dtoAdjunto.getId());
-		ConductasInapropiadas conductaInapropiada = genericDao.get(ConductasInapropiadas.class, filtroAdjuntoConductas);
-
 		AdjuntoConductasInapropiadas adjunto = null;
+		Filter filtroAdjuntoConductas = null;
 
 		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
 			try {
+				filtroAdjuntoConductas = genericDao.createFilter(FilterType.EQUALS, "adjunto.idDocRestClient", dtoAdjunto.getId());
 				adjunto = genericDao.get(AdjuntoConductasInapropiadas.class, genericDao.createFilter(FilterType.EQUALS, "idDocRestClient", dtoAdjunto.getId()));
 				borrado = gestorDocumentalAdapterApi.borrarAdjunto(adjunto.getIdDocRestClient(), usuarioLogado.getUsername());
 			} catch (Exception e) {
 				logger.error(e.getMessage());
 			}
 		} else {
+			filtroAdjuntoConductas = genericDao.createFilter(FilterType.EQUALS, "adjunto.id", dtoAdjunto.getId());
 			adjunto = genericDao.get(AdjuntoConductasInapropiadas.class, genericDao.createFilter(FilterType.EQUALS, "id", dtoAdjunto.getId()));
 		}
 
+		ConductasInapropiadas conductaInapropiada = genericDao.get(ConductasInapropiadas.class, filtroAdjuntoConductas);
+
 		if (borrado) {
 			if (adjunto == null) { borrado = false; }
+			Long idConductas = conductaInapropiada.getAdjunto().getId();
 			conductaInapropiada.setAdjunto(null);
 			genericDao.save(ConductasInapropiadas.class, conductaInapropiada);
-			genericDao.delete(AdjuntoConductasInapropiadas.class, genericDao.createFilter(FilterType.EQUALS, "id", dtoAdjunto.getId()));
+			proveedoresDao.deleteConductaById(idConductas);
 
 		}
 

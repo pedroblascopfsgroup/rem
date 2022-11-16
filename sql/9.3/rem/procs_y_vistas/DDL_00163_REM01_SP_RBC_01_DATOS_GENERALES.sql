@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20220404
+--## FECHA_CREACION=20221116
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-17614
+--## INCIDENCIA_LINK=HREOS-18998
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -17,6 +17,7 @@
 --##	      0.5 Filtramos las consultas para que no salgan los activos titulizados - HREOS-15423
 --##        0.6 Se cambian los NIFs de titulizados - [HREOS-15634] - Daniel Algaba
 --##        0.7 Añadido TIPO_VIVIENDA_INF y TIPOLOGIA_EDIFICIO - [HREOS-17614] - Daniel Algaba
+--##        0.8 NUM_UNIDAD - [HREOS-18998] - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -52,9 +53,20 @@ BEGIN
 
        V_MSQL := ' MERGE INTO '|| V_ESQUEMA ||'.AUX_APR_RBC_STOCK aux
 				using (				
-                           
+                  WITH UAS AS (
+                    SELECT ACTAM.ACT_NUM_ACTIVO_CAIXA AM, AGAUA.ACT_ID
+                    FROM '|| V_ESQUEMA ||'.ACT_AGR_AGRUPACION AGR
+                    JOIN '|| V_ESQUEMA ||'.ACT_AGA_AGRUPACION_ACTIVO AGAAM ON AGR.AGR_ID = AGAAM.AGR_ID AND AGAAM.BORRADO = 0 AND AGAAM.AGA_PRINCIPAL = 1
+                    JOIN '|| V_ESQUEMA ||'.ACT_AGA_AGRUPACION_ACTIVO AGAUA ON AGR.AGR_ID = AGAUA.AGR_ID AND AGAUA.BORRADO = 0 AND AGAUA.AGA_PRINCIPAL = 0
+                    JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACTAM ON ACTAM.ACT_ID = AGAAM.ACT_ID AND ACTAM.BORRADO = 0
+                    WHERE AGR.BORRADO = 0
+                    AND AGR.AGR_FECHA_BAJA IS NULL
+                    AND AGR.DD_TAG_ID = (SELECT DD_TAG_ID FROM DD_TAG_TIPO_AGRUPACION WHERE DD_TAG_CODIGO = ''16'')
+                    AND ACTAM.ACT_NUM_ACTIVO_CAIXA IS NOT NULL 
+                 )    
                  SELECT       
                   act.ACT_NUM_ACTIVO as NUM_INMUEBLE,
+                  UAS.AM NUM_UNIDAD,
                   act.ACT_NUM_ACTIVO_CAIXA as NUM_IDENTIFICATIVO,   
                   CASE                  
                   WHEN (SELECT DD_SIN_CODIGO FROM '|| V_ESQUEMA_M ||'.DD_SIN_SINO WHERE DD_SIN_ID=act.ACT_OVN_COMERC) = ''01'' THEN ''S''
@@ -68,6 +80,7 @@ BEGIN
                   JOIN '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO pac ON pac.ACT_ID = act.ACT_ID
                   JOIN '|| V_ESQUEMA ||'.ACT_PAC_PROPIETARIO_ACTIVO ACT_PRO ON ACT_PRO.ACT_ID = ACT.ACT_ID AND ACT_PRO.BORRADO = 0
                   JOIN '|| V_ESQUEMA ||'.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = ACT_PRO.PRO_ID AND PRO.BORRADO = 0
+                  LEFT JOIN UAS ON UAS.ACT_ID = ACT.ACT_ID
                   WHERE act.ACT_NUM_ACTIVO_CAIXA IS NOT NULL
                   AND act.DD_CRA_ID = (SELECT DD_CRA_ID FROM '|| V_ESQUEMA ||'.DD_CRA_CARTERA WHERE DD_CRA_CODIGO = ''03'')
                   AND act.BORRADO=0

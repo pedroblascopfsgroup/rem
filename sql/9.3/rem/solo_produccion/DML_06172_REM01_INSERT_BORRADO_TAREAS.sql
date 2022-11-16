@@ -1,10 +1,10 @@
 --/*
 --######################################### 
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20221027
+--## FECHA_CREACION=20221116
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=0.1
---## INCIDENCIA_LINK=HREOS-18893
+--## INCIDENCIA_LINK=HREOS-18941
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Cerrar tramites en venta.
@@ -13,6 +13,7 @@
 --## VERSIONES:
 --##        0.1 Versión inicial - [HREOS-18797] - PIER GOTTA
 --##        0.2 Correción estados BC y añadir estados Haya - [HREOS-18893] - Alejandra García
+--##        0.3 Añadir la tarea de Agendar y firmar subrogada para poner el estado del procedimiento a Cerrado - [HREOS-18941] - Alejandra García
 --#########################################
 --*/
 
@@ -76,7 +77,12 @@ BEGIN
 	INNER JOIN '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES TAR ON TAR.TAR_ID = TAC.TAR_ID
 	INNER JOIN '||V_ESQUEMA||'.TEX_TAREA_EXTERNA TXT ON TXT.TAR_ID = TAR.TAR_ID
 	INNER JOIN '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP ON TXT.TAP_ID = TAP.TAP_ID
-	INNER JOIN '||V_ESQUEMA||'.APR_AUX_HREOS_18797_2 AUX ON AUX.NUM_OFERTA = OFR.OFR_NUM_OFERTA AND AUX.TAREA_ANTIGUA_TRAMITE = ''T018_CierreContrato''
+	INNER JOIN '||V_ESQUEMA||'.APR_AUX_HREOS_18797_2 AUX ON AUX.NUM_OFERTA = OFR.OFR_NUM_OFERTA
+	LEFT JOIN '||V_ESQUEMA||'.DD_TOA_TIPO_OFR_ALQUILER TOA ON TOA.DD_TOA_ID = OFR.DD_TOA_ID
+		AND TOA.BORRADO = 0
+	WHERE (AUX.TAREA_ANTIGUA_TRAMITE = ''T018_CierreContrato''
+			OR
+		  (AUX.TAREA_ANTIGUA_TRAMITE = ''T018_AgendarYFirmar'' AND TOA.DD_TOA_CODIGO = ''SUB''))	
 	) AUX ON (AUX.TRA_ID = TRA.TRA_ID)
 	WHEN MATCHED THEN UPDATE SET
 	TRA.DD_EPR_ID = (SELECT DD_EPR_ID FROM '||V_ESQUEMA_M||'.DD_EPR_ESTADO_PROCEDIMIENTO WHERE DD_EPR_CODIGO = ''05''),

@@ -43,6 +43,7 @@ import es.pfsgroup.plugin.gestorDocumental.dto.documentos.DocumentosExpedienteDt
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.DtoMetadatosEspecificos;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.RecoveryToGestorDocAssembler;
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearActuacionTecnicaDto;
+import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearConductasInapropiadasDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearEntidadCompradorDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearExpedienteComercialDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearGastoDto;
@@ -86,6 +87,7 @@ import es.pfsgroup.plugin.rem.model.ActivoTributos;
 import es.pfsgroup.plugin.rem.model.AdjuntoComunicacion;
 import es.pfsgroup.plugin.rem.model.AdjuntoGastoAsociado;
 import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
+import es.pfsgroup.plugin.rem.model.ConductasInapropiadas;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoAgrupacion;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoPromocion;
@@ -1828,6 +1830,51 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 				}	
 			}
 		}		
+	}
+	
+	@Override
+	public Integer crearContenedorConductasInapropiadas(ConductasInapropiadas coi, String username)
+			throws GestorDocumentalException {
+		
+		String nifProveedor = coi.getProveedor().getDocIdentificativo();
+		String codClase = GestorDocumentalConstants.CODIGO_CLASE_EXPEDIENTE_PROYECTO;
+		String tipo = GestorDocumentalConstants.CODIGO_TIPO_CONDUCTAS_INAPROPIADAS;
+		String descripcionConductasInapropiadas = "";
+		
+		RecoveryToGestorExpAssembler recoveryToGestorAssembler = new RecoveryToGestorExpAssembler(appProperties);
+		CrearConductasInapropiadasDto crearConductasInapropiadasDto = recoveryToGestorAssembler.getCrearConductasInapropiadasDto(coi.getId(), nifProveedor, descripcionConductasInapropiadas, username, codClase, tipo);
+		RespuestaCrearExpediente respuesta;
+		
+		try {
+			respuesta = gestorDocumentalExpedientesApi.crearConductasInapropiadas(crearConductasInapropiadasDto);
+		} catch(GestorDocumentalException gex) {
+			logger.debug(gex.getMessage());
+			throw gex;
+		}
+		
+		Integer id_ConductasInapropiadas = null;
+		if(!Checks.esNulo(respuesta)) {
+			id_ConductasInapropiadas = respuesta.getIdExpediente();
+		}
+		
+		return id_ConductasInapropiadas;
+	}
+
+	@Override
+	public Long uploadDocumentoConductasInapropiadas(Long id, WebFileItem webFileItem, String userLogin,
+			String matricula, DtoMetadatosEspecificos dtoMetadatos) throws Exception, GestorDocumentalException {
+		
+		RecoveryToGestorDocAssembler recoveryToGestorDocAssembler = new RecoveryToGestorDocAssembler(appProperties);
+		CabeceraPeticionRestClientDto cabecera = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(id.toString(), GestorDocumentalConstants.CODIGO_TIPO_CONDUCTAS_INAPROPIADAS, GestorDocumentalConstants.CODIGO_CLASE_EXPEDIENTE_PROYECTO);
+		CrearDocumentoDto crearDoc = recoveryToGestorDocAssembler.getCrearDocumentoDto(webFileItem, userLogin, matricula);
+		RespuestaCrearDocumento respuestaCrearDocumento = gestorDocumentalApi.crearDocumento(cabecera, crearDoc);
+		
+		if(!Checks.esNulo(respuestaCrearDocumento) && !Checks.esNulo(respuestaCrearDocumento.getCodigoError())) {
+			logger.debug(respuestaCrearDocumento.getCodigoError() + " - " + respuestaCrearDocumento.getMensajeError());
+			throw new GestorDocumentalException(respuestaCrearDocumento.getCodigoError() + " - " + respuestaCrearDocumento.getMensajeError());
+		}
+		
+		return new Long(respuestaCrearDocumento.getIdDocumento());
 	}
 	
 }

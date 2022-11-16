@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.message.MessageService;
@@ -31,8 +32,6 @@ import es.capgemini.pfs.persona.model.DDTipoPersona;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.HQLBuilder;
-import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
@@ -44,7 +43,6 @@ import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
-import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
@@ -57,6 +55,7 @@ import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorDireccion;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
+import es.pfsgroup.plugin.rem.model.AdjuntoConductasInapropiadas;
 import es.pfsgroup.plugin.rem.model.BloqueoApis;
 import es.pfsgroup.plugin.rem.model.BloqueoApisCartera;
 import es.pfsgroup.plugin.rem.model.BloqueoApisEspecialidad;
@@ -110,9 +109,9 @@ import es.pfsgroup.plugin.rem.model.dd.DDResultadoProcesoBlanqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivosCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoBloqueoApi;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDireccionProveedor;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoConductasInapropiadas;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.proveedores.dao.ProveedoresDao;
@@ -2114,50 +2113,38 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 		return filter;
 	}
 	
-	
-	
-	@Override
 	@Transactional(readOnly = false)
-	public String uploadConducta(WebFileItem fileItem) throws Exception {
-				
-		Adjunto adj = null;
-		Long idDocRestClient = null;
+	public void uploadConducta(WebFileItem webFileItem) throws Exception {
+
+		if(webFileItem == null) return;
+		ConductasInapropiadas coi = null;
+		Filter filtro = null;
+		DDTipoDocumentoConductasInapropiadas tipoDocConductasInapropiadas = null;
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-		ActivoAdjuntoProveedor adjuntoProveedor = new ActivoAdjuntoProveedor();
-		ConductasInapropiadas conducta = genericDao.get(ConductasInapropiadas.class, 
-				genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(fileItem.getParameter("idEntidad"))));
-		ActivoProveedor proveedor = proveedoresDao.get(conducta.getProveedor().getId());
+		Long idDocRestClient = null;
+		String username = usuarioLogado != null ? usuarioLogado.getUsername() : "DEFAULT";
+		boolean gestorDocumentalActivado = gestorDocumentalAdapterApi.modoRestClientActivado();
 		
-	   	Filter filtroTipoDoc = genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("tipo"));
-	   	DDTipoDocumentoProveedor tipoDocumentoProveedor = genericDao.get(DDTipoDocumentoProveedor.class, filtroTipoDoc, genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
-	   	
-	   	if(!Checks.esNulo(tipoDocumentoProveedor)) {
-		   	if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
-		   		idDocRestClient = gestorDocumentalAdapterApi.uploadDocumentoProveedor(proveedor, fileItem, usuarioLogado.getUsername(), tipoDocumentoProveedor.getMatricula());
-		   	} else {
-		   		adj = uploadAdapter.saveBLOB(fileItem.getFileItem());
-		   	}
-		   	
-		   	if (!Checks.esNulo(idDocRestClient) || !Checks.esNulo(adj)) {
-					adjuntoProveedor.setTipoDocumentoProveedor(tipoDocumentoProveedor);
-					adjuntoProveedor.setProveedor(proveedor);
-					adjuntoProveedor.setContentType(fileItem.getFileItem().getContentType());
-					adjuntoProveedor.setTamanyo(fileItem.getFileItem().getLength());
-					adjuntoProveedor.setNombre(fileItem.getFileItem().getFileName());
-					adjuntoProveedor.setDescripcion(fileItem.getParameter("descripcion"));			
-					adjuntoProveedor.setFechaDocumento(new Date());
-					adjuntoProveedor.setIdDocRestClient(idDocRestClient);
-					adjuntoProveedor.setAdjunto(adj);
-					genericDao.save(ActivoAdjuntoProveedor.class, adjuntoProveedor);
-					
-					conducta.setAdjunto(adjuntoProveedor);
-					genericDao.save(ConductasInapropiadas.class, conducta);
-		   	}
-	   	} else {
-			throw new Exception(ProveedoresManager.ERROR_TIPO_DOCUMENTO_PROVEEDOR);
+		coi = genericDao.get(ConductasInapropiadas.class,
+				genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(webFileItem.getParameter("idEntidad"))));
+		filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", webFileItem.getParameter("tipo"));
+		tipoDocConductasInapropiadas = genericDao.get(DDTipoDocumentoConductasInapropiadas.class, filtro);
+		if(tipoDocConductasInapropiadas != null) {
+			if(gestorDocumentalActivado) {
+				try{
+					gestorDocumentalAdapterApi.crearContenedorConductasInapropiadas(coi, username);
+					idDocRestClient = gestorDocumentalAdapterApi.uploadDocumentoConductasInapropiadas(coi.getId(), webFileItem, username, tipoDocConductasInapropiadas.getCodigoMatricula(), null);
+					this.uploadAdjuntoConductasInapropiadas(webFileItem, idDocRestClient, coi, tipoDocConductasInapropiadas);
+				}catch(GestorDocumentalException gex){
+					if (gex.getMessage().contains("already exists")) {
+						idDocRestClient = gestorDocumentalAdapterApi.uploadDocumentoConductasInapropiadas(coi.getId(), webFileItem, username, tipoDocConductasInapropiadas.getCodigoMatricula(), null);
+						this.uploadAdjuntoConductasInapropiadas(webFileItem, idDocRestClient, coi, tipoDocConductasInapropiadas);
+					}
+				}
+			}else {
+				this.uploadAdjuntoConductasInapropiadas(webFileItem, null, coi, tipoDocConductasInapropiadas);
+			}
 		}
-	   	
-	   	return null;
 	}
 	
 	@Override
@@ -2598,5 +2585,73 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 		}
 		
 		return codigosPostalesADevolver;
+	}
+	
+	@Transactional(readOnly = false)
+	public String uploadAdjuntoConductasInapropiadas(WebFileItem webFileItem, Long idDocRestClient, ConductasInapropiadas coi, 
+			DDTipoDocumentoConductasInapropiadas tipoDocumentoConductasInapropiadas) throws UserException {
+		
+		try {
+			if(!Checks.esNulo(coi)) {
+				AdjuntoConductasInapropiadas adjuntoConductasInapropiadas = new AdjuntoConductasInapropiadas();
+				if(idDocRestClient == null) {
+					Adjunto adj = uploadAdapter.saveBLOB(webFileItem.getFileItem());
+					adjuntoConductasInapropiadas.setAdjunto(adj);
+				}else {
+					adjuntoConductasInapropiadas.setIdDocRestClient(idDocRestClient);
+				}
+				adjuntoConductasInapropiadas.setTipoDocumentoConductasInapropiadas(tipoDocumentoConductasInapropiadas);
+				adjuntoConductasInapropiadas.setContentType(webFileItem.getFileItem().getContentType());
+				adjuntoConductasInapropiadas.setTamanyo(webFileItem.getFileItem().getLength());
+				adjuntoConductasInapropiadas.setNombre(webFileItem.getFileItem().getFileName());
+				adjuntoConductasInapropiadas.setDescripcion(webFileItem.getParameter("descripcion"));
+				adjuntoConductasInapropiadas.setFechaDocumento(new Date());
+
+				genericDao.save(AdjuntoConductasInapropiadas.class, adjuntoConductasInapropiadas);
+
+				coi.setAdjunto(adjuntoConductasInapropiadas);
+				genericDao.save(ConductasInapropiadas.class, coi);
+			}
+		} catch (Exception e) {
+			logger.error("Error en ProveedoresManager", e);
+		}
+		
+		return null;
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public boolean deleteAdjuntoConductasInapropiadas(DtoAdjunto dtoAdjunto) {
+		boolean borrado = true;
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+
+		AdjuntoConductasInapropiadas adjunto = null;
+		Filter filtroAdjuntoConductas = null;
+
+		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
+			try {
+				filtroAdjuntoConductas = genericDao.createFilter(FilterType.EQUALS, "adjunto.idDocRestClient", dtoAdjunto.getId());
+				adjunto = genericDao.get(AdjuntoConductasInapropiadas.class, genericDao.createFilter(FilterType.EQUALS, "idDocRestClient", dtoAdjunto.getId()));
+				borrado = gestorDocumentalAdapterApi.borrarAdjunto(adjunto.getIdDocRestClient(), usuarioLogado.getUsername());
+			} catch (Exception e) {
+				logger.error(e.getMessage());
+			}
+		} else {
+			filtroAdjuntoConductas = genericDao.createFilter(FilterType.EQUALS, "adjunto.id", dtoAdjunto.getId());
+			adjunto = genericDao.get(AdjuntoConductasInapropiadas.class, genericDao.createFilter(FilterType.EQUALS, "id", dtoAdjunto.getId()));
+		}
+
+		ConductasInapropiadas conductaInapropiada = genericDao.get(ConductasInapropiadas.class, filtroAdjuntoConductas);
+
+		if (borrado) {
+			if (adjunto == null) { borrado = false; }
+			Long idConductas = conductaInapropiada.getAdjunto().getId();
+			conductaInapropiada.setAdjunto(null);
+			genericDao.save(ConductasInapropiadas.class, conductaInapropiada);
+			proveedoresDao.deleteConductaById(idConductas);
+
+		}
+
+		return borrado;
 	}
 }

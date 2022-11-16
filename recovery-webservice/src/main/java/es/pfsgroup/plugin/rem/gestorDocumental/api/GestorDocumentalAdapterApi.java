@@ -18,6 +18,7 @@ import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProyecto;
 import es.pfsgroup.plugin.rem.model.ActivoTributos;
 import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
+import es.pfsgroup.plugin.rem.model.ConductasInapropiadas;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoAgrupacion;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoPromocion;
@@ -147,5 +148,9 @@ public interface GestorDocumentalAdapterApi {
 	void actualizarAdmisionValidado(Trabajo tbj) throws ParseException;
 
 	String getMaestroPersonasByCarteraySubcarterayPropietario(DDCartera cartera, DDSubcartera subcartera,ActivoPropietario actPro);
+	
+	public Integer crearContenedorConductasInapropiadas(ConductasInapropiadas coi, String username) throws GestorDocumentalException;
+	
+	Long uploadDocumentoConductasInapropiadas(Long id, WebFileItem webFileItem, String userLogin, String matricula, DtoMetadatosEspecificos dtoMetadatos) throws Exception;
 
 }

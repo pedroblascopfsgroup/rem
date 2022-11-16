@@ -1,7 +1,7 @@
 --/*
 --#########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20221115
+--## FECHA_CREACION=20221116
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=0.1
 --## INCIDENCIA_LINK=HREOS-18941
@@ -12,6 +12,7 @@
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial - [HREOS-18941] - Alejandra García
+--##        0.2 Añadir campo DD_SOA_ID - [HREOS-18941] - Alejandra García
 --#########################################
 --*/
 
@@ -62,7 +63,8 @@ BEGIN
             TEX_ID			NUMBER(16,0),
             DD_EEC_CODIGO_ANTIGUO       NUMBER(16,0),
             DD_EEB_CODIGO_ANTIGUO       NUMBER(16,0),
-            OFR_NUM_OFERTA_CAIXA        NUMBER(10,0)
+            OFR_NUM_OFERTA_CAIXA        NUMBER(10,0),
+            DD_SOA_ID                   NUMBER(16,0)
 	)';
 	
 	EXECUTE IMMEDIATE V_MSQL;

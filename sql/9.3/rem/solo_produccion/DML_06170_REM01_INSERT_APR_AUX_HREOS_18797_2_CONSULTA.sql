@@ -1,7 +1,7 @@
 --/*
 --#########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20221115
+--## FECHA_CREACION=20221116
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=0.11
 --## INCIDENCIA_LINK=HREOS-18941
@@ -12,6 +12,7 @@
 --## INSTRUCCIONES:
 --## VERSIONES:
 --## 		0.1 Versión inicial - [HREOS-18941] - Alejandra García
+--##        0.2 Añadir campo DD_SOA_ID - [HREOS-18941] - Alejandra García
 --#########################################
 --*/
 
@@ -88,7 +89,8 @@ V_SENTENCIA := 'TRUNCATE TABLE '||V_ESQUEMA||'.APR_AUX_HREOS_18797_2_CONSULTA';
 									,EEC.DD_EEC_CODIGO
 									,EEB.DD_EEB_CODIGO
 									,CAIXA.OFR_NUM_OFERTA_CAIXA 
-								FROM '||V_ESQUEMA||'.APR_AUX_HREOS_18797 AUX
+									,OFR.DD_SOA_ID
+								FROM '||V_ESQUEMA||'.APR_AUX_HREOS_18797_2 AUX
 								JOIN  '||V_ESQUEMA||'.OFR_OFERTAS OFR  ON OFR.OFR_NUM_OFERTA = AUX.NUM_OFERTA
 									AND OFR.BORRADO = 0
 								JOIN  '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO  ON ECO.OFR_ID = OFR.OFR_ID
@@ -104,7 +106,8 @@ V_SENTENCIA := 'TRUNCATE TABLE '||V_ESQUEMA||'.APR_AUX_HREOS_18797_2_CONSULTA';
 							WHEN MATCHED THEN UPDATE SET
 							 T1.DD_EEC_CODIGO_ANTIGUO = T2.DD_EEC_CODIGO
 							,T1.DD_EEB_CODIGO_ANTIGUO = T2.DD_EEB_CODIGO
-							,T1.OFR_NUM_OFERTA_CAIXA  = T2.OFR_NUM_OFERTA_CAIXA ';
+							,T1.OFR_NUM_OFERTA_CAIXA  = T2.OFR_NUM_OFERTA_CAIXA
+							,T1.DD_SOA_ID  = T2.DD_SOA_ID  ';
                    
         	EXECUTE IMMEDIATE V_SENTENCIA;
         	

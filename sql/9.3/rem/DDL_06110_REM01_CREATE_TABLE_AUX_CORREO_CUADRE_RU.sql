@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Juan Bautista Alfonso
---## FECHA_CREACION=20221115
+--## FECHA_CREACION=20221117
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-12675
@@ -37,12 +37,7 @@ V_USUARIO VARCHAR2(100 CHAR):='REMVIP-12675'; --Usuariomodificar
 
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
                 --CORREO             --CORREO_EN_COPIA
-   /*   T_TIPO_DATA('adelgado@haya.es','0'),
-      T_TIPO_DATA('jrodriguezb@haya.es','0'),
-      T_TIPO_DATA('amolinam@haya.es','1'),
-      T_TIPO_DATA('dgutierrez@haya.es','1'),
-      T_TIPO_DATA('juanantonio.morenoortiz@zelenza.com','0'),*/
-      T_TIPO_DATA('pruebashrem@gmail.com','0'),
+      T_TIPO_DATA('ovidiu.remus@pfsgroup.es','0'),
       T_TIPO_DATA('juan.alfonso@pfsgroup.es','0')
 		); 
     V_TMP_TIPO_DATA T_TIPO_DATA;

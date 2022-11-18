@@ -212,7 +212,10 @@ public class DtoDatosBasicosOferta extends WebDto {
 	private String suborigenContratoEccCodigo;
 	private String suborigenContratoEccDescripcion;
 	private String ibanDevolucionCliente;
-	
+	private Double importeFianzaAnterior;
+	private boolean permiteImporteFianzaAnterior = false;
+
+
 	public Boolean getEstadoAprobadoLbk() {
 		return estadoAprobadoLbk;
 	}
@@ -1064,5 +1067,20 @@ public class DtoDatosBasicosOferta extends WebDto {
 	public void setIbanDevolucionCliente(String ibanDevolucionCliente) {
 		this.ibanDevolucionCliente = ibanDevolucionCliente;
 	}
-	
+
+	public Double getImporteFianzaAnterior() {
+		return importeFianzaAnterior;
+	}
+
+	public void setImporteFianzaAnterior(Double importeFianzaAnterior) {
+		this.importeFianzaAnterior = importeFianzaAnterior;
+	}
+
+	public boolean getPermiteImporteFianzaAnterior() {
+		return permiteImporteFianzaAnterior;
+	}
+
+	public void setPermiteImporteFianzaAnterior(boolean permiteImporteFianzaAnterior) {
+		this.permiteImporteFianzaAnterior = permiteImporteFianzaAnterior;
+	}
 }

@@ -45,4 +45,9 @@ public class TramiteAlquilerNoComercialRenovaciones extends TramiteAlquilerNoCom
 	public boolean permiteClaseCondicion() {
 		return true;
 	}
+
+	@Override
+	public boolean permiteImporteFianzaAnterior() {
+		return true;
+	}
 }

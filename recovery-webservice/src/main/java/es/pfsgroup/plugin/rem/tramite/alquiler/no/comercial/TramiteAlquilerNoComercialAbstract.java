@@ -68,4 +68,9 @@ public abstract class TramiteAlquilerNoComercialAbstract implements TramiteAlqui
 	public boolean permiteClaseCondicion() {
 		return true;
 	}
+
+	@Override
+	public boolean permiteImporteFianzaAnterior() {
+		return false;
+	}
 }

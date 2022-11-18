@@ -2,18 +2,7 @@ package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Version;
+import javax.persistence.*;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -59,7 +48,7 @@ public class ConductasInapropiadas implements Serializable, Auditable {
 	private String comentarios;
 	
 	@JoinColumn(name = "COI_ADJUNTO")  
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private AdjuntoConductasInapropiadas adjunto;
 	    
 	@Version   

@@ -2607,8 +2607,6 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 				adjuntoConductasInapropiadas.setDescripcion(webFileItem.getParameter("descripcion"));
 				adjuntoConductasInapropiadas.setFechaDocumento(new Date());
 
-				genericDao.save(AdjuntoConductasInapropiadas.class, adjuntoConductasInapropiadas);
-
 				coi.setAdjunto(adjuntoConductasInapropiadas);
 				genericDao.save(ConductasInapropiadas.class, coi);
 			}

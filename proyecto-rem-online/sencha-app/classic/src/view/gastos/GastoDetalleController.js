@@ -1955,7 +1955,8 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		if (propietario != "") {
 			var control = me.getViewModel().get("controlPestanyaGastoRefacturable");
 			var cartera = control.cartera.codigo;
-			if (cartera === CONST.CARTERA['SAREB'] || cartera === CONST.CARTERA['BANKIA']) {
+			if (cartera === CONST.CARTERA['SAREB'] || cartera === CONST.CARTERA['BANKIA']
+		        || cartera === CONST.CARTERA['BFA'] || cartera === CONST.CARTERA['TITULIZADA']) {
 				var isGastoPadre = (form.down('[name=destinatarioGastoCodigo]').value===CONST.TIPOS_DESTINATARIO_GASTO['PROPIETARIO'] && 
 						form.down('[name=nifEmisor]').value===CONST.PVE_DOCUMENTONIF['HAYA']);
 				var isGastoRefacturable = (form.down('[name=destinatarioGastoCodigo]').value===CONST.TIPOS_DESTINATARIO_GASTO['HAYA']);

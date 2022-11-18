@@ -2144,6 +2144,8 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 			}else {
 				this.uploadAdjuntoConductasInapropiadas(webFileItem, null, coi, tipoDocConductasInapropiadas);
 			}
+
+			genericDao.update(ConductasInapropiadas.class, coi);
 		}
 	}
 	
@@ -2609,7 +2611,6 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 				adjuntoConductasInapropiadas.setAuditoria(Auditoria.getNewInstance());
 
 				coi.setAdjunto(adjuntoConductasInapropiadas);
-				genericDao.save(ConductasInapropiadas.class, coi);
 			}
 		} catch (Exception e) {
 			logger.error("Error en ProveedoresManager", e);

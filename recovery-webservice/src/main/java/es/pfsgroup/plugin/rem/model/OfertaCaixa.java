@@ -135,6 +135,9 @@ public class OfertaCaixa implements Serializable, Auditable {
 
 	@Column(name="OFR_FECHA_MOD_EOB")
 	private Date fechaModificacionEstadoBc;
+
+	@Column(name="IBAN_DEVOLUCION_CLIENTE_ALQ")
+	private String ibanDevolucionClienteAlq;
 	
     @Version
     private Integer version;
@@ -390,6 +393,14 @@ public class OfertaCaixa implements Serializable, Auditable {
 				this.fechaModificacionEstadoBc = new Date();
 		}
 		this.estadoOfertaBc = estadoOfertaBc;
+	}
+
+	public String getIbanDevolucionClienteAlq() {
+		return ibanDevolucionClienteAlq;
+	}
+
+	public void setIbanDevolucionClienteAlq(String ibanDevolucionClienteAlq) {
+		this.ibanDevolucionClienteAlq = ibanDevolucionClienteAlq;
 	}
 	
 }

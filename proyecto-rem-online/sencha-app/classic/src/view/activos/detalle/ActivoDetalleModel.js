@@ -2129,7 +2129,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			}else{
 				editable = tieneFuncion;
 			}
-	    }
+	    },
+	    esEditableFianza: function(get) {
+			return  $AU.userIsRol(CONST.PERFILES['HAYASUPER']);
+		}
 	 },
     
 	 stores: {

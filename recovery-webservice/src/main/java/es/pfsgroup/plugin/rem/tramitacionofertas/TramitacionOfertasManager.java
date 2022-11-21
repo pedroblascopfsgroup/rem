@@ -154,6 +154,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 	private static final String AVISO_MENSAJE_TIPO_NUMERO_DOCUMENTO = "activo.motivo.oferta.tipo.numero.documento";
 	private static final String AVISO_MENSAJE_CLIENTE_OBLIGATORIO = "activo.motivo.oferta.cliente";
 	private static final String AVISO_MENSAJE_EXISTEN_OFERTAS_VENTA = "activo.motivo.oferta.existe.venta";
+	private static final String AVISO_MENSAJE_EXISTE_OFERTA_ACEPTADA = "activo.motivo.oferta.aceptada";
 	private static final String AVISO_MENSAJE_ACITVO_ALQUILADO_O_OCUPADO = "activo.motivo.oferta.alquilado.ocupado";
 	private static final String AVISO_MENSAJE_EXPEDIENTE_ANULADO_POR_GENCAT = "activo.motivo.oferta.anulado.gencat";
 	private static final String EXISTEN_UNIDADES_ALQUILABLES_CON_OFERTAS_VIVAS = "activo.matriz.con.unidades.alquilables.ofertas.vivas";
@@ -626,7 +627,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			}
 			
 			if (ofertaApi.isActivoConOfertaYExpedienteBlocked(activo)) {
-				throw new JsonViewerException("Un activo de la agrupación ya tiene una oferta aceptada y aprobada.");
+				throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_EXISTE_OFERTA_ACEPTADA)+": "+activo.getNumActivo());
 			}
 
 		}

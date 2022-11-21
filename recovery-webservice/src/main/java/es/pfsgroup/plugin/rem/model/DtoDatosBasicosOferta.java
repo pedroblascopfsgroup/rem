@@ -191,6 +191,28 @@ public class DtoDatosBasicosOferta extends WebDto {
 	
 	private Boolean modificarFormalizacionCajamar;
 	
+	private String codigoTipoAdenda;
+	
+	private String descripcionTipoAdenda;
+	
+	private Date fechaInicioSubrogacion;
+	
+	private Boolean autoFirme;
+	
+	private String codigoClaseCondicion;
+	
+	private String codigoDerechoArrendamiento;
+	
+	private String codigoRetenciondeImpuestos;
+	
+	private String codigoGrupoContratoCBK;
+	
+	private String origenContratoEccCodigo;
+	private String origenContratoEccDescripcion;
+	private String suborigenContratoEccCodigo;
+	private String suborigenContratoEccDescripcion;
+	private String ibanDevolucionCliente;
+	
 	public Boolean getEstadoAprobadoLbk() {
 		return estadoAprobadoLbk;
 	}
@@ -937,6 +959,110 @@ public class DtoDatosBasicosOferta extends WebDto {
 
 	public void setFechaForzadoCajamar(Date fechaForzadoCajamar) {
 		this.fechaForzadoCajamar = fechaForzadoCajamar;
+	}
+
+	public String getCodigoTipoAdenda() {
+		return codigoTipoAdenda;
+	}
+
+	public void setCodigoTipoAdenda(String codigoTipoAdenda) {
+		this.codigoTipoAdenda = codigoTipoAdenda;
+	}
+
+	public String getDescripcionTipoAdenda() {
+		return descripcionTipoAdenda;
+	}
+
+	public void setDescripcionTipoAdenda(String descripcionTipoAdenda) {
+		this.descripcionTipoAdenda = descripcionTipoAdenda;
+	}
+
+	public Date getFechaInicioSubrogacion() {
+		return fechaInicioSubrogacion;
+	}
+
+	public void setFechaInicioSubrogacion(Date fechaInicioSubrogacion) {
+		this.fechaInicioSubrogacion = fechaInicioSubrogacion;
+	}
+
+	public Boolean getAutoFirme() {
+		return autoFirme;
+	}
+
+	public void setAutoFirme(Boolean autoFirme) {
+		this.autoFirme = autoFirme;
+	}
+
+	public String getCodigoClaseCondicion() {
+		return codigoClaseCondicion;
+	}
+
+	public void setCodigoClaseCondicion(String codigoClaseCondicion) {
+		this.codigoClaseCondicion = codigoClaseCondicion;
+	}
+
+	public String getCodigoDerechoArrendamiento() {
+		return codigoDerechoArrendamiento;
+	}
+
+	public void setCodigoDerechoArrendamiento(String codigoDerechoArrendamiento) {
+		this.codigoDerechoArrendamiento = codigoDerechoArrendamiento;
+	}
+
+	public String getCodigoRetenciondeImpuestos() {
+		return codigoRetenciondeImpuestos;
+	}
+
+	public void setCodigoRetenciondeImpuestos(String codigoRetenciondeImpuestos) {
+		this.codigoRetenciondeImpuestos = codigoRetenciondeImpuestos;
+	}
+
+	public String getCodigoGrupoContratoCBK() {
+		return codigoGrupoContratoCBK;
+	}
+
+	public void setCodigoGrupoContratoCBK(String codigoGrupoContratoCBK) {
+		this.codigoGrupoContratoCBK = codigoGrupoContratoCBK;
+	}
+
+	public String getOrigenContratoEccCodigo() {
+		return origenContratoEccCodigo;
+	}
+
+	public void setOrigenContratoEccCodigo(String origenContratoEccCodigo) {
+		this.origenContratoEccCodigo = origenContratoEccCodigo;
+	}
+
+	public String getOrigenContratoEccDescripcion() {
+		return origenContratoEccDescripcion;
+	}
+
+	public void setOrigenContratoEccDescripcion(String origenContratoEccDescripcion) {
+		this.origenContratoEccDescripcion = origenContratoEccDescripcion;
+	}
+
+	public String getSuborigenContratoEccCodigo() {
+		return suborigenContratoEccCodigo;
+	}
+
+	public void setSuborigenContratoEccCodigo(String suborigenContratoEccCodigo) {
+		this.suborigenContratoEccCodigo = suborigenContratoEccCodigo;
+	}
+
+	public String getSuborigenContratoEccDescripcion() {
+		return suborigenContratoEccDescripcion;
+	}
+
+	public void setSuborigenContratoEccDescripcion(String suborigenContratoEccDescripcion) {
+		this.suborigenContratoEccDescripcion = suborigenContratoEccDescripcion;
+	}
+
+	public String getIbanDevolucionCliente() {
+		return ibanDevolucionCliente;
+	}
+
+	public void setIbanDevolucionCliente(String ibanDevolucionCliente) {
+		this.ibanDevolucionCliente = ibanDevolucionCliente;
 	}
 	
 }

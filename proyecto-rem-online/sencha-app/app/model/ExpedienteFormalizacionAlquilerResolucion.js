@@ -87,7 +87,27 @@ Ext.define('HreRem.model.ExpedienteFormalizacionAlquilerResolucion', {
 				name:'fechaFinCnt',
 				type:'date',
 	    		dateFormat: 'c'
-			}
+			},
+    		{
+    			name:'llamadaRealizada'
+    		},
+			{
+				name:'fechaLlamada',
+				type:'date',
+	    		dateFormat: 'c'
+			},
+    		{
+    			name:'burofaxEnviado'
+    		},
+			{
+				name:'fechaBurofax',
+				type:'date',
+	    		dateFormat: 'c'
+			},
+    	    {
+    	    	name: 'esSubrogacionEjecucionHipotecaria',
+    	    	type: 'boolean'
+    	    }
     ],
     
     proxy: {

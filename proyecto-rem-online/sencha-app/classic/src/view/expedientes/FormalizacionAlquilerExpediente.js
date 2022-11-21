@@ -8,7 +8,7 @@ Ext.define('HreRem.view.expedientes.FormalizacionAlquilerExpediente', {
     scrollable: 'y',
     recordName : "resolucionalquiler",
 	recordClass : "HreRem.model.ExpedienteFormalizacionAlquilerResolucion",
-	requires : ['HreRem.model.ExpedienteFormalizacionAlquilerResolucion'],
+	requires : ['HreRem.model.ExpedienteFormalizacionAlquilerResolucion', 'HreRem.view.expedientes.FirmaAdendaGrid'],
 	refreshAfterSave: true,
 	listeners : {
 		boxready : function() {
@@ -98,7 +98,8 @@ Ext.define('HreRem.view.expedientes.FormalizacionAlquilerExpediente', {
                     editOnSelect: true,
                     bind : {
                         store : '{storePosicionamientos}',
-                        topBar : '{!esExpedienteBloqueado}'
+                        topBar : '{!esExpedienteBloqueado}',
+                        hidden: '{esBankia}'
                     },
                     listeners : {
                         rowdblclick : 'comprobacionesDobleClickAlquiler',
@@ -376,6 +377,70 @@ Ext.define('HreRem.view.expedientes.FormalizacionAlquilerExpediente', {
                         	}
                         }
                     ]}
+                ]
+            },
+            {
+                xtype : 'fieldsettable',
+                collapsible : true,
+                colspan: 3,
+                defaultType : 'textfieldbase',
+                title : HreRem.i18n('title.comunicaciones.api'),
+                items :[
+                        {
+                            xtype : 'textfieldbase',
+                            width : '100%',
+                            colspan: 1,
+                            readOnly: true,
+                            fieldLabel : HreRem.i18n('fieldlabel.formalizacion.llamada.realizada'),
+                            bind : {
+                                value : '{resolucionalquiler.llamadaRealizada}'
+                            }
+                        },{
+        					xtype : 'datefieldbase',
+        					fieldLabel : HreRem.i18n('header.fecha.llamada'),
+        					colspan: 1,
+        					maxValue: null,
+        					bind : {
+        						value : '{resolucionalquiler.fechaLlamada}'
+        					},
+        					readOnly: true
+        				},{
+                            xtype : 'textfieldbase',
+                            readOnly: true,
+                            fieldLabel : HreRem.i18n('fieldlabel.formalizacion.burofax.enviado'),
+                            colspan: 1,
+                            bind : {
+                                value : '{resolucionalquiler.burofaxEnviado}'
+                            }
+                        },{
+        					xtype : 'datefieldbase',
+        					fieldLabel : HreRem.i18n('header.fecha.burofax'),
+        					maxValue: null,
+        					colspan: 3,
+        					bind : {
+        						value : '{resolucionalquiler.fechaBurofax}'
+        					},
+        					readOnly: true
+        				},
+						{
+							xtype:'fieldsettable',
+							defaultType: 'textfieldbase',
+							colspan: 3,
+							reference:'firmaAdenda',
+							bind:{
+								hidden:'{!resolucionalquiler.esSubrogacionEjecucionHipotecaria}'
+							},
+							title: HreRem.i18n("title.firma.adenda"),
+							items :
+							[
+								{
+									xtype: "firmaadendagrid", 
+									// TODO Falta una funcion aqui que esta en informeComercialActivo de ese estilo
+									reference: "firmaAdendaGrid", 
+									colspan: 3
+								}
+							]
+		           		}
                 ]
             }];
 

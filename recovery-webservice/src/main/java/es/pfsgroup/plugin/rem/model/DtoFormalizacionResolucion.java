@@ -50,6 +50,12 @@ public class DtoFormalizacionResolucion extends WebDto {
 	
 	private Date fechaInicioCnt;
 	private Date fechaFinCnt;
+	private String llamadaRealizada;
+	private Date fechaLlamada;
+	private String burofaxEnviado;
+	private Date fechaBurofax;
+	
+	private Boolean esSubrogacionEjecucionHipotecaria;
 	
 	
 	public Long getIdFormalizacion() {
@@ -207,6 +213,36 @@ public class DtoFormalizacionResolucion extends WebDto {
 	}
 	public void setFechaFinCnt(Date fechaFinCnt) {
 		this.fechaFinCnt = fechaFinCnt;
+	}
+	public String getLlamadaRealizada() {
+		return llamadaRealizada;
+	}
+	public void setLlamadaRealizada(String llamadaRealizada) {
+		this.llamadaRealizada = llamadaRealizada;
+	}
+	public Date getFechaLlamada() {
+		return fechaLlamada;
+	}
+	public void setFechaLlamada(Date fechaLlamada) {
+		this.fechaLlamada = fechaLlamada;
+	}
+	public String getBurofaxEnviado() {
+		return burofaxEnviado;
+	}
+	public void setBurofaxEnviado(String burofaxEnviado) {
+		this.burofaxEnviado = burofaxEnviado;
+	}
+	public Date getFechaBurofax() {
+		return fechaBurofax;
+	}
+	public void setFechaBurofax(Date fechaBurofax) {
+		this.fechaBurofax = fechaBurofax;
+	}
+	public Boolean getEsSubrogacionEjecucionHipotecaria() {
+		return esSubrogacionEjecucionHipotecaria;
+	}
+	public void setEsSubrogacionEjecucionHipotecaria(Boolean esSubrogacionEjecucionHipotecaria) {
+		this.esSubrogacionEjecucionHipotecaria = esSubrogacionEjecucionHipotecaria;
 	}
 	
 }

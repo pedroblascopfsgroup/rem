@@ -22,7 +22,7 @@ public interface AccionesCaixaApi {
 
     void accionFirmaArrasAprobadas(DtoFirmaArrasCaixa dto) throws Exception;
 
-    void accionFirmaContratoAprobada(DtoFirmaContratoCaixa dto) throws Exception;
+    void accionFirmaContratoAprobada(JSONObject dto) throws Exception;
 
     void accionVentaContabilizada(DtoAccionVentaContabilizada dto) throws Exception;
 
@@ -49,7 +49,7 @@ public interface AccionesCaixaApi {
 
     void accionFirmaArrasRechazadas(DtoFirmaArrasCaixa dto) throws ParseException, Exception;
 
-    void accionFirmaContratoRechazada(DtoFirmaContratoCaixa dto) throws Exception;
+    void accionFirmaContratoRechazada(JSONObject dto) throws Exception;
 
     void accionArrasContabilizadas(DtoExpedienteFechaYOfertaCaixa dto) throws ParseException;
 
@@ -73,4 +73,6 @@ public interface AccionesCaixaApi {
 
     @Transactional
     boolean incautaODevuelveDeposito(String codEstado, Long numOferta);
+    
+    Boolean avanzarTareaGenericoSinReplicar(JSONObject dto) throws Exception;
 }

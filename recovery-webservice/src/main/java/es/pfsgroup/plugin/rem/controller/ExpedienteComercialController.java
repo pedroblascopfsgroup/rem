@@ -18,6 +18,7 @@ import es.pfsgroup.framework.paradise.http.client.HttpSimplePostRequest;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
+import es.pfsgroup.plugin.rem.activo.exception.HistoricoTramitacionException;
 import es.pfsgroup.plugin.rem.adapter.ExpedienteAdapter;
 import es.pfsgroup.plugin.rem.adapter.ExpedienteComercialAdapter;
 import es.pfsgroup.plugin.rem.adapter.TrabajoAdapter;
@@ -34,6 +35,63 @@ import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ACCION_CODIGO;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ENTIDAD_CODIGO;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.REQUEST_STATUS_CODE;
 import es.pfsgroup.plugin.rem.model.*;
+import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.AdjuntoComprador;
+import es.pfsgroup.plugin.rem.model.Comprador;
+import es.pfsgroup.plugin.rem.model.DtoAccionAprobacionCaixa;
+import es.pfsgroup.plugin.rem.model.DtoActivosAlquiladosGrid;
+import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
+import es.pfsgroup.plugin.rem.model.DtoActualizacionRenta;
+import es.pfsgroup.plugin.rem.model.DtoAdjunto;
+import es.pfsgroup.plugin.rem.model.DtoAuditoriaDesbloqueo;
+import es.pfsgroup.plugin.rem.model.DtoAviso;
+import es.pfsgroup.plugin.rem.model.DtoBloqueosFinalizacion;
+import es.pfsgroup.plugin.rem.model.DtoCondiciones;
+import es.pfsgroup.plugin.rem.model.DtoCondicionesActivoExpediente;
+import es.pfsgroup.plugin.rem.model.DtoDatosBasicosOferta;
+import es.pfsgroup.plugin.rem.model.DtoDeposito;
+import es.pfsgroup.plugin.rem.model.DtoDiccionario;
+import es.pfsgroup.plugin.rem.model.DtoEntregaReserva;
+import es.pfsgroup.plugin.rem.model.DtoExpedienteHistScoring;
+import es.pfsgroup.plugin.rem.model.DtoExpedienteScoring;
+import es.pfsgroup.plugin.rem.model.DtoFichaExpediente;
+import es.pfsgroup.plugin.rem.model.DtoFirmaAdendaGrid;
+import es.pfsgroup.plugin.rem.model.DtoFormalizacionFinanciacion;
+import es.pfsgroup.plugin.rem.model.DtoFormalizacionResolucion;
+import es.pfsgroup.plugin.rem.model.DtoGarantiasExpediente;
+import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
+import es.pfsgroup.plugin.rem.model.DtoGastoRepercutido;
+import es.pfsgroup.plugin.rem.model.DtoGridFechaArras;
+import es.pfsgroup.plugin.rem.model.DtoHistoricoAntiguoDeudor;
+import es.pfsgroup.plugin.rem.model.DtoHistoricoCondiciones;
+import es.pfsgroup.plugin.rem.model.DtoHistoricoTramitacionTituloAdicional;
+import es.pfsgroup.plugin.rem.model.DtoHstcoSeguroRentas;
+import es.pfsgroup.plugin.rem.model.DtoInformeJuridico;
+import es.pfsgroup.plugin.rem.model.DtoListadoTramites;
+import es.pfsgroup.plugin.rem.model.DtoModificarCompradores;
+import es.pfsgroup.plugin.rem.model.DtoNotarioContacto;
+import es.pfsgroup.plugin.rem.model.DtoObservacion;
+import es.pfsgroup.plugin.rem.model.DtoObtencionDatosFinanciacion;
+import es.pfsgroup.plugin.rem.model.DtoOrigenLead;
+import es.pfsgroup.plugin.rem.model.DtoPlusvaliaVenta;
+import es.pfsgroup.plugin.rem.model.DtoPosicionamiento;
+import es.pfsgroup.plugin.rem.model.DtoReserva;
+import es.pfsgroup.plugin.rem.model.DtoRespuestaBCGenerica;
+import es.pfsgroup.plugin.rem.model.DtoScreening;
+import es.pfsgroup.plugin.rem.model.DtoSeguroRentas;
+import es.pfsgroup.plugin.rem.model.DtoSlideDatosCompradores;
+import es.pfsgroup.plugin.rem.model.DtoTabFianza;
+import es.pfsgroup.plugin.rem.model.DtoTanteoActivoExpediente;
+import es.pfsgroup.plugin.rem.model.DtoTanteoYRetractoOferta;
+import es.pfsgroup.plugin.rem.model.DtoTestigos;
+import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
+import es.pfsgroup.plugin.rem.model.DtoTipoDocExpedientes;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
+import es.pfsgroup.plugin.rem.model.VListadoOfertasAgrupadasLbk;
+import es.pfsgroup.plugin.rem.model.VReportAdvisoryNotes;
+import es.pfsgroup.plugin.rem.model.DtoExpedienteComercialGestionEconomica;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadFinanciera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
@@ -3190,9 +3248,45 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView desbloquearExpediente(ModelMap model,Long idOferta) {
+	public ModelAndView saveTabFianza(DtoTabFianza dto, @RequestParam Long id, ModelMap model,
+			HttpServletRequest request) {
 		try {
-			expedienteComercialApi.desbloquearExpediente(idOferta);
+			model.put(RESPONSE_DATA_KEY, expedienteComercialApi.saveTabFianza(dto, id));
+			model.put(RESPONSE_SUCCESS_KEY, true);
+		} catch (Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put("error", false);
+			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController ", e);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView tieneFechaAgendacionRelleno(Long idExpediente, ModelMap model) {
+		try{
+			model.put(RESPONSE_DATA_KEY, funcionesTramitesApi.checkFechaAgendacionRelleno(idExpediente));
+		} catch (JsonViewerException e) {
+			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.warn("Error controlado en ExpedienteComercialController", e);
+		} catch (Exception e) {
+			logger.error("error en ExpedienteComercialController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getFianzaExonerada(ModelMap model, Long idExpediente) {
+		try {
+			model.put(RESPONSE_DATA_KEY, funcionesTramitesApi.getFianzaExonerada(idExpediente));
 			model.put(RESPONSE_SUCCESS_KEY, true);
 
 		} catch (Exception e) {
@@ -3200,6 +3294,134 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			logger.error("Error en ExpedienteComercialController", e);
+		}
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getDtoFianza(ModelMap model, Long idExpediente) {
+		try {
+			model.put(RESPONSE_DATA_KEY, funcionesTramitesApi.getDtoFianza(idExpediente));
+
+		} catch (Exception e) {
+			model.put("error", false);
+			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController", e);
+		}
+
+		return createModelAndViewJson(model);
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView desbloquearExpediente(ModelMap model,Long idOferta) {
+		try {
+			expedienteComercialApi.desbloquearExpediente(idOferta);
+			model.put(RESPONSE_SUCCESS_KEY, true);
+		} catch (Exception e) {
+			model.put("error", false);
+			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController", e);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getHistoricoReagendaciones(Long idExpediente, ModelMap model){
+		try{
+			model.put(RESPONSE_DATA_KEY, funcionesTramitesApi.getHistoricoReagendaciones(idExpediente));
+			model.put(RESPONSE_SUCCESS_KEY, true);
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+
+		}
+		return createModelAndViewJson(model);
+	}
+
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getDtoTipoAlquiler(ModelMap model, Long idExpediente) {
+		try {
+			model.put(RESPONSE_DATA_KEY, funcionesTramitesApi.getDtoTipoAlquiler(idExpediente));
+
+		} catch (Exception e) {
+			model.put("error", false);
+			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController", e);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getFirmaAdenda(Long idExpediente) {
+		
+		ModelMap model = new ModelMap();
+		
+		try {
+			List<DtoFirmaAdendaGrid> list = expedienteComercialApi.getFirmaAdenda(idExpediente);
+			model.put(RESPONSE_DATA_KEY, list);
+			model.put(RESPONSE_SUCCESS_KEY, true);
+		} catch (Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController (getGestorPrescriptor)", e);
+		}
+		return createModelAndViewJson(model);
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getHistoricoAntiguoDeudor(Long idOferta, ModelMap model) {
+		
+		try {
+			model.put(RESPONSE_DATA_KEY, ofertaApi.getDtoHistoricoAntiguoDeudorList(idOferta));
+		} catch (Exception e) {
+			logger.error("Error en ExpedienteComercialController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView createHistoricoAntiguoDeudor(DtoHistoricoAntiguoDeudor dtoHitoricoAntiguoDeudor, Long idOferta, ModelMap model) {
+		
+		try {
+			boolean success = ofertaApi.createHistoricoAntiguoDeudor(dtoHitoricoAntiguoDeudor, idOferta);
+			model.put(RESPONSE_SUCCESS_KEY, success);
+
+		} catch (Exception e) {
+			logger.error("Error en ExpedienteComercialController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_MESSAGE_KEY, e.getMessage());
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView updateHistoricoAntiguoDeudor(DtoHistoricoAntiguoDeudor dtoHitoricoAntiguoDeudor, ModelMap model) {
+		
+		try {
+			boolean success = ofertaApi.updateHistoricoAntiguoDeudor(dtoHitoricoAntiguoDeudor);
+			model.put(RESPONSE_SUCCESS_KEY, success);
+
+		} catch (Exception e) {
+			logger.error("Error en ExpedienteComercialController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_MESSAGE_KEY, e.getMessage());
 		}
 
 		return createModelAndViewJson(model);

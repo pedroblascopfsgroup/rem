@@ -349,9 +349,12 @@ func-rem-gestionAPIs|R-Ashe
 func-rem-contabilizarDepositoOtrosEstados|R-Fiddlesticks
 func-rem-proveedoresNoHomologables|R-Nagami
 func-rem-datosProveedores|R-Nagami
+func-rem-formalizacionAlquileres-HREOS-18271|func-rem-formalizacionAlquileres
+rem_mirror|func-rem-contabilizarDepositoOtrosEstados
 func-rem-sincronizacionPrinexREM|R-Jax
 func-rem-variosUICsPorEntidad|R-Jax
 version-2.49.3-rem-REMVIP-12419|version-2.53.1-rem
 func-rem-ofrecimientosAlquilerSocialBBVA|R-Jax
 func-rem-tdd|@
 func-rem-catastroV2|R-Kisame
+rem_mirror|func-rem-formalizacionAlquileres

@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
@@ -8,21 +9,20 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
-import es.pfsgroup.plugin.rem.api.OfertaApi;
-import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
+import es.pfsgroup.plugin.rem.api.FuncionesTramitesApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.DtoTareasFormalizacion;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 
 @Component
 public class UpdaterServiceSancionOfertaAlquilerEnvioContrato implements UpdaterService {
@@ -33,14 +33,15 @@ public class UpdaterServiceSancionOfertaAlquilerEnvioContrato implements Updater
     @Autowired
     private ExpedienteComercialApi expedienteComercialApi;
     
-	@Autowired
-	private OfertaApi ofertaApi;
+    @Autowired
+    private FuncionesTramitesApi funcionesTramitesApi;
 
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaAlquilerEnvioContrato.class);
     
-	
-	private static final String COMBO_RESULTADO = "comboResultado";
-	private static final String FECHA_ENVIO = "fechaEnvio";
+	private static final String COMBO_LLAMADA = "comboLlamada";
+	private static final String COMBO_BUROFAX = "comboBurofax";
+	private static final String FECHA_LLAMADA = "fechaLlamada";
+	private static final String FECHA_BUROFAX = "fechaBurofax";
 
 	private static final String CODIGO_T015_ENVIO_CONTRATO = "T015_EnvioContrato";
 
@@ -49,37 +50,36 @@ public class UpdaterServiceSancionOfertaAlquilerEnvioContrato implements Updater
 	@Override
 	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
 
-		boolean estadoBcModificado = false;
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
-		
-		DDEstadosExpedienteComercial estadoExp = null;
-		DDEstadoExpedienteBc estadoBc = null;
-		String fechaEnvio = null;
-		
-		for(TareaExternaValor valor :  valores){
+		DtoTareasFormalizacion dto = new DtoTareasFormalizacion();
+		try {
+			for(TareaExternaValor valor :  valores) {
+				
+				if(COMBO_LLAMADA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {					
+					dto.setLlamadaRealizada(DDSinSiNo.cambioStringtoBooleano(valor.getValor()));
+				}
+				if(COMBO_BUROFAX.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {					
+					dto.setBurofaxEnviado(DDSinSiNo.cambioStringtoBooleano(valor.getValor()));
+				}
+				if(FECHA_LLAMADA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {					
+					dto.setFechaLlamadaRealizada(ft.parse(valor.getValor()));
+				}
+				if(FECHA_BUROFAX.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {					
+					dto.setFechaBurofaxEnviado(ft.parse(valor.getValor()));
+				}
+			}
 			
-			if(COMBO_RESULTADO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-				if (DDSiNo.SI.equals(valor.getValor())) {					
-					estadoExp = genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PTE_AGENDAR));
-					estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_IMPORTE_FINAL_APROBADO));
-					estadoBcModificado = true;
-				}else if (DDSiNo.NO.equals(valor.getValor())) {				
-					estadoExp = genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PTE_ENVIO));
-					estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_PTE_SANCION_PATRIMONIO));
-					estadoBcModificado = true;
-
-				}
-				if(estadoBcModificado) {
-					expedienteComercial.setEstadoBc(estadoBc);	
-				}
-				expedienteComercial.setEstado(estadoExp);
-			}
-			if(FECHA_ENVIO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-				fechaEnvio = valor.getValor();
-			}
+				
+			funcionesTramitesApi.createOrUpdateComunicacionApi(expedienteComercial, dto);
+			
+			expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_BORRADOR_ENVIADO)));	
+			expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PTE_CLAUSULAS_CLIENTE)));
+			
+			expedienteComercialApi.update(expedienteComercial, false);
+		
+		}catch(ParseException e) {
+			e.printStackTrace();
 		}
-
-		expedienteComercialApi.update(expedienteComercial,false);
 
 	}
 
@@ -90,6 +90,5 @@ public class UpdaterServiceSancionOfertaAlquilerEnvioContrato implements Updater
 	public String[] getKeys() {
 		return this.getCodigoTarea();
 	}
-
 
 }

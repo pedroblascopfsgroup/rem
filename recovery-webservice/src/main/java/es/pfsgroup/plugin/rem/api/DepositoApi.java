@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.rem.api;
 
+import java.util.List;
+
 import es.pfsgroup.plugin.rem.model.*;
 
 public interface DepositoApi {
@@ -50,4 +52,5 @@ public interface DepositoApi {
 	boolean incautaODevuelveDeposito(Deposito dep, String codDeposito);
 
 	boolean isDepositoDecidido(Deposito deposito);
+
 }

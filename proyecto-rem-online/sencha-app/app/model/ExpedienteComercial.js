@@ -395,6 +395,10 @@ Ext.define('HreRem.model.ExpedienteComercial', {
             {
     			name: 'usuCrearOfertaDepositoExterno',
        			type: 'boolean'
+    		},
+            {
+    			name: 'ecoConFianza',
+       			type: 'boolean'
     		}
     		
     ],

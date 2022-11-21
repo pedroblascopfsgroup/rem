@@ -197,4 +197,13 @@ public class ActivoTramiteDaoImpl extends AbstractEntityDao<ActivoTramite, Long>
 		return HibernateQueryUtils.uniqueResult(this, hb);
 	}
 	
+	@Override
+	public ActivoTramite getTramiteComercialVigenteByTrabajoAllTramites(Long idTrabajo){
+		HQLBuilder hb = new HQLBuilder(" from ActivoTramite tra");
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tra.trabajo.id", idTrabajo);
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tra.estadoTramite.codigo", JBPMActivoTramiteManager.ESTADO_PROCEDIMIENTO_EN_TRAMITE);
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tra.auditoria.borrado", false);
+		
+		return HibernateQueryUtils.uniqueResult(this, hb);
+	}
 }

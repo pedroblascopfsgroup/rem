@@ -21,6 +21,8 @@ public class DtoFirmaContratoCaixa extends WebDto{
     private String comboValidacionBC;
 
     private String observacionesBC;
+    
+    private String comboReagendacion;
 
     public Long getIdTarea() {
         return idTarea;
@@ -84,5 +86,13 @@ public class DtoFirmaContratoCaixa extends WebDto{
 
     public void setIdPosicionamiento(Long idPosicionamiento) {
         this.idPosicionamiento = idPosicionamiento;
+    }
+    
+    public String getComboReagendacion() {
+        return comboReagendacion;
+    }
+
+    public void setComboReagendacion(String comboReagendacion) {
+        this.comboReagendacion = comboReagendacion;
     }
 }

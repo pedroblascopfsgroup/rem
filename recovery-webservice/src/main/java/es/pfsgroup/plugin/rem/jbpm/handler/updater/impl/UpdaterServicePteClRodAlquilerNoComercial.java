@@ -101,11 +101,14 @@ public class UpdaterServicePteClRodAlquilerNoComercial implements UpdaterService
 			estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA));
 			ofertaApi.finalizarOferta(oferta);
 		}else {
-			estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.PTE_TRASLADAR_OFERTA_AL_CLIENTE));
-			estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadoExpedienteBc.PTE_TRASLADAR_OFERTA_AL_CLIENTE));
+			estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.PTE_PBC_ALQUILER_HRE));
+			// estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadoExpedienteBc.PTE_PBC_ALQUILER_HRE));
 		}
 		expedienteComercial.setEstado(estadoExpedienteComercial);
-		expedienteComercial.setEstadoBc(estadoExpedienteBc);
+
+		if (estadoExpedienteBc != null) {
+			expedienteComercial.setEstadoBc(estadoExpedienteBc);
+		}
 			
 		expedienteComercialApi.update(expedienteComercial, false);	
 

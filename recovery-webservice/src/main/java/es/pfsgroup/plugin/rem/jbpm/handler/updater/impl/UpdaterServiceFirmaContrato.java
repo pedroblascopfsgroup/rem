@@ -119,7 +119,7 @@ public class UpdaterServiceFirmaContrato implements UpdaterService {
 							
 						}
 						if(COMBO_FIRMA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-							if(DDSiNo.NO.equals(valor.getValor())) {
+							if(DDSiNo.SI.equals(valor.getValor())) {
 								aprueba = true;
 							}
 						}

@@ -34,6 +34,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoFinanciacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDGrupoImpuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDMetodoActualizacionRenta;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoExoneracionFianza;
 import es.pfsgroup.plugin.rem.model.dd.DDRangoImpuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenFianzaCCAA;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
@@ -441,6 +442,16 @@ public class CondicionanteExpediente implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TFN_ID")
 	private DDTfnTipoFinanciacion tipoFinanciacion;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_MEF_ID")
+	private DDMotivoExoneracionFianza motivoExoneracionFianza;
+    
+    @Column(name = "COE_FECHA_INI_BONIFICACION")
+	private Date fechaInicioBonificacion;
+    
+    @Column(name = "COE_FECHA_FIN_BONIFICACION")
+	private Date fechaFinBonificacion;
 
 	@Version   
 	private Long version;
@@ -1406,5 +1417,29 @@ public class CondicionanteExpediente implements Serializable, Auditable {
 	public void setTipoFinanciacion(DDTfnTipoFinanciacion tipoFinanciacion) {
 		this.tipoFinanciacion = tipoFinanciacion;
 	}
+	
+	public DDMotivoExoneracionFianza getMotivoExoneracionFianza() {
+		return motivoExoneracionFianza;
+	}
 
+	public void setMotivoExoneracionFianza(DDMotivoExoneracionFianza motivoExoneracionFianza) {
+		this.motivoExoneracionFianza = motivoExoneracionFianza;
+	}
+
+	public Date getFechaInicioBonificacion() {
+		return fechaInicioBonificacion;
+	}
+
+	public void setFechaInicioBonificacion(Date fechaInicioBonificacion) {
+		this.fechaInicioBonificacion = fechaInicioBonificacion;
+	}
+
+	public Date getFechaFinBonificacion() {
+		return fechaFinBonificacion;
+	}
+
+	public void setFechaFinBonificacion(Date fechaFinBonificacion) {
+		this.fechaFinBonificacion = fechaFinBonificacion;
+	}
+	
 }

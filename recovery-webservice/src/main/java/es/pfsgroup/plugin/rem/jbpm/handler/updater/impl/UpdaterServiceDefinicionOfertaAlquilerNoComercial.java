@@ -15,7 +15,6 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
-import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
@@ -35,9 +34,6 @@ public class UpdaterServiceDefinicionOfertaAlquilerNoComercial implements Update
 
     @Autowired
     private ExpedienteComercialApi expedienteComercialApi;
-    
-	@Autowired
-	private OfertaApi ofertaApi;
 	
     protected static final Log logger = LogFactory.getLog(UpdaterServiceDefinicionOfertaAlquilerNoComercial.class);
     
@@ -96,6 +92,8 @@ public class UpdaterServiceDefinicionOfertaAlquilerNoComercial implements Update
 		DDTipoOfertaAlquiler tipoOfertaAlquiler = subtipoOfertaAlquiler.getTipoOfertaAlquiler();
 		
 		oferta.setTipoOfertaAlquiler(tipoOfertaAlquiler);
+		
+		oferta.setSubtipoOfertaAlquiler(subtipoOfertaAlquiler);
 		
 		expedienteComercial.setEstado(estadoExpedienteComercial);
 		expedienteComercial.setEstadoBc(estadoExpedienteBc);

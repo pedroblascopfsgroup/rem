@@ -93,4 +93,7 @@ public interface ActivoTramiteDao extends AbstractDao<ActivoTramite, Long>{
 	 */
 	ActivoTramite getTramiteComercialVigenteByTrabajoYCodTipoTramite(Long idTrabajo, String codTipoTramite);
 
+
+	ActivoTramite getTramiteComercialVigenteByTrabajoAllTramites(Long idTrabajo);
+
 }

@@ -402,7 +402,13 @@ public class DiccionarioTargetClassMap{
 		mapa.put("segmentacionCartera", DDCarteraBc.class);
 		mapa.put("motivoExoneracionCee", DDMotivoExoneracionCee.class);
 		mapa.put("incidenciaCee", DDIncidenciaCee.class);
+		mapa.put("estadoAdenda", DDTipoAdenda.class);
 		mapa.put("estadoDeposito", DDEstadoDeposito.class);
+		mapa.put("claseCondicion", DDClaseCondicion.class);
+		mapa.put("derechoArrendamiento", DDDerechoArrendamiento.class);
+		mapa.put("retencionImpuestos", DDRetencionImpuestos.class);
+		mapa.put("origenContratoEcc", DDOrigenContratoEcc.class);
+		mapa.put("suborigenContratoEcc", DDSuborigenContratoEcc.class);
 
 		return Collections.unmodifiableMap(mapa);
 	}

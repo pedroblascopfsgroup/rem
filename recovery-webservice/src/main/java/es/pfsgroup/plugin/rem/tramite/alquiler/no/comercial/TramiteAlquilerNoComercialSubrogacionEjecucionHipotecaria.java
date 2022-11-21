@@ -76,7 +76,7 @@ public class TramiteAlquilerNoComercialSubrogacionEjecucionHipotecaria extends T
 	
 	@Override
 	public boolean permiteClaseCondicion() {
-		return false;
+		return true;
 	}
 
 }

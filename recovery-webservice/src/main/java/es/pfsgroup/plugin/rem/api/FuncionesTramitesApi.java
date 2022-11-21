@@ -1,8 +1,18 @@
 package es.pfsgroup.plugin.rem.api;
 
+import java.util.List;
+
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.CuentasVirtualesAlquiler;
+import es.pfsgroup.plugin.rem.model.DtoCondicionantesExpediente;
+import es.pfsgroup.plugin.rem.model.DtoTabFianza;
+import es.pfsgroup.plugin.rem.model.DtoTareasFormalizacion;
+import es.pfsgroup.plugin.rem.model.DtoTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.Fianzas;
 import es.pfsgroup.plugin.rem.model.HistoricoTareaPbc;
+import es.pfsgroup.plugin.rem.model.VGridHistoricoReagendaciones;
 
 public interface FuncionesTramitesApi {
 
@@ -20,5 +30,38 @@ public interface FuncionesTramitesApi {
 
 	boolean tieneCampoClasificacionRelleno(TareaExterna tareaExterna);
 	
+	List<VGridHistoricoReagendaciones> getHistoricoReagendaciones(Long idExpediente);
+
+	boolean checkIBANValido(TareaExterna tareaExterna, String numIban);
+
+	boolean checkCuentasVirtualesAlquilerLibres(TareaExterna tareaExterna);
+
+	boolean checkFechaAgendacionRelleno(Long idExpediente);
+
+	DtoCondicionantesExpediente getFianzaExonerada(Long idExpediente);
+
+	DtoTabFianza getDtoFianza(Long idExpediente);
+	
+	DtoTipoAlquiler getDtoTipoAlquiler(Long idExpediente);
+
+	boolean seNecesitaCuentaVirtualAlquiler(TareaExterna tareaExterna);
+
+	boolean seHaReagendado2VecesOMas(TareaExterna tareaExterna);
+	
+	void createOrUpdateComunicacionApi(ExpedienteComercial eco, DtoTareasFormalizacion dto);
+
+	boolean modificarFianza(ExpedienteComercial eco);
+
+	void actualizarEstadosPublicacionActivos(ExpedienteComercial expedienteComercial);
+
+	CuentasVirtualesAlquiler devolverCuentaVirtualAlquiler(Activo activo, Fianzas fianza, boolean vincular) ;
+
+	boolean estanCamposRellenosParaFormalizacion(TareaExterna tareaExterna);
+
+	boolean estanCamposParaDefinicionOfertaRellenos(TareaExterna tareaExterna);
+
+	boolean estaPermitidoClaseCondicion(TareaExterna tareaExterna);
+
+    boolean tieneIbanInformado(TareaExterna tareaExterna);
 }
 

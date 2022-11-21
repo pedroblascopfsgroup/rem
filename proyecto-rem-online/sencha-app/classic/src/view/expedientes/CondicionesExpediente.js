@@ -659,7 +659,8 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 										fieldLabel : HreRem.i18n('fieldlabel.fianza.exonerada'),
 										bind : {
 											value : '{condiciones.fianzaExonerada}',
-											hidden: '{!esBankiaAlquilerOAlquilerNoComercial}'
+											hidden: '{!esBankiaAlquilerOAlquilerNoComercial}',
+											readOnly : '{!condiciones.fianzaExoneradaEditable}'
 										}
 									},
 									{
@@ -707,9 +708,15 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 									{
 										xtype : 'textfieldbase',
 										fieldLabel : HreRem.i18n('fieldlabel.documento'),
-										maxLength : 9,
+										setMaxLength: function (v) {
+                                            this.maxLength = v;
+                                        },
+                                        getMaxLength: function () {
+                                            return this.maxLength;
+                                        },
 										bind : {
-											value : '{condiciones.documentoFiador}'
+											value : '{condiciones.documentoFiador}',
+											maxLength: '{maxLengthDocumentoFiador}'
 										}
 									},
 									{
@@ -1015,23 +1022,8 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 								reference : 'bonificacionBk',
 								margin : '5 0 0 0',
 								fieldLabel : HreRem.i18n('fieldlabel.bonificacion'),
-								colspan: 2,
 								bind : {
 									value : '{condiciones.bonificacion}'
-								},
-								listeners : {
-									change : 'onChangeBonificacion'
-								}
-							},
-							{
-								xtype : 'numberfieldbase',
-								reference : 'mesesBonificacionBk',
-								name : 'mesesBonificacion',
-								margin : '5 0 0 0',
-								fieldLabel : HreRem.i18n('fieldlabel.duracion.meses'),
-								bind : {
-									value : '{condiciones.mesesBonificacion}',
-									disabled : true
 								}
 							},
 							{
@@ -1043,6 +1035,32 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 								symbol : HreRem.i18n('symbol.euro'),
 								bind : {
 									value : '{condiciones.importeBonificacion}',
+									disabled : '{!condiciones.bonificacion}'
+								}
+							},
+							{
+								xtype : 'datefieldbase',
+								reference : 'fechaInicioBonificacionBk',
+								name : 'fechaInicioBonificacionBk',
+								fieldLabel : HreRem.i18n('fieldlabel.fecha.inicio.bonificacion'),
+								margin : '5 0 0 0',
+								maxValue: null,
+								minValue: $AC.getCurrentDate(),
+								bind : {
+									value : '{condiciones.fechaInicioBonificacion}',
+									disabled : '{!condiciones.bonificacion}'
+								}
+							},
+							{
+								xtype : 'datefieldbase',
+								reference : 'fechaFinBonificacionBk',
+								name : 'fechaFinBonificacionBk',
+								fieldLabel : HreRem.i18n('fieldlabel.fecha.fin.bonificacion'),
+								margin : '5 0 0 0',
+								maxValue: null,
+								minValue: $AC.getCurrentDate(),
+								bind : {
+									value : '{condiciones.fechaFinBonificacion}',
 									disabled : '{!condiciones.bonificacion}'
 								}
 							} 

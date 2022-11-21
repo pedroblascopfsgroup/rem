@@ -278,5 +278,14 @@ public class ActivoTramite implements Serializable, Auditable{
 		return tareasActivas;
 	}
 
+	public Set<String> getTareasExternasActivasCodigo() {
+		Set<String> tareasActivasCodigo = new HashSet<String>();
+		 for (TareaActivo tareaActivo : tareas) {
+			if(!tareaActivo.getTareaFinalizada()) {
+				tareasActivasCodigo.add(tareaActivo.getTareaExterna().getTareaProcedimiento().getCodigo());
+			}
+		}
+		return tareasActivasCodigo;
+	}
 		
 }

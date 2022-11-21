@@ -193,6 +193,8 @@ public class DtoFichaExpediente extends WebDto {
 	
 	private Boolean usuCrearOfertaDepositoExterno;
 	
+	private Boolean ecoConFianza;
+	
 	public Long getId() {
 		return id;
 	}
@@ -993,6 +995,14 @@ public class DtoFichaExpediente extends WebDto {
 
 	public void setUsuCrearOfertaDepositoExterno(Boolean usuCrearOfertaDepositoExterno) {
 		this.usuCrearOfertaDepositoExterno = usuCrearOfertaDepositoExterno;
+	}
+
+	public Boolean getEcoConFianza() {
+		return ecoConFianza;
+	}
+
+	public void setEcoConFianza(Boolean ecoConFianza) {
+		this.ecoConFianza = ecoConFianza;
 	}
 	
 }

@@ -183,7 +183,7 @@
 				</targetBean>
 			</action>
 		</event>
-		<transition to="T018_TrasladarOfertaCliente" name="avanzaBPM"></transition>
+		<transition to="T018_DatosPBC" name="avanzaBPM"></transition>
 		<transition to="Fin" name="Fin"></transition>
 	</state> 
 	
@@ -211,7 +211,7 @@
 	</state> 
 	<decision name ="T018_PteClRodDecision" expression="#{T018_PteClRodDecision}">
 		<transition to="Fin" name="rechaza"></transition>
-        <transition to="T018_TrasladarOfertaCliente" name="aprueba"></transition>
+        <transition to="T018_DatosPBC" name="aprueba"></transition>
 	</decision>
 	
 	<state name="T018_TrasladarOfertaCliente">
@@ -289,14 +289,9 @@
 				</targetBean>
 			</action>
 		</event>
-		<transition to="T018_DatosPBCDecision" name="avanzaBPM"></transition>
+		<transition to="T018_CalculoRiesgo" name="avanzaBPM"></transition>
 		<transition to="Fin" name="Fin"></transition>
-	</state> 
-	<decision name ="T018_DatosPBCDecision" expression="#{T018_DatosPBCDecision}">
-		<transition to="T018_CalculoRiesgo" name="acepta"></transition>
-        <transition to="Fin" name="rechaza"></transition>
-	</decision>
-	
+	</state> 	
 	<state name="T018_CalculoRiesgo">
 		<event type="node-enter">
 			<action name="miTarea"
@@ -321,8 +316,419 @@
 	</state> 
 	<decision name ="T018_CalculoRiesgoDecision" expression="#{T018_CalculoRiesgoDecision}">
 		<transition to="T018_PbcAlquiler" name="aceptaConRiesgo"></transition>
-		<transition to="T018_AgendarYFirmar" name="aceptaSinRiesgo"></transition>
+		<transition to="T018_AprobacionOferta" name="aceptaSinRiesgo"></transition>
         <transition to="Fin" name="rechaza"></transition>
+	</decision>
+	
+	<state name="T018_RespuestaContraofertaBC">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="T018_RespuestaContraofertaBCDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state> 
+	<decision name ="T018_RespuestaContraofertaBCDecision" expression="#{T018_RespuestaContraofertaBCDecision}">
+		<transition to="T018_AprobacionOferta" name="acepta"></transition>
+		<transition to="T018_ProponerRescisionCliente" name="rechazaRenovacion"></transition>
+		<transition to="T018_EsperaComitePosesiones" name="rechazaAlquilerSocial"></transition>
+	</decision>
+	
+	<state name="T018_EntregaFianzas">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="T018_EntregaFianzasDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state> 
+	<decision name ="T018_EntregaFianzasDecision" expression="#{T018_EntregaFianzasDecision}">
+		<transition to="T018_FirmaContrato" name="acepta"></transition>
+		<transition to="T018_RespuestaReagendacionBC" name="rechaza"></transition>
+		<transition to="T018_AgendarFirma" name="rechazaMenosTres"></transition>
+	</decision>
+	
+	<state name="T018_AprobacionOferta">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="T018_AprobacionOfertaDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state> 
+	<decision name ="T018_AprobacionOfertaDecision" expression="#{T018_AprobacionOfertaDecision}">
+		<transition to="T018_AgendarFirma" name="aceptaNoSubrogacion"></transition>
+		<transition to="T018_RespuestaContraofertaBC" name="rechazaRenovacionAlquilerSocial"></transition>
+		<transition to="Fin" name="aceptaSubrogacionHipotecariaSinAdenda"></transition>
+		<transition to="T018_AgendarFirmaAdenda" name="aceptaSubrogacionHipotecariaConAdenda"></transition>
+	</decision>
+	
+	<state name="T018_ComunicarSubrogacion">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="T018_ComunicarSubrogacionDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state> 
+	<decision name ="T018_ComunicarSubrogacionDecision" expression="#{T018_ComunicarSubrogacionDecision}">
+		<transition to="T018_AltaContratoAlquiler" name="aceptaSubrogacionDacion"></transition>
+		<transition to="T018_CierreContrato" name="aceptaSubrogacionHipotecaria"></transition>
+		<transition to="Fin" name="rechaza"></transition>
+	</decision>
+	
+	<state name="T018_AltaContratoAlquiler">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="T018_AltaContratoAlquilerDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state> 
+	<decision name ="T018_AltaContratoAlquilerDecision" expression="#{T018_AltaContratoAlquilerDecision}">
+		<transition to="T018_CierreContrato" name="acepta"></transition>
+		<transition to="Fin" name="rechaza"></transition>
+	</decision>
+	
+	<state name="T018_AgendarFirmaAdenda">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="T018_AgendarFirmaAdendaDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state> 
+	<decision name ="T018_AgendarFirmaAdendaDecision" expression="#{T018_AgendarFirmaAdendaDecision}">
+		<transition to="T018_FirmaAdenda" name="acepta"></transition>
+	</decision>
+	
+	<state name="T018_RespuestaReagendacionBC">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="T018_RespuestaReagendacionBCDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state> 
+	<decision name ="T018_RespuestaReagendacionBCDecision" expression="#{T018_RespuestaReagendacionBCDecision}">
+		<transition to="T018_AgendarFirma" name="acepta"></transition>
+		<transition to="T018_ProponerRescisionCliente" name="rechazaRenovacion"></transition>
+		<transition to="T018_EsperaComitePosesiones" name="irComiteAlqSocial"></transition>
+		<transition to="Fin" name="rechazaAlqSocial"></transition>
+	</decision>
+	
+	<state name="T018_FirmaAdenda">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="T018_FirmaAdendaDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state> 
+	<decision name ="T018_FirmaAdendaDecision" expression="#{T018_FirmaAdendaDecision}">
+		<transition to="Fin" name="acepta"></transition>
+		<transition to="T018_AgendarFirmaAdenda" name="rechazaMenosTresVeces"></transition>
+		<transition to="T018_DecisionContinuidadOferta" name="rechazaMasDosVeces"></transition>
+	</decision>
+	
+	<state name="T018_DecisionContinuidadOferta">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state> 
+	
+	<state name="T018_AltaContratoAlquilerAdenda">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="T018_AltaContratoAlquilerAdendaDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state> 
+	<decision name ="T018_AltaContratoAlquilerAdendaDecision" expression="#{T018_AltaContratoAlquilerAdendaDecision}">
+		<transition to="T018_ComunicarSubrogacion" name="acepta"></transition>
+		<transition to="Fin" name="rechaza"></transition>
+	</decision>
+	
+	<state name="T018_ProponerRescisionCliente">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="T018_ProponerRescisionClienteDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state> 
+	<decision name ="T018_ProponerRescisionClienteDecision" expression="#{T018_ProponerRescisionClienteDecision}">
+		<transition to="T018_FirmaRescisionContrato" name="acepta"></transition>
+		<transition to="Fin" name="rechazaNoCarteraConcertadaResidencial"></transition>
+		<transition to="T018_DecisionComite" name="rechazaCarteraConcertadaResidencial"></transition>
+	</decision>
+	
+	<state name="T018_DecisionComite">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="T018_DecisionComiteDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state> 
+	<decision name ="T018_DecisionComiteDecision" expression="#{T018_DecisionComiteDecision}">
+		<transition to="T018_ConfirmacionBC" name="nuevasCondiciones"></transition>
+		<transition to="T018_AgendarFirma" name="reagendar"></transition>
+		<transition to="Fin" name="cancelar"></transition>
+	</decision>
+	
+	<state name="T018_FirmaRescisionContrato">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="T018_FirmaRescisionContratoDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state> 
+	<decision name ="T018_FirmaRescisionContratoDecision" expression="#{T018_FirmaRescisionContratoDecision}">
+		<transition to="Fin" name="acepta"></transition>
+		<transition to="Fin" name="rechaza"></transition>
+	</decision>
+	
+	<state name="T018_FirmaContrato">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="T018_FirmaContratoDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state> 
+	<decision name ="T018_FirmaContratoDecision" expression="#{T018_FirmaContratoDecision}">
+		<transition to="Fin" name="acepta"></transition>
+		<transition to="Fin" name="rechaza"></transition>
+	</decision>
+	
+	<state name="T018_AgendarFirma">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="T018_AgendarFirmaDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state> 
+	
+	<decision name ="T018_AgendarFirmaDecision" expression="#{T018_AgendarFirmaDecision}">
+		<transition to="T018_FirmaContrato" name="conFianzaExonerada"></transition>
+        <transition to="T018_EntregaFianzas" name="sinFianzaExonerada"></transition>
 	</decision>
 	
 	<state name="T018_PbcAlquiler">
@@ -348,37 +754,8 @@
 		<transition to="Fin" name="Fin"></transition>
 	</state> 
 	<decision name ="T018_PbcAlquilerDecision" expression="#{T018_PbcAlquilerDecision}">
-		<transition to="T018_AgendarYFirmar" name="acepta"></transition>
+		<transition to="T018_AprobacionOferta" name="acepta"></transition>
         <transition to="Fin" name="rechaza"></transition>
-	</decision>
-	
-	
-	<state name="T018_AgendarYFirmar">
-		<event type="node-enter">
-			<action name="miTarea"
-				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
-				config-type="bean">
-				<targetBean>
-					activoGenericEnterActionHandler
-				</targetBean>
-			</action>
-		</event>
-		<event type="node-leave">
-			<action name="miTarea"
-				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
-				config-type="bean">
-				<targetBean>
-					activoGenericLeaveActionHandler
-				</targetBean>
-			</action>
-		</event>
-		<transition to="T018_AgendarYFirmarDecision" name="avanzaBPM"></transition>
-		<transition to="Fin" name="Fin"></transition>
-	</state> 
-	
-	<decision name ="T018_AgendarYFirmarDecision" expression="#{T018_AgendarYFirmarDecision}">
-		<transition to="T018_PteClRod" name="clRodSi"></transition>
-        <transition to="T018_CierreContrato" name="clRodNo"></transition>
 	</decision>
 	
 	<state name="T018_CierreContrato">
@@ -448,6 +825,59 @@
 		</event>
 		<transition to="Fin" name="avanzaBPM"></transition>
 	</state>
+	
+	<state name="T018_EsperaComitePosesiones">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="T018_EsperaComitePosesionesDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state> 
+	<decision name ="T018_EsperaComitePosesionesDecision" expression="#{T018_EsperaComitePosesionesDecision}">
+		<transition to="T018_AprobacionOferta" name="acepta"></transition>
+		<transition to="Fin" name="rechaza"></transition>
+	</decision>
+	
+	<state name="T018_ConfirmacionBC">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="T018_ConfirmacionBCDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state> 
+	<decision name ="T018_ConfirmacionBCDecision" expression="#{T018_ConfirmacionBCDecision}">
+		<transition to="T018_AprobacionOferta" name="acepta"></transition>
+	</decision>
 	
 	<end-state name="Fin">
 		<event type="node-enter">

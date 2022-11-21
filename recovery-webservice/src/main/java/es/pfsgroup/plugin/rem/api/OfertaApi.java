@@ -868,4 +868,13 @@ public interface OfertaApi {
 	void llamarCambioEstadoReplicarNoSession(Long idOferta, String codigoEstado);
 	
 	void actualizarOfertaBoarding(Oferta oferta, TareaExterna tareaExterna);
+
+	List<DtoHistoricoAntiguoDeudor> getDtoHistoricoAntiguoDeudorList(Long idOferta) throws IllegalAccessException, InvocationTargetException;
+
+	List<HistoricoAntiguoDeudor> getHistoricoAntiguoDeudorList(Long idOferta);
+	
+	boolean createHistoricoAntiguoDeudor(DtoHistoricoAntiguoDeudor dtoHitoricoAntiguoDeudor, Long idOferta);
+
+	boolean updateHistoricoAntiguoDeudor(DtoHistoricoAntiguoDeudor dtoHitoricoAntiguoDeudor);
+
 }

@@ -5939,6 +5939,17 @@ comprobarFormatoModificar: function() {
 			    	 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 			 	}
 		});
-	}
+	},
+	
+	esEjecucionHipotecaria: function(){
+		
+    	var me = this;
+
+    	if(me.getViewModel().get('expediente.tipoOfertaAlquilerCodigo') == "01"){
+    		return true;
+    	}else{
+    		return false;
+    	}
+    }
 	
 });

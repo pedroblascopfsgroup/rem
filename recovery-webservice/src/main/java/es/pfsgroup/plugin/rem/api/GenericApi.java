@@ -19,7 +19,6 @@ import es.pfsgroup.plugin.rem.model.ActivoProveedorReducido;
 import es.pfsgroup.plugin.rem.model.AuthenticationData;
 import es.pfsgroup.plugin.rem.model.AvanzarDatosPBCDto;
 import es.pfsgroup.plugin.rem.model.ConfiguracionSubpartidasPresupuestarias;
-import es.pfsgroup.plugin.rem.model.DatosPBCDto;
 import es.pfsgroup.plugin.rem.model.DtoDiccionario;
 import es.pfsgroup.plugin.rem.model.DtoLocalidadSimple;
 import es.pfsgroup.plugin.rem.model.DtoMenuItem;
@@ -422,4 +421,5 @@ public interface GenericApi {
 	public List<DDEstadoOferta> getDiccionarioEstadosOfertasAgrupacion(Long idAgrupacion);
 
 	public List<DDEstadoDeposito> getDiccionarioEstadoDeposito(Long idActivo);
+
 }

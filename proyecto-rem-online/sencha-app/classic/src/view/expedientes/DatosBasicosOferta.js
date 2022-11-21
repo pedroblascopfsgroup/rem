@@ -23,6 +23,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
     initComponent: function () {
 
         var me = this;
+        var esEditableTabOfertaExpedientes = $AU.userHasFunction('TAB_DATOS_BASICOS_EXPEDIENTES') || $AU.userHasFunction('EDITAR_TAB_DATOS_BASICOS_OFERTA_EXPEDIENTES') || $AU.userIsRol(CONST.PERFILES['HAYASUPER']);
 
 		/*var storeNecesitaFinanciacion = Ext.create('Ext.data.Store', {
 		data : [
@@ -166,7 +167,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 							bind:{
 								store:'{storeClaseContrato}',
 								value:'{datosbasicosoferta.claseContratoCodigo}',
-								hidden: '{!esBankiaAlquilerOAlquilerNoComercial}'
+								hidden: '{!esBankia}'
 							}
 						},
 						{
@@ -216,8 +217,51 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 							valueField: 'codigo'
 						},
 						{
+							xtype : 'datefieldbase',
+							formatter : 'date("d/m/Y")',
+							fieldLabel : HreRem.i18n('fieldlabel.fecha.inicio.subrogacion'),
+							readOnly : true,
+							bind : {
+								value : '{datosbasicosoferta.fechaInicioSubrogacion}',
+								hidden: '{!esAlquilerNoComercial}' 
+							}
+						},
+						{
+		                	xtype: 'comboboxfieldbase',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.auto.firme'),
+		                	name: 'comboautofirme',
+		                	reference: 'comboautofirmeRef',
+		                	bind: {	
+			                	readOnly : true,
+		                		store: '{comboSiNoBoolean}',
+								value: '{datosbasicosoferta.autoFirme}'
+		                	}
+		                
+		                },
+		                {
+							xtype: 'comboboxfieldbase',
+							fieldLabel:  HreRem.i18n('fieldlabel.retencion.impuesto'),
+							bind:{
+								store:'{storeRetencionImpuestos}',
+								value:'{datosbasicosoferta.codigoRetenciondeImpuestos}',
+								hidden: '{!esBankiaAlquilerOAlquilerNoComercial}'
+							}
+						},
+						{
+                            xtype: 'textfieldbase',
+                            fieldLabel:  HreRem.i18n('fieldlabel.iban.devolucion.cliente'),
+                            bind:{
+                                value:'{datosbasicosoferta.ibanDevolucionCliente}',
+                                hidden: '{!esBankiaAlquilerOAlquilerNoComercial}'
+                            },
+                            listeners: {
+                                'focusleave': 'checkIbanDevolucion'
+                            }
+                        },
+						{
 							bind : {hidden : '{!esTipoAlquiler}'}
 						}
+						
 					]},
 					{
 						xtype : 'fieldsettable',
@@ -470,7 +514,86 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 							}
 						]
 					},											
-					
+					{
+						xtype : 'fieldsettable',
+						defaultType : 'displayfieldbase',
+						title : HreRem.i18n('fieldlabel.no.comercial'),
+						collapsible: false,
+						border: false,
+						colspan: 3,
+						layout: {
+					        type: 'table',
+					        columns: 3,
+					        tdAttrs: {
+					        	width: '33%',
+					        	style: 'vertical-align: top'
+					        },
+					        tableAttrs: {
+					            style: {
+					                width: '100%'
+								}
+					        }
+						},
+						bind : {
+							hidden : '{!esAlquilerNoComercial}' 
+						},
+						items : [
+							{
+			    				xtype : 'comboboxfieldbase',
+								fieldLabel : HreRem.i18n('fieldlabel.tipo.adenda'),
+								reference: 'estadoAdenda',
+								readOnly : true,
+								bind : {
+									store : '{comboEstadoAdenda}',
+									value : '{datosbasicosoferta.codigoTipoAdenda}',
+									hidden: '{!datosbasicosoferta.codigoTipoAdenda}'
+								}
+			    			},
+							{
+								xtype: 'comboboxfieldbase',
+								fieldLabel:  HreRem.i18n('fieldlabel.clase.condicion'),
+								bind:{
+									store:'{storeClaseCondicion}',
+									value:'{datosbasicosoferta.codigoClaseCondicion}',
+									hidden: '{!esBankiaAlquilerOAlquilerNoComercial}' 
+								}
+							},
+							{
+								xtype: 'comboboxfieldbase',
+								fieldLabel:  HreRem.i18n('fieldlabel.grupo.contrato.cbk'),
+								bind:{
+									store:'{comboSiNoExclusionBulk}',
+									value:'{datosbasicosoferta.codigoGrupoContratoCBK}',
+									hidden: '{!esBankiaAlquilerOAlquilerNoComercial}'
+								}
+							},
+							{
+								xtype : "comboboxfieldbase",
+								fieldLabel : HreRem.i18n('fieldlabel.origen.contrato.ecc'),
+								bind : {
+									store : '{comboOrigenContratoEcc}',
+									value : '{datosbasicosoferta.origenContratoEccCodigo}'
+								}
+							},
+							{
+								xtype : "comboboxfieldbase",
+								fieldLabel : HreRem.i18n('fieldlabel.suborigen.contrato.ecc'),
+								bind : {
+									store : '{comboSuborigenContratoEcc}',
+									value : '{datosbasicosoferta.suborigenContratoEccCodigo}'
+								}
+							},
+							{
+								xtype: 'comboboxfieldbase',
+								fieldLabel:  HreRem.i18n('fieldlabel.derecho.arrendamiento'),
+								bind:{
+									store:'{storeDerechoArrendamiento}',
+									value:'{datosbasicosoferta.codigoDerechoArrendamiento}',
+									hidden: '{!esBankiaAlquilerOAlquilerNoComercial}'
+								}
+							}
+						]
+					},
 					{
 						xtype : 'fieldsettable',	
 						colspan: 3,	
@@ -1029,7 +1152,24 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 									flex : 1
 								}]
 					}]
-		}
+		},
+		{
+			xtype:'fieldsettable',
+			defaultType: 'textfieldbase',
+			colspan: 3,
+			reference: 'historicoantiguodeudor',
+			bind: {
+				hidden: '{!esCaixaAlquilerNoComercial}'
+			},
+			title: HreRem.i18n('fieldlabel.historico.antiguo.deudor.titulo'),
+			items: [
+				{
+					xtype: "historicoantiguodeudorgrid", 
+					reference: "historicoantiguodeudorref", 
+					colspan: 3
+				}
+			]
+   		}
 
 		]
 

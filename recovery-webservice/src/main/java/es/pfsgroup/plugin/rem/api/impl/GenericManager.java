@@ -103,6 +103,7 @@ import es.pfsgroup.plugin.rem.model.Ejercicio;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GastoLineaDetalle;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
+import es.pfsgroup.plugin.rem.model.GestionCCPP;
 import es.pfsgroup.plugin.rem.model.GestorSustituto;
 import es.pfsgroup.plugin.rem.model.GrupoUsuario;
 import es.pfsgroup.plugin.rem.model.HistoricoFasePublicacionActivo;
@@ -2322,7 +2323,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 		return listaDDEstadoOferta;
 	}
-	
+
 	@Override
 	public List<DDEstadoDeposito> getDiccionarioEstadoDeposito(Long idActivo) {
 		List<DDEstadoDeposito> estadosDeposito = genericDao.getList(DDEstadoDeposito.class);

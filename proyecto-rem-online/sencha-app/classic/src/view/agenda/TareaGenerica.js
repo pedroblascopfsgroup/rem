@@ -4973,10 +4973,11 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 			    			me.bloquearObligatorio(fechaAgendacionIngreso);
 			    			fechaAgendacionIngreso.setReadOnly(true);
 			    			me.bloquearObligatorio(comboFianza);
-			    			me.desbloquearCampo(fechaReagendarIngreso);
+								me.desbloquearCampo(fechaReagendarIngreso);
+								me.campoObligatorio(fechaReagendarIngreso);
 			    			fechaAgendacionIngreso.setValue(Ext.Date.format(new Date(dto.agendacionIngreso), 'd/m/Y'));
 			    			me.desbloquearCampo(motivoReagendacion);
-			    			me.campoObligatorio(motivoReagendacion);
+								me.campoObligatorio(motivoReagendacion);
 				    		me.campoNoObligatorio(motivoFianzaExonerada);
 						}else{
 							me.desbloquearCampo(fechaAgendacionIngreso);

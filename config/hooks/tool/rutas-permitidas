@@ -24,6 +24,8 @@ func-rem-nuevosValoresParaCriterioCajaIndicadoresImpuestos|R-Buu
 func-rem-nuevaNomenclaturaFicherosGastos|R-Buu
 func-rem-proveedoresNoHomologables|R-Nagami
 func-rem-datosProveedores|R-Nagami
+rem_mirror|version-@-rem
+rem_mirror|func-rem-modificacionStockUAs
 func-rem-formalizacionAlquileres-HREOS-18271|func-rem-formalizacionAlquileres
 rem_mirror|func-rem-contabilizarDepositoOtrosEstados
 func-rem-sincronizacionPrinexREM|R-Jax

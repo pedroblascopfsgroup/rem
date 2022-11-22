@@ -4867,60 +4867,25 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 	
 	T018_ProponerRescisionClienteValidacion: function(){
 		var me = this;
-		var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
-		var idExpediente = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
 		
 		var comboResultado = me.down('[name=comboResultado]');
 		var tipoActivoRescision = me.down('[name=tipoActivoRescision]');
-		var tipoCarteraRescision = me.down('[name=tipoCarteraRescision]');
-		var justificacion = me.down('[name=justificacion]');
+		
+		me.deshabilitarCampo(tipoActivoRescision);
+		me.campoNoObligatorio(tipoActivoRescision);
 		
 		comboResultado.addListener('change', function(comboResultado) {
-			if (comboResultado.value == CONST.COMBO_SIN_SINO['NO'] && tipoActivoRescision.value == CONST.CODIGO_TIPO_ACTIVO_RESCISION['TERCIARIA']) { 
-				justificacion.setValue('Demanda judicial');
-				me.bloquearCampo(justificacion);
+			if (comboResultado.value == CONST.COMBO_SIN_SINO['NO']) { 
+				me.habilitarCampo(tipoActivoRescision);
 				me.campoObligatorio(tipoActivoRescision);
-				me.campoObligatorio(tipoCarteraRescision);
 			} else {
-				me.borrarCampo(justificacion);
-				me.desbloquearCampo(justificacion);
+				tipoActivoRescision.reset();
+				me.deshabilitarCampo(tipoActivoRescision);
 				me.campoNoObligatorio(tipoActivoRescision);
-				me.campoObligatorio(tipoCarteraRescision);
-			}
-		});
-		
-		tipoActivoRescision.addListener('change', function(tipoActivoRescision) {
-			if (comboResultado.value == CONST.COMBO_SIN_SINO['NO'] && tipoActivoRescision.value == CONST.CODIGO_TIPO_ACTIVO_RESCISION['TERCIARIA']) { 
-				justificacion.setValue('Demanda judicial');
-				me.bloquearCampo(justificacion);
-			} else {
-				me.borrarCampo(justificacion);
-				me.desbloquearCampo(justificacion);
 			}
 		});
 	},
 	
-	T018_FirmaRescisionContratoValidacion: function(){
-		var me = this;
-		var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
-		var idExpediente = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
-		
-		var comboResultado = me.down('[name=comboResultado]');
-		var fechaFirma = me.down('[name=fechaFirma]');
-		
-		if (CONST.CARTERA['BANKIA'] == codigoCartera) {
-			me.habilitarCampo(comboResultado);
-			me.campoObligatorio(comboResultado);
-			me.habilitarCampo(fechaFirma);
-			me.campoObligatorio(fechaFirma);
-			
-		} else {
-			me.deshabilitarCampo(comboResultado);
-			me.ocultarCampo(comboResultado);
-			me.deshabilitarCampo(fechaFirma);
-			me.ocultarCampo(fechaFirma);
-		}
-	},
 	
 	T018_FirmaContratoValidacion: function(){
 		var me = this;

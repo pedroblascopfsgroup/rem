@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR= Alvaro Valero
---## FECHA_CREACION=20221122
+--## FECHA_CREACION=20221123
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-19013
@@ -44,7 +44,8 @@ DECLARE
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
     	T_TIPO_DATA('T018_AgendarFirmaAdenda'			,'justificacion'),
     	T_TIPO_DATA('T018_FirmaAdenda'					,'justificacion'),
-    	T_TIPO_DATA('T018_ProponerRescisionCliente'		,'justificacion')
+    	T_TIPO_DATA('T018_ProponerRescisionCliente'		,'justificacion'),
+    	T_TIPO_DATA('T018_ProponerRescisionCliente'		,'tipoCarteraRescision')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 BEGIN

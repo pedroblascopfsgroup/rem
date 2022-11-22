@@ -1957,13 +1957,16 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 							ActivoAgrupacion agrupacion = oferta.getAgrupacion();
 							Double umbralAskingPrice = 200000.0;
 							String codComiteHaya = null;
-							String codComite = DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(codSubcartera) ? DDComiteSancion.CODIGO_CES_APPLE : DDComiteSancion.CODIGO_CES_REMAINING;
+							String codComite = null;
 							if(DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(codSubcartera)) {
 								codComiteHaya = DDComiteSancion.CODIGO_HAYA_APPLE;
+								codComite = DDComiteSancion.CODIGO_CES_APPLE;
 							} else if (DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(codSubcartera)) {
 								codComiteHaya = DDComiteSancion.CODIGO_HAYA_REMAINING;
+								codComite = DDComiteSancion.CODIGO_CES_REMAINING;
 							} else if (DDSubcartera.CODIGO_JAGUAR.equals(codSubcartera)) {
 								codComiteHaya = DDComiteSancion.CODIGO_HAYA_JAGUAR;
+								codComite = DDComiteSancion.CODIGO_CES_JAGUAR;
 							}
 							Double importeOferta = Checks.esNulo(oferta.getImporteOferta()) ? 0d : oferta.getImporteOferta();
 							if(Checks.esNulo(agrupacion)) {

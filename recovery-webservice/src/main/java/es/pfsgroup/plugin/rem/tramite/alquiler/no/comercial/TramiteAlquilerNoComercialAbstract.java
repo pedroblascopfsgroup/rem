@@ -38,8 +38,11 @@ public abstract class TramiteAlquilerNoComercialAbstract implements TramiteAlqui
 	@Override
 	public boolean modificarFianza(ExpedienteComercial eco) {
 		boolean modificar = false;
-		
-		modificar = this.cumpleCondiciones(tramiteDao.getTramiteComercialVigenteByTrabajoAllTramites(eco.getTrabajo().getId()));
+
+		ActivoTramite tramiteVigente = tramiteDao.getTramiteComercialVigenteByTrabajoAllTramites(eco.getTrabajo().getId());
+		if(tramiteVigente != null) {
+			modificar = this.cumpleCondiciones(tramiteVigente);
+		}
 		
 		return modificar;
 	}

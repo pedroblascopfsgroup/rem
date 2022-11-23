@@ -46,9 +46,9 @@ public class CampanyaObrasNuevasDto implements WebcomRESTDto{
 	
 	private LongDataType idAgrupacionBc;
 	
-	private DateDataType fechaPrevFinalizacion;
-	private DateDataType fechaEscrituraDesde;
-	private DateDataType fechaEscrituraHasta;
+	private DateDataType agrFechaPrevFinalizacion;
+	private DateDataType agrFechaEscrituraDesde;
+	private DateDataType agrFechaEscrituraHasta;
 	
 	public DateDataType getFechaAccion() {
 		return fechaAccion;
@@ -200,22 +200,22 @@ public class CampanyaObrasNuevasDto implements WebcomRESTDto{
 	public void setIdAgrupacionBc(LongDataType idAgrupacionBc) {
 		this.idAgrupacionBc = idAgrupacionBc;
 	}
-	public DateDataType getFechaPrevFinalizacion() {
-		return fechaPrevFinalizacion;
+	public DateDataType getAgrFechaPrevFinalizacion() {
+		return agrFechaPrevFinalizacion;
 	}
-	public void setFechaPrevFinalizacion(DateDataType fechaPrevFinalizacion) {
-		this.fechaPrevFinalizacion = fechaPrevFinalizacion;
+	public void setAgrFechaPrevFinalizacion(DateDataType agrFechaPrevFinalizacion) {
+		this.agrFechaPrevFinalizacion = agrFechaPrevFinalizacion;
 	}
-	public DateDataType getFechaEscrituraDesde() {
-		return fechaEscrituraDesde;
+	public DateDataType getAgrFechaEscrituraDesde() {
+		return agrFechaEscrituraDesde;
 	}
-	public void setFechaEscrituraDesde(DateDataType fechaEscrituraDesde) {
-		this.fechaEscrituraDesde = fechaEscrituraDesde;
+	public void setAgrFechaEscrituraDesde(DateDataType agrFechaEscrituraDesde) {
+		this.agrFechaEscrituraDesde = agrFechaEscrituraDesde;
 	}
-	public DateDataType getFechaEscrituraHasta() {
-		return fechaEscrituraHasta;
+	public DateDataType getAgrFechaEscrituraHasta() {
+		return agrFechaEscrituraHasta;
 	}
-	public void setFechaEscrituraHasta(DateDataType fechaEscrituraHasta) {
-		this.fechaEscrituraHasta = fechaEscrituraHasta;
+	public void setAgrFechaEscrituraHasta(DateDataType agrFechaEscrituraHasta) {
+		this.agrFechaEscrituraHasta = agrFechaEscrituraHasta;
 	}
 }

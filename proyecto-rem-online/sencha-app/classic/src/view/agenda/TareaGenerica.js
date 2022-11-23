@@ -5029,6 +5029,9 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 			if (decisionComite.value == CONST.CODIGO_DECISION_COMITE['NUEVAS_CONDICIONES']) { 
 				me.campoObligatorio(cambiosComite);
 				me.campoObligatorio(cambiosComiteRealizados);
+			} else {
+				me.campoNoObligatorio(cambiosComite);
+				me.campoNoObligatorio(cambiosComiteRealizados);
 			}
 		});
 		

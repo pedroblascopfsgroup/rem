@@ -5020,19 +5020,15 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 	
 	T018_DecisionComiteValidacion: function(){
 		var me = this;
-		var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
-		var idExpediente = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
 		
-		var cambiosComite = me.down('[name=cambiosComite]');
 		var decisionComite = me.down('[name=decisionComite]');
+		var cambiosComite = me.down('[name=cambiosComite]');
+		var cambiosComiteRealizados = me.down('[name=cambiosComiteRealizados]');
 		
 		decisionComite.addListener('change', function(decisionComite) {
-			if (decisionComite.value == CONST.CODIGO_DECISION_COMITE['CANCELAR']) { 
-				cambiosComite.setValue('Demanda judicial');
-				me.bloquearCampo(cambiosComite);
-			} else {
-				me.borrarCampo(cambiosComite);
-				me.desbloquearCampo(cambiosComite);
+			if (decisionComite.value == CONST.CODIGO_DECISION_COMITE['NUEVAS_CONDICIONES']) { 
+				me.campoObligatorio(cambiosComite);
+				me.campoObligatorio(cambiosComiteRealizados);
 			}
 		});
 		

@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -300,6 +301,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 			List<String> authorities = new ArrayList<String>();
 			List<String> roles = new ArrayList<String>();
 			List<String> groupRoles = new ArrayList<String>();
+			Set<String> codigosCartera = new HashSet<String>();
 
 			/**
 			 * Al lanzar este método en un hilo diferente
@@ -343,8 +345,12 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 			authData.setEsGestorSustituto(esGestorSustituto(usuario));
 
 			if (uca != null && !uca.isEmpty()) {
-				authData.setCodigoCartera(uca.get(0).getCartera().getCodigo());
+				for (UsuarioCartera usuarioCartera: uca) {
+					codigosCartera.add(usuarioCartera.getCartera().getCodigo());
+				}
 			}
+
+			authData.setCodigosCartera(new ArrayList<String>(codigosCartera));
 
 			String jwtToken = createJwtForTheSession(usuario.getUsername(), roles);
 			// El token se traslada a la interfaz, a través del auhtData, y se establece en la sesión de usuario para su uso en el servidor

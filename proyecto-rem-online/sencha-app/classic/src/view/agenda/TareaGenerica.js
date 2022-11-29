@@ -4789,17 +4789,19 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 	
 	T018_RespuestaContraofertaBCValidacion: function(){
 		var me = this;
-		var idExpediente = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
 		
 		var comboResultado = me.down('[name=comboResultado]');
 		var fechaAlta = me.down('[name=fechaAlta]');
 		
-		me.habilitarCampo(comboResultado);
+		me.bloquearCampo(comboResultado);
+		me.bloquearCampo(fechaAlta);
 		me.campoObligatorio(comboResultado);
-		me.habilitarCampo(fechaAlta);
 		me.campoObligatorio(fechaAlta);
-			
 		
+		if($AU.userHasFunction('FUNC_AVANZA_FORMALIZACION_ALQUILER_NC_BC')){
+			me.desbloquearCampo(comboResultado);
+			me.desbloquearCampo(fechaAlta);
+		}		
 	},
 	
 	T018_EntregaFianzasValidacion: function(){

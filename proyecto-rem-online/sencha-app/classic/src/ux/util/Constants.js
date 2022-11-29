@@ -835,7 +835,8 @@ Ext.define('HreRem.ux.util.Constants', {
 	},
 	
 	CIF_PROPIETARIO: {
-		OMEGA: 'B88203708'
+		OMEGA: 'B88203708',
+		JAGUAR: 'B16896615'
 	},
 
 	DD_CDU_CESION_USO: {

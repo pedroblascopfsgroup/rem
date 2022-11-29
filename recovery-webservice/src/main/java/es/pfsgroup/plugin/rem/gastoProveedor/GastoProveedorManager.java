@@ -91,6 +91,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	private static final String COD_ABOGADO_OCUPACIONAL = DDSubtipoGasto.COD_ABOGADO_OCUPACIONAL;
 	private static final String COD_ABOGADO_ASUNTOS_GENERALES = DDSubtipoGasto.COD_ABOGADO_ASUNTOS_GENERALES;
 	private static final String COD_ABOGADO_ASISTENCIA_JURIDiCA = DDSubtipoGasto.COD_ABOGADO_ASISTENCIA_JURIDiCA;
+	private static final String PROPIETARIO_JAGUAR = "B16896615";
 
 	@Autowired
 	private GenericABMDao genericDao;
@@ -3882,6 +3883,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 		if (!Checks.esNulo(gasto) && !Checks.esNulo(gasto.getEstadoGasto())
 				&& !Checks.esNulo(gasto.getEstadoGasto().getCodigo()) && !Checks.esNulo(gasto.getPropietario())
+				&& !Checks.esNulo(gasto.getPropietario().getDocIdentificativo())
 				&& !Checks.esNulo(gasto.getPropietario().getCartera())
 				&& !Checks.esNulo(gasto.getPropietario().getCartera().getCodigo())) {
 			DDCartera cartera = gasto.getPropietario().getCartera();
@@ -3898,8 +3900,13 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					genericDao.createFilter(FilterType.EQUALS, "idGastoProveedorRefacturado", gasto.getId()),
 					genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
 			if (!Checks.esNulo(cartera) && (DDCartera.CODIGO_CARTERA_BANKIA.equals(cartera.getCodigo())
+					|| DDCartera.CODIGO_CARTERA_TITULIZADA.equals(cartera.getCodigo())
+					|| DDCartera.CODIGO_CARTERA_BFA.equals(cartera.getCodigo())
 					|| DDCartera.CODIGO_CARTERA_SAREB.equals(cartera.getCodigo())
-					|| DDCartera.CODIGO_CARTERA_BBVA.equals(cartera.getCodigo()))) {
+					|| DDCartera.CODIGO_CARTERA_BBVA.equals(cartera.getCodigo())
+					|| (DDCartera.CODIGO_CARTERA_CERBERUS.equals(cartera.getCodigo()) 
+						&& PROPIETARIO_JAGUAR.equals(gasto.getPropietario().getDocIdentificativo()))
+					)) {
 				if (DDDestinatarioGasto.CODIGO_HAYA.equals(gasto.getDestinatarioGasto().getCodigo())) {
 					if (!(DDEstadoGasto.AUTORIZADO_ADMINISTRACION.equals(estadoGasto)
 							|| DDEstadoGasto.AUTORIZADO_PROPIETARIO.equals(estadoGasto)

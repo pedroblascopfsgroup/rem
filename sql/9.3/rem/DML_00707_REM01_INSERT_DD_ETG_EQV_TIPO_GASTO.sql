@@ -1,10 +1,10 @@
 --/*
 --#########################################
 --## AUTOR=Juan Bautista Alfonso
---## FECHA_CREACION=20221031
+--## FECHA_CREACION=20221129
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=REMVIP-12666
+--## INCIDENCIA_LINK=REMVIP-12844
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Actualizacion registros 
@@ -46,6 +46,7 @@
 --##		0.33 Añadir PEP para subtipo Duplicado Cedula habitabilidad - [REMVIP-12100] - Juan Bautista Alfonso (29/07/22)			
 --##		0.34 Añadir PEP Comunidad de propietarios Regularizaciones alquiler rotacional - [REMVIP-12231] Juan Bautista Alfonso (08/09/22)					
 --##		0.35 Añadir DD_CBC_CODIGO 02 para las pep XXXX-22-2-A-COM VT - Comision gestion ventas - [REMVIP-12666] - Juan Bautista Alfonso
+--##		0.35 Añadir DD_CBC_CODIGO alquiler para las pep XXXX-22-2-INF MNTO - Inspección técnica de edificios - [REMVIP-12844] - Juan Bautista Alfonso
 --#########################################
 --*/
 
@@ -530,7 +531,11 @@ DECLARE
 		T_TABLA('1119','XXXX-22-2-A-COM','22','00','3','05','131','02','','','null','','','','2022'),
 
 		--Añadir PEP XXXX-22-2-A-COM VT para alquiler rotacional - REMVIP-12666 (31/10/22)
-		T_TABLA('1120','XXXX-22-2-A-COM VT','22','01','58','13','168','02','','','null','','','','2022')
+		T_TABLA('1120','XXXX-22-2-A-COM VT','22','01','58','13','168','02','','','null','','','','2022'),
+
+		--Añadir DD_CBC_CODIGO alquiler para las pep XXXX-22-2-INF MNTO - REMVIP-12844 (29/11/22)
+		T_TABLA('1121','XXXX-22-2-INF MNTO','22','00','52','14','68','02','','','null','','','','2022'),
+		T_TABLA('1122','XXXX-22-2-INF MNTO','22','00','52','14','68','03','','','null','','','','2022')
 
     ); 
     V_TMP_TABLA T_TABLA;

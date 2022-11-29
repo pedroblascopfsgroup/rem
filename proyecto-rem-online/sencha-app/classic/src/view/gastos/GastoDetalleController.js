@@ -1952,11 +1952,13 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		var me = this;
 		var form = me.getView().down('formBase');
 		var propietario = form.down('[name=nombrePropietario]').getValue();
+		var docPropietario = form.down('[name=buscadorNifPropietarioField]').getValue();
 		if (propietario != "") {
 			var control = me.getViewModel().get("controlPestanyaGastoRefacturable");
 			var cartera = control.cartera.codigo;
 			if (cartera === CONST.CARTERA['SAREB'] || cartera === CONST.CARTERA['BANKIA']
-		        || cartera === CONST.CARTERA['BFA'] || cartera === CONST.CARTERA['TITULIZADA']) {
+		        || cartera === CONST.CARTERA['BFA'] || cartera === CONST.CARTERA['TITULIZADA']
+				|| (cartera === CONST.CARTERA['CERBERUS'] && docPropietario === CONST.CIF_PROPIETARIO['JAGUAR'])) {
 				var isGastoPadre = (form.down('[name=destinatarioGastoCodigo]').value===CONST.TIPOS_DESTINATARIO_GASTO['PROPIETARIO'] && 
 						form.down('[name=nifEmisor]').value===CONST.PVE_DOCUMENTONIF['HAYA']);
 				var isGastoRefacturable = (form.down('[name=destinatarioGastoCodigo]').value===CONST.TIPOS_DESTINATARIO_GASTO['HAYA']);

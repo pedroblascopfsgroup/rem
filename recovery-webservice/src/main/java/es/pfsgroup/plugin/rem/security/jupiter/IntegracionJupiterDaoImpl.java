@@ -3,7 +3,9 @@ package es.pfsgroup.plugin.rem.security.jupiter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -193,7 +195,6 @@ public class IntegracionJupiterDaoImpl extends AbstractEntityDao<MapeoJupiterREM
 				usuarioCarteraNuevo.setCartera(cartera);
 				genericDao.save(UsuarioCartera.class, usuarioCarteraNuevo);
 				logger.debug("Creando asociacion cartera " + codigoCartera + " - usuario " + usuario.getUsername());
-				break; // Sólo puede haber una cartera activa
 			} else {
 				logger.error("No existe la cartera " + codigoCartera + " en REM: no se crea asociacion con el usuario " + usuario.getUsername());
 			}
@@ -208,29 +209,15 @@ public class IntegracionJupiterDaoImpl extends AbstractEntityDao<MapeoJupiterREM
 			genericDao.delete(UsuarioCartera.class, filtroUsuario, obtenerFiltroUCADescripcionSubcartera(descSubcartera));
 			logger.debug("Eliminando asociacion subcartera " + descSubcartera + " - usuario " + username);
 		}
-		String codigoCarteraParaSubcarterasPreexistentes = "";
-		List<UsuarioCartera> subcarterasPreexistentes = genericDao.getList(UsuarioCartera.class, filtroUsuario, 
-				genericDao.createFilter(FilterType.NOTNULL, SUB_CARTERA));
-		if (subcarterasPreexistentes != null && subcarterasPreexistentes.size()>0) {
-			codigoCarteraParaSubcarterasPreexistentes = subcarterasPreexistentes.get(0).getCartera().getCodigo();
-		}
 		for (String descSubcartera : altasSubcarteras) {
 			DDSubcartera subcartera = genericDao.get(DDSubcartera.class, obtenerFiltroCodigoSubcartera(descSubcartera));
 			if (subcartera != null) {
-				if ("".contentEquals(codigoCarteraParaSubcarterasPreexistentes)) {
-					codigoCarteraParaSubcarterasPreexistentes = subcartera.getCarteraCodigo();
-				}
-				if (codigoCarteraParaSubcarterasPreexistentes.contentEquals(subcartera.getCarteraCodigo())) {
-					UsuarioCartera usuarioSubcarteraNuevo = new UsuarioCartera();
-					usuarioSubcarteraNuevo.setUsuario(usuario);
-					usuarioSubcarteraNuevo.setCartera(subcartera.getCartera());
-					usuarioSubcarteraNuevo.setSubCartera(subcartera);
-					genericDao.save(UsuarioCartera.class, usuarioSubcarteraNuevo);
-					logger.debug("Creando asociacion subcartera " + descSubcartera + " - usuario " + username);
-				} else {
-					logger.debug("No creamos asociacion subcartera " + descSubcartera + " - usuario " + username 
-							+ " porque pertenece a otra cartera diferente que la/s subcartera/s preexistente/s ");
-				}
+				UsuarioCartera usuarioSubcarteraNuevo = new UsuarioCartera();
+				usuarioSubcarteraNuevo.setUsuario(usuario);
+				usuarioSubcarteraNuevo.setCartera(subcartera.getCartera());
+				usuarioSubcarteraNuevo.setSubCartera(subcartera);
+				genericDao.save(UsuarioCartera.class, usuarioSubcarteraNuevo);
+				logger.debug("Creando asociacion subcartera " + descSubcartera + " - usuario " + username);
 			} else {
 				logger.error("No existe la subcartera " + descSubcartera + " en REM: no se crea asociacion con el usuario " + username);
 			}

@@ -20,7 +20,7 @@ public class ActivoObrasNuevasDto implements WebcomRESTDto {
 	
 	//Petición HREOS-7226
 	private LongDataType agrVisitable;
-	private LongDataType pisoPiloto;
+	private LongDataType esPisoPiloto;
 	
 	public DateDataType getFechaAccion() {
 		return fechaAccion;
@@ -58,10 +58,10 @@ public class ActivoObrasNuevasDto implements WebcomRESTDto {
 	public void setAgrVisitable(LongDataType agrVisitable) {
 		this.agrVisitable = agrVisitable;
 	}
-	public LongDataType getPisoPiloto() {
-		return pisoPiloto;
+	public LongDataType getEsPisoPiloto() {
+		return esPisoPiloto;
 	}
-	public void setPisoPiloto(LongDataType pisoPiloto) {
-		this.pisoPiloto = pisoPiloto;
+	public void setEsPisoPiloto(LongDataType esPisoPiloto) {
+		this.esPisoPiloto = esPisoPiloto;
 	}
 }

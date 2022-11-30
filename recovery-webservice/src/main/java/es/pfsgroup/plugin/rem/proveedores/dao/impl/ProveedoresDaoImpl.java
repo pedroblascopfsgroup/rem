@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import es.pfsgroup.plugin.rem.usuarioRem.UsuarioRemApi;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,14 +23,12 @@ import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.DtoMediador;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
-import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VProveedores;
 import es.pfsgroup.plugin.rem.model.dd.DDCodigoPostal;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadProveedor;
@@ -42,13 +41,15 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 
 	@Autowired
 	private GenericABMDao genericDao;
+
+	@Autowired
+	private UsuarioRemApi usuarioRemApi;
 	
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<DtoProveedorFilter> getProveedoresList(DtoProveedorFilter dto, Usuario usuarioLogado, Boolean esProveedor, Boolean esGestoria, Boolean esExterno) {
-		List<UsuarioCartera> usuarioCartera = genericDao.getList(UsuarioCartera.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));	
 		String select = "select distinct pve.id, pve.codigoProveedorRem, pve.tipoProveedorDescripcion, pve.subtipoProveedorDescripcion, pve.nifProveedor, pve.nombreProveedor, pve.nombreComercialProveedor, pve.estadoProveedorDescripcion, pve.observaciones";
 		String from = " from VBusquedaProveedor pve";		
 		String where = "";
@@ -100,11 +101,6 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 			
 		HQLBuilder hb = new HQLBuilder(select + from + where);
 		if (haswhere) hb.setHasWhere(true);
-
-		if (usuarioCartera != null && !usuarioCartera.isEmpty()) {
-			dto.setCartera(usuarioCartera.get(0).getCartera().getCodigo());
-					
-		}
 		
 		if (!Checks.esNulo(dto.getCodigo())) {
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "pve.codigoProveedorRem", Long.valueOf(dto.getCodigo()));
@@ -138,15 +134,33 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 							+ "or (pve.tipoProveedorCodigo = '" + DDEntidadProveedor.TIPO_PROVEEDOR_CODIGO + "' and pve.idUser = :usuarioLogadoId) ");
 			hb.getParameters().put("usuarioLogadoId", usuarioLogado.getId());
 		}
-		
+
+		List<String> codigosCarteras = usuarioRemApi.getCodigosCarterasUsuario(null, usuarioLogado);
+
 		// Si es externo pero no es gestoria ni proveedor, es fsv, capa control o consulta, y hay que carterizar en función del tipo de proveedor
 		if(esExterno && !esGestoria && !esProveedor) {
-			
-			hb.appendWhere(" (pve.tipoProveedorCodigo in ('"+DDEntidadProveedor.TIPO_ENTIDAD_CODIGO+"','"+DDEntidadProveedor.TIPO_PROVEEDOR_CODIGO+"') and pve.cartera = :cartera )"					
+
+			String queryCarteraList = "";
+
+			if (!Checks.estaVacio(codigosCarteras)) {
+				boolean first = true;
+				for(String codigoCartera : codigosCarteras) {
+					if(first) {
+						queryCarteraList.concat("and pve.cartera in (" + codigoCartera);
+						first = false;
+					} else
+						queryCarteraList.concat(", " + codigoCartera);
+				}
+			}
+
+			if(!queryCarteraList.isEmpty())
+				queryCarteraList.concat(")");
+
+			hb.appendWhere(" (pve.tipoProveedorCodigo in ('"+DDEntidadProveedor.TIPO_ENTIDAD_CODIGO+"','"+DDEntidadProveedor.TIPO_PROVEEDOR_CODIGO+"') "+queryCarteraList+" )"
 					+ "or (pve.tipoProveedorCodigo = '" + DDEntidadProveedor.TIPO_ADMINISTRACION_CODIGO + "')");
-			hb.getParameters().put("cartera", dto.getCartera());
-		} else {
-			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "pve.cartera", dto.getCartera());
+
+		} else if (!Checks.estaVacio(codigosCarteras)) {
+			HQLBuilder.addFiltroWhereInSiNotNull(hb, "pve.cartera", codigosCarteras);
 		}
 		
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "pve.nombreProveedor", dto.getNombre(), true);

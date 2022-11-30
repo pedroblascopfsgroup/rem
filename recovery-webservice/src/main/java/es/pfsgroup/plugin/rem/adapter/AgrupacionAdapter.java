@@ -36,13 +36,8 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.model.NMBLocalizaciones
 import es.pfsgroup.plugin.rem.activo.dao.*;
 import es.pfsgroup.plugin.rem.activo.publicacion.dao.ActivoPublicacionDao;
 import es.pfsgroup.plugin.rem.activo.valoracion.dao.ActivoValoracionDao;
-import es.pfsgroup.plugin.rem.api.*;
 import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
 import es.pfsgroup.plugin.rem.concurrencia.dao.ConcurrenciaDao;
-import es.pfsgroup.plugin.rem.model.*;
-import es.pfsgroup.plugin.rem.model.dd.*;
-import es.pfsgroup.plugin.rem.model.*;
-import es.pfsgroup.plugin.rem.model.dd.*;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
@@ -56,8 +51,6 @@ import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.api.TramitacionOfertasApi;
-import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
-import es.pfsgroup.plugin.rem.concurrencia.dao.ConcurrenciaDao;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
@@ -107,7 +100,6 @@ import es.pfsgroup.plugin.rem.model.OfertaExclusionBulk;
 import es.pfsgroup.plugin.rem.model.OfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.TmpClienteGDPR;
-import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VAgrupacionActivosGestorComercial;
 import es.pfsgroup.plugin.rem.model.VBusquedaVisitasDetalle;
 import es.pfsgroup.plugin.rem.model.VCalculosActivoAgrupacion;
@@ -1065,17 +1057,6 @@ public class AgrupacionAdapter {
 	public Page getListAgrupaciones(DtoAgrupacionFilter dtoAgrupacionFilter) {
 
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,
-				genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
-				
-		if (!Checks.esNulo(usuarioCartera)){
-			if(!Checks.esNulo(usuarioCartera.getSubCartera())){
-				dtoAgrupacionFilter.setCodCartera(usuarioCartera.getCartera().getCodigo());
-				dtoAgrupacionFilter.setSubcarteraCodigo(usuarioCartera.getSubCartera().getCodigo());
-			}else{
-				dtoAgrupacionFilter.setCodCartera(usuarioCartera.getCartera().getCodigo());
-			}
-		}
 
 		Page temp = (Page) activoAgrupacionApi.getListAgrupaciones(dtoAgrupacionFilter, usuarioLogado);
 		return temp;

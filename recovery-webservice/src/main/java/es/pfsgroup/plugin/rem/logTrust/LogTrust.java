@@ -1,7 +1,10 @@
 package es.pfsgroup.plugin.rem.logTrust;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 
+import es.pfsgroup.plugin.rem.usuarioRem.UsuarioRemApi;
 import org.apache.commons.logging.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -10,7 +13,6 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 
 class LogTrust {
@@ -23,6 +25,9 @@ class LogTrust {
 
 	@Autowired
 	protected GenericABMDao genericDao;
+
+	@Autowired
+	private UsuarioRemApi usuarioRemApi;
 	
 	/**
 	 * Este método recibe una cadena de texto y lo direcciona al log4j.
@@ -44,35 +49,32 @@ class LogTrust {
 	}
 	
 	/**
-	 * Este método obtiene el código de la cartera del usuario logueado (si el usuario está carterizado).
+	 * Este método obtiene los códigos de las carteras del usuario logueado (si el usuario está carterizado).
 	 *
-	 * @return Devuelve un literal con el código de cartera del usuario logueado, o vacío si el usuario no está carterizado.
+	 * @return Devuelve una lista con el código de cartera del usuario logueado, o una lista vacía si el usuario no está carterizado.
 	 */
-	protected String getCodigoCarteraUsuarioLogueado() {
+	protected List<String> getCodigosCarterasUsuarioLogueado() {
 		Usuario usuarioLogueado = usuarioApi.getUsuarioLogado();
-		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogueado.getId()));
 
-		if(!Checks.esNulo(usuarioCartera)){
-			return usuarioCartera.getCartera().getCodigo();
-		}
-
-		return "";
+		return usuarioRemApi.getCodigosCarterasUsuario(null, usuarioLogueado);
 	}
 	
 	/**
-	* Este método obtiene el nombre de la cartera del usuario logueado (si el usuario está carterizado).
+	* Este método obtiene los normbres de las carteras del usuario logueado (si el usuario está carterizado).
 	*
-	* @return Devuelve un literal con el nombre de cartera del usuario logueado, o vacío si el usuario no está carterizado.
+	* @return Devuelve una lista con los nombres de las carteras del usuario logueado, o una lista vacía si el usuario no está carterizado.
 	*/
-	protected String getDescripcionCarteraUsuarioLogueado() {
-		String codigoCartera = getCodigoCarteraUsuarioLogueado();
-		
-		DDCartera cartera = genericDao.get(DDCartera.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoCartera));
-		
-		if(!Checks.esNulo(cartera)){
-			return cartera.getDescripcion();
+	protected List<String> getDescripcionesCarterasUsuarioLogueado() {
+		List<String> descripcionesCarterasUsuarioLogado = new ArrayList<String>();
+		List<String> codigosCarteras = getCodigosCarterasUsuarioLogueado();
+
+		for (String codigoCartera : codigosCarteras) {
+			DDCartera cartera = genericDao.get(DDCartera.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoCartera));
+
+			if(!Checks.esNulo(cartera))
+				descripcionesCarterasUsuarioLogado.add(cartera.getDescripcion());
 		}
-	
-		return "";
+
+		return descripcionesCarterasUsuarioLogado;
 	}
 }

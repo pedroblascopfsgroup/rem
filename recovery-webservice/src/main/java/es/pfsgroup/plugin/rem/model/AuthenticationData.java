@@ -10,7 +10,7 @@ public class AuthenticationData {
 	private List<String> groupRoles;
 	private String codigoGestor;
 	private Integer esGestorSustituto;
-	private List<String> codigosCartera;
+	private List<String> codigoCarteras;
 	private String jwt;
 
 
@@ -70,12 +70,12 @@ public class AuthenticationData {
 		this.esGestorSustituto = esGestorSustituto;
 	}
 
-	public List<String> getCodigosCartera() {
-		return codigosCartera;
+	public List<String> getCodigoCarteras() {
+		return codigoCarteras;
 	}
 
-	public void setCodigosCartera(List<String> codigosCartera) {
-		this.codigosCartera = codigosCartera;
+	public void setCodigoCarteras(List<String> codigoCarteras) {
+		this.codigoCarteras = codigoCarteras;
 	}
 
 	public List<String> getGroupRoles() {

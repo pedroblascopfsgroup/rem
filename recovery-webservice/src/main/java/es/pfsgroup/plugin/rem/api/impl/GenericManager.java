@@ -17,7 +17,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -29,6 +28,7 @@ import javax.annotation.Resource;
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
 
+import es.pfsgroup.plugin.rem.usuarioRem.UsuarioRemApi;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -104,7 +104,6 @@ import es.pfsgroup.plugin.rem.model.Ejercicio;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GastoLineaDetalle;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
-import es.pfsgroup.plugin.rem.model.GestionCCPP;
 import es.pfsgroup.plugin.rem.model.GestorSustituto;
 import es.pfsgroup.plugin.rem.model.GrupoUsuario;
 import es.pfsgroup.plugin.rem.model.HistoricoFasePublicacionActivo;
@@ -278,6 +277,9 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	@Autowired
 	private InterlocutorGenericService interlocutorGenericService;
 
+	@Autowired
+	private UsuarioRemApi usuarioRemApi;
+
 
 
 	@Override
@@ -291,17 +293,13 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		AuthenticationData authData = new AuthenticationData();
 		try{
 			Usuario usuario = adapter.getUsuarioLogado();
-			Filter filtroUca = genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuario.getId());
-			List<UsuarioCartera> uca = genericDao.getList(UsuarioCartera.class, filtroUca);
 
 			Filter filtroGru = genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuario.getId());
 			List<GrupoUsuario> gruUsu = genericDao.getList(GrupoUsuario.class, filtroGru);
 
-
 			List<String> authorities = new ArrayList<String>();
 			List<String> roles = new ArrayList<String>();
 			List<String> groupRoles = new ArrayList<String>();
-			Set<String> codigosCartera = new HashSet<String>();
 
 			/**
 			 * Al lanzar este método en un hilo diferente
@@ -341,16 +339,8 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 			authData.setRoles(roles);
 			authData.setGroupRoles(groupRoles);
 			authData.setCodigoGestor(gestorEntidad.getCodigoGestorPorUsuario(usuario.getId()));
-
 			authData.setEsGestorSustituto(esGestorSustituto(usuario));
-
-			if (uca != null && !uca.isEmpty()) {
-				for (UsuarioCartera usuarioCartera: uca) {
-					codigosCartera.add(usuarioCartera.getCartera().getCodigo());
-				}
-			}
-
-			authData.setCodigosCartera(new ArrayList<String>(codigosCartera));
+			authData.setCodigoCarteras(usuarioRemApi.getCodigosCarterasUsuario(null, usuario));
 
 			String jwtToken = createJwtForTheSession(usuario.getUsername(), roles);
 			// El token se traslada a la interfaz, a través del auhtData, y se establece en la sesión de usuario para su uso en el servidor
@@ -1366,20 +1356,22 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 	@Override
 	public List<DDSubcartera> getComboSubcartera(String codCartera) {
-		List<DDSubcartera> listaSubcartera;
+		List<DDSubcartera> listaSubcartera = new ArrayList<DDSubcartera>();
 		Usuario usuarioLogado = adapter.getUsuarioLogado();
-		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));				
-		if (!Checks.esNulo(usuarioCartera) && !Checks.esNulo(usuarioCartera.getSubCartera()) && !Checks.esNulo(usuarioCartera.getSubCartera().getCodigo())){
-			Filter filtroSubcartera = genericDao.createFilter(FilterType.EQUALS, "codigo", usuarioCartera.getSubCartera().getCodigo());
-			listaSubcartera = genericDao.getList(DDSubcartera.class, filtroSubcartera);
-		}else{
-			if(Checks.esNulo(codCartera)) {
-				listaSubcartera = genericDao.getList(DDSubcartera.class);
-			}else {
+		List<UsuarioCartera> usuarioCarteraList = genericDao.getList(UsuarioCartera.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
+
+		for(UsuarioCartera usuarioCartera : usuarioCarteraList) {
+			if (!Checks.esNulo(usuarioCartera) && !Checks.esNulo(usuarioCartera.getSubCartera()) && !Checks.esNulo(usuarioCartera.getSubCartera().getCodigo())) {
+				Filter filtroSubcartera = genericDao.createFilter(FilterType.EQUALS, "codigo", usuarioCartera.getSubCartera().getCodigo());
+				listaSubcartera.addAll(genericDao.getList(DDSubcartera.class, filtroSubcartera));
+			} else if (Checks.esNulo(codCartera)) {
+				listaSubcartera.addAll(genericDao.getList(DDSubcartera.class));
+			} else {
 				Filter filtroCartera = genericDao.createFilter(FilterType.EQUALS, "cartera.codigo", codCartera);
-				listaSubcartera = genericDao.getList(DDSubcartera.class, filtroCartera);
+				listaSubcartera.addAll(genericDao.getList(DDSubcartera.class, filtroCartera));
 			}
 		}
+
 		return listaSubcartera;
 	}
 

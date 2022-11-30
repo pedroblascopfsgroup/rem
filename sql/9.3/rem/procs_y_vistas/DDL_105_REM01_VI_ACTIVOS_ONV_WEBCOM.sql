@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Roman Romanchuk
---## FECHA_CREACION=20190805
+--## AUTOR=Adrián Molina
+--## FECHA_CREACION=20221130
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-7226
+--## INCIDENCIA_LINK=HREOS-19040
 --## PRODUCTO=NO
 --## Finalidad: Tabla para almacentar el historico de las agrupaciones de Obra Nueva enviadas a webcom.
 --##           
@@ -169,7 +169,7 @@ BEGIN
 		-- Creamos comentario para las columnas AGR_VISITABLE y PISO_PILOTO
 		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_VISTA||'.AGR_VISITABLE IS ''Visitable''';		
 		EXECUTE IMMEDIATE V_MSQL;
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_VISTA||'.PISO_PILOTO IS ''Indica el activo seleccionado como piso piloto de la agrupación''';		
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_VISTA||'.ES_PISO_PILOTO IS ''Indica el activo seleccionado como piso piloto de la agrupación''';
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comentarios en columnas creados.');
 	

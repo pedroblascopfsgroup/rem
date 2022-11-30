@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20220505
+--## AUTOR=Adrián Molina
+--## FECHA_CREACION=20221130
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-17546 
+--## INCIDENCIA_LINK=HREOS-19040
 --## PRODUCTO=NO
 --## Finalidad: Tabla para almacentar el historico de las agrupaciones de Obra Nueva enviadas a webcom. HREOS-1551 - Se añaden agrupaciones Asistidas.
 --##           
@@ -19,7 +19,8 @@
 --##		0.7: 20210903 Javier Esbri. Añadir el campo de ID_AGRUPACION_BC que se informa del campo AGR_UVEM_COAGIW de la ACT_AGR - HREOS-15078
 --##		0.8: 20210923 Daniel Algaba. Se cambiañ el campo de ID_AGRUPACION_BC para apuntar a AGR_NUM_AGRUP_BC de la ACT_AGR - HREOS-15254
 --##		0.9: 20211020 Daniel Algaba. Añadir el campo de ID_AGRUPACION_BC que se informa del campo AGR_UVEM_COAGIW de la ACT_AGR - HREOS-15634
---##		0.10: 20220504 Juan Jose Sanjuan. Añadir el campo de FECHA_PREV_FINALIZACION, FECHA_ESCRITURA_DESDE, FECHA_ESCRITURA_HASTA de la ACT_AGR - HREOS-17546 
+--##		0.10: 20220504 Juan Jose Sanjuan. Añadir el campo de FECHA_PREV_FINALIZACION, FECHA_ESCRITURA_DESDE, FECHA_ESCRITURA_HASTA de la ACT_AGR - HREOS-17546
+--##		0.11: 20221130 Adrián Molina. Cambiar de donde viene el dato de AGR_COMERCIALIZABLE_CONS_PLANO - HREOS-19040
 --##########################################
 --*/
 
@@ -178,7 +179,7 @@ BEGIN/*Versión 0.9*/
                   (SELECT USU.USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS USU 
 					WHERE USU.USU_USERNAME = ''REM-USER'')) AS NUMBER (16, 0)) 					AS ID_USUARIO_REM_ACCION,
 		CAST(AGR.AGR_EXISTE_PISO_PILOTO AS NUMBER(1,0))											AS AGR_EXISTE_PISO_PILOTO,
-		CAST(AGR.AGR_COMERCIALIZABLE_CONS_PLANO AS NUMBER(1,0))									AS AGR_COMERCIALIZABLE_CONS_PLANO,
+		CAST(AGR.AGR_VENTA_PLANO AS NUMBER(1,0))									            AS AGR_COMERCIALIZABLE_CONS_PLANO,
 		 CASE WHEN (IAG.PISO_PILOTO = 1) 
 		  THEN CAST(IAG.ACT_NUM_ACTIVO AS NUMBER (16, 0))
 		  ELSE NULL

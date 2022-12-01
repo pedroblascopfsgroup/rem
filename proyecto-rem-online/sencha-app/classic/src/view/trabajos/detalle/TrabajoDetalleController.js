@@ -507,7 +507,11 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 							  isDev = true;
 						  } else {
 							  response = decode['response']
-							  existeTarea = 'true' == response['tareaExistente'];
+							  if (response != null && response != undefined){
+							    existeTarea = 'true' == response['tareaExistente'];
+							  } else {
+							    isDev = true;
+							  }
 						  }
 						  
 					  },

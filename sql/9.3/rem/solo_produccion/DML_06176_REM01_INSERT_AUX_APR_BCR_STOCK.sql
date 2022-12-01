@@ -1,0 +1,481 @@
+--/*
+--#########################################
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20221201
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=HREOS-18998
+--## PRODUCTO=NO
+--##
+--## Finalidad: Script que añade a uno varios perfiles, las funciones añadidas en T_ARRAY_FUNCION
+--## INSTRUCCIONES:
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
+SET DEFINE OFF;
+DECLARE
+
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+    V_MSQL VARCHAR2(32000 CHAR);
+    V_TABLA_BACK VARCHAR2(40 CHAR) := 'BACKUP_BCR_STOCK';
+    V_TABLA VARCHAR2(40 CHAR) := 'AUX_APR_BCR_STOCK';
+    V_USUARIO VARCHAR2(100 CHAR):='HREOS-18998';
+
+    ERR_NUM NUMBER; -- Numero de errores
+    ERR_MSG VARCHAR2(2048); -- Mensaje de error
+
+BEGIN
+
+    V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TABLA||' 
+                (NUM_IDENTIFICATIVO
+                , NUM_UNIDAD
+                , CLASE_USO
+                , NUM_INMUEBLE
+                , CUOTA
+                , GRADO_PROPIEDAD
+                , FEC_VALIDO_DE
+                , FEC_VALIDO_A
+                , STATUS_USUARIO
+                , SITUACION_ALQUILER
+                , SOCIEDAD_PATRIMONIAL
+                , SUBTIPO_VIVIENDA
+                , SUBTIPO_SUELO
+                , NUM_INMUEBLE_ANTERIOR
+                , PRODUCTO
+                , PROCEDENCIA_PRODUCTO
+                , SOCIEDAD_ORIGEN
+                , BANCO_ORIGEN
+                , FINCA
+                , LIBRO
+                , TOMO
+                , FOLIO
+                , INSCRIPCION
+                , NUM_CARTILLA
+                , ORIGEN_REGULATORIO
+                , CLASE_USO_REGISTRAL
+                , IDUFIR
+                , VIVIENDA_HABITUAL
+                , FEC_PRESENTACION_REGISTRO
+                , FEC_INSC_TITULO
+                , FEC_ADJUDICACION
+                , FEC_TITULO_FIRME
+                , IMPORTE_CESION
+                , FEC_CESION_REMATE
+                , FEC_PRESENTADO
+                , INDICADOR_LLAVES
+                , FEC_RECEP_LLAVES
+                , NUM_AUTOS_JUZGADO
+                , TIPO_IMPUESTO_COMPRA
+                , SUBTIPO_IMPUESTO_COMPRA
+                , PORC_IMPUESTO_COMPRA
+                , COD_TP_IVA_COMPRA
+                , NUM_CARGAS
+                , COD_GESTORIA
+                , NOMBRE_REGISTRO_PROPIEDAD
+                , NUMERO_REGISTRO_PROPIEDAD
+                , COD_GESTORIA_ADMINIS
+                , TIPO_ALQUILER
+                , COMPLEMENTO
+                , CALLE
+                , NUMERO
+                , APARTADO
+                , POBLACION
+                , REGION
+                , PAIS
+                , CALLE2
+                , DISTRITO
+                , ALA_EDIFICIO
+                , PLANTA
+                , NUM_UBICACION
+                , X_GOOGLE
+                , Y_GOOGLE
+                , SIGLA_EDIFICIO
+                , ESTADO_TITULARIDAD
+                , FEC_ESTADO_TITULARIDAD
+                , ESTADO_POSESORIO
+                , FEC_ESTADO_POSESORIO
+                , ESTADO_COMERCIAL_ALQUILER
+                , FEC_ESTADO_COMERCIAL_ALQUILER
+                , ESTADO_COMERCIAL_VENTA
+                , FEC_ESTADO_COMERCIAL_VENTA
+                , ESTADO_TECNICO
+                , FEC_ESTADO_TECNICO
+                , EST_COMERCIAL_SERVICER
+                , FEC_COMERCIAL_SERVICER
+                , EST_DESA_PROMO_DETALLADO
+                , FEC_DESA_PROMO_DETALLADO
+                , EST_DESA_PROMO_GENERAL
+                , FEC_DESA_PROMO_GENERAL
+                , EST_ENTR_PROD_MANT_VENTA
+                , FEC_ENTR_PROD_MANT_VENTA
+                , EST_ENTR_PROD_MANT_ALQ
+                , FEC_ENTR_PROD_MANT_ALQ
+                , PROMO_CONJUNTA_OB_REM
+                , PROMO_CONJUNTA_VENTA
+                , PROMO_CONJUNTA_ALQUILER
+                , ACTIVO_CARTERA_CONCENTRADA
+                , ACTIVO_AAMM
+                , ACTIVO_PROMO_ESTRATEG
+                , DESTINO_COMERCIAL
+                , CANAL_DISTRIBUCION_VENTA
+                , MOTIVO_NO_COMERCIAL
+                , FEC_INICIO_CONCURENCIA
+                , FEC_FIN_CONCURENCIA
+                , FEC_VISITA_INMB_SERVICER
+                , FEC_PUBLICACION_SERVICER
+                , PUBLICABLE_PORT_PUBLI_VENTA
+                , PUBLICABLE_PORT_PUBLI_ALQUI
+                , PUBLICABLE_PORT_INVER_VENTA
+                , PUBLICABLE_PORT_INVER_ALQUI
+                , PUBLICABLE_PORT_API_VENTA
+                , PUBLICABLE_PORT_API_ALQUI
+                , NECESIDAD_ARRAS
+                , MOT_NECESIDAD_ARRAS
+                , RENUNCIA_EXENSION
+                , CARTERA_VENTA_ACTIVOS
+                , CARTERA_VENTA_CREDITOS
+                , CAT_COMERCIALIZACION
+                , TRIBUT_PROPUESTA_VENTA
+                , TRIBUT_PROPUESTA_CLI_EXT_IVA
+                , CANAL_DISTRIBUCION_ALQ
+                , PROMO_COMERCIAL
+                , TXT_COMERCIAL_CAS_1
+                , TXT_COMERCIAL_CAS_2
+                , TXT_COMERCIAL_ENG_1
+                , TXT_COMERCIAL_ENG_2
+                , FEC_PUBLI_SERVICER_APIS
+                , FEC_PUBLI_PORT_INVERSOR
+                , FEC_INICIO_INFORME
+                , FEC_FIN_INFORME
+                , ANYO_CONCESION
+                , FEC_FIN_CONCESION
+                , CALIFICACION_ENERGETICA
+                , CERTIFICADO_REGISTRADO
+                , FEC_SOLICITUD
+                , FEC_FIN_VIGENCIA
+                , LISTA_EMISIONES
+                , VALORES_EMISIONES
+                , LISTA_ENERGIA
+                , VALOR_ENERGIA
+                , CEDULA_HABITABILIDAD
+                , PRECIO_MAX_MOD_VENTA
+                , PRECIO_MAX_MOD_ALQUILER
+                , SITUACION_VPO
+                , NECESARIA_AUTORI_TRANS
+                , TANTEO_RETRACTO_TRANS
+                , IND_COMPRADOR_ACOGE_AYUDA
+                , IMP_AYUDA_FINANCIACION
+                , FEC_VENCIMIENTO_SEGURO
+                , FEC_DEVOLUCION_AYUDA
+                , SITUACION_CEE
+                , MOTIVO_EXONERACION_CEE
+                , INCIDENCIA_CEE
+                , NUMERO_CEE
+                , CODIGO_SST
+                , SUP_TASACION_SOLAR
+                , PORC_OBRA_EJECUTADA
+                , SUP_TASACION_UTIL
+                , SUP_REGISTRAL_UTIL
+                , SUP_TASACION_CONSTRUIDA
+                , NUM_HABITACIONES
+                , NUM_BANYOS
+                , NUM_TERRAZAS
+                , ANYO_CONSTRUCCION
+                , ANYO_ULTIMA_REFORMA
+                , SUP_SOBRE_RASANTE
+                , SUP_BAJO_RASANTE
+                , NUM_APARACAMIENTOS
+                , IDEN_PL_PARKING
+                , IDEN_TRASTERO
+                , SUP_REG_CONSTRUIDA
+                , SUP_REG_SOLAR
+                , TIENE_ASCENSOR
+                , TIENE_TRASTERO
+                , INMUEBLE_VACACIONAL
+                , EQUIPAMIENTO_015001
+                , BALCON
+                , CALEFACCION
+                , COCINA_EQUIPADA
+                , EST_CONSERVACION
+                , JARDIN
+                , USO_JARDIN
+                , PISCINA
+                , SALIDA_HUMOS
+                , TERRAZA
+                , TIPO_VIVIENDA_INF
+                , TIPOLOGIA_EDIFICIO
+                , SEG_INVERSION_PROM
+                , IMP_PRECIO_VENTA
+                , PRECIO_VENTA_NEGOCIABLE
+                , DESC_COLEC_PRECIO_ALQUI
+                , IMP_PRECIO_ALQUI
+                , PRECIO_ALQUI_NEGOCIABLE
+                , DESC_COL_PRECIO_CAMP_ALQUI
+                , IMP_PRECIO_CAMP_ALQUI
+                , PRECIO_CAMP_ALQUI_NEGOCIABLE
+                , DESC_COL_PRECIO_CAMP_VENTA
+                , IMP_PRECIO_CAMP_VENTA
+                , PRECIO_CAMP_VENTA_NEGOCIABLE
+                , DESC_COL_PRECIO_VENTA
+                , IMP_PRECIO_REF_ALQUI
+                , FEC_INICIO_PRECIO_VENTA
+                , FEC_FIN_PRECIO_VENTA
+                , FEC_INICIO_PRECIO_ALQUI
+                , FEC_FIN_PRECIO_ALQUI
+                , FEC_INICIO_PRECIO_CAMP_VENTA
+                , FEC_FIN_PRECIO_CAMP_VENTA
+                , FEC_INICIO_PRECIO_CAMP_ALQUI
+                , FEC_FIN_PRECIO_CAMP_ALQUI
+                , FEC_POSESION
+                , FEC_SENYAL_LANZAMIENTO
+                , FEC_LANZAMIENTO
+                , AVISO_OCUP_SERVICER
+                , IND_FUERZA_PUBLICA
+                , IND_OCUPANTES_VIVIENDA
+                , FEC_RESOLUCION_MORA
+                , IND_ENTREGA_VOL_POSESI
+                , SEGMENTACION_CARTERA
+                , FLAG_EN_REM
+                , FLAG_FICHEROS
+                , FLAG_OFERTA_VIVA
+                , SUP_ALQUILABLE
+                , CONCURRENCIA_ENVIADA)
+                SELECT NUM_IDENTIFICATIVO
+                , NUM_UNIDAD
+                , CLASE_USO
+                , NUM_INMUEBLE
+                , CUOTA
+                , GRADO_PROPIEDAD
+                , FEC_VALIDO_DE
+                , FEC_VALIDO_A
+                , STATUS_USUARIO
+                , SITUACION_ALQUILER
+                , SOCIEDAD_PATRIMONIAL
+                , SUBTIPO_VIVIENDA
+                , SUBTIPO_SUELO
+                , NUM_INMUEBLE_ANTERIOR
+                , PRODUCTO
+                , PROCEDENCIA_PRODUCTO
+                , SOCIEDAD_ORIGEN
+                , BANCO_ORIGEN
+                , FINCA
+                , LIBRO
+                , TOMO
+                , FOLIO
+                , INSCRIPCION
+                , NUM_CARTILLA
+                , ORIGEN_REGULATORIO
+                , CLASE_USO_REGISTRAL
+                , IDUFIR
+                , VIVIENDA_HABITUAL
+                , FEC_PRESENTACION_REGISTRO
+                , FEC_INSC_TITULO
+                , FEC_ADJUDICACION
+                , FEC_TITULO_FIRME
+                , IMPORTE_CESION
+                , FEC_CESION_REMATE
+                , FEC_PRESENTADO
+                , INDICADOR_LLAVES
+                , FEC_RECEP_LLAVES
+                , NUM_AUTOS_JUZGADO
+                , TIPO_IMPUESTO_COMPRA
+                , SUBTIPO_IMPUESTO_COMPRA
+                , PORC_IMPUESTO_COMPRA
+                , COD_TP_IVA_COMPRA
+                , NUM_CARGAS
+                , COD_GESTORIA
+                , NOMBRE_REGISTRO_PROPIEDAD
+                , NUMERO_REGISTRO_PROPIEDAD
+                , COD_GESTORIA_ADMINIS
+                , TIPO_ALQUILER
+                , COMPLEMENTO
+                , CALLE
+                , NUMERO
+                , APARTADO
+                , POBLACION
+                , REGION
+                , PAIS
+                , CALLE2
+                , DISTRITO
+                , ALA_EDIFICIO
+                , PLANTA
+                , NUM_UBICACION
+                , X_GOOGLE
+                , Y_GOOGLE
+                , SIGLA_EDIFICIO
+                , ESTADO_TITULARIDAD
+                , FEC_ESTADO_TITULARIDAD
+                , ESTADO_POSESORIO
+                , FEC_ESTADO_POSESORIO
+                , ESTADO_COMERCIAL_ALQUILER
+                , FEC_ESTADO_COMERCIAL_ALQUILER
+                , ESTADO_COMERCIAL_VENTA
+                , FEC_ESTADO_COMERCIAL_VENTA
+                , ESTADO_TECNICO
+                , FEC_ESTADO_TECNICO
+                , EST_COMERCIAL_SERVICER
+                , FEC_COMERCIAL_SERVICER
+                , EST_DESA_PROMO_DETALLADO
+                , FEC_DESA_PROMO_DETALLADO
+                , EST_DESA_PROMO_GENERAL
+                , FEC_DESA_PROMO_GENERAL
+                , EST_ENTR_PROD_MANT_VENTA
+                , FEC_ENTR_PROD_MANT_VENTA
+                , EST_ENTR_PROD_MANT_ALQ
+                , FEC_ENTR_PROD_MANT_ALQ
+                , PROMO_CONJUNTA_OB_REM
+                , PROMO_CONJUNTA_VENTA
+                , PROMO_CONJUNTA_ALQUILER
+                , ACTIVO_CARTERA_CONCENTRADA
+                , ACTIVO_AAMM
+                , ACTIVO_PROMO_ESTRATEG
+                , DESTINO_COMERCIAL
+                , CANAL_DISTRIBUCION_VENTA
+                , MOTIVO_NO_COMERCIAL
+                , FEC_INICIO_CONCURENCIA
+                , FEC_FIN_CONCURENCIA
+                , FEC_VISITA_INMB_SERVICER
+                , FEC_PUBLICACION_SERVICER
+                , PUBLICABLE_PORT_PUBLI_VENTA
+                , PUBLICABLE_PORT_PUBLI_ALQUI
+                , PUBLICABLE_PORT_INVER_VENTA
+                , PUBLICABLE_PORT_INVER_ALQUI
+                , PUBLICABLE_PORT_API_VENTA
+                , PUBLICABLE_PORT_API_ALQUI
+                , NECESIDAD_ARRAS
+                , MOT_NECESIDAD_ARRAS
+                , RENUNCIA_EXENSION
+                , CARTERA_VENTA_ACTIVOS
+                , CARTERA_VENTA_CREDITOS
+                , CAT_COMERCIALIZACION
+                , TRIBUT_PROPUESTA_VENTA
+                , TRIBUT_PROPUESTA_CLI_EXT_IVA
+                , CANAL_DISTRIBUCION_ALQ
+                , PROMO_COMERCIAL
+                , TXT_COMERCIAL_CAS_1
+                , TXT_COMERCIAL_CAS_2
+                , TXT_COMERCIAL_ENG_1
+                , TXT_COMERCIAL_ENG_2
+                , FEC_PUBLI_SERVICER_APIS
+                , FEC_PUBLI_PORT_INVERSOR
+                , FEC_INICIO_INFORME
+                , FEC_FIN_INFORME
+                , ANYO_CONCESION
+                , FEC_FIN_CONCESION
+                , CALIFICACION_ENERGETICA
+                , CERTIFICADO_REGISTRADO
+                , FEC_SOLICITUD
+                , FEC_FIN_VIGENCIA
+                , LISTA_EMISIONES
+                , VALORES_EMISIONES
+                , LISTA_ENERGIA
+                , VALOR_ENERGIA
+                , CEDULA_HABITABILIDAD
+                , PRECIO_MAX_MOD_VENTA
+                , PRECIO_MAX_MOD_ALQUILER
+                , SITUACION_VPO
+                , NECESARIA_AUTORI_TRANS
+                , TANTEO_RETRACTO_TRANS
+                , IND_COMPRADOR_ACOGE_AYUDA
+                , IMP_AYUDA_FINANCIACION
+                , FEC_VENCIMIENTO_SEGURO
+                , FEC_DEVOLUCION_AYUDA
+                , SITUACION_CEE
+                , MOTIVO_EXONERACION_CEE
+                , INCIDENCIA_CEE
+                , NUMERO_CEE
+                , CODIGO_SST
+                , SUP_TASACION_SOLAR
+                , PORC_OBRA_EJECUTADA
+                , SUP_TASACION_UTIL
+                , SUP_REGISTRAL_UTIL
+                , SUP_TASACION_CONSTRUIDA
+                , NUM_HABITACIONES
+                , NUM_BANYOS
+                , NUM_TERRAZAS
+                , ANYO_CONSTRUCCION
+                , ANYO_ULTIMA_REFORMA
+                , SUP_SOBRE_RASANTE
+                , SUP_BAJO_RASANTE
+                , NUM_APARACAMIENTOS
+                , IDEN_PL_PARKING
+                , IDEN_TRASTERO
+                , SUP_REG_CONSTRUIDA
+                , SUP_REG_SOLAR
+                , TIENE_ASCENSOR
+                , TIENE_TRASTERO
+                , INMUEBLE_VACACIONAL
+                , EQUIPAMIENTO_015001
+                , BALCON
+                , CALEFACCION
+                , COCINA_EQUIPADA
+                , EST_CONSERVACION
+                , JARDIN
+                , USO_JARDIN
+                , PISCINA
+                , SALIDA_HUMOS
+                , TERRAZA
+                , TIPO_VIVIENDA_INF
+                , TIPOLOGIA_EDIFICIO
+                , SEG_INVERSION_PROM
+                , IMP_PRECIO_VENTA
+                , PRECIO_VENTA_NEGOCIABLE
+                , DESC_COLEC_PRECIO_ALQUI
+                , IMP_PRECIO_ALQUI
+                , PRECIO_ALQUI_NEGOCIABLE
+                , DESC_COL_PRECIO_CAMP_ALQUI
+                , IMP_PRECIO_CAMP_ALQUI
+                , PRECIO_CAMP_ALQUI_NEGOCIABLE
+                , DESC_COL_PRECIO_CAMP_VENTA
+                , IMP_PRECIO_CAMP_VENTA
+                , PRECIO_CAMP_VENTA_NEGOCIABLE
+                , DESC_COL_PRECIO_VENTA
+                , IMP_PRECIO_REF_ALQUI
+                , FEC_INICIO_PRECIO_VENTA
+                , FEC_FIN_PRECIO_VENTA
+                , FEC_INICIO_PRECIO_ALQUI
+                , FEC_FIN_PRECIO_ALQUI
+                , FEC_INICIO_PRECIO_CAMP_VENTA
+                , FEC_FIN_PRECIO_CAMP_VENTA
+                , FEC_INICIO_PRECIO_CAMP_ALQUI
+                , FEC_FIN_PRECIO_CAMP_ALQUI
+                , FEC_POSESION
+                , FEC_SENYAL_LANZAMIENTO
+                , FEC_LANZAMIENTO
+                , AVISO_OCUP_SERVICER
+                , IND_FUERZA_PUBLICA
+                , IND_OCUPANTES_VIVIENDA
+                , FEC_RESOLUCION_MORA
+                , IND_ENTREGA_VOL_POSESI
+                , SEGMENTACION_CARTERA
+                , FLAG_EN_REM
+                , FLAG_FICHEROS
+                , FLAG_OFERTA_VIVA
+                , SUP_ALQUILABLE
+                , CONCURRENCIA_ENVIADA 
+                FROM '||V_ESQUEMA||'.'||V_TABLA_BACK||'';
+
+    EXECUTE IMMEDIATE V_MSQL;
+
+    DBMS_SNAPSHOT.REFRESH('REM01.AUX_APR_BCR_STOCK_M', 'c');
+    
+    COMMIT;
+
+EXCEPTION
+     WHEN OTHERS THEN
+          ERR_NUM := SQLCODE;
+          ERR_MSG := SQLERRM;
+          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
+          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+          DBMS_OUTPUT.put_line(ERR_MSG);
+          DBMS_OUTPUT.put_line(V_MSQL);
+          ROLLBACK;
+          RAISE;   
+END;
+/
+EXIT;

@@ -128,7 +128,7 @@ BEGIN
           (SELECT USU.USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS USU 
 			WHERE USU.USU_USERNAME = ''REM-USER'')) AS NUMBER (16, 0)) 										AS ID_USUARIO_REM_ACCION,
 		CAST(AGR.AGR_VISITABLE AS NUMBER(1,0))	 															AS AGR_VISITABLE,
-		CAST(AGA.PISO_PILOTO AS NUMBER(1,0))																AS ES_PISO_PILOTO
+		CAST(AGA.PISO_PILOTO AS NUMBER(1,0))																AS PISO_PILOTO
 		FROM '||V_ESQUEMA||'.ACT_AGR_AGRUPACION AGR
 		INNER JOIN '||V_ESQUEMA||'.ACT_AGA_AGRUPACION_ACTIVO AGA  ON AGA.AGR_ID = AGR.AGR_ID         
 		INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON AGA.ACT_ID = ACT.ACT_ID		
@@ -169,7 +169,7 @@ BEGIN
 		-- Creamos comentario para las columnas AGR_VISITABLE y PISO_PILOTO
 		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_VISTA||'.AGR_VISITABLE IS ''Visitable''';		
 		EXECUTE IMMEDIATE V_MSQL;
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_VISTA||'.ES_PISO_PILOTO IS ''Indica el activo seleccionado como piso piloto de la agrupación''';
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_VISTA||'.PISO_PILOTO IS ''Indica el activo seleccionado como piso piloto de la agrupación''';
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comentarios en columnas creados.');
 	

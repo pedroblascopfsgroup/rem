@@ -1144,6 +1144,9 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			}
 
 			compradorBusqueda.setIdPersonaHayaCaixa(cliente.getIdPersonaHayaCaixa());
+			if(compradorBusqueda.getIdPersonaHayaCaixa() == null || compradorBusqueda.getIdPersonaHayaCaixa().trim().isEmpty()) {
+				compradorBusqueda.setIdPersonaHayaCaixa(interlocutorCaixaService.getIdPersonaHayaCaixa(oferta, null, compradorBusqueda.getDocumento(), null));
+			}
 			compradorBusqueda.setFechaNacimientoConstitucion(cliente.getFechaNacimiento());
 			compradorBusqueda.setDireccion(cliente.getDireccion());
 			compradorBusqueda.setPaisNacimientoComprador(cliente.getPaisNacimiento());
@@ -1249,6 +1252,9 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			compradorExpedienteNuevo.setEstadoInterlocutor(interlocutorActivo);
 			compradorExpedienteNuevo.setEstadoInterlocutorRepSiTiene(interlocutorActivo);
 			compradorExpedienteNuevo.setIdPersonaHayaCaixaRepresentante(cliente.getIdPersonaHayaCaixaRepresentante());
+			if(compradorExpedienteNuevo.getIdPersonaHayaCaixaRepresentante() == null || compradorExpedienteNuevo.getIdPersonaHayaCaixaRepresentante().trim().isEmpty()) {
+				compradorExpedienteNuevo.setIdPersonaHayaCaixaRepresentante(interlocutorCaixaService.getIdPersonaHayaCaixa(oferta,null,compradorExpedienteNuevo.getDocumentoRepresentante(), null));
+			}
 			
 			if(oferta.getActivoPrincipal() != null && DDCartera.isCarteraBk(oferta.getActivoPrincipal().getCartera())) {
 				this.setInterlocutorOferta(compradorExpedienteNuevo, true, oferta);
@@ -1357,9 +1363,15 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 						compradorBusquedaAdicional.setDocumento(titularAdicional.getDocumento());
 						compradorBusquedaAdicional.setInfoAdicionalPersona(titularAdicional.getInfoAdicionalPersona());
 						compradorBusquedaAdicional.setIdPersonaHayaCaixa(titularAdicional.getInfoAdicionalPersona() != null ? titularAdicional.getInfoAdicionalPersona().getIdPersonaHayaCaixa() : null);
+						if(compradorBusquedaAdicional.getIdPersonaHayaCaixa() == null || compradorBusquedaAdicional.getIdPersonaHayaCaixa().trim().isEmpty()) {
+							compradorBusquedaAdicional.setIdPersonaHayaCaixa(interlocutorCaixaService.getIdPersonaHayaCaixa(oferta, null, compradorBusquedaAdicional.getDocumento(), null));
+						}
 					}
 
 					compradorExpedienteNuevo.setIdPersonaHayaCaixaRepresentante(titularAdicional.getIdPersonaHayaCaixaRepresentante());
+					if(compradorExpedienteNuevo.getIdPersonaHayaCaixaRepresentante() == null || compradorExpedienteNuevo.getIdPersonaHayaCaixaRepresentante().trim().isEmpty()) {
+						compradorExpedienteNuevo.setIdPersonaHayaCaixaRepresentante(interlocutorCaixaService.getIdPersonaHayaCaixa(oferta,null,compradorExpedienteNuevo.getDocumentoRepresentante(), null));
+					}
 
 					if (!Checks.esNulo(titularAdicional.getTipoPersona()) && DDTipoPersona.CODIGO_TIPO_PERSONA_JURIDICA
 							.equals(titularAdicional.getTipoPersona().getCodigo())) {

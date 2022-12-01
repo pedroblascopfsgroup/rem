@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Adrián Molina
---## FECHA_CREACION=20221130
+--## AUTOR=Lara Pablo
+--## FECHA_CREACION=20221201
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-19040
@@ -183,7 +183,7 @@ BEGIN/*Versión 0.9*/
 		 CASE WHEN (IAG.PISO_PILOTO = 1) 
 		  THEN CAST(IAG.ACT_NUM_ACTIVO AS NUMBER (16, 0))
 		  ELSE NULL
-		END 		                                                                      		 AS PISO_PILOTO,
+		END 		                                                                      		 AS ES_PISO_PILOTO,
         	CAST(AGR.AGR_VISITABLE AS NUMBER(1,0))                                             	 AS AGR_VISITABLE,
         	CAST(AGR.AGR_EMPRESA_PROMOTORA AS VARCHAR2(250 CHAR))                              	 AS AGR_EMPRESA_PROMOTORA,
         	CAST(AGR.AGR_EMPRESA_COMERCIALIZADORA AS VARCHAR2(250 CHAR))                       	 AS AGR_EMPRESA_COMERCIALIZADORA,

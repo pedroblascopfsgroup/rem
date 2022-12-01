@@ -39,7 +39,7 @@ public class CampanyaObrasNuevasDto implements WebcomRESTDto{
 	private LongDataType agrExistePisoPiloto;
 	private LongDataType agrComercializableConsPlano;
 	
-	private LongDataType pisoPiloto;
+	private LongDataType esPisoPiloto;
 	private LongDataType agrVisitable;
 	private StringDataType agrEmpresaPromotora;
 	private StringDataType agrEmpresaComercializadora;
@@ -170,11 +170,11 @@ public class CampanyaObrasNuevasDto implements WebcomRESTDto{
 	public void setAgrComercializableConsPlano(LongDataType agrComercializableConsPlano) {
 		this.agrComercializableConsPlano = agrComercializableConsPlano;
 	}
-	public LongDataType getPisoPiloto() {
-		return pisoPiloto;
+	public LongDataType getEsPisoPiloto() {
+		return esPisoPiloto;
 	}
-	public void setPisoPiloto(LongDataType pisoPiloto) {
-		this.pisoPiloto = pisoPiloto;
+	public void setEsPisoPiloto(LongDataType esPisoPiloto) {
+		this.esPisoPiloto = esPisoPiloto;
 	}
 	public LongDataType getAgrVisitable() {
 		return agrVisitable;

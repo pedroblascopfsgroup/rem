@@ -348,6 +348,51 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 				return false;
 			}
 		},
+		/*
+		isTipoGastoSuministro: function(get){
+			var me = this;
+	    	var cartera = me.lookupController().getViewModel().get('gasto').get('cartera');
+	        var tipoGasto = me.lookupController().getViewModel().get('gasto').get('tipoGastoCodigo');
+	        var comboActivoRecovery = me.getView().getViewModel().get('gasto.tipoOperacionCodigo');
+			var comboTipoAltaRef = me.getView().down("[reference='comboTipoOperacionRef']");
+	        
+	        if(cartera == CONST.CARTERA['BANKIA']){
+				
+			}
+		
+			if(get("activo.isCarteraBbva")){
+				var gestores = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) 
+				|| $AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) 
+				||  $AU.userIsRol(CONST.PERFILES['SUPERUSUARO_ADMISION']);
+				var me = this;
+				
+				var tipoAltaCodigo = me.getView().getViewModel().get('activo.tipoAltaCodigo');
+				var comboActivoRecovery = me.getView().getViewModel().get('activo.idRecovery');
+				var comboTipoAltaRef = me.getView().down("[reference='tipoAltaRef']");
+				
+				
+				if(gestores){
+					if (comboActivoRecovery != null) {
+						if(!Ext.isEmpty(comboTipoAltaRef)) comboTipoAltaRef.setValue(CONST.DD_TAL_TIPO_ALTA['ALTA_AUTOMATICA']);
+						return false;
+					}else if(comboActivoRecovery == null && tipoAltaCodigo == CONST.DD_TAL_TIPO_ALTA['ALTA_AUTOMATICA']){
+						return true;
+					}else{
+						if(tipoAltaCodigo == CONST.DD_TAL_TIPO_ALTA['ALTA_AUTOMATICA']) {
+							if(!Ext.isEmpty(comboTipoAltaRef)) comboTipoAltaRef.setValue(CONST.DD_TAL_TIPO_ALTA['ALTA_AUTOMATICA']);
+	         				return false;
+	         			} else if (tipoAltaCodigo != CONST.DD_TAL_TIPO_ALTA['ALTA_AUTOMATICA'] || tipoAltaCodigo == null) {
+	         				return true;         				
+	         			} 
+	
+					}
+	
+					}
+									
+				}
+			
+			return false;
+		},*/
 		
 		esLiberbank : function(get) {
 			var cartera = get('detalleeconomico.cartera');
@@ -461,18 +506,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 				}
 			}
 		},
-
-		comboTipoOperacion : {
-			model : 'HreRem.model.ComboBase',
-			proxy : {
-				type : 'uxproxy',
-				remoteUrl : 'generic/getDiccionario',
-				extraParams : {
-					diccionario : 'tipoOperacionGasto'
-				}
-			}
-		},
-
+	
 		comboSubtiposGasto : {
 			model : 'HreRem.model.ComboBase',
 			proxy : {
@@ -496,6 +530,25 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 			}
 		},
 
+		comboTipoOperacion : {
+			model : 'HreRem.model.ComboBase',
+			proxy : {
+				type : 'uxproxy',
+				remoteUrl : 'generic/getDiccionario',
+				extraParams : {
+					diccionario : 'tipoOperacionGasto'
+				}
+			}
+		},
+		comboTipoOperacionGastoSuministro: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+			type: 'uxproxy',
+			remoteUrl: 'gastosproveedor/getComboTipoOperacionByGasto',
+			extraParams: {idGasto: '{gasto.idGasto}'} 
+			},
+			autoLoad: true
+		},
 		comboPropietarios : {
 			model : 'HreRem.model.ComboBase',
 			proxy : {
@@ -923,6 +976,15 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
                 }
             }
         },
+		comboTipoOperacionGastoSuministro: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+			type: 'uxproxy',
+			remoteUrl: 'gastosproveedor/getComboTipoOperacionByGasto',
+			extraParams: {idGasto: '{gasto.idGasto}'} 
+			},
+			autoLoad: true
+		},
         
         comboSubtiposGastoFiltered: {
 			model : 'HreRem.model.ComboBase',

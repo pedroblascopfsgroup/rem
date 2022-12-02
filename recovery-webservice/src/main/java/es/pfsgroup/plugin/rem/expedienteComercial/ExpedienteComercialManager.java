@@ -4193,12 +4193,20 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					DDTiposImpuesto tipoImpuesto = (DDTiposImpuesto) utilDiccionarioApi
 							.dameValorDiccionarioByCod(DDTiposImpuesto.class, dto.getTipoImpuestoCodigo());
 					condiciones.setTipoImpuesto(tipoImpuesto);
+
+					if(DDTiposImpuesto.TIPO_IMPUESTO_ITP.equals(dto.getTipoImpuestoCodigo())){
+						condiciones.setTipoAplicable(null);
+					}
 				}
 			}else{
 				if (!Checks.esNulo(dto.getTipoImpuestoCodigoAlq())) {
 					DDTiposImpuesto tipoImpuesto = (DDTiposImpuesto) utilDiccionarioApi
 							.dameValorDiccionarioByCod(DDTiposImpuesto.class, dto.getTipoImpuestoCodigoAlq());
 					condiciones.setTipoImpuesto(tipoImpuesto);
+				}
+
+				if(DDTiposImpuesto.TIPO_IMPUESTO_ITP.equals(dto.getTipoImpuestoCodigoAlq())){
+					condiciones.setTipoAplicable(null);
 				}
 			}
 

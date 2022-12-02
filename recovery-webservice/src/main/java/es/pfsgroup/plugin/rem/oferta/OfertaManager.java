@@ -10146,5 +10146,30 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		return historicoAntiguoDeudor;
 	}
 
+	@Override
+	public boolean isIngresoDepositoOfertaCancelada(Oferta oferta){
+		OfertaCaixa ofertaCaixa = oferta.getOfertaCaixa();
+		if (ofertaCaixa != null && DDEstadoOfertaBC.CODIGO_CANCELADA.equals(ofertaCaixa.getEstadoOfertaBc().getCodigo())){
+			boolean cambiaDeposito = depositoApi.cambiaEstadoDeposito(oferta.getDeposito(), DDEstadoDeposito.CODIGO_PDTE_DECISION_DEVOLUCION_INCAUTACION);
+			if (cambiaDeposito){
+				setEstadoOfertaBCByCod(ofertaCaixa, DDEstadoOfertaBC.CODIGO_SOLICITAR_DEVOLUCION_RESERVA_DEPOSITO);
+			}
+			return cambiaDeposito;
+		}
+		return false;
+	}
+
+	private void setEstadoOfertaBCByCod(OfertaCaixa ofertaCaixa, String codEstadoBC) {
+
+		if(ofertaCaixa != null && codEstadoBC != null) {
+			Filter filtroEstadoOfertaBC = genericDao.createFilter(FilterType.EQUALS, "codigo", codEstadoBC);
+			DDEstadoOfertaBC estadoOfertaBC = genericDao.get(DDEstadoOfertaBC.class, filtroEstadoOfertaBC);
+			if(estadoOfertaBC != null) {
+				ofertaCaixa.setEstadoOfertaBc(estadoOfertaBC);
+				genericDao.save(OfertaCaixa.class, ofertaCaixa);
+			}
+		}
+	}
+
 }
 

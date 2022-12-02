@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Alejandra García
---## FECHA_CREACION=20220903
+--## AUTOR=Pier Gotta
+--## FECHA_CREACION=20220929
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-18634
@@ -29,7 +29,9 @@
 --##        0.16  HREOS-17367 -  Daniel Algaba - Añadir nuevos campos
 --##        0.17  HREOS-17497 -  Daniel Algaba - Se quita campo NUM_CARTILLA
 --##        0.18  HREOS-17515 -  Daniel Algaba - Se añade campo NUM_CARTILLA
---##        0.19  HREOS-18634 -  Alejandra García - Se añade flag CONCURRENCIA_ENVIADA
+--##        0.19  HREOS-18617 -  Alejandra García - Se añade campo FLAG_SUP_INMOBILIARIA a la AUX_APR_RBC_STOCK
+--##        0.20  HREOS-18634 -  Alejandra García - Se añade flag CONCURRENCIA_ENVIADA
+--##        0.21  HREOS-18634 -  Pier Gotta - Se añade SUP_ALQUILABLE
 --##########################################
 --*/
 
@@ -62,10 +64,11 @@ DECLARE
   TYPE T_COL IS TABLE OF VARCHAR2(500 CHAR);
   TYPE T_ARRAY_COL IS TABLE OF T_COL;
   V_COL T_ARRAY_COL := T_ARRAY_COL(
-  	  T_COL('AUX_APR_BCR_STOCK',',FLAG_EN_REM NUMBER (1)',',FLAG_FICHEROS VARCHAR2(1 CHAR)',',FLAG_OFERTA_VIVA NUMBER (1)',',CONCURRENCIA_ENVIADA NUMBER (1)'),
-      T_COL('AUX_APR_RBC_STOCK','','','',''),
-      T_COL('AUX_APR_BCR_DELTA',',FLAG_EN_REM NUMBER (1)','','',''),
-      T_COL('AUX_APR_RBC_DELTA','','','','')
+
+      T_COL('AUX_APR_BCR_STOCK',',FLAG_EN_REM NUMBER (1)',',FLAG_FICHEROS VARCHAR2(1 CHAR)',',FLAG_OFERTA_VIVA NUMBER (1)', ',SUP_ALQUILABLE VARCHAR2(12 CHAR)',',CONCURRENCIA_ENVIADA NUMBER (1)'),
+      T_COL('AUX_APR_RBC_STOCK',',SUP_ALQUILABLE VARCHAR2(12 CHAR)',',TIPO_SUP_INMOBILIARIA NUMBER(16,0)','','',''),
+      T_COL('AUX_APR_BCR_DELTA',',FLAG_EN_REM NUMBER (1)',',SUP_ALQUILABLE VARCHAR2(12 CHAR)','','',''),
+      T_COL('AUX_APR_RBC_DELTA',',SUP_ALQUILABLE VARCHAR2(12 CHAR)','','','','')
 	  
    );  
   V_TMP_COL T_COL;
@@ -325,8 +328,10 @@ BEGIN
         '||V_TMP_COL(3)||'
 
         '||V_TMP_COL(4)||'
-
+        
         '||V_TMP_COL(5)||'
+
+        '||V_TMP_COL(6)||'
 
 
         

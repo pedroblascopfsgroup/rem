@@ -3,6 +3,7 @@
 cd $DIR_INPUT_AUX
 
 lftp -u usr_pfsbc,9f32bfd20b -p 22 sftp://intercambio2.haya.es <<EOF
+set xfer:clobber on
 cd Archivos/recep/
 mget $1
 bye
@@ -13,6 +14,7 @@ rm -f $1
 sleep 30
 
 lftp -u usr_pfsbc,9f32bfd20b -p 22 sftp://intercambio2.haya.es <<EOF
+set xfer:clobber on
 cd Archivos/recep/
 mget $1
 bye

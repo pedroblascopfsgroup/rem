@@ -67,6 +67,8 @@ public class DDSubtipoGasto implements Auditable, Dictionary {
 	public static final String COD_ABOGADO_OCUPACIONAL = "95";
 	public static final String COD_ABOGADO_ASUNTOS_GENERALES = "96";
 	public static final String COD_ABOGADO_ASISTENCIA_JURIDiCA = "97";
+	public static final String IBI_URBANA = "01";
+	public static final String IBI_RUSTICA = "02";
 
 	@Id
 	@Column(name = "DD_STG_ID")

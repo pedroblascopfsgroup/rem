@@ -96,5 +96,6 @@ public class GastoManager extends BusinessOperationOverrider<GastoApi> implement
 		Filter filterBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 		return genericDao.get(GastoProveedor.class, filter,filterBorrado);
 	}
+
 	
 }

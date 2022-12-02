@@ -122,6 +122,9 @@ public class ActivoInfoRegistral implements Serializable, Auditable {
 
 	@Column(name = "REG_NUMERO_REGISTRO")
 	private String regNumRegistro;
+	
+	@Column(name = "REG_SUPERFICIE_ALQUILABLE")
+	private Float superficieAlquilable;
 
 	@Version   
 	private Long version;
@@ -325,4 +328,13 @@ public class ActivoInfoRegistral implements Serializable, Auditable {
 	public void setRegNumRegistro(String regNumRegistro) {
 		this.regNumRegistro = regNumRegistro;
 	}
+
+	public Float getSuperficieAlquilable() {
+		return superficieAlquilable;
+	}
+
+	public void setSuperficieAlquilable(Float superficieAlquilable) {
+		this.superficieAlquilable = superficieAlquilable;
+	}
+
 }

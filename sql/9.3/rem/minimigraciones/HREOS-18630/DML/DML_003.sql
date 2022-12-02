@@ -1,0 +1,105 @@
+--/*
+--##########################################
+--## AUTOR=Pier Gotta
+--## FECHA_CREACION=202209121
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=HREOS-18630
+--## PRODUCTO=NO
+--## 
+--## Finalidad: INSERTAR PROVEEDOR DIRECCION 
+--##			
+--## INSTRUCCIONES:  
+--## VERSIONES:
+--##        0.1 Versión inicial
+--#########################################
+--*/
+
+--Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
+
+DECLARE
+	V_MSQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
+	V_ESQUEMA VARCHAR2(25 CHAR):= 'REM01';-- '#ESQUEMA#'; -- Configuracion Esquema
+	V_ESQUEMA_M VARCHAR2(25 CHAR):= 'REMMASTER';-- '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+	V_USUARIO VARCHAR2(50 CHAR) := 'HREOS-18630'; -- USUARIO CREAR/MODIFICAR
+	V_COUNT NUMBER(16); -- Vble. para comprobar
+	err_num NUMBER; -- Numero de errores
+	err_msg VARCHAR2(2048); -- Mensaje de error
+	
+BEGIN
+	DBMS_OUTPUT.PUT_LINE('[INICIO] ');
+
+	V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.ACT_PRD_PROVEEDOR_DIRECCION T1 USING (
+		   SELECT 
+		   0 AS PRD_ID,
+		   PVE.PVE_ID, 
+		   PVE.DD_PRV_ID, 
+		   PVE.DD_TDI_ID, 
+		   PVE.PVE_DOCIDENTIF, 
+		   PVE.PVE_NOMBRE, 
+		   PVE.PVE_CP, 
+		   PVE.PVE_DIRECCION,
+		   PVE.DD_LOC_ID,
+		   PVE.PVE_TELF1, 
+		   PVE.PVE_TELF2, 
+		   PVE.PVE_FAX, 
+		   PVE.PVE_EMAIL,
+		   AUX.NOMBRE_VIA,
+		   AUX.NUMERO_VIA,
+		   AUX.TIPO_CALLE
+		   FROM '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE
+		   JOIN '||V_ESQUEMA||'.APR_AUX_HREOS_18630 AUX ON AUX.CIF = PVE.PVE_DOCIDENTIF
+		   WHERE NOT EXISTS (SELECT 1 FROM '||V_ESQUEMA||'.ACT_PRD_PROVEEDOR_DIRECCION PVD WHERE PVE.PVE_ID = PVD.PVE_ID AND BORRADO = 0) AND BORRADO = 0
+		   ) T2 ON (T1.PVE_ID = T2.PVE_ID)
+		   WHEN NOT MATCHED THEN INSERT 							      
+		   (PRD_ID,
+		   PVE_ID,
+		   DD_TDP_ID,
+		   DD_TVI_ID,
+		   PRD_NOMBRE,
+		   PRD_NUM,
+		   DD_PRV_ID,
+		   PRD_CP,
+		   PRD_EMAIL,
+		   PRD_TELEFONO,
+		   DD_LOC_ID,
+		   USUARIOCREAR,
+		   FECHACREAR) 
+		   VALUES ('||V_ESQUEMA||'.S_ACT_PRD_PROVEEDOR_DIRECCION.NEXTVAL, 
+		   T2.PVE_ID, 
+		   (SELECT DD_TDP_ID FROM '||V_ESQUEMA||'.DD_TDP_TIPO_DIR_PROVEEDOR WHERE DD_TDP_CODIGO = ''01''),
+		   (SELECT DD_TVI_ID FROM '||V_ESQUEMA_M||'.DD_TVI_TIPO_VIA WHERE DD_TVI_CODIGO = T2.TIPO_CALLE),
+		   T2.NOMBRE_VIA, 
+		   T2.NUMERO_VIA,
+		   T2.DD_PRV_ID, 
+		   T2.PVE_CP, 
+		   T2.PVE_EMAIL, 
+		   T2.PVE_TELF1, 
+		   T2.DD_LOC_ID,
+		   ''HREOS-18630'', 
+		   SYSDATE)';
+	EXECUTE IMMEDIATE V_MSQL;
+
+	DBMS_OUTPUT.PUT_LINE('[INFO] CREADOS  '|| SQL%ROWCOUNT ||' REGISTROS EN ACT_PVC_PROVEEDOR_CONTACTO');
+
+	COMMIT;
+
+	DBMS_OUTPUT.PUT_LINE('[FIN] ');
+	
+	EXCEPTION
+	
+	    WHEN OTHERS THEN
+		DBMS_OUTPUT.PUT_LINE('[ERROR] Se ha producido un error en la ejecucion:'||TO_CHAR(SQLCODE));
+		DBMS_OUTPUT.PUT_LINE('-----------------------------------------------------------');
+		DBMS_OUTPUT.PUT_LINE(SQLERRM);
+		DBMS_OUTPUT.PUT_LINE(V_MSQL);
+		ROLLBACK;
+		RAISE;
+END;
+/
+EXIT;

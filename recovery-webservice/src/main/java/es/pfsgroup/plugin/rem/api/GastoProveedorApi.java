@@ -7,6 +7,7 @@ import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOperacionGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
 
 import java.lang.reflect.InvocationTargetException;
@@ -422,5 +423,7 @@ public interface GastoProveedorApi {
 
 	boolean isProveedorIncompleto(Long idGasto);
 	List<HistoricoEnvioPedidos> getHistoricoEnvioPedidosByIdGasto(Long idGasto);
+
+	public List <DDTipoOperacionGasto> getComboTipoOperacionByGasto(Long idGasto);
 }
 

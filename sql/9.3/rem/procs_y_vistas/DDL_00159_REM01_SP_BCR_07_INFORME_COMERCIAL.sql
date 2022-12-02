@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20220404
+--## FECHA_CREACION=20221115
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-17614
+--## INCIDENCIA_LINK=HREOS-18793
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -18,6 +18,7 @@
 --##        0.6 Se añaden el campo de número de aparcaminetos - HREOS-17497 - Daniel Algaba
 --##        0.7 Nuevos mapeos - HREOS-17515 - Daniel Algaba
 --##        0.7 Añadimos ICO_BALCON - HREOS-17614 - Daniel Algaba
+--##		0.8 Inicializamos la tabla ACT_EDI_EDIFICIO para que las UAs tengan valor - HREOS-18793
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -189,6 +190,28 @@ BEGIN
       
       EXECUTE IMMEDIATE V_MSQL;
 
+      SALIDA := SALIDA || '   [INFO] ACTUALIZADOS '|| SQL%ROWCOUNT|| CHR(10);
+      
+      SALIDA := SALIDA || '   [INFO] 2 - ACT_EDI_EDIFICIO'||CHR(10);
+      
+      V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.ACT_EDI_EDIFICIO 
+				(EDI_ID
+				,ICO_ID
+				,USUARIOCREAR
+				,FECHACREAR)
+				SELECT '|| V_ESQUEMA ||'.S_ACT_EDI_EDIFICIO.NEXTVAL
+				, ICO.ICO_ID
+				, ''STOCK_BC''
+				,SYSDATE
+				FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK APR
+				JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = APR.NUM_IDENTIFICATIVO AND ACT.BORRADO = 0
+				JOIN '|| V_ESQUEMA ||'.ACT_ICO_INFO_COMERCIAL ICO ON ACT.ACT_ID = ICO.ACT_ID AND ICO.BORRADO = 0
+				WHERE ACT.BORRADO = 0
+				AND APR.FLAG_EN_REM = '|| FLAG_EN_REM||'
+				AND NOT EXISTS (SELECT 1 FROM '|| V_ESQUEMA ||'.ACT_EDI_EDIFICIO EDIF WHERE EDIF.ICO_ID = ICO.ICO_ID AND EDIF.BORRADO = 0)';
+      
+      EXECUTE IMMEDIATE V_MSQL;
+      
       SALIDA := SALIDA || '   [INFO] ACTUALIZADOS '|| SQL%ROWCOUNT|| CHR(10);
 
 COMMIT;

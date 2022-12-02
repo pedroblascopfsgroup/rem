@@ -254,6 +254,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				COD_ABOGADO_ASUNTOS_GENERALES, COD_ABOGADO_ASISTENCIA_JURIDiCA };
 		List<String> codigosSubtipoGasto = new ArrayList<String>(Arrays.asList(subtiposGasto));
 		Boolean filtroGastosB = false;
+		boolean esIBI = false;
 		if (!Checks.esNulo(gasto)) {
 			
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", gasto.getId());
@@ -547,6 +548,33 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			if (!Checks.esNulo(gasto.getFechaDocumentoBBVA())) {
 				dto.setFechaDocumentoBBVA(gasto.getFechaDocumentoBBVA());
 			}
+
+			if (!Checks.esNulo(gasto.getFechaDomiciliado())) {
+				dto.setFechaDomiciliado(gasto.getFechaDomiciliado());
+			}
+			
+			if (gasto.getGastoLineaDetalleList() != null && !gasto.getGastoLineaDetalleList().isEmpty()) {
+				for (GastoLineaDetalle linea : gasto.getGastoLineaDetalleList()) {
+					if (DDSubtipoGasto.IBI_RUSTICA.equals(linea.getSubtipoGasto().getCodigo()) 
+							|| DDSubtipoGasto.IBI_URBANA.equals(linea.getSubtipoGasto().getCodigo())) {
+						esIBI = true;
+					}
+				}
+			}
+			
+			if (
+					DDCartera.CODIGO_CARTERA_BANKIA.equals(gasto.getCartera().getCodigo()) && 
+					(DDTipoGasto.CODIGO_SUMINISTRO.equals(gasto.getTipoGasto().getCodigo()) ||
+						DDTipoGasto.CODIGO_TASA.equals(gasto.getTipoGasto().getCodigo()) ||
+						esIBI)
+					&& !Checks.esNulo(gasto.getGestoria())
+					) {
+				dto.setIsFechaDomiciliado(true);
+			} else {
+				dto.setIsFechaDomiciliado(false);
+			}
+			
+			
 		}
 
 		return dto;
@@ -831,6 +859,13 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			}
 
 		}
+		if( 
+			(DDTipoOperacionGasto.OPERACION_DOMICILIACION.equals(dto.getTipoOperacionCodigo()) || DDTipoOperacionGasto.OPERACION_DOMICILIACION.equals(gastoProveedor.getTipoOperacion().getCodigo()))
+			 && dto.getTipoOperacionCodigo() != gastoProveedor.getTipoOperacion().getCodigo()
+			) {
+				gastoProveedor.setFechaDomiciliado(new Date());
+		}
+		
 		if (!Checks.esNulo(dto.getDestinatario()) && !DDDestinatarioGasto.CODIGO_HAYA.equals(dto.getDestinatario())) {
 			if (!esGastoHijo) {
 				gastoProveedor.getGastoDetalleEconomico().setGastoRefacturable(false);
@@ -919,6 +954,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			gastoProveedor.setClaveFactura(dto.getClaveFactura());
 		}
 		
+	
 		genericDao.save(GastoProveedor.class, gastoProveedor);
 		
 		if(actualizaSuplidos) {
@@ -4644,5 +4680,44 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			}
 		}
 		return listaEnvioPedidos;
+	}
+	
+
+	@Override
+	public List<DDTipoOperacionGasto> getComboTipoOperacionByGasto(Long idGasto) {
+		List <DDTipoOperacionGasto> listaDDTipoOperacionGasto = genericDao.getList(DDTipoOperacionGasto.class);
+		boolean esIBI = false;
+		
+		try {
+			
+			GastoProveedor gastoProveedor = genericDao.get(GastoProveedor.class,
+			genericDao.createFilter(FilterType.EQUALS, "id", idGasto));
+			//si es diferente a caixa/bankia ... quitamos domiciliación, sino enviamos la lista completa
+			if (gastoProveedor.getGastoLineaDetalleList() != null && !gastoProveedor.getGastoLineaDetalleList().isEmpty()) {
+				for (GastoLineaDetalle linea : gastoProveedor.getGastoLineaDetalleList()) {
+					if (DDSubtipoGasto.IBI_RUSTICA.equals(linea.getSubtipoGasto().getCodigo()) 
+							|| DDSubtipoGasto.IBI_URBANA.equals(linea.getSubtipoGasto().getCodigo())) {
+						esIBI = true;
+					}
+				}
+			}
+
+			if (
+				!(DDCartera.CODIGO_CARTERA_BANKIA.equals(gastoProveedor.getCartera().getCodigo()) && 
+				(DDTipoGasto.CODIGO_SUMINISTRO.equals(gastoProveedor.getTipoGasto().getCodigo()) ||
+						DDTipoGasto.CODIGO_TASA.equals(gastoProveedor.getTipoGasto().getCodigo()) ||
+						esIBI)
+				&& !Checks.esNulo(gastoProveedor.getGestoria()))
+				) {
+					DDTipoOperacionGasto operacionGastoDomiciliacion = genericDao.get(DDTipoOperacionGasto.class,
+										genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoOperacionGasto.OPERACION_DOMICILIACION));
+					listaDDTipoOperacionGasto.remove(operacionGastoDomiciliacion);
+			}
+			
+		} catch (NumberFormatException e) {
+			logger.error(e.getMessage(),e);
+		}
+		return listaDDTipoOperacionGasto;
+
 	}
 }

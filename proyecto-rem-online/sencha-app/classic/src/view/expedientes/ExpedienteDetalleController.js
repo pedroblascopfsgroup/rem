@@ -2727,9 +2727,9 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 					tipoAplicableBkAlq.setDisabled(false);
 	    			tipoAplicableBkAlq.allowBlank = false;
 				}else{
+					tipoAplicableBkAlq.reset();
 					tipoAplicableBkAlq.setDisabled(true);
 	    			tipoAplicableBkAlq.allowBlank = true;
-	    			tipoAplicableBkAlq.reset();
 				}
 				
 				if(CONST.TIPO_GRUPO_IMPUESTO['CODIGO_TASA_CERO'] == value){
@@ -2737,6 +2737,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	    			tipoAplicableBkAlq.allowBlank = true;
 	    			tipoAplicableBkAlq.reset();
 	    		}else{
+	    		    tipoAplicableBkAlq.reset();
 	    			tipoAplicableBkAlq.setDisabled(false);
 	    			tipoAplicableBkAlq.allowBlank = false;
 	    		}
@@ -3130,18 +3131,17 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		    	}
 		    	
 	    		if(CONST.TIPO_IMPUESTO['ITP'] == value){
-	    				    				
+
+                    if(esBankia){
+                        grupoImpuesto.clearValue();
+                        grupoImpuesto.setDisabled(true);
+                    }
 	    			inversionSujetoPasivo.reset();
 	    			renunciaExencion.reset();
 	    			tipoAplicable.reset();
 	    			tipoAplicable.setDisabled(true);
 	    			renunciaExencion.setDisabled(true);
 	    			inversionSujetoPasivo.setDisabled(true);
-	    			
-	    			if(esBankia){
-	    				grupoImpuesto.clearValue();
-	    				grupoImpuesto.setDisabled(true);
-	    			}
 	    			
 	    		}else{
 	    			
@@ -5812,13 +5812,12 @@ comprobarFormatoModificar: function() {
 	    			inversionSujetoPasivo.allowBlank = true;
 	    			
 		    		if(CONST.TIPO_IMPUESTO['ITP'] == value){
-		    			tipoAplicableBk.reset();
+                        if(esBankia){
+                            grupoImpuesto2.clearValue();
+                            grupoImpuesto2.setDisabled(true);
+                        }
 		    			tipoAplicableBk.setDisabled(true);
-		    			if(esBankia){
-		    				grupoImpuesto2.clearValue();
-		    				grupoImpuesto2.setDisabled(true);
-		    			}
-		    			
+
 		    		}else{
 		    			tipoAplicableBk.setDisabled(false);
 		    			if(esBankia){

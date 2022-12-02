@@ -1,0 +1,95 @@
+--/*
+--##########################################
+--## AUTOR=Pier Gotta
+--## FECHA_CREACION=20221116
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.2
+--## INCIDENCIA_LINK=HREOS-18618
+--## PRODUCTO=NO
+--##
+--## Finalidad: Modifica a Nulo los campos de la auxiliar
+--## INSTRUCCIONES:
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
+SET DEFINE OFF;
+
+CREATE OR REPLACE PROCEDURE SP_RBC_CAMPOS_NULOS
+        ( FLAG_EN_REM IN NUMBER  
+        , SALIDA OUT VARCHAR2
+        , COD_RETORNO OUT NUMBER
+   
+    )
+
+   AS
+
+    V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar
+    V_ESQUEMA VARCHAR2(25 CHAR):= 'REM01'; -- Configuracion Esquema
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= 'REMMASTER'; -- Configuracion Esquema Master
+    V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
+    V_NUM_REGS NUMBER(16);
+    V_NUM_REGS2 NUMBER(16);
+    UNIDAD_INMOBILIARIA VARCHAR2(100 CHAR);
+    SUPERFICIE_INMOBILIARIA VARCHAR2(100 CHAR);
+
+    ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+    ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+
+   /*CURSOR UNIDADES_INMOBILIARIAS IS
+        SELECT DISTINCT UNIDAD_INMOBILIARIA
+        FROM REM01.AUX_CONTROL_STOCK_UAS
+        WHERE UNIDAD_INMOBILIARIA IS NOT NULL;*/
+
+
+   CURSOR SUPERFICIES_INMOBILIARIAS IS
+        SELECT DISTINCT SUPERFICIE_INMOBILIARIA
+        FROM REM01.AUX_CONTROL_STOCK_UAS
+        WHERE SUPERFICIE_INMOBILIARIA IS NOT NULL;
+
+  BEGIN
+
+        /*FOR I IN UNIDADES_INMOBILIARIAS LOOP
+            UNIDAD_INMOBILIARIA:=I.UNIDAD_INMOBILIARIA;
+
+            V_MSQL := 'UPDATE '||V_ESQUEMA||'.AUX_APR_RBC_STOCK SET '||UNIDAD_INMOBILIARIA||' = NULL WHERE TIPO_SUP_INMOBILIARIA = ''01''';
+            EXECUTE IMMEDIATE V_MSQL;
+
+            EXIT WHEN UNIDADES_INMOBILIARIAS%NOTFOUND;
+        END LOOP;
+
+    SALIDA := SALIDA;*/
+
+
+        FOR I IN SUPERFICIES_INMOBILIARIAS LOOP
+            SUPERFICIE_INMOBILIARIA:=I.SUPERFICIE_INMOBILIARIA;
+
+            V_MSQL := 'UPDATE '||V_ESQUEMA||'.AUX_APR_RBC_STOCK SET '||SUPERFICIE_INMOBILIARIA||' = NULL WHERE TIPO_SUP_INMOBILIARIA = (SELECT DD_TSI_ID FROM '||V_ESQUEMA||'.DD_TSI_TIPO_SUP_IMNOBILIARIA WHERE BORRADO = 0 AND DD_TSI_CODIGO = ''02'')';
+            EXECUTE IMMEDIATE V_MSQL;
+
+            EXIT WHEN SUPERFICIES_INMOBILIARIAS%NOTFOUND;
+        END LOOP;
+
+    SALIDA := SALIDA;
+
+    COMMIT;
+  
+    DBMS_OUTPUT.PUT_LINE('[FIN] ' );
+
+EXCEPTION
+     WHEN OTHERS THEN
+          ERR_NUM := SQLCODE;
+          ERR_MSG := SQLERRM;
+          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
+          DBMS_OUTPUT.put_line('-----------------------------------------------------------');
+          DBMS_OUTPUT.put_line(ERR_MSG);
+          ROLLBACK;
+          RAISE;
+END SP_RBC_CAMPOS_NULOS;
+/
+
+EXIT

@@ -1754,4 +1754,12 @@ public class GastosProveedorController extends ParadiseJsonController {
 		}
 		return createModelAndViewJson(model);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getComboTipoOperacionByGasto(WebDto webDto, ModelMap model, Long idGasto){
+		model.put("data", gastoProveedorApi.getComboTipoOperacionByGasto(idGasto));
+
+		return new ModelAndView("jsonView", model);
+	}
 }

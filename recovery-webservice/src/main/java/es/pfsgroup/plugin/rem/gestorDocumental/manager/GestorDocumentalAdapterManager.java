@@ -693,9 +693,15 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 	private String generateListadoPersonas(Oferta oferta, List<CompradorExpediente> compradores) {
 		String personas = null;
 
+		ActivoPropietario actPro = oferta.getActivoPrincipal().getPropietarioPrincipal();
+		DDCartera cartera = oferta.getActivoPrincipal().getCartera();
+		DDSubcartera subcartera = oferta.getActivoPrincipal().getSubcartera();
+		if(!DDSubcartera.isSubcarteraApple(subcartera)) {
+			actPro = null;
+		}
+		
 		for(CompradorExpediente cex: compradores){
-			String idPersonaHaya = getIdPersonaHayaByCarteraAndDocumento(oferta.getActivoPrincipal().getCartera(),
-					oferta.getActivoPrincipal().getSubcartera(), cex.getPrimaryKey().getComprador().getDocumento());
+			String idPersonaHaya = getIdPersonaHayaByCarteraAndDocumento(cartera, subcartera, actPro, cex.getPrimaryKey().getComprador().getDocumento());
 
 			if(idPersonaHaya != null){
 				if(personas == null){
@@ -709,10 +715,10 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		return personas;
 	}
 
-	public String getIdPersonaHayaByCarteraAndDocumento(DDCartera cartera, DDSubcartera subcartera, String documento){
+	public String getIdPersonaHayaByCarteraAndDocumento(DDCartera cartera, DDSubcartera subcartera, ActivoPropietario actPro, String documento){
 
 		if (cartera != null && documento != null){
-			MaestroDePersonas maestroDePersonas = new MaestroDePersonas(getMaestroPersonasByCarteraySubcarterayPropietario(cartera,subcartera,null));
+			MaestroDePersonas maestroDePersonas = new MaestroDePersonas(getMaestroPersonasByCarteraySubcarterayPropietario(cartera,subcartera,actPro));
 			return maestroDePersonas.getIdPersonaHayaByDocumento(documento);
 		}
 		return null;

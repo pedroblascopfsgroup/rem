@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20220704
+--## FECHA_CREACION=20221109
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-18259
@@ -271,6 +271,7 @@ BEGIN
         , FLAG_OFERTA_VIVA	NUMBER(1,0)
         , ERRORCODE                   VARCHAR2(255 CHAR)
         , ERRORMESSAGE                VARCHAR2(512 CHAR)
+		, SUP_ALQUILABLE VARCHAR2(12 CHAR)
         
 
 

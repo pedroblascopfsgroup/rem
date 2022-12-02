@@ -271,6 +271,14 @@ Ext.define('HreRem.view.administracion.AdministracionModel', {
 			type: 'uxproxy',
 			remoteUrl: 'generic/getComboSubtipoGastoFiltered'
 		}
+	},
+	comboTipoOperacionGastoSuministro: {
+		model: 'HreRem.model.ComboBase',
+		proxy: {
+		type: 'uxproxy',
+		remoteUrl: 'gastosproveedor/getComboTipoOperacionByGasto',
+		extraParams: {idGasto: '{gasto.idGasto}'} 
+		}/*,autoLoad: true*/
 	}
 
   }

@@ -286,8 +286,16 @@ Ext.define('HreRem.model.GastoProveedor', {
 			name : 'fechaDocumentoBBVA',
 			type : 'date',
 			dateFormat: 'c'
-		}
-   		
+		},
+		{
+			name : 'fechaDomiciliado',
+			type : 'date',
+			dateFormat: 'c'
+		},
+		{
+    		name: 'isFechaDomiciliado',
+    		type: 'boolean'
+    	}
     ],
     
 	proxy: {

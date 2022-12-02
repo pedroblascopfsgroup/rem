@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20220922
+--## FECHA_CREACION=20221116
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-17716
+--## INCIDENCIA_LINK=HREOS-18998
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -32,6 +32,7 @@
 --##        0.20 Corrección Fecha fin informe - [HREOS-17614] - Daniel Algaba
 --##        0.21 Nuevo lógica para el ćalculo del estado comercial Servicer y fecha de inicio/fin informe comercial - [HREOS-17716] - Daniel Algaba
 --##        0.22 Equivalencia EST_CONSERVACION con nuevo campo ACT_ACTIVO_CAIXA - [REMVIP-12391] - IVAN REPISO
+--##        0.23 Se cambia el campo del texto comercial - [HREOS-18998] - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -108,8 +109,8 @@ BEGIN
                 , EQV6.DD_CODIGO_CAIXA PISCINA
                 , EQV7.DD_CODIGO_CAIXA SALIDA_HUMOS
                 , EQV8.DD_CODIGO_CAIXA TERRAZA
-                ,  REPLACE(REPLACE(ICO.ICO_INFO_DISTRIBUCION_INTERIOR, CHR(10), '' ''), CHR(13), '' '') TXT_COMERCIAL_CAS_1
-                ,  REPLACE(REPLACE(EDIF.EDI_DESCRIPCION, CHR(10), '' ''), CHR(13), '' '') TXT_COMERCIAL_CAS_2
+                ,  REPLACE(REPLACE(SUBSTR(COALESCE(ICO.ICO_DESCRIPCION,ICO.ICO_INFO_DISTRIBUCION_INTERIOR,EDIF.EDI_DESCRIPCION),1,3000), CHR(10), '' ''), CHR(13), '' '') TXT_COMERCIAL_CAS_1
+                ,  NULL TXT_COMERCIAL_CAS_2
                 , EQV9.DD_CODIGO_CAIXA BALCON              
             FROM '|| V_ESQUEMA ||'.ACT_ACTIVO ACT
             JOIN '|| V_ESQUEMA ||'.ACT_ICO_INFO_COMERCIAL ICO ON ACT.ACT_ID=ICO.ACT_ID AND ICO.BORRADO=0

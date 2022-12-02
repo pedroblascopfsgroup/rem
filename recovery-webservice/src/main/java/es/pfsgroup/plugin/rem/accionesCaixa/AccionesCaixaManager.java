@@ -139,6 +139,7 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
 					genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_RECHAZADA)));
 		}
 		ofertaApi.setEstadoOfertaBC(ofr, null);
+		depositoApi.modificarEstadoDepositoSiIngresado(ofr);
 		return true;
 	}
 
@@ -865,10 +866,12 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
 		}
 
 		if (!principalCaducada) {
-			Deposito deposito = depositoApi.getDepositoByNumOferta(numOferta);
-			depositoApi.ingresarDeposito(deposito);
+			if(!ofertaApi.isIngresoDepositoOfertaCancelada(oferta)){
+				Deposito deposito = depositoApi.getDepositoByNumOferta(numOferta);
+				depositoApi.ingresarDeposito(deposito);
 
-			ofertaApi.actualizaEstadoOfertaRemAndBC(oferta);
+				ofertaApi.actualizaEstadoOfertaRemAndBC(oferta);
+			}
 		}
 
 	}

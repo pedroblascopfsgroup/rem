@@ -243,7 +243,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 					
 						{
 				        	xtype:'fieldset',
-				        	height: 260,
+				        	height: 290,
 				        	margin: '0 10 10 0',
 				        	layout: {
 						        type: 'table',
@@ -303,14 +303,24 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 								 		symbol: HreRem.i18n("symbol.m2"),
 								 		fieldLabel: HreRem.i18n('fieldlabel.superficie.sobre.rasante'),								 		
 								 		bind: '{datosRegistrales.superficieSobreRasante}'
-									}
+									},
+									{ 
+										xtype: 'numberfieldbase',
+										reference: 'superficieAlquilable',
+								 		symbol: HreRem.i18n("symbol.m2"),
+										fieldLabel: HreRem.i18n('fieldlabel.superficie.alquilable'),
+		                				bind: {
+		                					value: '{datosRegistrales.superficieAlquilable}',
+		                					hidden: '{!isCarteraBankia}'
+		                				}
+					                }
 		
 								]
 				        },
 				        
 				        {
 				        	xtype:'fieldset',
-				        	height: 260,
+				        	height: 290,
 				        	margin: '0 10 10 0',
 				        	layout: {
 						        type: 'table',
@@ -363,7 +373,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 				        {
 				        	xtype:'fieldset',
 				        	title: HreRem.i18n('fieldlabel.obra.nueva'),
-				        	height: 260,
+				        	height: 290,
 				        	margin: '0 0 10 0',
 				        	layout: {
 						        type: 'table',

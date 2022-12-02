@@ -273,6 +273,9 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 				if (!Checks.esNulo(activo.getInfoRegistral().getInfoRegistralBien()) && !Checks.esNulo(activo.getInfoRegistral().getSuperficieUtil())) {
 					BeanUtils.copyProperty(activoDto, "superficieUtil", activo.getInfoRegistral().getSuperficieUtil());
 				}
+				if (!Checks.esNulo(activo.getInfoRegistral().getInfoRegistralBien()) && !Checks.esNulo(activo.getInfoRegistral().getSuperficieAlquilable())) {
+					BeanUtils.copyProperty(activoDto, "superficieAlquilable", activo.getInfoRegistral().getSuperficieAlquilable());
+				}
 				if (activo.getInfoRegistral() != null  && activo.getInfoRegistral().getSuperficieParcelaUtil() != null) {
 					activoDto.setSuperficieParcelaUtil(activo.getInfoRegistral().getSuperficieParcelaUtil().toString());
 				}
@@ -642,7 +645,13 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 				activo.getTitulo().setAuditoria(Auditoria.getNewInstance());				
 			}
 			
-			beanUtilNotNull.copyProperties(activo.getTitulo(), dto);			
+			beanUtilNotNull.copyProperties(activo.getTitulo(), dto);
+			
+			if (dto.getSuperficieAlquilable() != null) {
+
+				activo.getInfoRegistral().setSuperficieAlquilable(Float.valueOf(dto.getSuperficieConstruida()));
+			
+			}
 			
 			if (dto.getEstadoTitulo() != null) {
 				

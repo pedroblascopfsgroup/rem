@@ -1,13 +1,14 @@
 --/*
 --##########################################
---## AUTOR=Viorel Remus Ovidiu
+--## AUTOR=Remus Ovidiu Viorel
 --## FECHA_CREACION=20221205
+--## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-12882
 --## PRODUCTO=NO
---## Finalidad: Carga de datos en ACT_EJE_EJERCICIO 2023
---##           
---## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
+--##
+--## Finalidad: Script que inserta ejercicion 2023
+--## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##########################################

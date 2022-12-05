@@ -543,7 +543,7 @@ DECLARE
 		T_TABLA('1123','XXXX-22-3-A-T JD DES','22','01','2','02','163','01','','','null','','','','2022'),
 
 		-- Añadir DD_CBC_CODIGO Alquiler rotacional para las pep XXXX-22-2-A-COM - REMVIP-12770 (05/12/22)
-		T_TABLA('1124','XXXX-22-2-A-COM','22','00','3','05','132','01','','','null','','','','2022')
+		T_TABLA('1124','XXXX-22-2-A-COM','22','00','3','05','132','02','','','null','','','','2022')
 
 
     ); 

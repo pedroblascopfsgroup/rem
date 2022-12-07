@@ -10132,7 +10132,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "		 JOIN REM01.DD_SCR_SUBCARTERA SCR ON SCR.DD_SCR_ID = ACT.DD_SCR_ID AND SCR.BORRADO = 0" 
 				+ "		 WHERE GPV.BORRADO = 0"
 				+ "		 AND CRA.DD_CRA_CODIGO NOT IN ('03','17')" 
-				+ "		 AND SCR.DD_SCR_ID NOT IN ('137','135','38','37','39','68')" 
+				+ "		 AND SCR.DD_SCR_CODIGO NOT IN ('137','135','38','37','39','68')"
 				+ "		 AND GPV.GPV_NUM_GASTO_HAYA = :numGasto");
 
 		if(!"0".equals(cartera)) {

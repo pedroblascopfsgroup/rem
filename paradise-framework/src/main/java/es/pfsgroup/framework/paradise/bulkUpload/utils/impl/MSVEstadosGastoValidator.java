@@ -248,12 +248,16 @@ public class MSVEstadosGastoValidator extends MSVExcelValidatorAbstract{
 				mapaErrores.get(messageServices.getMessage(CHECK_GASTO_AGRUPADO)).add(fila);
 				esCorrecto = false;
 			}
-			if(particularValidator.esGastoBBVA(numGasto) && !particularValidator.tieneGastoCampoObligatorioCuentaContable(numGasto)){
-				mapaErrores.get(messageServices.getMessage(CHECK_CUENTA_CONTABLE_OBL_BBVA)).add(fila);
-				esCorrecto = false;
-			} else if(particularValidator.esGastoUnicaja(numGasto) && !particularValidator.tieneGastoCamposObligatoriosCuentaPartidaApartadoCapitulo(numGasto)){
-				mapaErrores.get(messageServices.getMessage(CHECK_OBL_CART_UNICAJA)).add(fila);
-				esCorrecto = false;
+			if(particularValidator.esGastoBBVA(numGasto)){
+				if(!particularValidator.tieneGastoCampoObligatorioCuentaContable(numGasto)) {
+					mapaErrores.get(messageServices.getMessage(CHECK_CUENTA_CONTABLE_OBL_BBVA)).add(fila);
+					esCorrecto = false;
+				}
+			} else if(particularValidator.esGastoUnicaja(numGasto)) {
+				if(!particularValidator.tieneGastoCamposObligatoriosCuentaPartidaApartadoCapitulo(numGasto)) {
+					mapaErrores.get(messageServices.getMessage(CHECK_OBL_CART_UNICAJA)).add(fila);
+					esCorrecto = false;
+				}
 			} else if(!particularValidator.tieneGastoCamposObligatoriosCuentaPartida(numGasto)){
 				mapaErrores.get(messageServices.getMessage(CHECK_CUENTA_Y_PARTIDA)).add(fila);
 				esCorrecto = false;

@@ -58,8 +58,8 @@ BEGIN
 	ADN_ID,
 	ACT_ID,
 	ADN_FECHA_TITULO,
-	ADN_TRAMITADOR_TITULO,
 	ADN_VALOR_ADQUISICION,
+	ADN_TRAMITADOR_TITULO,
 	ADN_NUM_REFERENCIA,
 	VERSION,
 	USUARIOCREAR,
@@ -74,19 +74,19 @@ BEGIN
 	SELECT
 	'||V_ESQUEMA||'.S_ACT_ADN_ADJNOJUDICIAL.NEXTVAL     ADN_ID,
 	ACT2.ACT_ID											ACT_ID,
-	NULL             									ADN_FECHA_TITULO,
-	NULL                             					ADN_TRAMITADOR_TITULO,
-	NULL												ADN_VALOR_ADQUISICION,
-	NULL                               					ADN_NUM_REFERENCIA,
-	''0''                                               VERSION,
+	TO_DATE(''13/07/2022'', ''DD/MM/YYYY'')              ADN_FECHA_TITULO,	
+	NULL												 ADN_VALOR_ADQUISICION,
+   '''' 								 ADN_TRAMITADOR_TITULO,
+	NULL                               					 ADN_NUM_REFERENCIA,
+	0                                                 VERSION,
 	'''||V_USUARIO||'''                                 USUARIOCREAR,
 	SYSDATE                                             FECHACREAR,
 	NULL                                                USUARIOMODIFICAR,
 	NULL                                                FECHAMODIFICAR,
 	NULL                                                USUARIOBORRAR,
 	NULL                                                FECHABORRAR,
-	0                                         BORRADO,
-	NULL									FECHA_POSESION
+	0                                         			BORRADO,
+	NULL												FECHA_POSESION
 	FROM '||V_ESQUEMA||'.'||V_TABLA_AUX||' AUX
 	JOIN '||V_ESQUEMA||'.'||V_TABLA_ACT||' ACT2 ON AUX.ACT_NUM_ACTIVO_NUV = ACT2.ACT_NUM_ACTIVO
 	')

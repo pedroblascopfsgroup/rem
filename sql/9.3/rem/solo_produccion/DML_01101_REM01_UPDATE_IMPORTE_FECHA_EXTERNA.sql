@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=Santi Monzó
---## FECHA_CREACION=20220218
+--## AUTOR=Alejandra García
+--## FECHA_CREACION=20221209
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-16597
+--## INCIDENCIA_LINK=HREOS-19071
 --## PRODUCTO=NO
 --##
 --## Finalidad:  
 --## INSTRUCCIONES:
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial - [HREOS-16597] - Santi Monzó (20220218)
+--##        0.2 Modificar ACT_VENTA_EXTERNA_FECHA a 15/12/22 - [HREOS-19071] - Alejandra García (20221209)
 --##########################################
 --*/
 
@@ -43,7 +44,7 @@ BEGIN
 
     
             V_SQL := 'UPDATE '||V_ESQUEMA||'.ACT_ACTIVO
-                        SET ACT_VENTA_EXTERNA_FECHA = TO_DATE(''13/07/2022'', ''DD/MM/YYYY'')
+                        SET ACT_VENTA_EXTERNA_FECHA = TO_DATE(''15/12/2022'', ''DD/MM/YYYY'')
                             ,ACT_VENTA_EXTERNA_IMPORTE = 1
                             ,USUARIOMODIFICAR = '''||V_USUARIO||'''
                             ,FECHAMODIFICAR = SYSDATE

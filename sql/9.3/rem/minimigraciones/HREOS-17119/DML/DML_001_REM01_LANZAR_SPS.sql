@@ -1,18 +1,19 @@
 --/*
 --#########################################
---## AUTOR=Santi Monzó
---## FECHA_CREACION=20220214
+--## AUTOR=Alejandra García
+--## FECHA_CREACION=20221209
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## ARTEFACTO=batch
---## INCIDENCIA_LINK=HREOS-17119
+--## INCIDENCIA_LINK=HREOS-19071
 --## PRODUCTO=NO
 --## 
 --## Finalidad:
 --##			
 --## INSTRUCCIONES:  
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial - [HREOS-17119] - Santi Monzó (20220214)
+--##        0.2 Quitar el update de la situación comercial = null para los activos nuevos - [HREOS-19071] - Alejandra García (20221209)
 --#########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -60,18 +61,6 @@ DBMS_OUTPUT.PUT_LINE('[INFO] [INICIO]');
         DBMS_OUTPUT.PUT_LINE('[INFO] YA HAY ACTIVOS INSERTADOS EN ACT_ACTIVO DE LOS QUE SE QUIEREN INSERTAR');
         
     ELSE 
- 
-  EXECUTE IMMEDIATE ('
-        UPDATE '||V_ESQUEMA||'.ACT_ACTIVO
-            SET DD_SCM_ID = NULL
-            WHERE ACT_ID IN (
-
-            SELECT ACT.ACT_ID
-            FROM '||V_ESQUEMA||'.AUX_ACT_TRASPASO_ACTIVO AUX
-            JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO = AUX.ACT_NUM_ACTIVO_NUV)
-            '
-  )
-  ;
 
    EXECUTE IMMEDIATE ('
         UPDATE '||V_ESQUEMA||'.ACT_ACTIVO

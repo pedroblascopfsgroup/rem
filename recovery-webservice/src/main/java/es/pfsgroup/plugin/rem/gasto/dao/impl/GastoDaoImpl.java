@@ -3,12 +3,11 @@ package es.pfsgroup.plugin.rem.gasto.dao.impl;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
+import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.adapter.RemUtils;
+import es.pfsgroup.plugin.rem.usuarioRem.UsuarioRemApi;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -24,7 +23,6 @@ import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
@@ -34,7 +32,6 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.DtoGastosFilter;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.GastoRefacturable;
-import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.VGastosProveedor;
 import es.pfsgroup.plugin.rem.model.VGastosProveedorExcel;
@@ -57,6 +54,12 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 	
 	@Autowired
 	private GenericABMDao genericDao;
+
+	@Autowired
+	private GenericAdapter adapter;
+
+	@Autowired
+	private UsuarioRemApi usuarioRemApi;
 
 	@Override
 	public DtoPage getListGastos(DtoGastosFilter dtoGastosFilter, Long usuarioId) {
@@ -159,21 +162,8 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 	private HQLBuilder rellenarFiltrosBusquedaGasto(DtoGastosFilter dtoGastosFilter, Boolean isGenerateExcel, Long usuarioId) {
 		String select = "select vgasto ";
 		String from;
-		
-		List<UsuarioCartera> usuarioCartera = genericDao.getList(UsuarioCartera.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioId));
-		List<String> subcarteras = new ArrayList<String>();
-		
-		if (usuarioCartera != null && !usuarioCartera.isEmpty()){
-			dtoGastosFilter.setEntidadPropietariaCodigo(usuarioCartera.get(0).getCartera().getCodigo());
-			
-			if(dtoGastosFilter.getSubentidadPropietariaCodigo() == null){
-				for (UsuarioCartera usu : usuarioCartera) {
-					if (usu.getSubCartera() != null) {
-						subcarteras.add(usu.getSubCartera().getCodigo());
-					}
-				}
-			}
-		}
+
+		List<String> codigosSubcarteras = usuarioRemApi.getCodigosSubcarterasUsuario(dtoGastosFilter.getEntidadPropietariaCodigo(), adapter.getUsuarioLogado());
 		
 		if (isGenerateExcel) {
 			from = "from VGastosProveedorExcel vgasto";
@@ -185,17 +175,17 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 		HQLBuilder hb = null;
 
 		// Por si es necesario filtrar por datos de los activos del gasto
-		String fromGastoActivos = GastoActivosHqlHelper.getFrom(dtoGastosFilter, subcarteras);
+		String fromGastoActivos = GastoActivosHqlHelper.getFrom(dtoGastosFilter, codigosSubcarteras);
 		if (!Checks.esNulo(fromGastoActivos)) {
 			from = from + fromGastoActivos;
-				where = where + GastoActivosHqlHelper.getWhereJoin(dtoGastosFilter, hasWhere, subcarteras);
+				where = where + GastoActivosHqlHelper.getWhereJoin(dtoGastosFilter, hasWhere, codigosSubcarteras);
 				hasWhere = true;
 		}
 
-		if(dtoGastosFilter.getSubentidadPropietariaCodigo() != null || !subcarteras.isEmpty()) {
-			String fromGastoActivosSubcartera = GastoActivosHqlHelper.getFromSubcartera(dtoGastosFilter, subcarteras);
+		if(dtoGastosFilter.getSubentidadPropietariaCodigo() != null || !Checks.estaVacio(codigosSubcarteras)) {
+			String fromGastoActivosSubcartera = GastoActivosHqlHelper.getFromSubcartera(dtoGastosFilter, codigosSubcarteras);
 			from = from + fromGastoActivosSubcartera;
-			where = where + GastoActivosHqlHelper.getWhereJoinSubcartera(dtoGastosFilter, hasWhere, subcarteras);
+			where = where + GastoActivosHqlHelper.getWhereJoinSubcartera(dtoGastosFilter, hasWhere, codigosSubcarteras);
 			hasWhere = true;
 		}
 		
@@ -243,13 +233,29 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 		if (hasWhere) {
 			hb.setHasWhere(true);
 		}
-		
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgasto.entidadPropietariaCodigo", dtoGastosFilter.getEntidadPropietariaCodigo());
-		
-		if (subcarteras != null && !subcarteras.isEmpty()) {
-			HQLBuilder.addFiltroWhereInSiNotNull(hb, "act.subcartera.codigo", subcarteras);
-		} else {
+
+		if (!Checks.esNulo(dtoGastosFilter.getSubentidadPropietariaCodigo())) {
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.subcartera.codigo", dtoGastosFilter.getSubentidadPropietariaCodigo());
+		} else if (!Checks.estaVacio(codigosSubcarteras)) {
+			List<String> codigosCarterasConSubcartera = usuarioRemApi.getCodigosCarterasUsuario(true, adapter.getUsuarioLogado());
+			List<String> codigosCarterasSinSubcartera = usuarioRemApi.getCodigosCarterasUsuario(false, adapter.getUsuarioLogado());
+
+			if (!Checks.estaVacio(codigosCarterasConSubcartera) && !Checks.estaVacio(codigosCarterasSinSubcartera)) {
+				hb.appendWhere("vgasto.entidadPropietariaCodigo in ("+ RemUtils.join(",", codigosCarterasConSubcartera) +") " +
+						"and act.subcartera.codigo in ("+ RemUtils.join(",", codigosSubcarteras) +") " +
+						"or vgasto.entidadPropietariaCodigo in ("+ RemUtils.join(",", codigosCarterasSinSubcartera) +")");
+			} else if (!Checks.estaVacio(codigosCarterasConSubcartera) && Checks.estaVacio(codigosCarterasSinSubcartera)) {
+				hb.appendWhere("vgasto.entidadPropietariaCodigo in ("+ RemUtils.join(",", codigosCarterasConSubcartera)+") " +
+						"and act.subcartera.codigo in ("+ RemUtils.join(",", codigosSubcarteras) +")");
+			}
+		}
+
+		List<String> codigosCarteras = usuarioRemApi.getCodigosCarterasUsuario(null, adapter.getUsuarioLogado());
+
+		if (!Checks.esNulo(dtoGastosFilter.getEntidadPropietariaCodigo())) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgasto.entidadPropietariaCodigo", dtoGastosFilter.getEntidadPropietariaCodigo());
+		} else if (!Checks.estaVacio(codigosCarteras) && Checks.estaVacio(codigosSubcarteras)) {
+			HQLBuilder.addFiltroWhereInSiNotNull(hb, "vgasto.entidadPropietariaCodigo", codigosCarteras);
 		}
 		
 		if(dtoGastosFilter.getNumActivo() != null) {

@@ -9,6 +9,9 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.adapter.RemUtils;
+import es.pfsgroup.plugin.rem.usuarioRem.UsuarioRemApi;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +27,6 @@ import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionDao;
@@ -38,7 +40,6 @@ import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionGridFilter;
 import es.pfsgroup.plugin.rem.model.DtoSubdivisiones;
 import es.pfsgroup.plugin.rem.model.DtoVigenciaAgrupacion;
-import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 
 @Repository("ActivoAgrupacionDao")
@@ -59,10 +60,19 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 	@Autowired
 	private GenericABMDao genericDao;
 
+	@Autowired
+	private GenericAdapter adapter;
+
+	@Autowired
+	private UsuarioRemApi usuarioRemApi;
+
 	@Override
 	public Page getListAgrupaciones(DtoAgrupacionFilter dto, Usuario usuLogado) {
 		String from = " select distinct agr from VBusquedaAgrupaciones agr";
-		boolean activos = dto.getNif() != null || dto.getSubcarteraCodigo() != null || dto.getNumActHaya() != null
+
+		List<String> codigosSubcarteras = usuarioRemApi.getCodigosSubcarterasUsuario(dto.getCodCartera(), adapter.getUsuarioLogado());
+
+		boolean activos = dto.getNif() != null || dto.getSubcarteraCodigo() != null || !Checks.estaVacio(codigosSubcarteras) || dto.getNumActHaya() != null
 				|| dto.getNumActPrinex() != null || dto.getNumActReco() != null || dto.getNumActSareb() != null
 				|| dto.getNumActUVEM() != null;
 		
@@ -98,7 +108,31 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 		}
 
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "agr.numAgrupacionRem", dto.getNumAgrupacionRem());
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "agr.cartera", dto.getCodCartera());
+
+		if (!Checks.esNulo(dto.getSubcarteraCodigo())) {
+			hb.appendWhere(ActivoAgrupacionHqlHelper.getWhereAndSubcarteraCodigo(dto.getSubcarteraCodigo()));
+		} else if (!Checks.estaVacio(codigosSubcarteras)) {
+			List<String> codigosCarterasConSubcartera = usuarioRemApi.getCodigosCarterasUsuario(true, adapter.getUsuarioLogado());
+			List<String> codigosCarterasSinSubcartera = usuarioRemApi.getCodigosCarterasUsuario(false, adapter.getUsuarioLogado());
+
+			if (!Checks.estaVacio(codigosCarterasConSubcartera) && !Checks.estaVacio(codigosCarterasSinSubcartera)) {
+				hb.appendWhere("agr.cartera in ("+ RemUtils.join(",", codigosCarterasConSubcartera) +") " +
+						"and ac.subcartera.codigo in ("+ RemUtils.join(",", codigosSubcarteras) +") " +
+						"or agr.cartera in ("+ RemUtils.join(",", codigosCarterasSinSubcartera) +")");
+			} else if (!Checks.estaVacio(codigosCarterasConSubcartera) && Checks.estaVacio(codigosCarterasSinSubcartera)) {
+				hb.appendWhere("agr.cartera in ("+ RemUtils.join(",", codigosCarterasConSubcartera)+") " +
+						"and ac.subcartera.codigo in ("+ RemUtils.join(",", codigosSubcarteras) +")");
+			}
+		}
+
+		List<String> codigosCarteras = usuarioRemApi.getCodigosCarterasUsuario(null, adapter.getUsuarioLogado());
+
+		if (!Checks.esNulo(dto.getCodCartera())) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "agr.cartera", dto.getCodCartera());
+		} else if (!Checks.estaVacio(codigosCarteras) && Checks.estaVacio(codigosSubcarteras)) {
+			HQLBuilder.addFiltroWhereInSiNotNull(hb, "agr.cartera", codigosCarteras);
+		}
+
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "agr.provincia.codigo", dto.getCodProvincia());
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "agr.localidad.descripcion", dto.getLocalidadDescripcion(), true);
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "agr.numAgrupacionUvem", dto.getNumAgrUVEM());
@@ -210,10 +244,6 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 
 		if (dto.getNumActReco() != null) {
 			hb.appendWhere(ActivoAgrupacionHqlHelper.getWhereAndNumActRecovery(dto.getNumActReco()));
-		}
-
-		if (dto.getSubcarteraCodigo() != null) {
-			hb.appendWhere(ActivoAgrupacionHqlHelper.getWhereAndSubcarteraCodigo(dto.getSubcarteraCodigo()));
 		}
 
 		if (dto.getNif() != null) {
@@ -574,34 +604,41 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 	}
 	
 	@Override
-	public Page getBusquedaAgrupacionesGrid(DtoAgrupacionGridFilter dto, Long usuarioId) {		
-		List<UsuarioCartera> usuarioCartera = genericDao.getList(UsuarioCartera.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioId));
-		List<String> subcarteras = new ArrayList<String>();
+	public Page getBusquedaAgrupacionesGrid(DtoAgrupacionGridFilter dto, Long usuarioId) {
 		
 		HQLBuilder hb = new HQLBuilder("select vgrid from VGridBusquedaAgrupaciones vgrid ");
-		
-		if (usuarioCartera != null && !usuarioCartera.isEmpty()) {
-			dto.setCarteraCodigo(usuarioCartera.get(0).getCartera().getCodigo());
-			
-			if (dto.getSubcarteraCodigo() == null) {
-				for (UsuarioCartera usu : usuarioCartera) {
-					if (usu.getSubCartera() != null) {
-						subcarteras.add(usu.getSubCartera().getCodigo());
-					}
-				}
-			}
-		}
 		
 		if (dto.getNumAgrupacionRem() != null && StringUtils.isNumeric(dto.getNumAgrupacionRem()))
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.numAgrupacionRem", Long.valueOf(dto.getNumAgrupacionRem()));
 		if (dto.getNumAgrupacionUvem() != null && StringUtils.isNumeric(dto.getNumAgrupacionUvem()))
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.numAgrupacionUvem", Long.valueOf(dto.getNumAgrupacionUvem()));
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.carteraCodigo", dto.getCarteraCodigo());	
-		if (subcarteras != null && !subcarteras.isEmpty()) {
-			HQLBuilder.addFiltroWhereInSiNotNull(hb, "vgrid.subcarteraCodigo", subcarteras);
-		} else {
+
+		List<String> codigosSubcarteras = usuarioRemApi.getCodigosSubcarterasUsuario(dto.getCarteraCodigo(), adapter.getUsuarioLogado());
+
+		if (!Checks.esNulo(dto.getSubcarteraCodigo())) {
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.subcarteraCodigo", dto.getSubcarteraCodigo());
+		} else if (!Checks.estaVacio(codigosSubcarteras)) {
+			List<String> codigosCarterasConSubcartera = usuarioRemApi.getCodigosCarterasUsuario(true, adapter.getUsuarioLogado());
+			List<String> codigosCarterasSinSubcartera = usuarioRemApi.getCodigosCarterasUsuario(false, adapter.getUsuarioLogado());
+
+			if (!Checks.estaVacio(codigosCarterasConSubcartera) && !Checks.estaVacio(codigosCarterasSinSubcartera)) {
+				hb.appendWhere("vgrid.carteraCodigo in ("+ RemUtils.join(",", codigosCarterasConSubcartera) +") " +
+						"and vgrid.subcarteraCodigo in ("+ RemUtils.join(",", codigosSubcarteras) +") " +
+						"or vgrid.carteraCodigo in ("+ RemUtils.join(",", codigosCarterasSinSubcartera) +")");
+			} else if (!Checks.estaVacio(codigosCarterasConSubcartera) && Checks.estaVacio(codigosCarterasSinSubcartera)) {
+				hb.appendWhere("vgrid.carteraCodigo in ("+ RemUtils.join(",", codigosCarterasConSubcartera)+") " +
+						"and vgrid.subcarteraCodigo in ("+ RemUtils.join(",", codigosSubcarteras) +")");
+			}
 		}
+
+		List<String> codigosCarteras = usuarioRemApi.getCodigosCarterasUsuario(null, adapter.getUsuarioLogado());
+
+		if (!Checks.esNulo(dto.getCarteraCodigo())) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.carteraCodigo", dto.getCarteraCodigo());
+		} else if (!Checks.estaVacio(codigosCarteras) && Checks.estaVacio(codigosSubcarteras)) {
+			HQLBuilder.addFiltroWhereInSiNotNull(hb, "vgrid.carteraCodigo", codigosCarteras);
+		}
+
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.tipoAgrupacionCodigo", dto.getTipoAgrupacionCodigo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.tipoAlquilerCodigo", dto.getTipoAlquilerCodigo());
 		

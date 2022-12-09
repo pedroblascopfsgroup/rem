@@ -6,6 +6,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.usuarioRem.UsuarioRemApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -16,11 +18,9 @@ import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
-import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.propuestaprecios.dao.PropuestaPrecioDao;
 
 @Repository("PropuestaPrecioDao")
@@ -28,6 +28,12 @@ public class PropuestaPrecioDaoImpl extends AbstractEntityDao<PropuestaPrecio, L
 
 	@Autowired
 	private GenericABMDao genericDao;
+
+	@Autowired
+	private GenericAdapter adapter;
+
+	@Autowired
+	private UsuarioRemApi usuarioRemApi;
 	
     @Override
 	public Page getListPropuestasPrecio(DtoPropuestaFilter dto) {
@@ -48,17 +54,20 @@ public class PropuestaPrecioDaoImpl extends AbstractEntityDao<PropuestaPrecio, L
     
     @Override
     public Page getListHistoricoPropuestasPrecios(DtoHistoricoPropuestaFilter dto, Long usuarioId) {
-    	List<UsuarioCartera> usuarioCartera = genericDao.getList(UsuarioCartera.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioId));
-    	
+
     	HQLBuilder hb = new HQLBuilder(" from VBusquedaPropuestasPrecio prp");
-    	
-		if (usuarioCartera != null && !usuarioCartera.isEmpty()) {
-			dto.setEntidadPropietariaCodigo(usuarioCartera.get(0).getCartera().getCodigo());
-		}
-    	
+
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "prp.numPropuesta", dto.getNumPropuesta());
    		HQLBuilder.addFiltroLikeSiNotNull(hb, "prp.nombrePropuesta", dto.getNombrePropuesta(), true);
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "prp.entidadPropietariaCodigo", dto.getEntidadPropietariaCodigo());
+
+		List<String> codigosCarteras = usuarioRemApi.getCodigosCarterasUsuario(null, adapter.getUsuarioLogado());
+
+		if (!Checks.esNulo(dto.getEntidadPropietariaCodigo())) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "prp.entidadPropietariaCodigo", dto.getEntidadPropietariaCodigo());
+		} else if (!Checks.estaVacio(codigosCarteras)) {
+			HQLBuilder.addFiltroWhereInSiNotNull(hb, "prp.entidadPropietariaCodigo", codigosCarteras);
+		}
+
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb,"prp.tipoPropuesta", dto.getTipoPropuesta());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb,"prp.numTramite", dto.getNumTramite());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb,"prp.numTrabajo", dto.getNumTrabajo());

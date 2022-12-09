@@ -9,8 +9,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.adapter.RemUtils;
 import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.restclient.caixabc.ReplicarOfertaDto;
+import es.pfsgroup.plugin.rem.usuarioRem.UsuarioRemApi;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -34,7 +37,6 @@ import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.TitularesAdicionalesOferta;
-import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionIncAnuladas;
 import es.pfsgroup.plugin.rem.model.VListOfertasCES;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
@@ -66,7 +68,12 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 
 	@Autowired
 	private CaixaBcRestClient caixaBcRestClient;
-	
+
+	@Autowired
+	private GenericAdapter adapter;
+
+	@Autowired
+	private UsuarioRemApi usuarioRemApi;
 
 	//HREOS-6229
 	@SuppressWarnings("unchecked")
@@ -431,22 +438,8 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 
 	@Override
 	public Page getBusquedaOfertasGrid(DtoOfertaGridFilter dto, Long usuarioId) {
-		List<UsuarioCartera> usuarioCartera = genericDao.getList(UsuarioCartera.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioId));
-		List<String> subcarteras = new ArrayList<String>();
 		
 		HQLBuilder hb = new HQLBuilder("select vgrid from VGridBusquedaOfertas vgrid");
-		
-		if (usuarioCartera != null && !usuarioCartera.isEmpty()) {
-			dto.setCarteraCodigo(usuarioCartera.get(0).getCartera().getCodigo());
-			
-			if (dto.getSubcarteraCodigo() == null) {			
-				for (UsuarioCartera usu : usuarioCartera) {
-					if (usu.getSubCartera() != null) {
-						subcarteras.add(usu.getSubCartera().getCodigo());
-					}
-				}
-			}
-		}	
 		
 		if (dto.getNumOferta() != null && StringUtils.isNumeric(dto.getNumOferta().trim()))
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.numOferta", Long.valueOf(dto.getNumOferta().trim()));
@@ -486,12 +479,33 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.numActivoSareb", dto.getNumActivoSareb());
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "vgrid.telefonoOfertante", dto.getTelefonoOfertante(), true);
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "vgrid.emailOfertante", dto.getEmailOfertante(), true);
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.carteraCodigo", dto.getCarteraCodigo());
-		if (subcarteras != null && !subcarteras.isEmpty()) {
-			HQLBuilder.addFiltroWhereInSiNotNull(hb, "vgrid.subcarteraCodigo", subcarteras);
-		} else {
+
+		List<String> codigosSubcarteras = usuarioRemApi.getCodigosSubcarterasUsuario(dto.getCarteraCodigo(), adapter.getUsuarioLogado());
+
+		if (!Checks.esNulo(dto.getSubcarteraCodigo())) {
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.subcarteraCodigo", dto.getSubcarteraCodigo());
+		} else if (!Checks.estaVacio(codigosSubcarteras)) {
+			List<String> codigosCarterasConSubcartera = usuarioRemApi.getCodigosCarterasUsuario(true, adapter.getUsuarioLogado());
+			List<String> codigosCarterasSinSubcartera = usuarioRemApi.getCodigosCarterasUsuario(false, adapter.getUsuarioLogado());
+
+			if (!Checks.estaVacio(codigosCarterasConSubcartera) && !Checks.estaVacio(codigosCarterasSinSubcartera)) {
+				hb.appendWhere("vgrid.carteraCodigo in ("+ RemUtils.join(",", codigosCarterasConSubcartera) +") " +
+						"and vgrid.subcarteraCodigo in ("+ RemUtils.join(",", codigosSubcarteras) +") " +
+						"or vgrid.carteraCodigo in ("+ RemUtils.join(",", codigosCarterasSinSubcartera) +")");
+			} else if (!Checks.estaVacio(codigosCarterasConSubcartera) && Checks.estaVacio(codigosCarterasSinSubcartera)) {
+				hb.appendWhere("vgrid.carteraCodigo in ("+ RemUtils.join(",", codigosCarterasConSubcartera)+") " +
+						"and vgrid.subcarteraCodigo in ("+ RemUtils.join(",", codigosSubcarteras) +")");
+			}
 		}
+
+		List<String> codigosCarteras = usuarioRemApi.getCodigosCarterasUsuario(null, adapter.getUsuarioLogado());
+
+		if (!Checks.esNulo(dto.getCarteraCodigo())) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.carteraCodigo", dto.getCarteraCodigo());
+		} else if (!Checks.estaVacio(codigosCarteras) && Checks.estaVacio(codigosSubcarteras)) {
+			HQLBuilder.addFiltroWhereInSiNotNull(hb, "vgrid.carteraCodigo", codigosCarteras);
+		}
+
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "vgrid.nombreCanal", dto.getNombreCanal(), true);
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "vgrid.codigoPromocionPrinex", dto.getCodigoPromocionPrinex(), true);
 				

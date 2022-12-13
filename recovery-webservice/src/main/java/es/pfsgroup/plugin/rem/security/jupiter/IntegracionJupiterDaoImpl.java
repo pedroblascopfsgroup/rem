@@ -206,20 +206,30 @@ public class IntegracionJupiterDaoImpl extends AbstractEntityDao<MapeoJupiterREM
 		String username =  usuario.getUsername();
 		Filter filtroUsuario = obtenerFiltroIdUsuario(usuario);
 		for (String descSubcartera : bajasSubcarteras) {
-			genericDao.delete(UsuarioCartera.class, filtroUsuario, obtenerFiltroUCADescripcionSubcartera(descSubcartera));
-			logger.debug("Eliminando asociacion subcartera " + descSubcartera + " - usuario " + username);
+			try {
+				genericDao.delete(UsuarioCartera.class, filtroUsuario, obtenerFiltroUCADescripcionSubcartera(descSubcartera));
+				logger.debug("Eliminando asociacion subcartera " + descSubcartera + " - usuario " + username);
+			}catch (Exception e) {
+				logger.error("Error al eliminar subcartera " + e.getMessage());
+				logger.error("Codigo subcartera error " + descSubcartera);
+			}
 		}
 		for (String descSubcartera : altasSubcarteras) {
-			DDSubcartera subcartera = genericDao.get(DDSubcartera.class, obtenerFiltroCodigoSubcartera(descSubcartera));
-			if (subcartera != null) {
-				UsuarioCartera usuarioSubcarteraNuevo = new UsuarioCartera();
-				usuarioSubcarteraNuevo.setUsuario(usuario);
-				usuarioSubcarteraNuevo.setCartera(subcartera.getCartera());
-				usuarioSubcarteraNuevo.setSubCartera(subcartera);
-				genericDao.save(UsuarioCartera.class, usuarioSubcarteraNuevo);
-				logger.debug("Creando asociacion subcartera " + descSubcartera + " - usuario " + username);
-			} else {
-				logger.error("No existe la subcartera " + descSubcartera + " en REM: no se crea asociacion con el usuario " + username);
+			try {
+				DDSubcartera subcartera = genericDao.get(DDSubcartera.class, obtenerFiltroCodigoSubcartera(descSubcartera));
+				if (subcartera != null) {
+					UsuarioCartera usuarioSubcarteraNuevo = new UsuarioCartera();
+					usuarioSubcarteraNuevo.setUsuario(usuario);
+					usuarioSubcarteraNuevo.setCartera(subcartera.getCartera());
+					usuarioSubcarteraNuevo.setSubCartera(subcartera);
+					genericDao.save(UsuarioCartera.class, usuarioSubcarteraNuevo);
+					logger.debug("Creando asociacion subcartera " + descSubcartera + " - usuario " + username);
+				} else {
+					logger.error("No existe la subcartera " + descSubcartera + " en REM: no se crea asociacion con el usuario " + username);
+				}
+			}catch(Exception e) {
+				logger.error("Error al agregar subcartera " + e.getMessage());
+				logger.error("Codigo subcartera error " + descSubcartera);
 			}
 		}
 	}

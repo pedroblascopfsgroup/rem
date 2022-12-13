@@ -209,21 +209,25 @@ public class MSVEstadosGastoValidator extends MSVExcelValidatorAbstract{
 				autoriza = false;
 			}
 		}
-		if(!particularValidator.tieneGastoAbonadoGasto(numGasto)){
-			mapaErrores.get(messageServices.getMessage(CHECK_AUT_SIN_ID_ABONADO)).add(fila);
-			return false;
+		if(particularValidator.esGastoCaixaBank(numGasto, null)) {
+			if(particularValidator.esTipoOperacionGastoAbono(numGasto) && !particularValidator.tieneGastoAbonadoGasto(numGasto)) {
+				mapaErrores.get(messageServices.getMessage(CHECK_AUT_SIN_ID_ABONADO)).add(fila);
+				autoriza = false;
+			}
+			if(particularValidator.esGastoAlquiler(numGasto) && !particularValidator.tieneGastoActivosONumeroContrato(numGasto)){
+				mapaErrores.get(messageServices.getMessage(CHECK_AUT_SIN_ACTIVOS_O_CONT_CAIXA)).add(fila);
+				autoriza = false;
+			}
 		}
-		if(particularValidator.esGastoCaixaBank(numGasto, null) && particularValidator.esGastoAlquiler(numGasto) && !particularValidator.tieneGastoActivosONumeroContrato(numGasto)){
-			mapaErrores.get(messageServices.getMessage(CHECK_AUT_SIN_ACTIVOS_O_CONT_CAIXA)).add(fila);
-			autoriza = false;
-		}
-		if(particularValidator.esGastoCaixaBank(numGasto, CODIGO_SUBCARTERA_LIVING_CENTER) && !particularValidator.tieneGastoFechaDevengoEspecialOFechaAnteriorAEmision(numGasto)){
-			mapaErrores.get(messageServices.getMessage(CHECK_AUT_NO_FECHA_DEVENGO_LIVINGCENTER)).add(fila);
-			autoriza = false;
-		}
-		if(particularValidator.esGastoCaixaBank(numGasto, CODIGO_SUBCARTERA_LIVING_CENTER) && !particularValidator.tieneGastoCampoObligatorioNIFTitularCartaPago(numGasto)){
-			mapaErrores.get(messageServices.getMessage(CHECK_AUT_SIN_NIF_TITULAR_LIVINGCENTER)).add(fila);
-			autoriza = false;
+		if(particularValidator.esGastoCaixaBank(numGasto, CODIGO_SUBCARTERA_LIVING_CENTER)) {
+			if(!particularValidator.tieneGastoFechaDevengoEspecialOFechaAnteriorAEmision(numGasto)){
+				mapaErrores.get(messageServices.getMessage(CHECK_AUT_NO_FECHA_DEVENGO_LIVINGCENTER)).add(fila);
+				autoriza = false;
+			}
+			if(!particularValidator.tieneGastoCampoObligatorioNIFTitularCartaPago(numGasto)) {
+				mapaErrores.get(messageServices.getMessage(CHECK_AUT_SIN_NIF_TITULAR_LIVINGCENTER)).add(fila);
+				autoriza = false;
+			}
 		}
 		
 		return autoriza;

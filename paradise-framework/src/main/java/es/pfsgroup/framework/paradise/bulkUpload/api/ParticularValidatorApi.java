@@ -1565,6 +1565,8 @@ public interface ParticularValidatorApi {
 
 	Boolean tieneGastoAbonadoGasto(String numGasto);
 
+	Boolean esTipoOperacionGastoAbono(String numGasto);
+
 	Boolean yaRechazadoPropietarioGasto(String numGasto);
 
 	Boolean carteraTangoGasto(String numGasto);

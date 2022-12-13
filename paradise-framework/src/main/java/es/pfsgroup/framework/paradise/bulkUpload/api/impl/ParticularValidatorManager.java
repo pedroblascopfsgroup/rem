@@ -1,17 +1,11 @@
 package es.pfsgroup.framework.paradise.bulkUpload.api.impl;
 
 
-import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import es.capgemini.devon.beans.Service;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
-
-import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
-import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVMasivaAltaBBVAValidator;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9931,9 +9925,28 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 			return false;
 
 		String resultado = rawDao.getExecuteSQL("SELECT GPV.NUM_GASTO_ABONADO "
-				+ "		 FROM GPV_GASTOS_PROVEEDOR GPV"
+				+ "		 FROM REM01.GPV_GASTOS_PROVEEDOR GPV"
 				+ "		 WHERE GPV.GPV_NUM_GASTO_HAYA = :numGasto "
 				+ "		 	AND GPV.BORRADO = 0");
+		return resultado != null && !resultado.isEmpty();
+	}
+
+	@Override
+	public Boolean esTipoOperacionGastoAbono(String numGasto){
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codigoTipoOperacion", "03");
+		params.put("numGasto", numGasto);
+		rawDao.addParams(params);
+
+		if(Checks.esNulo(numGasto))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM REM01.GPV_GASTOS_PROVEEDOR GPV"
+				+ "		 JOIN REM01.DD_TOG_TIPO_OPERACION_GASTO TOG ON TOG.DD_TOG_ID = GPV.DD_TOG_ID"
+				+ "		 WHERE GPV.GPV_NUM_GASTO_HAYA = :numGasto"
+				+ "		 AND TOG.DD_TOG_CODIGO = :codigoTipoOperacion"
+				+ "		 AND GPV.BORRADO = 0");
 		return resultado != null && !resultado.isEmpty();
 	}
 

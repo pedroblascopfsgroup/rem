@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.security.jupiter;
 import java.util.List;
 
 import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 
 public interface IntegracionJupiterDao {
 
@@ -29,5 +30,9 @@ public interface IntegracionJupiterDao {
 	public Usuario crearUsuario(String username, String nombre, String apellidos, String email);
 
 	public List<String> getCodigodGruposPerfilesREM(List<String> codigosPerfilesJupiter);
+
+	DDCartera obtenerCarteraBySubcarteraCodigo(String codSubcartera);
+
+	void eliminarCarteraByUsuarioAndCartera(Usuario usuario, String codCartera);
 	
 }

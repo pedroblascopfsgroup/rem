@@ -140,25 +140,29 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 		// Si es externo pero no es gestoria ni proveedor, es fsv, capa control o consulta, y hay que carterizar en función del tipo de proveedor
 		if(esExterno && !esGestoria && !esProveedor) {
 
-			String queryCarteraList = "";
+			StringBuilder queryCarteraList = new StringBuilder();
 
-			if (!Checks.estaVacio(codigosCarteras)) {
+			if(!Checks.esNulo(dto.getCartera())) {
+				queryCarteraList = new StringBuilder("and pve.cartera = '"+ dto.getCartera() +"'");
+			} else if (!Checks.estaVacio(codigosCarteras)) {
 				boolean first = true;
 				for(String codigoCartera : codigosCarteras) {
 					if(first) {
-						queryCarteraList.concat("and pve.cartera in (" + codigoCartera);
+						queryCarteraList = new StringBuilder("and pve.cartera in ('" + codigoCartera);
 						first = false;
 					} else
-						queryCarteraList.concat(", " + codigoCartera);
+						queryCarteraList.append("', '").append(codigoCartera);
 				}
+
+				if(queryCarteraList.length() > 0)
+					queryCarteraList.append("')");
 			}
 
-			if(!queryCarteraList.isEmpty())
-				queryCarteraList.concat(")");
+			hb.appendWhere(" (pve.tipoProveedorCodigo in ('"+DDEntidadProveedor.TIPO_ENTIDAD_CODIGO+"','"+DDEntidadProveedor.TIPO_PROVEEDOR_CODIGO+"') "+ queryCarteraList +")"
+					+ " or (pve.tipoProveedorCodigo = '" + DDEntidadProveedor.TIPO_ADMINISTRACION_CODIGO + "')");
 
-			hb.appendWhere(" (pve.tipoProveedorCodigo in ('"+DDEntidadProveedor.TIPO_ENTIDAD_CODIGO+"','"+DDEntidadProveedor.TIPO_PROVEEDOR_CODIGO+"') "+queryCarteraList+" )"
-					+ "or (pve.tipoProveedorCodigo = '" + DDEntidadProveedor.TIPO_ADMINISTRACION_CODIGO + "')");
-
+		} else if(!Checks.esNulo(dto.getCartera())) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "pve.cartera", dto.getCartera());
 		} else if (!Checks.estaVacio(codigosCarteras)) {
 			HQLBuilder.addFiltroWhereInSiNotNull(hb, "pve.cartera", codigosCarteras);
 		}

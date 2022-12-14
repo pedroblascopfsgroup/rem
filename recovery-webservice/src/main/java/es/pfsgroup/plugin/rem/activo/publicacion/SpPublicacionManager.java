@@ -88,12 +88,14 @@ public class SpPublicacionManager extends BusinessOperationOverrider<SpPublicaci
         DDEstadoExpedienteBc estadobc = eco.getEstadoBc();
         String codEstado = estado != null ? estado.getCodigo() : null;
         String codEstadobc = estadobc != null ? estadobc.getCodigo() : null;
+        DDCartera cartera = eco.getOferta().getActivoPrincipal().getCartera();
 
-        if(!DDCartera.isCarteraBk(eco.getOferta().getActivoPrincipal().getCartera())){
+        if(!DDCartera.isCarteraBk(cartera) && !DDCartera.isCarteraTitulizada(cartera)){
             return false;
         }
 
-        return calculaT017ResolucionCES(codTarea, codEstadobc) || calculaT015ElevaraSancion(codTarea, codEstado);
+        return calculaT017ResolucionCES(codTarea, codEstadobc) || calculaT015ElevaraSancion(codTarea, codEstado)
+                || calculaT013ResolucionComite(codTarea, codEstado);
     }
 
 
@@ -105,5 +107,9 @@ public class SpPublicacionManager extends BusinessOperationOverrider<SpPublicaci
     private boolean calculaT015ElevaraSancion(String codTarea, String codEstado) {
         
     	return (TareaProcedimientoConstants.TramiteAlquilerT015.CODIGO_ELEVAR.equals(codTarea) && DDEstadosExpedienteComercial.PTE_SCORING.equals(codEstado));
+    }
+
+    private boolean calculaT013ResolucionComite(String codTarea, String codEstado) {
+        return (TareaProcedimientoConstants.CODIGO_RESOLUCION_COMITE_T013.equals(codTarea) && DDEstadosExpedienteComercial.APROBADO.equals(codEstado));
     }
 }

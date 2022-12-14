@@ -114,5 +114,13 @@ public class DDTipoActivoRescision implements Auditable, Dictionary {
 	public void setCodigoC4C(String codigoC4C) {
 		this.codigoC4C = codigoC4C;
 	}
+	
+	public static boolean isTerciario(DDTipoActivoRescision tipoActivoRescision) {
+		boolean is = false;
+		if(tipoActivoRescision != null && (CODIGO_TERCIARIA.equals(tipoActivoRescision.getCodigo()))) {
+			is = true;
+		}
+		return is;
+	}
 
 }

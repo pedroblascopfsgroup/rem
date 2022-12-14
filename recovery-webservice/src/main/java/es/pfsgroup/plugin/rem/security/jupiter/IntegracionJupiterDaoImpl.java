@@ -46,6 +46,7 @@ public class IntegracionJupiterDaoImpl extends AbstractEntityDao<MapeoJupiterREM
 	private static final String SUB_CARTERA = "subCartera";
 	private static final String UCA_DESCRIPCION_SUB = "subCartera.descripcion";
 	private static final String UCA_CODIGO_SUB = "subCartera.codigo";
+	private static final String UCA_CODIGO_CAR = "cartera.codigo";
 
 	private static final Log logger = LogFactory.getLog(IntegracionJupiterDaoImpl.class);
 	
@@ -431,6 +432,9 @@ public class IntegracionJupiterDaoImpl extends AbstractEntityDao<MapeoJupiterREM
 		return genericDao.createFilter(FilterType.EQUALS, PERFIL_CODIGO, codigo);
 	}
 	
+	private Filter obtenerFiltroCarteraByCodigo(String codigo) {
+		return genericDao.createFilter(FilterType.EQUALS, UCA_CODIGO_CAR, codigo);
+	}
 	
 	private void eliminarCarterasFiltro(Filter filtroUsuario, String username) {
 		Filter filtroCarteraNotNull = genericDao.createFilter(FilterType.NULL, SUB_CARTERA);
@@ -447,13 +451,13 @@ public class IntegracionJupiterDaoImpl extends AbstractEntityDao<MapeoJupiterREM
 	@Override
 	public void eliminarCarteraByUsuarioAndCartera(Usuario usuario, String codCartera) {
 		Filter filtroUsuario = obtenerFiltroIdUsuario(usuario);
-		Filter filtroSubcartera = obtenerFiltroByCodigo(codCartera);
-		eliminarCarteraByUsuarioAndCartera(filtroUsuario, filtroSubcartera, usuario.getUsername());
+		Filter filtroCartera = obtenerFiltroCarteraByCodigo(codCartera);
+		eliminarCarteraByUsuarioAndCartera(filtroUsuario, filtroCartera, usuario.getUsername());
 	}
 	
-	private void eliminarCarteraByUsuarioAndCartera(Filter filtroUsuario, Filter filtroSubcartera, String username) {
+	private void eliminarCarteraByUsuarioAndCartera(Filter filtroUsuario, Filter filtroCartera, String username) {
 		Filter filtroCarteraNotNull = genericDao.createFilter(FilterType.NULL, SUB_CARTERA);
-		genericDao.delete(UsuarioCartera.class, filtroUsuario, filtroCarteraNotNull, filtroSubcartera);
+		genericDao.delete(UsuarioCartera.class, filtroUsuario, filtroCarteraNotNull, filtroCartera);
 		logger.info("Eliminamos carteras previamente asociadas al usuario " + username + " dado que tiene subcarteras asociadas.");
 	}
 }

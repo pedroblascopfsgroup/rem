@@ -22,6 +22,7 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivoRescision;
 
@@ -73,15 +74,11 @@ public class UpdaterServiceProponerRescisionClienteAlquilerNoComercial implement
 			expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoEco)));
 		}
 		
-		if(!dto.getComboResultado()) {
-			if(DDTipoActivoRescision.CODIGO_TERCIARIA.equals(dto.getTipoActivoRescision())){
-				if(oferta != null) {
-					ofertaApi.finalizarOferta(oferta);
-				}
-			}
+		if(DDEstadoExpedienteBc.isCompromisoCancelado(expedienteComercial.getEstadoBc())) {
+			expedienteComercial.setMotivoAnulacion(genericDao.get(DDMotivoAnulacionExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoAnulacionExpediente.COD_CAIXA_JUDICIALIZADO)));
+			ofertaApi.finalizarOferta(oferta);
 		}
-		
-		tramiteAlquilerNoComercialApi.saveHistoricoFirmaAdenda(dto, oferta);
+	
 		
 		genericDao.save(ExpedienteComercial.class, expedienteComercial);
 		

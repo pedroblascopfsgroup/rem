@@ -19,4 +19,6 @@ public interface TramiteAlquilerNoComercial {
 
 	public boolean permiteClaseCondicion();
 
+	public boolean permiteImporteFianzaAnterior();
+
 }

@@ -591,6 +591,14 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 									value:'{datosbasicosoferta.codigoDerechoArrendamiento}',
 									hidden: '{!esBankiaAlquilerOAlquilerNoComercial}'
 								}
+							},
+							{
+								xtype : 'currencyfieldbase',
+								fieldLabel : HreRem.i18n('fieldlabel.importe.fianza.anterior'),
+								bind:{
+									value:'{datosbasicosoferta.importeFianzaAnterior}',
+									readOnly: '{!datosbasicosoferta.permiteImporteFianzaAnterior}'
+								}
 							}
 						]
 					},

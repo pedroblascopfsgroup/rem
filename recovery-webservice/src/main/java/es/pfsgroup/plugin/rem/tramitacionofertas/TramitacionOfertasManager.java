@@ -1144,6 +1144,9 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			}
 
 			compradorBusqueda.setIdPersonaHayaCaixa(cliente.getIdPersonaHayaCaixa());
+			if(compradorBusqueda.getIdPersonaHayaCaixa() == null || compradorBusqueda.getIdPersonaHayaCaixa().trim().isEmpty()) {
+				compradorBusqueda.setIdPersonaHayaCaixa(interlocutorCaixaService.getIdPersonaHayaCaixa(oferta, null, compradorBusqueda.getDocumento(), null));
+			}
 			compradorBusqueda.setFechaNacimientoConstitucion(cliente.getFechaNacimiento());
 			compradorBusqueda.setDireccion(cliente.getDireccion());
 			compradorBusqueda.setPaisNacimientoComprador(cliente.getPaisNacimiento());
@@ -1249,6 +1252,9 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			compradorExpedienteNuevo.setEstadoInterlocutor(interlocutorActivo);
 			compradorExpedienteNuevo.setEstadoInterlocutorRepSiTiene(interlocutorActivo);
 			compradorExpedienteNuevo.setIdPersonaHayaCaixaRepresentante(cliente.getIdPersonaHayaCaixaRepresentante());
+			if(compradorExpedienteNuevo.getIdPersonaHayaCaixaRepresentante() == null || compradorExpedienteNuevo.getIdPersonaHayaCaixaRepresentante().trim().isEmpty()) {
+				compradorExpedienteNuevo.setIdPersonaHayaCaixaRepresentante(interlocutorCaixaService.getIdPersonaHayaCaixa(oferta,null,compradorExpedienteNuevo.getDocumentoRepresentante(), null));
+			}
 			
 			if(oferta.getActivoPrincipal() != null && DDCartera.isCarteraBk(oferta.getActivoPrincipal().getCartera())) {
 				this.setInterlocutorOferta(compradorExpedienteNuevo, true, oferta);
@@ -1357,9 +1363,15 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 						compradorBusquedaAdicional.setDocumento(titularAdicional.getDocumento());
 						compradorBusquedaAdicional.setInfoAdicionalPersona(titularAdicional.getInfoAdicionalPersona());
 						compradorBusquedaAdicional.setIdPersonaHayaCaixa(titularAdicional.getInfoAdicionalPersona() != null ? titularAdicional.getInfoAdicionalPersona().getIdPersonaHayaCaixa() : null);
+						if(compradorBusquedaAdicional.getIdPersonaHayaCaixa() == null || compradorBusquedaAdicional.getIdPersonaHayaCaixa().trim().isEmpty()) {
+							compradorBusquedaAdicional.setIdPersonaHayaCaixa(interlocutorCaixaService.getIdPersonaHayaCaixa(oferta, null, compradorBusquedaAdicional.getDocumento(), null));
+						}
 					}
 
 					compradorExpedienteNuevo.setIdPersonaHayaCaixaRepresentante(titularAdicional.getIdPersonaHayaCaixaRepresentante());
+					if(compradorExpedienteNuevo.getIdPersonaHayaCaixaRepresentante() == null || compradorExpedienteNuevo.getIdPersonaHayaCaixaRepresentante().trim().isEmpty()) {
+						compradorExpedienteNuevo.setIdPersonaHayaCaixaRepresentante(interlocutorCaixaService.getIdPersonaHayaCaixa(oferta,null,compradorExpedienteNuevo.getDocumentoRepresentante(), null));
+					}
 
 					if (!Checks.esNulo(titularAdicional.getTipoPersona()) && DDTipoPersona.CODIGO_TIPO_PERSONA_JURIDICA
 							.equals(titularAdicional.getTipoPersona().getCodigo())) {
@@ -1957,13 +1969,16 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 							ActivoAgrupacion agrupacion = oferta.getAgrupacion();
 							Double umbralAskingPrice = 200000.0;
 							String codComiteHaya = null;
-							String codComite = DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(codSubcartera) ? DDComiteSancion.CODIGO_CES_APPLE : DDComiteSancion.CODIGO_CES_REMAINING;
+							String codComite = null;
 							if(DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(codSubcartera)) {
 								codComiteHaya = DDComiteSancion.CODIGO_HAYA_APPLE;
+								codComite = DDComiteSancion.CODIGO_CES_APPLE;
 							} else if (DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(codSubcartera)) {
 								codComiteHaya = DDComiteSancion.CODIGO_HAYA_REMAINING;
+								codComite = DDComiteSancion.CODIGO_CES_REMAINING;
 							} else if (DDSubcartera.CODIGO_JAGUAR.equals(codSubcartera)) {
 								codComiteHaya = DDComiteSancion.CODIGO_HAYA_JAGUAR;
+								codComite = DDComiteSancion.CODIGO_CES_JAGUAR;
 							}
 							Double importeOferta = Checks.esNulo(oferta.getImporteOferta()) ? 0d : oferta.getImporteOferta();
 							if(Checks.esNulo(agrupacion)) {

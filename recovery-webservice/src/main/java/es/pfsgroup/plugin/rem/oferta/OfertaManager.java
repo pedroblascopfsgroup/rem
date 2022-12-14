@@ -9930,12 +9930,14 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				
 				Trabajo trabajo = expediente.getTrabajo();
 				List<ActivoTramite> tramites = activoTramiteApi.getTramitesActivoTrabajoList(trabajo.getId());
-				ActivoTramite tramite = tramites.get(0);
-				
-				Set<TareaActivo> tareasTramite = tramite.getTareas();
-				if(tareasTramite != null && !tareasTramite.isEmpty()) {
-					for (TareaActivo tarea : tareasTramite) {
-						tarea.getAuditoria().setBorrado(true);
+				if (tramites != null && !tramites.isEmpty()){
+					ActivoTramite tramite = tramites.get(0);
+
+					Set<TareaActivo> tareasTramite = tramite.getTareas();
+					if(tareasTramite != null && !tareasTramite.isEmpty()) {
+						for (TareaActivo tarea : tareasTramite) {
+							tarea.getAuditoria().setBorrado(true);
+						}
 					}
 				}
 				genericDao.save(ExpedienteComercial.class, expediente);

@@ -381,6 +381,13 @@ Ext.define('HreRem.model.DatosBasicosOferta', {
 			{
 				name: 'suborigenContratoEccDescripcion'
 			},
+			{
+				name: 'importeFianzaAnterior'
+			},
+			{
+				name: 'permiteImporteFianzaAnterior',
+				type: 'boolean'
+			},
             {
     			name: 'fechaLiquida',
     			type:'date', 

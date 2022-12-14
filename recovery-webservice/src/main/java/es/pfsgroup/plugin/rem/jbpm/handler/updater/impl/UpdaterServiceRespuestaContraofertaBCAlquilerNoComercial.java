@@ -80,7 +80,7 @@ public class UpdaterServiceRespuestaContraofertaBCAlquilerNoComercial implements
 			if(alquilerSocial) {
 				estadoExpBC = DDEstadoExpedienteBc.CODIGO_CONTRAOFERTADO;
 			}else if(novacionRenovacion) {
-				estadoExpBC = DDEstadoExpedienteBc.CODIGO_BORRADOR_ACEPTADO;
+				estadoExpBC = DDEstadoExpedienteBc.CODIGO_IMPORTE_FINAL_APROBADO;
 			}
 		}else {
 			if(alquilerSocial) {

@@ -250,10 +250,10 @@ Ext.define('HreRem.view.activos.detalle.DatosPatrimonio', {
 							reference: 'aplicaAlquilerSocialRef',
 							colspan: 1,
 							bind: {
-								readOnly: '{patrimonio.isCarteraBBVA}',
-								hidden: '{!patrimonio.isCarteraBBVA}',
 								store: '{comboSinSino}',
-								value: '{patrimonio.aplicaAlquilerSocial}'
+								value: '{patrimonio.aplicaAlquilerSocial}',
+								readOnly: '{patrimonio.isCarteraBBVA}',
+								hidden: '{!patrimonio.isCarteraBBVA}'
 							}
 						},
 						{

@@ -1546,6 +1546,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			oferta.setGrupoContratoCBK(DDSinSiNo.CODIGO_SI.equals(dto.getCodigoGrupoContratoCBK()));
 		}
 
+		oferta.setImporteFianzaAnterior(dto.getImporteFianzaAnterior());
+
 
 		if (!Checks.esNulo(dto.getCheckForzadoCajamar())) {
 			oferta.setCheckFormCajamar(dto.getCheckForzadoCajamar());
@@ -2578,6 +2580,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		if (oferta.getSuborigenContratoEcc() != null) {
 			dto.setSuborigenContratoEccCodigo(oferta.getSuborigenContratoEcc().getCodigo());
 			dto.setSuborigenContratoEccDescripcion(oferta.getSuborigenContratoEcc().getDescripcion());
+		}
+
+		dto.setImporteFianzaAnterior(oferta.getImporteFianzaAnterior());
+
+		if(DDTipoOferta.isTipoAlquilerNoComercial(oferta.getTipoOferta())) {
+			dto.setPermiteImporteFianzaAnterior(tramiteAlquilerNoComercialApi.permiteImporteFianzaAnterior(expediente));
 		}
 		
 		return dto;

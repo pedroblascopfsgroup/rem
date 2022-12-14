@@ -61,8 +61,6 @@ public class UpdaterServiceFirmaAdendaAlquilerNoComercial implements UpdaterServ
 			}
 		}
 		
-		tramiteAlquilerNoComercialApi.saveHistoricoFirmaAdenda(dto, oferta);
-		
 		DtoEstados dtoEstados = this.devolverEstados(dto.getAdendaFirmada(), tareaExternaActual);
 		if(dtoEstados.getCodigoEstadoExpedienteBc() != null) {
 			expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dtoEstados.getCodigoEstadoExpedienteBc())));
@@ -72,7 +70,8 @@ public class UpdaterServiceFirmaAdendaAlquilerNoComercial implements UpdaterServ
 		if(DDEstadosExpedienteComercial.isFirmado(expedienteComercial.getEstado())) {
 			funcionesTramitesApi.actualizarEstadosPublicacionActivos(expedienteComercial);
 		}
-		
+
+		tramiteAlquilerNoComercialApi.saveHistoricoFirmaAdenda(dto, oferta);
 		genericDao.save(ExpedienteComercial.class, expedienteComercial);
 		
 	}

@@ -164,7 +164,7 @@ public class UpdaterServiceAgendarFirmaNoComercial implements UpdaterService {
 	}
 	
 	private void crearRegistroEnHistorico(Fianzas fia, DtoTareasFormalizacion dto) {
-		if (!Checks.esNulo(dto.getFechaReagendarIngreso())) {
+		if (!Checks.esNulo(dto.getFechaReagendarIngreso()) || dto.getMotivoReagendacion() != null) {
 			HistoricoReagendacion histReagendacion = new HistoricoReagendacion();
 			histReagendacion.setFianza(fia);
 			histReagendacion.setFechaReagendacionIngreso(dto.getFechaReagendarIngreso());

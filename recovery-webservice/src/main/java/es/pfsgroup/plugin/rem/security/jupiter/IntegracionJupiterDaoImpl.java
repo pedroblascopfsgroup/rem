@@ -441,6 +441,7 @@ public class IntegracionJupiterDaoImpl extends AbstractEntityDao<MapeoJupiterREM
 		Filter filtroUsuario = obtenerFiltroIdUsuario(usuario);
 		Filter filtroCartera = obtenerFiltroCarteraByCodigo(codCartera);
 		eliminarCarteraByUsuarioAndCartera(filtroUsuario, filtroCartera, usuario.getUsername());
+		logger.info("Se ha eliminado la cartera:" + codCartera);
 	}
 	
 	private void eliminarCarteraByUsuarioAndCartera(Filter filtroUsuario, Filter filtroCartera, String username) {

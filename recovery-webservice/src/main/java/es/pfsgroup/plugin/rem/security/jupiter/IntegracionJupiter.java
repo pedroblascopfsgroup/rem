@@ -235,7 +235,8 @@ public class IntegracionJupiter implements IntegracionJupiterApi {
 			}
 		}
 		
-		listaBajaCarterasPorTenerSubcartera = new ArrayList<String>(listaBajaCarterasPorTenerSubcarteraNoRepetidas);
+		List<String> listaAuxiliar = new ArrayList<String>(listaBajaCarterasPorTenerSubcarteraNoRepetidas);
+		listaBajaCarterasPorTenerSubcartera.addAll(listaAuxiliar);
 	}
 
 	private String corregirCodigoJupiter(String codigoJupiter) {

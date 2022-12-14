@@ -9947,7 +9947,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "		 WHERE GPV.GPV_NUM_GASTO_HAYA = :numGasto"
 				+ "		 AND TOG.DD_TOG_CODIGO = :codigoTipoOperacion"
 				+ "		 AND GPV.BORRADO = 0");
-		return resultado != null && !resultado.isEmpty();
+		return !"0".equals(resultado);
 	}
 
 	@Override

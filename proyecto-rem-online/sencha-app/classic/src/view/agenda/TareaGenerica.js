@@ -4786,96 +4786,22 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		}
 	},
 	
-	T018_AgendarFirmaAdendaValidacion: function(){
-		var me = this;
-		var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
-		var idExpediente = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
-		
-		var fechaFirma = me.down('[name=fechaFirma]');
-		var lugarFirma = me.down('[name=lugarFirma]');
-		var justificacion = me.down('[name=justificacion]');
-		
-		if (CONST.CARTERA['BANKIA'] == codigoCartera) {
-			me.habilitarCampo(fechaFirma);
-			me.campoObligatorio(fechaFirma);
-			me.habilitarCampo(lugarFirma);
-			me.campoObligatorio(lugarFirma);
-			me.editableyNoObligatorio(justificacion);
-			
-		} else {
-			me.deshabilitarCampo(fechaFirma);
-			me.ocultarCampo(fechaFirma);
-			me.deshabilitarCampo(lugarFirma);
-			me.ocultarCampo(lugarFirma);
-			me.deshabilitarCampo(justificacion);
-			me.ocultarCampo(justificacion);
-		}
-	},
-	
-	T018_FirmaAdendaValidacion: function(){
-		var me = this;
-		var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
-		var idExpediente = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
-		
-		var comboResultado = me.down('[name=comboResultado]');
-		var justificacion = me.down('[name=justificacion]');
-		
-		if (CONST.CARTERA['BANKIA'] == codigoCartera) {
-			me.habilitarCampo(comboResultado);
-			me.campoObligatorio(comboResultado);
-			me.editableyNoObligatorio(justificacion);
-			
-		} else {
-			me.deshabilitarCampo(comboResultado);
-			me.ocultarCampo(comboResultado);
-			me.deshabilitarCampo(justificacion);
-			me.ocultarCampo(justificacion);
-		}
-	},
-	
-	T018_AltaContratoAlquilerAdendaValidacion: function(){
-		var me = this;
-		var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
-		var idExpediente = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
-		
-		var comboResultado = me.down('[name=comboResultado]');
-		var fechaAlta = me.down('[name=fechaAlta]');
-		
-		if (CONST.CARTERA['BANKIA'] == codigoCartera) {
-			me.habilitarCampo(comboResultado);
-			me.campoObligatorio(comboResultado);
-			me.habilitarCampo(fechaAlta);
-			me.campoObligatorio(fechaAlta);
-			
-			if($AU.userHasFunction('FUNC_AVANZA_FORMALIZACION_ALQUILER_NC_BC')){
-				me.desbloquearCampo(comboResultado);
-				me.desbloquearCampo(fechaAlta);
-			} else {
-				me.bloquearCampo(comboResultado);
-				me.bloquearCampo(fechaAlta);
-			}
-			
-		} else {
-			me.deshabilitarCampo(comboResultado);
-			me.ocultarCampo(comboResultado);
-			me.deshabilitarCampo(fechaAlta);
-			me.ocultarCampo(fechaAlta);
-		}
-	},
 	
 	T018_RespuestaContraofertaBCValidacion: function(){
 		var me = this;
-		var idExpediente = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
 		
 		var comboResultado = me.down('[name=comboResultado]');
 		var fechaAlta = me.down('[name=fechaAlta]');
 		
-		me.habilitarCampo(comboResultado);
+		me.bloquearCampo(comboResultado);
+		me.bloquearCampo(fechaAlta);
 		me.campoObligatorio(comboResultado);
-		me.habilitarCampo(fechaAlta);
 		me.campoObligatorio(fechaAlta);
-			
 		
+		if($AU.userHasFunction('FUNC_AVANZA_FORMALIZACION_ALQUILER_NC_BC')){
+			me.desbloquearCampo(comboResultado);
+			me.desbloquearCampo(fechaAlta);
+		}		
 	},
 	
 	T018_EntregaFianzasValidacion: function(){
@@ -4943,60 +4869,25 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 	
 	T018_ProponerRescisionClienteValidacion: function(){
 		var me = this;
-		var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
-		var idExpediente = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
 		
 		var comboResultado = me.down('[name=comboResultado]');
 		var tipoActivoRescision = me.down('[name=tipoActivoRescision]');
-		var tipoCarteraRescision = me.down('[name=tipoCarteraRescision]');
-		var justificacion = me.down('[name=justificacion]');
+		
+		me.deshabilitarCampo(tipoActivoRescision);
+		me.campoNoObligatorio(tipoActivoRescision);
 		
 		comboResultado.addListener('change', function(comboResultado) {
-			if (comboResultado.value == CONST.COMBO_SIN_SINO['NO'] && tipoActivoRescision.value == CONST.CODIGO_TIPO_ACTIVO_RESCISION['TERCIARIA']) { 
-				justificacion.setValue('Demanda judicial');
-				me.bloquearCampo(justificacion);
+			if (comboResultado.value == CONST.COMBO_SIN_SINO['NO']) { 
+				me.habilitarCampo(tipoActivoRescision);
 				me.campoObligatorio(tipoActivoRescision);
-				me.campoObligatorio(tipoCarteraRescision);
 			} else {
-				me.borrarCampo(justificacion);
-				me.desbloquearCampo(justificacion);
+				tipoActivoRescision.reset();
+				me.deshabilitarCampo(tipoActivoRescision);
 				me.campoNoObligatorio(tipoActivoRescision);
-				me.campoObligatorio(tipoCarteraRescision);
-			}
-		});
-		
-		tipoActivoRescision.addListener('change', function(tipoActivoRescision) {
-			if (comboResultado.value == CONST.COMBO_SIN_SINO['NO'] && tipoActivoRescision.value == CONST.CODIGO_TIPO_ACTIVO_RESCISION['TERCIARIA']) { 
-				justificacion.setValue('Demanda judicial');
-				me.bloquearCampo(justificacion);
-			} else {
-				me.borrarCampo(justificacion);
-				me.desbloquearCampo(justificacion);
 			}
 		});
 	},
 	
-	T018_FirmaRescisionContratoValidacion: function(){
-		var me = this;
-		var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
-		var idExpediente = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
-		
-		var comboResultado = me.down('[name=comboResultado]');
-		var fechaFirma = me.down('[name=fechaFirma]');
-		
-		if (CONST.CARTERA['BANKIA'] == codigoCartera) {
-			me.habilitarCampo(comboResultado);
-			me.campoObligatorio(comboResultado);
-			me.habilitarCampo(fechaFirma);
-			me.campoObligatorio(fechaFirma);
-			
-		} else {
-			me.deshabilitarCampo(comboResultado);
-			me.ocultarCampo(comboResultado);
-			me.deshabilitarCampo(fechaFirma);
-			me.ocultarCampo(fechaFirma);
-		}
-	},
 	
 	T018_FirmaContratoValidacion: function(){
 		var me = this;
@@ -5036,7 +4927,6 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		me.bloquearCampo(fechaAgendacionIngreso);
 		me.campoObligatorio(fechaAgendacionIngreso);
     	me.bloquearCampo(importe);
-    	me.bloquearCampo(ibanDevolucion);
     	me.bloquearCampo(fechaReagendarIngreso);
     	me.bloquearCampo(motivoReagendacion);
     	me.bloquearCampo(motivoFianzaExonerada);
@@ -5056,7 +4946,6 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 
             } else {
 	    		me.desbloquearCampo(importe);
-	    		me.desbloquearCampo(ibanDevolucion);
 	    		me.borrarCampo(motivoFianzaExonerada);
 	    		me.bloquearCampo(motivoFianzaExonerada);
 	    		me.campoNoObligatorio(motivoFianzaExonerada);
@@ -5079,15 +4968,20 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		    			comboFianza.setValue(CONST.COMBO_SIN_SINO['SI']);
 		    		}
 		    		
+		    		if (!Ext.isEmpty(dto.ibanDevolucion)) {
+						ibanDevolucion.setValue(dto.ibanDevolucion);
+					}
+		    		
 		    		if(CONST.COMBO_SIN_SINO['NO'] == comboFianza.getValue()){
 			    		if (!Ext.isEmpty(dto.agendacionIngreso)) {
 			    			me.bloquearObligatorio(fechaAgendacionIngreso);
 			    			fechaAgendacionIngreso.setReadOnly(true);
 			    			me.bloquearObligatorio(comboFianza);
-			    			me.desbloquearCampo(fechaReagendarIngreso);
+								me.desbloquearCampo(fechaReagendarIngreso);
+								me.campoObligatorio(fechaReagendarIngreso);
 			    			fechaAgendacionIngreso.setValue(Ext.Date.format(new Date(dto.agendacionIngreso), 'd/m/Y'));
 			    			me.desbloquearCampo(motivoReagendacion);
-			    			me.campoObligatorio(motivoReagendacion);
+								me.campoObligatorio(motivoReagendacion);
 				    		me.campoNoObligatorio(motivoFianzaExonerada);
 						}else{
 							me.desbloquearCampo(fechaAgendacionIngreso);
@@ -5104,10 +4998,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 						if (!Ext.isEmpty(dto.meses)) {
 							meses.setValue(dto.meses);								
 						}
-						if (!Ext.isEmpty(dto.ibanDevolucion)) {
-							ibanDevolucion.setValue(dto.ibanDevolucion);
-						}
-						
+
 						if(!Ext.isEmpty(dto.fechaAprobacionOferta)){
 //							var fecha = new Date(dto.fechaAprobacionOferta);
 //							fecha.setDate(fecha.getDate() + 90);
@@ -5130,19 +5021,18 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 	
 	T018_DecisionComiteValidacion: function(){
 		var me = this;
-		var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
-		var idExpediente = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
 		
-		var cambiosComite = me.down('[name=cambiosComite]');
 		var decisionComite = me.down('[name=decisionComite]');
+		var cambiosComite = me.down('[name=cambiosComite]');
+		var cambiosComiteRealizados = me.down('[name=cambiosComiteRealizados]');
 		
 		decisionComite.addListener('change', function(decisionComite) {
-			if (decisionComite.value == CONST.CODIGO_DECISION_COMITE['CANCELAR']) { 
-				cambiosComite.setValue('Demanda judicial');
-				me.bloquearCampo(cambiosComite);
+			if (decisionComite.value == CONST.CODIGO_DECISION_COMITE['NUEVAS_CONDICIONES']) { 
+				me.campoObligatorio(cambiosComite);
+				me.campoObligatorio(cambiosComiteRealizados);
 			} else {
-				me.borrarCampo(cambiosComite);
-				me.desbloquearCampo(cambiosComite);
+				me.campoNoObligatorio(cambiosComite);
+				me.campoNoObligatorio(cambiosComiteRealizados);
 			}
 		});
 		

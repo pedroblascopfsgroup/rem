@@ -16,5 +16,9 @@ public class TramiteAlquilerNoComercialSubrogacionDacion extends TramiteAlquiler
 		return false;
 	}
 	
+	@Override
+	public boolean permiteClaseCondicion() {
+		return true;
+	}
 
 }

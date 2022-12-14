@@ -570,6 +570,9 @@ public class Oferta implements Serializable, Auditable {
     @JoinColumn(name = "DD_SCN_ID")
     private DDSuborigenContratoEcc suborigenContratoEcc;
 
+	@Column(name = "OFR_IMPORTE_FIANZA_ANT")
+	private Double importeFianzaAnterior;
+
 	public Date getFechaAlta() {
 		return fechaAlta;
 	}
@@ -1789,6 +1792,13 @@ public class Oferta implements Serializable, Auditable {
 
 	public void setSuborigenContratoEcc(DDSuborigenContratoEcc suborigenContratoEcc) {
 		this.suborigenContratoEcc = suborigenContratoEcc;
-	}	
-	
+	}
+
+	public Double getImporteFianzaAnterior() {
+		return importeFianzaAnterior;
+	}
+
+	public void setImporteFianzaAnterior(Double importeFianzaAnterior) {
+		this.importeFianzaAnterior = importeFianzaAnterior;
+	}
 }

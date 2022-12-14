@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.constants;
 public class TareaProcedimientoConstants {
 
     public static final String CODIGO_RESOLUCION_EXPEDIENTE_T013 = "T013_ResolucionExpediente";
+    public static final String CODIGO_RESOLUCION_COMITE_T013 = "T013_ResolucionComite";
     public static final String CODIGO_RESOLUCION_EXPEDIENTE_T017 = "T017_ResolucionExpediente";
     public static final String CODIGO_BLOQUEO_SCREENING_T017 = "T017_BloqueoScreening";
     public static final String CODIGO_CONFIRMAR_FECHA_ESCRITURA_T017 = "T017_ConfirmarFechaEscritura";

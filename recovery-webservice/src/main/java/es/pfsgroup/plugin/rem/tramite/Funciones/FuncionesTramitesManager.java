@@ -327,7 +327,7 @@ public class FuncionesTramitesManager implements FuncionesTramitesApi {
 		
 		Fianzas fia = genericDao.get(Fianzas.class, genericDao.createFilter(FilterType.EQUALS, "oferta.id", eco.getOferta().getId()));
 		
-		if((fia == null || fia.getCuentaVirtualAlquiler() == null) && (coe.getFianzaExonerada() == null || !coe.getFianzaExonerada())) {
+		if((fia != null && fia.getCuentaVirtualAlquiler() == null) && (coe.getFianzaExonerada() == null || !coe.getFianzaExonerada())) {
 			resultado = true;
 		} 
 			

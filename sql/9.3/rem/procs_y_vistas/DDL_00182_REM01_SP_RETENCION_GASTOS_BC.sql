@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20221213
+--## FECHA_CREACION=20221215
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-17266
@@ -317,7 +317,7 @@ WHERE EXISTS (
 EXECUTE IMMEDIATE V_MSQL;
 OUTPUT := 'Se han insertado ' || GASTOS_PROVISION || ' gastos provisionados y ' || GASTOS_MANUALES || ' gastos manuales en la tabla GASTOS_RETENIDOS_BC. ' || GASTOS_RETENIDOS || ' gastos retenidos actualmente. Adicionalmente, se han borrado ' || SQL%ROWCOUNT || ' que estaban duplicados en la tabla de gastos retenidos';
 
-V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.AUX_REMVIP_12908 (GPV_ID)
+V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.AUX_REMVIP_12818 (GPV_ID)
 		select GPV_ID from (
 WITH PROPIETARIOS_ACTIVOS AS(
     SELECT /*+ MATERIALIZE */ GLD.GPV_ID, PRO.PRO_ID 
@@ -477,7 +477,7 @@ EXECUTE IMMEDIATE V_MSQL;
 V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR T1
 USING (
     SELECT DISTINCT GPV_ID
-    FROM rem01.AUX_REMVIP_12908 AUX
+    FROM rem01.AUX_REMVIP_12818 AUX
 ) T2
 ON (T1.GPV_ID = T2.GPV_ID)
 WHEN MATCHED THEN

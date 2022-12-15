@@ -153,6 +153,23 @@ public class ExpedienteComercialAdapter {
 
 		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
 			ExpedienteComercial expedienteComercial = expedienteComercialApi.findOne(id);
+
+			try {
+				gestorDocumentalAdapterApi.getAdjuntosExpedienteComercial(expedienteComercial);
+			} catch (GestorDocumentalException gex) {
+				logger.debug(gex.getMessage(), gex);
+				if (GestorDocumentalException.CODIGO_ERROR_CONTENEDOR_NO_EXISTE.equals(gex.getCodigoError())) {
+					try {
+						Integer idExpediente = gestorDocumentalAdapterApi.crearExpedienteComercial(expedienteComercial, usuario.getUsername());
+						logger.debug("GESTOR DOCUMENTAL [ crearExpediente para " + expedienteComercial.getNumExpediente() + "]: ID EXPEDIENTE RECIBIDO " + idExpediente);
+					} catch (GestorDocumentalException gexc) {
+						logger.error(gexc.getMessage(), gexc);
+					}
+				} else {
+					throw gex;
+				}
+			}
+
 			try {
 				listaAdjuntos = gestorDocumentalAdapterApi.getAdjuntosExpedienteComercialMultiTipo(expedienteComercial);
 				for (DtoAdjunto adj : listaAdjuntos) {
@@ -171,7 +188,6 @@ public class ExpedienteComercialAdapter {
 						adj.setTamanyo(adjuntoExpedienteComercial.getTamanyo());
 					} else {
 						DDSubtipoDocumentoExpediente subtipoExp = ddSubtipoDocumentoExpedienteDao.getSubtipoDocumentoExpedienteComercialPorMatricula(adj.getMatricula());
-
 						if(!Checks.esNulo(subtipoExp)) {
 							if(!Checks.esNulo(subtipoExp.getTipoDocumentoExpediente())) {
 								adj.setDescripcionTipo(subtipoExp.getTipoDocumentoExpediente().getDescripcion());
@@ -182,18 +198,6 @@ public class ExpedienteComercialAdapter {
 				}
 			} catch (GestorDocumentalException gex) {
 				logger.error(gex.getMessage(), gex);
-				if (GestorDocumentalException.CODIGO_ERROR_CONTENEDOR_NO_EXISTE.equals(gex.getCodigoError())) {
-
-					Integer idExpediente;
-					try{
-						idExpediente = gestorDocumentalAdapterApi.crearExpedienteComercial(expedienteComercial,usuario.getUsername());
-						logger.debug("GESTOR DOCUMENTAL [ crearExpediente para " + expedienteComercial.getNumExpediente() + "]: ID EXPEDIENTE RECIBIDO " + idExpediente);
-					} catch (GestorDocumentalException gexc) {
-						//logger.error(gexc.getMessage(),gexc);
-					}
-				} else {
-					throw gex;
-				}
 			} catch (ProcessingException pex){
 				pex.printStackTrace();
 			}

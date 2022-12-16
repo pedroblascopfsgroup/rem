@@ -117,6 +117,7 @@ public class AgendaAdapter {
 	private static final String ERROR_CAMPOS_VALIDACION_FORMATO ="Los formatos de los siguientes campos requeridos y no requeridos no son correctos: ";
 	private static final String ERROR_TAREA_NO_PERMITIDA = "El tipo de tarea no esta permitida para avanzar";
 	public static final String ERROR_TAREA_DEPENDIENTE = "No se ha podido avanzar alguna oferta dependiente de la principal";
+	private static final String ERROR_CAMPO_FECHA_INVALID = "El campo fecha tiene un año anterior a 1900. Revise la fecha";
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	private SimpleDateFormat ft = new SimpleDateFormat("dd/MM/yyyy");
 	private SimpleDateFormat ft2 = new SimpleDateFormat("yyyy-MM-dd");
@@ -390,6 +391,12 @@ public class AgendaAdapter {
 		for (Map.Entry<String, String[]> entry : valores.entrySet()) {
 			String key = entry.getKey();
 			if (!key.equals("idTarea")){
+				if (key.toUpperCase().contains("FECHA")){
+					String[] fechaSplit = entry.getValue()[0].replace("/", "-").split("-");
+					if (fechaSplit.length == 3 && Long.parseLong(fechaSplit[2]) < 1900 ){
+						throw new UserException(ERROR_CAMPO_FECHA_INVALID);
+					}
+				}
 				camposFormulario.put(key, (String)entry.getValue()[0]);
 			}else{
 				idTarea = Long.parseLong((String)entry.getValue()[0]);

@@ -1,11 +1,11 @@
 --/*
 --#########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20221212
+--## FECHA_CREACION=20221219
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## ARTEFACTO=batch
---## INCIDENCIA_LINK=HREOS-19071
+--## INCIDENCIA_LINK=HREOS-19105
 --## PRODUCTO=NO
 --## 
 --## Finalidad:
@@ -15,6 +15,7 @@
 --##        0.1 Versión inicial - [HREOS-15592] - Santi Monzó (20211015)
 --##        0.2 Modificar ADN_FECHA_TITULO a 15/12/22 - [HREOS-19071] - Alejandra García (20221209)
 --##        0.3 Modificar ADN_FECHA_TITULO a 20/12/22 - [HREOS-19071] - Alejandra García (20221212)
+--##        0.4 Modificar ADN_FECHA_TITULO a 21/12/22 - [HREOS-19105] - Alejandra García (20221219)
 --#########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -76,7 +77,7 @@ BEGIN
 	SELECT
 	'||V_ESQUEMA||'.S_ACT_ADN_ADJNOJUDICIAL.NEXTVAL     ADN_ID,
 	ACT2.ACT_ID											ACT_ID,
-	TO_DATE(''20/12/2022'', ''DD/MM/YYYY'')              ADN_FECHA_TITULO,	
+	TO_DATE(''21/12/2022'', ''DD/MM/YYYY'')              ADN_FECHA_TITULO,	
 	NULL												 ADN_VALOR_ADQUISICION,
    '''' 								 ADN_TRAMITADOR_TITULO,
 	NULL                               					 ADN_NUM_REFERENCIA,

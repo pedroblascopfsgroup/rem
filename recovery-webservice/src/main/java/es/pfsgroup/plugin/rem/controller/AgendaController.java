@@ -533,7 +533,9 @@ public class AgendaController extends TareaController {
 						
 						break;
 					}
-				}								
+				}
+
+				ofertaApi.replicateOfertaFlushDto(eco.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(eco));
 			}
 			model.put("success", salto);
 

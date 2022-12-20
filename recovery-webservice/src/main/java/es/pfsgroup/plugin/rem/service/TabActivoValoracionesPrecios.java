@@ -236,20 +236,22 @@ public class TabActivoValoracionesPrecios implements TabActivoService {
 				valoracionesDto.setCampanyaPrecioVentaNegociable(actCaixa.getCampanyaPrecioVentaNegociable());
 			}
 		}
-		
-		//Valores económicos
-		if (!Checks.esNulo(activoInfoComercial.getValorEstimadoVenta())) 
-			valoracionesDto.setValorEstimadoVentaICO(activoInfoComercial.getValorEstimadoVenta().doubleValue());
-		if (!Checks.esNulo(activoInfoComercial.getValorEstimadoRenta())) 
-			valoracionesDto.setValorEstimadoRentaICO(activoInfoComercial.getValorEstimadoRenta().doubleValue());
-		if (!Checks.esNulo(activoInfoComercial.getMinVenta())) 
-			valoracionesDto.setValorEstimadoMinVenta(activoInfoComercial.getMinVenta().doubleValue());
-		if (!Checks.esNulo(activoInfoComercial.getMinRenta())) 
-			valoracionesDto.setValorEstimadoMinRenta(activoInfoComercial.getMinRenta().doubleValue());
-		if (!Checks.esNulo(activoInfoComercial.getMaxVenta())) 
-			valoracionesDto.setValorEstimadoMaxVenta(activoInfoComercial.getMaxVenta().doubleValue());
-		if (!Checks.esNulo(activoInfoComercial.getMaxRenta())) 
-			valoracionesDto.setValorEstimadoMaxRenta(activoInfoComercial.getMaxRenta().doubleValue());
+
+		if(activoInfoComercial != null) {
+			//Valores económicos
+			if (!Checks.esNulo(activoInfoComercial.getValorEstimadoVenta()))
+				valoracionesDto.setValorEstimadoVentaICO(activoInfoComercial.getValorEstimadoVenta().doubleValue());
+			if (!Checks.esNulo(activoInfoComercial.getValorEstimadoRenta()))
+				valoracionesDto.setValorEstimadoRentaICO(activoInfoComercial.getValorEstimadoRenta().doubleValue());
+			if (!Checks.esNulo(activoInfoComercial.getMinVenta()))
+				valoracionesDto.setValorEstimadoMinVenta(activoInfoComercial.getMinVenta().doubleValue());
+			if (!Checks.esNulo(activoInfoComercial.getMinRenta()))
+				valoracionesDto.setValorEstimadoMinRenta(activoInfoComercial.getMinRenta().doubleValue());
+			if (!Checks.esNulo(activoInfoComercial.getMaxVenta()))
+				valoracionesDto.setValorEstimadoMaxVenta(activoInfoComercial.getMaxVenta().doubleValue());
+			if (!Checks.esNulo(activoInfoComercial.getMaxRenta()))
+				valoracionesDto.setValorEstimadoMaxRenta(activoInfoComercial.getMaxRenta().doubleValue());
+		}
 
 		return valoracionesDto;	
 	}

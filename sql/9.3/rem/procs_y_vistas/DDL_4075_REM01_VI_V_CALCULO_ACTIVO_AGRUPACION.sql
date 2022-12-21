@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Juan José Sanjuan
---## FECHA_CREACION=20211215
+--## AUTOR=Pedro Blasco
+--## FECHA_CREACION=20221219
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-16677
+--## INCIDENCIA_LINK=HREOS-18982
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -15,6 +15,7 @@
 --##		0.3 Contador activos UAs
 --##		0.4 Hacer que recoja agrupaciones que no estén registradas en la AGA
 --##		0.5 Hacer que diferencia los activos de venta o alquiler y su estado de publicacion
+--##    0.6 Corregir join de DD_TCO_ID para que use la tabla APU en lugar de ACT
 --##########################################
 --*/
 
@@ -75,7 +76,7 @@ BEGIN
           JOIN '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION APU ON APU.ACT_ID = ACT.ACT_ID
           LEFT JOIN '|| V_ESQUEMA ||'.DD_EPV_ESTADO_PUB_VENTA EPV ON EPV.DD_EPV_ID = APU.DD_EPV_ID
           LEFT JOIN '|| V_ESQUEMA ||'.DD_EPA_ESTADO_PUB_ALQUILER EPA ON EPA.DD_EPA_ID = APU.DD_EPA_ID
-          LEFT JOIN '|| V_ESQUEMA ||'.DD_TCO_TIPO_COMERCIALIZACION TCO ON TCO.DD_TCO_ID = ACT.DD_TCO_ID
+          LEFT JOIN '|| V_ESQUEMA ||'.DD_TCO_TIPO_COMERCIALIZACION TCO ON TCO.DD_TCO_ID = APU.DD_TCO_ID
           WHERE ((TCO.DD_TCO_CODIGO IN (''01'',''02'') AND EPV.DD_EPV_CODIGO = ''03'' ) OR (TCO.DD_TCO_CODIGO IN (''02'',''03'') AND EPA.DD_EPA_CODIGO = ''03''))
 		  AND (CASE WHEN TAG.DD_TAG_CODIGO = ''16'' AND AGA.AGA_PRINCIPAL = 1 THEN 0
         			ELSE 1

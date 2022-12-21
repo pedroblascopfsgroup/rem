@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20221219
+--## FECHA_CREACION=20221221
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-19105
@@ -14,6 +14,7 @@
 --##        0.2 Modificar ACT_VENTA_EXTERNA_FECHA a 15/12/22 - [HREOS-19071] - Alejandra García (20221209)
 --##        0.3 Modificar ACT_VENTA_EXTERNA_FECHA a 20/12/22 - [HREOS-19071] - Alejandra García (20221212)
 --##        0.4 Modificar ACT_VENTA_EXTERNA_FECHA a 21/12/22 - [HREOS-19105] - Alejandra García (20221219)
+--##        0.5 Modificar ACT_VENTA_EXTERNA_FECHA a 20/12/22 - [HREOS-19105] - Alejandra García (20221221)
 --##########################################
 --*/
 
@@ -46,7 +47,7 @@ BEGIN
 
     
             V_SQL := 'UPDATE '||V_ESQUEMA||'.ACT_ACTIVO
-                        SET ACT_VENTA_EXTERNA_FECHA = TO_DATE(''21/12/2022'', ''DD/MM/YYYY'')
+                        SET ACT_VENTA_EXTERNA_FECHA = TO_DATE(''20/12/2022'', ''DD/MM/YYYY'')
                             ,ACT_VENTA_EXTERNA_IMPORTE = 1
                             ,USUARIOMODIFICAR = '''||V_USUARIO||'''
                             ,FECHAMODIFICAR = SYSDATE

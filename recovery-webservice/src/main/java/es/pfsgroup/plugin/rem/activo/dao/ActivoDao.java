@@ -354,8 +354,7 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	
 	Long getNextBbvaNumActivo();
 	
-	public Activo existeActivoUsuarioCarterizado(Long numActivo, Long idCartera, List<Long> idSubcarteras);
-
+	public Activo existeActivoUsuarioCarterizado(Long numActivo, String codCartera, List<String> codSubcarteras);
 
 	public Long getCarga(String idBieCarRecovery);
 

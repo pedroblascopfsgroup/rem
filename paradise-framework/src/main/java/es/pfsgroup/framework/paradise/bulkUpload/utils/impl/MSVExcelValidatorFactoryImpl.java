@@ -1,10 +1,9 @@
 package es.pfsgroup.framework.paradise.bulkUpload.utils.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelValidator;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 @Component
 public class MSVExcelValidatorFactoryImpl {
@@ -273,6 +272,9 @@ public class MSVExcelValidatorFactoryImpl {
 	@Autowired
 	private MSVMasivaOrganismosValidator msvOrganismos;
 
+	@Autowired
+	private MSVEstadosGastoValidator msvEstadosGastoValidator;
+
 	public MSVExcelValidator getForTipoValidador(String codTipoOperacion) {
 
 		if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_AGRUPATION_RESTRICTED.equals(codTipoOperacion)) {
@@ -461,6 +463,8 @@ public class MSVExcelValidatorFactoryImpl {
 			return actualizarPorcentajeConstruccion;
 		} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_CONFIGURACION_RECOMENDACION.equals(codTipoOperacion)) {
 			return msvConfigRecomendacion;
+		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_ESTADOS_GASTOS.equals(codTipoOperacion)){
+			return msvEstadosGastoValidator;
 		} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_DE_ORGANISMOS.equals(codTipoOperacion)) {
 			return msvOrganismos;
 		}

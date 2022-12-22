@@ -11,6 +11,8 @@ import java.util.Properties;
 
 import javax.annotation.Resource;
 
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.pfsgroup.plugin.rem.model.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -32,19 +34,6 @@ import es.pfsgroup.plugin.rem.api.ConcurrenciaApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.concurrencia.dao.ConcurrenciaDao;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustWebService;
-import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
-import es.pfsgroup.plugin.rem.model.ActivoOferta;
-import es.pfsgroup.plugin.rem.model.Concurrencia;
-import es.pfsgroup.plugin.rem.model.Deposito;
-import es.pfsgroup.plugin.rem.model.DtoHistoricoConcurrencia;
-import es.pfsgroup.plugin.rem.model.DtoPujaDetalle;
-import es.pfsgroup.plugin.rem.model.Oferta;
-import es.pfsgroup.plugin.rem.model.Puja;
-import es.pfsgroup.plugin.rem.model.TitularesAdicionalesOferta;
-import es.pfsgroup.plugin.rem.model.VGridCambiosPeriodoConcurrencia;
-import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionConcurrencia;
-import es.pfsgroup.plugin.rem.model.VGridOfertasActivosConcurrencia;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientFacade;
@@ -592,6 +581,12 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 		}
 		
 		return is;
+	}
+
+	@Override
+	public boolean checkOfertaConcurrencia(TareaExterna tareaExterna) {
+		Oferta oferta = ofertaApi.tareaExternaToOferta(tareaExterna);
+		return isOfertaEnConcurrencia(oferta);
 	}
 
 }

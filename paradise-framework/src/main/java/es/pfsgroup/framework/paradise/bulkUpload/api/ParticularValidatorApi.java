@@ -1539,4 +1539,80 @@ public interface ParticularValidatorApi {
 
 	Boolean isPerimetroMacc(String numActivo);
 
+    Boolean existeMotivoRechazoGasto(String codigo);
+
+    Boolean tieneDocumentoGasto(String numGasto);
+
+    Boolean tieneFacturaGasto(String numGasto);
+
+    Boolean tieneLineaDetalleGasto(String numGasto);
+
+	Boolean tieneTipoGasto(String numGasto);
+
+	Boolean tieneEmisorGasto(String numGasto);
+
+	Boolean tienePropietarioGasto(String numGasto);
+
+	Boolean tieneFechaEmisionGasto(String numGasto);
+
+	Boolean tieneTipoOperacionGasto(String numGasto);
+
+	Boolean tienePeriodicidadGasto(String numGasto);
+
+	Boolean tieneConceptoGasto(String numGasto);
+
+	Boolean tieneImporteGasto(String numGasto);
+
+	Boolean tieneGastoAbonadoGasto(String numGasto);
+
+	Boolean esTipoOperacionGastoAbono(String numGasto);
+
+	Boolean yaRechazadoPropietarioGasto(String numGasto);
+
+	Boolean carteraTangoGasto(String numGasto);
+
+	Boolean esAgrupadoGasto(String numGasto);
+
+	Boolean estaEstadoNoPermitidoGasto(String numGasto, String codigo);
+
+	Boolean esGastoBBVA(String numGasto);
+
+	Boolean esGastoUnicaja(String numGasto);
+	
+	Boolean esGastoCaixaBank(String numGasto, String subcartera);
+
+	Boolean tieneGastoCamposObligatoriosCuentaPartidaApartadoCapitulo(String numGasto);
+
+	Boolean tieneGastoCampoObligatorioCuentaContable(String numGasto);
+
+	Boolean tieneGastoCamposObligatoriosCuentaPartida(String numGasto);
+
+	Boolean tieneGastoFechaDevengoEspecialOFechaAnteriorAEmision(String numGasto);
+
+	Boolean tieneGastoCampoObligatorioNIFTitularCartaPago(String numGasto);
+
+	Boolean esGastoRechazado(String numGasto);
+
+	Boolean esGastoAutorizadoAdministracion(String numGasto);
+
+	Boolean esGastoConSuplidosVinculados(String numGasto);
+
+	Boolean esGastoSuplidoConPadreAutorizado(String numGasto);
+
+	Boolean tieneGastoSuplidoNIFIgualGastoPadreNIF(String numGasto);
+
+	Boolean tieneGastoSuplidoAbonoCuenta(String numGasto);
+
+	Boolean esGastoSuplido(String numGasto);
+
+	Boolean esGastoPadreSuplido(String numGasto);
+
+	Boolean esGastoAlquiler(String numGasto);
+
+	Boolean tieneGastoActivosONumeroContrato(String numGasto);
+
+	Boolean tieneGastoTipoImpuestoIndirectoIncorrecto(String numGasto);
+
+	Boolean tieneGastoLineaDetalleEntidades(String numGasto);
+	
 }

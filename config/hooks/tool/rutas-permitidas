@@ -345,10 +345,11 @@ func-rem-agendaIdentificarEstado|R-Annie
 func-rem-NNRRActualizacionCCPP|R-Annie
 remvip-11238-rem|R-Caracara
 func-rem-gestionAPIs|R-Ashe
-rem_mirror|func-rem-identificacionIBIsTasasDomiciliadosInterfazGastosSAPBC
-rem_mirror|R-Tyrael
+rem_mirror|func-rem-nuevaCargaMasivaEstadosGastos
 rem_mirror|version-@-rem
 func-rem-onboardingCIBE|version-2.48.2-rem
+rem_mirror|R-Tyrael
+rem_mirror|func-rem-identificacionIBIsTasasDomiciliadosInterfazGastosSAPBC
 rem_mirror|func-rem-nuevosValoresParaCriterioCajaIndicadoresImpuestos
 R-Tyrael|R-Fiddlesticks
 func-rem-contabilizarDepositoOtrosEstados|R-Fiddlesticks
@@ -358,7 +359,6 @@ func-rem-nuevosValoresParaCriterioCajaIndicadoresImpuestos|R-Buu
 func-rem-nuevaNomenclaturaFicherosGastos|R-Buu
 func-rem-proveedoresNoHomologables|R-Nagami
 func-rem-datosProveedores|R-Nagami
-rem_mirror|version-@-rem
 rem_mirror|func-rem-modificacionStockUAs
 func-rem-formalizacionAlquileres-HREOS-18271|func-rem-formalizacionAlquileres
 rem_mirror|func-rem-contabilizarDepositoOtrosEstados
@@ -371,3 +371,5 @@ func-rem-catastroV2|R-Kisame
 func-rem-SuncapitalRequerimiento2|R-Buu
 func-rem-modificacionStockUAs|R-Buu
 rem_mirror|func-rem-formalizacionAlquileres
+func-rem-nuevaCargaMasivaEstadosGastos|R-Fuji
+func-rem-perfiladoVariasCarteras|R-Fuji

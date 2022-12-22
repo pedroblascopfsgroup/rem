@@ -9,6 +9,9 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.adapter.RemUtils;
+import es.pfsgroup.plugin.rem.usuarioRem.UsuarioRemApi;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.lang.StringUtils;
@@ -33,7 +36,6 @@ import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.DtoGestionEconomicaTrabajo;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.Trabajo;
-import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VBusquedaTrabajosGastos;
 import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
@@ -53,6 +55,12 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 	
 	@Autowired
 	private GenericABMDao genericDao;
+
+	@Autowired
+	private GenericAdapter adapter;
+
+	@Autowired
+	private UsuarioRemApi usuarioRemApi;
 	
 	protected static final Log logger = LogFactory.getLog(TrabajoDaoImpl.class);
 	private static final String NIE_HAYA = "A86744349";
@@ -129,7 +137,12 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 	   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.numActivoRem", dto.getNumActivoRem());
 	   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.numAgrupacionRem", dto.getNumAgrupacionRem());
 	   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.idActivo", dto.getIdActivo());
-	   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.cartera", dto.getCartera());
+			List<String> codigosCarteras = usuarioRemApi.getCodigosCarterasUsuario(null, adapter.getUsuarioLogado());
+			if (!Checks.esNulo(dto.getCartera())) {
+				HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.cartera", dto.getCartera());
+			} else if(!Checks.estaVacio(codigosCarteras)) {
+				HQLBuilder.addFiltroWhereInSiNotNull(hb, "tbj.cartera", codigosCarteras);
+			}
 	   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.gestorActivo", dto.getGestorActivo());
 	   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.cubreSeguro", dto.getCubreSeguro());
 	   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.idProveedor", dto.getIdProveedor());
@@ -380,11 +393,7 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 	@Override
 	public Page getBusquedaTrabajosGrid(DtoTrabajoGridFilter dto, Long idUsuario) {
 		HQLBuilder hb = new HQLBuilder(" from VGridBusquedaTrabajos vgrid");
-		
-		List<UsuarioCartera> usuarioCartera = genericDao.getList(UsuarioCartera.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", idUsuario));
-		if (usuarioCartera != null && !usuarioCartera.isEmpty()) {
-			dto.setCarteraCodigo(usuarioCartera.get(0).getCartera().getCodigo());
-		}
+		List<String> codigosCarteras = usuarioRemApi.getCodigosCarterasUsuario(null, adapter.getUsuarioLogado());
 
 		if (Boolean.TRUE.equals(dto.getEsGestorExterno())) {
 			List<Long> proveedorIds = proveedorDao.getIdsProveedorByIdUsuario(idUsuario);
@@ -411,7 +420,11 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.estadoTrabajoCodigo", dto.getEstadoTrabajoCodigo());
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "vgrid.solicitante", dto.getSolicitante(), true);
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "vgrid.proveedor", dto.getProveedor(), true);
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.carteraCodigo", dto.getCarteraCodigo());
+		if (!Checks.esNulo(dto.getCarteraCodigo())) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.carteraCodigo", dto.getCarteraCodigo());
+		} else if(!Checks.estaVacio(codigosCarteras)) {
+			HQLBuilder.addFiltroWhereInSiNotNull(hb, "vgrid.carteraCodigo", codigosCarteras);
+		}
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.areaPeticionariaCodigo", dto.getAreaPeticionaria());
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "vgrid.responsableTrabajo", dto.getResponsableTrabajo(), true);
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.provinciaCodigo", dto.getProvinciaCodigo());
@@ -641,8 +654,32 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "btg.facturado", dto.getFacturado());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "btg.codigoSubtipo", dto.getCodigoSubtipo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "btg.cubreSeguro", dto.getCubreSeguro());
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "btg.cartera", dto.getCartera());
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "btg.subcartera", dto.getSubcartera());
+
+		List<String> codigosSubcarteras = usuarioRemApi.getCodigosSubcarterasUsuario(dto.getCartera(), adapter.getUsuarioLogado());
+
+		if (!Checks.esNulo(dto.getSubcartera())) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "btg.subcartera", dto.getSubcartera());
+		} else if (!Checks.estaVacio(codigosSubcarteras)) {
+			List<String> codigosCarterasConSubcartera = usuarioRemApi.getCodigosCarterasUsuario(true, adapter.getUsuarioLogado());
+			List<String> codigosCarterasSinSubcartera = usuarioRemApi.getCodigosCarterasUsuario(false, adapter.getUsuarioLogado());
+
+			if (!Checks.estaVacio(codigosCarterasConSubcartera) && !Checks.estaVacio(codigosCarterasSinSubcartera)) {
+				hb.appendWhere("btg.cartera in ("+ RemUtils.join(",", codigosCarterasConSubcartera) +") " +
+						"and btg.subcartera in ("+ RemUtils.join(",", codigosSubcarteras) +") " +
+						"or btg.cartera in ("+ RemUtils.join(",", codigosCarterasSinSubcartera) +")");
+			} else if (!Checks.estaVacio(codigosCarterasConSubcartera) && Checks.estaVacio(codigosCarterasSinSubcartera)) {
+				hb.appendWhere("btg.cartera in ("+ RemUtils.join(",", codigosCarterasConSubcartera)+") " +
+						"and btg.subcartera in ("+ RemUtils.join(",", codigosSubcarteras) +")");
+			}
+		}
+
+		List<String> codigosCarteras = usuarioRemApi.getCodigosCarterasUsuario(null, adapter.getUsuarioLogado());
+
+		if (!Checks.esNulo(dto.getCartera())) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "btg.cartera", dto.getCartera());
+		} else if (!Checks.estaVacio(codigosCarteras) && Checks.estaVacio(codigosSubcarteras)) {
+			HQLBuilder.addFiltroWhereInSiNotNull(hb, "btg.cartera", codigosCarteras);
+		}
 
 		if(idUsuario != null) {
 			List<Long> proveedorId = proveedorDao.getIdsProveedorByIdUsuario(idUsuario);
@@ -690,7 +727,8 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
         List <String> in = new  ArrayList<String>();
         StringBuilder sb = new StringBuilder(" select tbj from Trabajo tbj ");
         // JOIN solo si entra cartera o numero de activo
-        if (dto.getCartera() != null || dto.getSubcartera() != null || dto.getNumActivo() != null) {
+		List<String> codigosCarteras = usuarioRemApi.getCodigosCarterasUsuario(null, adapter.getUsuarioLogado());
+        if (!Checks.estaVacio(codigosCarteras) || dto.getNumActivo() != null) {
             sb.append(" join tbj.activosTrabajo acttbj ");
             sb.append(" join acttbj.activo act ");
         }
@@ -712,12 +750,29 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
         if (dto.getNumActivo() != null){
             HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivo", dto.getNumActivo()); 
         }else {
-            if (dto.getCartera() != null){
-                HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.cartera.codigo", dto.getCartera());
-            }
-            if (dto.getSubcartera() != null){
-                HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.subcartera.codigo", dto.getSubcartera());
-            }
+			List<String> codigosSubcarteras = usuarioRemApi.getCodigosSubcarterasUsuario(dto.getCartera(), adapter.getUsuarioLogado());
+
+			if (!Checks.esNulo(dto.getSubcartera())) {
+				HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.subcartera.codigo", dto.getSubcartera());
+			} else if (!Checks.estaVacio(codigosSubcarteras)) {
+				List<String> codigosCarterasConSubcartera = usuarioRemApi.getCodigosCarterasUsuario(true, adapter.getUsuarioLogado());
+				List<String> codigosCarterasSinSubcartera = usuarioRemApi.getCodigosCarterasUsuario(false, adapter.getUsuarioLogado());
+
+				if (!Checks.estaVacio(codigosCarterasConSubcartera) && !Checks.estaVacio(codigosCarterasSinSubcartera)) {
+					hb.appendWhere("act.cartera.codigo in ("+ RemUtils.join(",", codigosCarterasConSubcartera) +") " +
+							"and act.subcartera.codigo in ("+ RemUtils.join(",", codigosSubcarteras) +") " +
+							"or act.cartera.codigo in ("+ RemUtils.join(",", codigosCarterasSinSubcartera) +")");
+				} else if (!Checks.estaVacio(codigosCarterasConSubcartera) && Checks.estaVacio(codigosCarterasSinSubcartera)) {
+					hb.appendWhere("act.cartera.codigo in ("+ RemUtils.join(",", codigosCarterasConSubcartera)+") " +
+							"and act.subcartera.codigo in ("+ RemUtils.join(",", codigosSubcarteras) +")");
+				}
+			}
+
+			if (!Checks.esNulo(dto.getCartera())) {
+				HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.cartera.codigo", dto.getCartera());
+			} else if (!Checks.estaVacio(codigosCarteras) && Checks.estaVacio(codigosSubcarteras)) {
+				HQLBuilder.addFiltroWhereInSiNotNull(hb, "act.cartera.codigo", codigosCarteras);
+			}
         }
         
         return HibernateQueryUtils.page(this, hb, dto);
@@ -729,7 +784,8 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
         List <String> in = new  ArrayList<String>();
         StringBuilder sb = new StringBuilder(" select tbj from Trabajo tbj ");
         // JOIN solo si entra cartera o num activo
-        if (dto.getCartera() != null || dto.getSubcartera() != null || dto.getNumActivo() != null) {
+		  List<String> codigosCarteras = usuarioRemApi.getCodigosCarterasUsuario(null, adapter.getUsuarioLogado());
+		  if (!Checks.estaVacio(codigosCarteras) || dto.getNumActivo() != null) {
 	            sb.append(" join tbj.activosTrabajo acttbj ");
 	            sb.append(" join acttbj.activo act ");
         }	
@@ -751,12 +807,29 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
         if (dto.getNumActivo() != null){
             HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivo", dto.getNumActivo()); 
         }else {
-            if (dto.getCartera() != null){
-                HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.cartera.codigo", dto.getCartera());
-            }
-            if (dto.getSubcartera() != null){
-                HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.subcartera.codigo", dto.getSubcartera());
-            }
+			List<String> codigosSubcarteras = usuarioRemApi.getCodigosSubcarterasUsuario(dto.getCartera(), adapter.getUsuarioLogado());
+
+			if (!Checks.esNulo(dto.getSubcartera())) {
+				HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.subcartera.codigo", dto.getSubcartera());
+			} else if (!Checks.estaVacio(codigosSubcarteras)) {
+				List<String> codigosCarterasConSubcartera = usuarioRemApi.getCodigosCarterasUsuario(true, adapter.getUsuarioLogado());
+				List<String> codigosCarterasSinSubcartera = usuarioRemApi.getCodigosCarterasUsuario(false, adapter.getUsuarioLogado());
+
+				if (!Checks.estaVacio(codigosCarterasConSubcartera) && !Checks.estaVacio(codigosCarterasSinSubcartera)) {
+					hb.appendWhere("act.cartera.codigo in ("+ RemUtils.join(",", codigosCarterasConSubcartera) +") " +
+							"and act.subcartera.codigo in ("+ RemUtils.join(",", codigosSubcarteras) +") " +
+							"or act.cartera.codigo in ("+ RemUtils.join(",", codigosCarterasSinSubcartera) +")");
+				} else if (!Checks.estaVacio(codigosCarterasConSubcartera) && Checks.estaVacio(codigosCarterasSinSubcartera)) {
+					hb.appendWhere("act.cartera.codigo in ("+ RemUtils.join(",", codigosCarterasConSubcartera)+") " +
+							"and act.subcartera.codigo in ("+ RemUtils.join(",", codigosSubcarteras) +")");
+				}
+			}
+
+			if (!Checks.esNulo(dto.getCartera())) {
+				HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.cartera.codigo", dto.getCartera());
+			} else if (!Checks.estaVacio(codigosCarteras) && Checks.estaVacio(codigosSubcarteras)) {
+				HQLBuilder.addFiltroWhereInSiNotNull(hb, "act.cartera.codigo", codigosCarteras);
+			}
         }
         if (proveedorId.size() >0) {
             // ID Proveedor

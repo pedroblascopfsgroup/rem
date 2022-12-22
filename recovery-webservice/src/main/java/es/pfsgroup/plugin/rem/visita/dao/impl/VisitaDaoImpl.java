@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import es.pfsgroup.plugin.rem.adapter.RemUtils;
+import es.pfsgroup.plugin.rem.usuarioRem.UsuarioRemApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -14,13 +16,11 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.model.DtoVisitasFilter;
 import es.pfsgroup.plugin.rem.model.VBusquedaVisitasDetalle;
 import es.pfsgroup.plugin.rem.model.Visita;
-import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.rest.dto.VisitaDto;
 import es.pfsgroup.plugin.rem.visita.dao.VisitaDao;
 
@@ -32,6 +32,9 @@ public class VisitaDaoImpl extends AbstractEntityDao<Visita, Long> implements Vi
 	
 	@Autowired
 	private GenericABMDao genericDao;
+
+	@Autowired
+	private UsuarioRemApi usuarioRemApi;
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -99,25 +102,33 @@ public class VisitaDaoImpl extends AbstractEntityDao<Visita, Long> implements Vi
 	@SuppressWarnings("unchecked")
 	@Override
 	public DtoPage getListVisitasDetalle(DtoVisitasFilter dtoVisitasFilter, Usuario usuarioLogeado) {
-		List<UsuarioCartera> usuarioCartera = genericDao.getList(UsuarioCartera.class,
-				genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogeado.getId()));
-		List<String> subcarteras = new ArrayList<String>();
-				
+
 		HQLBuilder hb = new HQLBuilder(" from VBusquedaVisitasDetalle vvisita");
-		
-		if (!Checks.esNulo(usuarioCartera) && !usuarioCartera.isEmpty()) {
-			dtoVisitasFilter.setCarteraCodigo(usuarioCartera.get(0).getCartera().getCodigo());
-			
-			if (dtoVisitasFilter.getSubcarteraCodigo() == null) {
-				for (UsuarioCartera uca : usuarioCartera) {
-					if (uca.getSubCartera() != null)
-						subcarteras.add(uca.getSubCartera().getCodigo());
-				}
+
+		List<String> codigosSubcarteras = usuarioRemApi.getCodigosSubcarterasUsuario(dtoVisitasFilter.getCarteraCodigo(), usuarioLogeado);
+
+		if (!Checks.esNulo(dtoVisitasFilter.getSubcarteraCodigo())) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vvisita.subcarteraCodigo", dtoVisitasFilter.getSubcarteraCodigo());
+		} else if (!Checks.estaVacio(codigosSubcarteras)) {
+			List<String> codigosCarterasConSubcartera = usuarioRemApi.getCodigosCarterasUsuario(true, usuarioLogeado);
+			List<String> codigosCarterasSinSubcartera = usuarioRemApi.getCodigosCarterasUsuario(false, usuarioLogeado);
+
+			if (!Checks.estaVacio(codigosCarterasConSubcartera) && !Checks.estaVacio(codigosCarterasSinSubcartera)) {
+				hb.appendWhere("vvisita.carteraCodigo in ("+ RemUtils.join(",", codigosCarterasConSubcartera) +") " +
+						"and vvisita.subcarteraCodigo in ("+ RemUtils.join(",", codigosSubcarteras) +") " +
+						"or vvisita.carteraCodigo in ("+ RemUtils.join(",", codigosCarterasSinSubcartera) +")");
+			} else if (!Checks.estaVacio(codigosCarterasConSubcartera) && Checks.estaVacio(codigosCarterasSinSubcartera)) {
+				hb.appendWhere("vvisita.carteraCodigo in ("+ RemUtils.join(",", codigosCarterasConSubcartera)+") " +
+						"and vvisita.subcarteraCodigo in ("+ RemUtils.join(",", codigosSubcarteras) +")");
 			}
 		}
-		
-		if(!Checks.esNulo(subcarteras) && !subcarteras.isEmpty()) {
-			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vvisita.subcarteraCodigo", subcarteras);
+
+		List<String> codigosCarteras = usuarioRemApi.getCodigosCarterasUsuario(null, usuarioLogeado);
+
+		if (!Checks.esNulo(dtoVisitasFilter.getCarteraCodigo())) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vvisita.carteraCodigo", dtoVisitasFilter.getCarteraCodigo());
+		} else if (!Checks.estaVacio(codigosCarteras) && Checks.estaVacio(codigosSubcarteras)) {
+			HQLBuilder.addFiltroWhereInSiNotNull(hb, "vvisita.carteraCodigo", codigosCarteras);
 		}
 
 		if(!Checks.esNulo(dtoVisitasFilter.getNumVisitaRem())){
@@ -126,10 +137,6 @@ public class VisitaDaoImpl extends AbstractEntityDao<Visita, Long> implements Vi
 
 		if(!Checks.esNulo(dtoVisitasFilter.getNumActivo())){
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vvisita.numActivo", dtoVisitasFilter.getNumActivo().toString());
-		}
-		
-		if(!Checks.esNulo(dtoVisitasFilter.getCarteraCodigo())){
-			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vvisita.carteraCodigo", dtoVisitasFilter.getCarteraCodigo());
 		}
 
 		Page pageVisitas = HibernateQueryUtils.page(this, hb, dtoVisitasFilter);

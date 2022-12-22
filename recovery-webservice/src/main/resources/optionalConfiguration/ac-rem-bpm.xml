@@ -912,6 +912,10 @@
             	def funcionesTramitesManager = ctx.getBean("funcionesTramitesManager");
 				return funcionesTramitesManager.tieneIbanInformado(tareaExterna);
 			}
+			def checkOfertaConcurrencia = {
+				def concurrenciaManager = ctx.getBean("concurrenciaManager");
+				return concurrenciaManager.checkOfertaConcurrencia(tareaExterna);
+			}
            
   			 ]]></value>
   		</list>

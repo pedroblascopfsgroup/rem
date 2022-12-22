@@ -69,7 +69,6 @@ import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.model.dd.*;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
-import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.*;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PLANO;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PRINCIPAL;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PROPIEDAD;
@@ -87,6 +86,7 @@ import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
 import es.pfsgroup.plugin.rem.trabajo.dao.TrabajoDao;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
+import es.pfsgroup.plugin.rem.usuarioRem.UsuarioRemApi;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -259,6 +259,9 @@ public class ActivoAdapter {
 
 	@Autowired
 	private TramitacionOfertasApi tramitacionOfertasApi;
+
+	@Autowired
+	private UsuarioRemApi usuarioRemApi;
 	
 	private static final String CONSTANTE_REST_CLIENT = "rest.client.gestor.documental.constante";
 	public static final String OFERTA_INCOMPATIBLE_MSG = "El tipo de oferta es incompatible con el destino comercial del activo";
@@ -1604,17 +1607,6 @@ public class ActivoAdapter {
 	public Object getActivos(DtoActivoFilter dtoActivoFiltro) {
 
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,
-				genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
-				
-		if (!Checks.esNulo(usuarioCartera)){
-			if(!Checks.esNulo(usuarioCartera.getSubCartera())){
-				dtoActivoFiltro.setEntidadPropietariaCodigo(usuarioCartera.getCartera().getCodigo());
-				dtoActivoFiltro.setSubcarteraCodigo(usuarioCartera.getSubCartera().getCodigo());
-			}else{
-				dtoActivoFiltro.setEntidadPropietariaCodigo(usuarioCartera.getCartera().getCodigo());
-			}
-		}
 		
 		DDIdentificacionGestoria gestoria = gestorActivoApi.isGestoria(usuarioLogado);
 		if (!Checks.esNulo(gestoria)) {
@@ -1953,13 +1945,11 @@ public class ActivoAdapter {
 		List<DtoListadoTramites> listadoTramitesDto = new ArrayList<DtoListadoTramites>();
 		List<VBusquedaTramitesActivo> tramitesActivo = genericDao.getList(VBusquedaTramitesActivo.class, filtro);
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,
-				genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
+		List<String> codigosCarteras = usuarioRemApi.getCodigosCarterasUsuario(null, usuarioLogado);
+
 		boolean esUsuarioBBVA = false;
-		if(usuarioCartera != null && usuarioCartera.getCartera() != null) {
-			esUsuarioBBVA = DDCartera.CODIGO_CARTERA_BBVA.equals(usuarioCartera.getCartera().getCodigo());
-		}
-		
+		if(codigosCarteras.contains(DDCartera.CODIGO_CARTERA_BBVA))
+			esUsuarioBBVA = true;
 		
 		for (VBusquedaTramitesActivo tramite : tramitesActivo) {
 			

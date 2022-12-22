@@ -9,7 +9,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,9 +29,6 @@ import es.pfsgroup.plugin.rem.model.GrupoUsuario;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
-import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
-import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.CambiosBDDaoError;
-import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.FieldInfo;
 
 @Repository("IntegracionJupiterDao")
 public class IntegracionJupiterDaoImpl extends AbstractEntityDao<MapeoJupiterREM, Long> implements IntegracionJupiterDao {
@@ -49,6 +45,8 @@ public class IntegracionJupiterDaoImpl extends AbstractEntityDao<MapeoJupiterREM
 	private static final String UCA_DESCRIPCION = "cartera.descripcion";
 	private static final String SUB_CARTERA = "subCartera";
 	private static final String UCA_DESCRIPCION_SUB = "subCartera.descripcion";
+	private static final String UCA_CODIGO_SUB = "subCartera.codigo";
+	private static final String UCA_CODIGO_CAR = "cartera.codigo";
 
 	private static final Log logger = LogFactory.getLog(IntegracionJupiterDaoImpl.class);
 	
@@ -193,7 +191,6 @@ public class IntegracionJupiterDaoImpl extends AbstractEntityDao<MapeoJupiterREM
 				usuarioCarteraNuevo.setCartera(cartera);
 				genericDao.save(UsuarioCartera.class, usuarioCarteraNuevo);
 				logger.debug("Creando asociacion cartera " + codigoCartera + " - usuario " + usuario.getUsername());
-				break; // Sólo puede haber una cartera activa
 			} else {
 				logger.error("No existe la cartera " + codigoCartera + " en REM: no se crea asociacion con el usuario " + usuario.getUsername());
 			}
@@ -204,35 +201,33 @@ public class IntegracionJupiterDaoImpl extends AbstractEntityDao<MapeoJupiterREM
 	public void actualizarSubcarteras(Usuario usuario, List<String> altasSubcarteras, List<String> bajasSubcarteras) {
 		String username =  usuario.getUsername();
 		Filter filtroUsuario = obtenerFiltroIdUsuario(usuario);
-		for (String descSubcartera : bajasSubcarteras) {
-			genericDao.delete(UsuarioCartera.class, filtroUsuario, obtenerFiltroUCADescripcionSubcartera(descSubcartera));
-			logger.debug("Eliminando asociacion subcartera " + descSubcartera + " - usuario " + username);
-		}
-		String codigoCarteraParaSubcarterasPreexistentes = "";
-		List<UsuarioCartera> subcarterasPreexistentes = genericDao.getList(UsuarioCartera.class, filtroUsuario, 
-				genericDao.createFilter(FilterType.NOTNULL, SUB_CARTERA));
-		if (subcarterasPreexistentes != null && subcarterasPreexistentes.size()>0) {
-			codigoCarteraParaSubcarterasPreexistentes = subcarterasPreexistentes.get(0).getCartera().getCodigo();
-		}
-		for (String descSubcartera : altasSubcarteras) {
-			DDSubcartera subcartera = genericDao.get(DDSubcartera.class, obtenerFiltroCodigoSubcartera(descSubcartera));
-			if (subcartera != null) {
-				if ("".contentEquals(codigoCarteraParaSubcarterasPreexistentes)) {
-					codigoCarteraParaSubcarterasPreexistentes = subcartera.getCarteraCodigo();
+		
+			for (String codigoSubcartera : bajasSubcarteras) {
+				try {
+					genericDao.delete(UsuarioCartera.class, filtroUsuario, obtenerFiltroSubcarteraByCodigoSubcartera(codigoSubcartera));
+					logger.debug("Eliminando asociacion subcartera " + codigoSubcartera + " - usuario " + username);
+				}catch(Exception e) {
+					logger.error("Error al agregar subcartera " + e.getMessage());
+					logger.error("Codigo subcartera error " + codigoSubcartera);
 				}
-				if (codigoCarteraParaSubcarterasPreexistentes.contentEquals(subcartera.getCarteraCodigo())) {
+		}
+		
+		for (String codigo : altasSubcarteras) {
+			try {
+				DDSubcartera subcartera = genericDao.get(DDSubcartera.class, obtenerFiltroByCodigo(codigo));
+				if (subcartera != null) {
 					UsuarioCartera usuarioSubcarteraNuevo = new UsuarioCartera();
 					usuarioSubcarteraNuevo.setUsuario(usuario);
 					usuarioSubcarteraNuevo.setCartera(subcartera.getCartera());
 					usuarioSubcarteraNuevo.setSubCartera(subcartera);
 					genericDao.save(UsuarioCartera.class, usuarioSubcarteraNuevo);
-					logger.debug("Creando asociacion subcartera " + descSubcartera + " - usuario " + username);
+					logger.debug("Creando asociacion subcartera " + codigo + " - usuario " + username);
 				} else {
-					logger.debug("No creamos asociacion subcartera " + descSubcartera + " - usuario " + username 
-							+ " porque pertenece a otra cartera diferente que la/s subcartera/s preexistente/s ");
+					logger.error("No existe la subcartera " + codigo + " en REM: no se crea asociacion con el usuario " + username);
 				}
-			} else {
-				logger.error("No existe la subcartera " + descSubcartera + " en REM: no se crea asociacion con el usuario " + username);
+			}catch(Exception e) {
+				logger.error("Error al agregar subcartera " + e.getMessage());
+				logger.error("Codigo subcartera error " + codigo);
 			}
 		}
 	}
@@ -320,11 +315,12 @@ public class IntegracionJupiterDaoImpl extends AbstractEntityDao<MapeoJupiterREM
 	public List<String> getCodigosCarterasREM(Usuario usuario) {
 		List<String> resultado = new ArrayList<String>();
 		Filter filtroUca = genericDao.createFilter(FilterType.EQUALS, USUARIO_ID, usuario.getId());
-		List<UsuarioCartera> uca = genericDao.getList(UsuarioCartera.class, filtroUca, 
+		List<UsuarioCartera> ucaList = genericDao.getList(UsuarioCartera.class, filtroUca, 
 				genericDao.createFilter(FilterType.NULL, SUB_CARTERA));
-		if (uca != null && !uca.isEmpty()) {
-			resultado.add(uca.get(0).getCartera().getDescripcion());
+		for (UsuarioCartera usuarioCartera : ucaList) {
+			resultado.add(usuarioCartera.getCartera().getDescripcion());
 		}
+	
 		return resultado;
 	}
 
@@ -336,7 +332,7 @@ public class IntegracionJupiterDaoImpl extends AbstractEntityDao<MapeoJupiterREM
 		if (uca != null && !uca.isEmpty()) {
 			for (UsuarioCartera uc : uca) {
 				if (uc.getSubCartera() != null && !uc.getSubCartera().getAuditoria().isBorrado()) {
-					resultado.add(uc.getSubCartera().getDescripcion());
+					resultado.add(uc.getSubCartera().getCodigo());
 				}
 			}
 		}
@@ -428,10 +424,41 @@ public class IntegracionJupiterDaoImpl extends AbstractEntityDao<MapeoJupiterREM
 		return genericDao.createFilter(FilterType.EQUALS, UCA_DESCRIPCION_SUB, descSubcartera);
 	}
 	
+	private Filter obtenerFiltroSubcarteraByCodigoSubcartera(String codigoSubcartera) {
+		return genericDao.createFilter(FilterType.EQUALS, UCA_CODIGO_SUB, codigoSubcartera);
+	}
+	
+	private Filter obtenerFiltroByCodigo(String codigo) {
+		return genericDao.createFilter(FilterType.EQUALS, PERFIL_CODIGO, codigo);
+	}
+	
+	private Filter obtenerFiltroCarteraByCodigo(String codigo) {
+		return genericDao.createFilter(FilterType.EQUALS, UCA_CODIGO_CAR, codigo);
+	}
+	
 	private void eliminarCarterasFiltro(Filter filtroUsuario, String username) {
 		Filter filtroCarteraNotNull = genericDao.createFilter(FilterType.NULL, SUB_CARTERA);
 		genericDao.delete(UsuarioCartera.class, filtroUsuario, filtroCarteraNotNull);
 		logger.info("Eliminamos carteras previamente asociadas al usuario " + username + " dado que tiene subcarteras asociadas.");
 	}
 
+	@Override
+	public DDCartera obtenerCarteraBySubcarteraCodigo(String codSubcartera) {
+		DDSubcartera subcartera = genericDao.get(DDSubcartera.class, obtenerFiltroByCodigo(codSubcartera));
+		return subcartera.getCartera();
+	}
+	
+	@Override
+	public void eliminarCarteraByUsuarioAndCartera(Usuario usuario, String codCartera) {
+		Filter filtroUsuario = obtenerFiltroIdUsuario(usuario);
+		Filter filtroCartera = obtenerFiltroCarteraByCodigo(codCartera);
+		eliminarCarteraByUsuarioAndCartera(filtroUsuario, filtroCartera, usuario.getUsername());
+		logger.info("Se ha eliminado la cartera:" + codCartera);
+	}
+	
+	private void eliminarCarteraByUsuarioAndCartera(Filter filtroUsuario, Filter filtroCartera, String username) {
+		Filter filtroCarteraNotNull = genericDao.createFilter(FilterType.NULL, SUB_CARTERA);
+		genericDao.delete(UsuarioCartera.class, filtroUsuario, filtroCarteraNotNull, filtroCartera);
+		logger.info("Eliminamos carteras previamente asociadas al usuario " + username + " dado que tiene subcarteras asociadas.");
+	}
 }

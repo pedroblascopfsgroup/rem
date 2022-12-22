@@ -1936,17 +1936,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Override
 	public Page getActivosPublicacion(DtoActivosPublicacion dtoActivosPublicacion) {
-		// Búsqueda carterizada
-		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,
-				genericDao.createFilter(FilterType.EQUALS, "usuario.id", adapter.getUsuarioLogado().getId()));
-		if (!Checks.esNulo(usuarioCartera)) {
-			if (!Checks.esNulo(usuarioCartera.getSubCartera())) {
-				dtoActivosPublicacion.setCartera(usuarioCartera.getCartera().getCodigo());
-				dtoActivosPublicacion.setSubCartera(usuarioCartera.getSubCartera().getCodigo());
-			} else {
-				dtoActivosPublicacion.setCartera(usuarioCartera.getCartera().getCodigo());
-			}
-		}
 
 		// Filtro por alquiler y venta
 		String filtroEstadoPublicacionAlquiler = dtoActivosPublicacion.getEstadoPublicacionAlquilerCodigo();
@@ -5903,16 +5892,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 			DDIdentificacionGestoria ige = gestorActivoManager.isGestoria(usuarioLogado);
 			List<UsuarioCartera> usuarioCartera = genericDao.getList(UsuarioCartera.class,genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
-			List<Long> subcarteras = new ArrayList<Long>();
 			Activo activo = genericDao.get(Activo.class, genericDao.createFilter(FilterType.EQUALS, "numActivo", numActivo));
 			esGestoria = !Checks.esNulo(ige);
 			
 			if (activo != null) {
-				for (UsuarioCartera uca : usuarioCartera) {
-					if (uca.getSubCartera() != null) {
-						subcarteras.add(uca.getSubCartera().getId());
-					}
-				}
 				
 				if (esGestoria) {
 					esGestoriaDelActivo = Long.parseLong(rawDao.getExecuteSQL("SELECT COUNT(*) "
@@ -5925,7 +5908,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				}
 					
 				if(usuarioCartera != null && !usuarioCartera.isEmpty()) {
-					activo = activoDao.existeActivoUsuarioCarterizado(numActivo, usuarioCartera.get(0).getCartera().getId(), subcarteras);
+					activo = activoDao.existeActivoUsuarioCarterizado(numActivo, null, null);
 					if (activo != null) {
 						return activo.getId();
 					} else {

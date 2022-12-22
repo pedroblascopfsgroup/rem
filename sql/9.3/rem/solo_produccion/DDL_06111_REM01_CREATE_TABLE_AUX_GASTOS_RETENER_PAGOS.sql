@@ -46,8 +46,9 @@ END IF;
 EXECUTE IMMEDIATE '
 CREATE TABLE '||V_ESQUEMA_1||'.'||V_TABLA||' AS
 (
-select FAC_ID_REM,
-       dd_ega_id
+select 
+     FAC_ID_REM
+    ,dd_ega_id
 from (
 WITH PROPIETARIOS_ACTIVOS AS(
     SELECT /*+ MATERIALIZE */ GLD.GPV_ID, PRO.PRO_ID 

@@ -141,7 +141,7 @@ public class LogTrustEvento extends LogTrust {
 		builder.append(SEPARADOR);
 		builder.append(getUsernameUsuarioLogueado());
 		builder.append(SEPARADOR);
-		builder.append(getDescripcionCarteraUsuarioLogueado());
+		builder.append(getDescripcionesCarterasUsuarioLogueado());
 		builder.append(SEPARADOR);
 		builder.append(this.obtenerStringCodigoEstado(codigoEstadoPeticion));
 		builder.append(SEPARADOR);

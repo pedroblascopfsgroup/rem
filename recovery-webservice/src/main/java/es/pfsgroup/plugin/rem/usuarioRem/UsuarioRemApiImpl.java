@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.model.UsuarioCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.devon.beans.Service;
@@ -33,6 +36,9 @@ public class UsuarioRemApiImpl implements UsuarioRemApi {
 	
 	@Autowired
 	private GestorExpedienteComercialApi gestorExpedienteComercialApi;
+
+	@Autowired
+	private GenericAdapter adapter;
 
 	public List<String> getGestorSustitutoUsuario(Usuario usuario) {
 
@@ -128,7 +134,7 @@ public class UsuarioRemApiImpl implements UsuarioRemApi {
 			}
 		}
 	}
-	
+
 	public void rellenaListaCorreosPorDefecto(String codigoTipo, List<String> mailsPara){
 		String usuarioName = remUtils.obtenerUsuarioPorDefecto(codigoTipo);
 		Filter filtroUsuarioPorDefecto = null;
@@ -139,5 +145,69 @@ public class UsuarioRemApiImpl implements UsuarioRemApi {
 				mailsPara.add(usuPorDefecto.getEmail());
 			}
 		}
+	}
+
+	/**
+	 * Método que devuelve los códigos de las carteras relacionadas con el usuario mediante la UCA.
+	 * @param tieneSubcartera Parámetro que indica que carteras recuperará:
+	 *                        - null: Todas las carteras relacionadas con el usuario.
+	 *                        - true: Las carteras relacioandas con el usuario que tengan subcartera informada.
+	 *                        - false: Las carteras relacionadas con el usuario que NO tengan la subcartera infromada.
+	 * @param usuario Usuario logueado.
+	 * @return Devuelve una lista de Strings con los códigos de las carteras.
+	 */
+	public List<String> getCodigosCarterasUsuario(Boolean tieneSubcartera, Usuario usuario) {
+
+		List<String> codigosCarterasUsuarioLogado = new ArrayList<String>();
+
+		if(Checks.esNulo(usuario))
+			usuario = adapter.getUsuarioLogado();
+
+		List<UsuarioCartera> usuarioCarteraList = genericDao.getList(UsuarioCartera.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuario.getId()));
+
+		if(!Checks.estaVacio(usuarioCarteraList)) {
+			for(UsuarioCartera usuarioCartera : usuarioCarteraList) {
+				if(usuarioCartera.getCartera() != null && !codigosCarterasUsuarioLogado.contains(usuarioCartera.getCartera().getCodigo())) {
+					if(tieneSubcartera == null)
+						codigosCarterasUsuarioLogado.add(usuarioCartera.getCartera().getCodigo());
+					else if(tieneSubcartera && usuarioCartera.getSubCartera() != null)
+						codigosCarterasUsuarioLogado.add(usuarioCartera.getCartera().getCodigo());
+					else if (!tieneSubcartera && usuarioCartera.getSubCartera() == null)
+						codigosCarterasUsuarioLogado.add(usuarioCartera.getCartera().getCodigo());
+				}
+			}
+		}
+
+		return codigosCarterasUsuarioLogado;
+	}
+
+	public List<String> getCodigosSubcarterasUsuario(String codCartera, Usuario usuario) {
+
+		List<String> codigosSubcarterasUsuarioLogado = new ArrayList<String>();
+
+		if(Checks.esNulo(usuario))
+			usuario = adapter.getUsuarioLogado();
+
+		List<UsuarioCartera> usuarioCarteraList;
+
+		if(Checks.esNulo(codCartera)) {
+			usuarioCarteraList = genericDao.getList(UsuarioCartera.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuario.getId()));
+		} else {
+			DDCartera cartera = genericDao.get(DDCartera.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codCartera));
+			if(cartera == null)
+				return codigosSubcarterasUsuarioLogado;
+
+			usuarioCarteraList = genericDao.getList(UsuarioCartera.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuario.getId()),
+					genericDao.createFilter(FilterType.EQUALS, "cartera.id", cartera.getId()));
+		}
+
+		if(!Checks.estaVacio(usuarioCarteraList)) {
+			for(UsuarioCartera usuarioCartera : usuarioCarteraList) {
+				if(usuarioCartera.getSubCartera() != null && !codigosSubcarterasUsuarioLogado.contains(usuarioCartera.getSubCartera().getCodigo()))
+					codigosSubcarterasUsuarioLogado.add(usuarioCartera.getSubCartera().getCodigo());
+			}
+		}
+
+		return codigosSubcarterasUsuarioLogado;
 	}
 }

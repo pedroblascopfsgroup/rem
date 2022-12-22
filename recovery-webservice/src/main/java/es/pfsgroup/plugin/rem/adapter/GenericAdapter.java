@@ -1,8 +1,10 @@
 package es.pfsgroup.plugin.rem.adapter;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -107,9 +109,9 @@ public class GenericAdapter {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public List<Dictionary> getDiccionario(String diccionario) {
 
-		List lista = new ArrayList();		
+		Set valoresDiccionario = new HashSet();
 		if("gestorCommiteLiberbank".equals(diccionario)) {			
-			lista.add(diccionarioApi.dameValorDiccionarioByCod(DDCartera.class, DDCartera.CODIGO_CARTERA_LIBERBANK));
+			valoresDiccionario.add(diccionarioApi.dameValorDiccionarioByCod(DDCartera.class, DDCartera.CODIGO_CARTERA_LIBERBANK));
 		}else {
 			List<UsuarioCartera> usuarioCartera = null;
 			Class<?> clase = DiccionarioTargetClassMap.convertToTargetClass(diccionario);
@@ -117,29 +119,26 @@ public class GenericAdapter {
 				usuarioCartera = genericDao.getList(UsuarioCartera.class,	genericDao.createFilter(FilterType.EQUALS, "usuario.id", getUsuarioLogado().getId()));
 				if (usuarioCartera != null && !usuarioCartera.isEmpty()) {
 					for (UsuarioCartera usu : usuarioCartera) {
-						if (DDCartera.class.equals(clase) && !lista.contains(diccionarioApi.dameValorDiccionarioByCod(clase, usu.getCartera().getCodigo()))) {
-							lista.add(diccionarioApi.dameValorDiccionarioByCod(clase, usu.getCartera().getCodigo()));
-						} else if (DDSubcartera.class.equals(clase) && usu.getSubCartera() != null) {
-							lista.add(diccionarioApi.dameValorDiccionarioByCod(clase, usu.getSubCartera().getCodigo()));
-						}
-					}	
-					if (DDSubcartera.class.equals(clase) && lista.isEmpty()) {
-						Filter f1 = genericDao.createFilter(FilterType.EQUALS, "cartera.codigo", usuarioCartera.get(0).getCartera().getCodigo());
-						Filter f2 = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
-						List<DDSubcartera> subcarteras = genericDao.getList(DDSubcartera.class, f1, f2);
-						
-						for (DDSubcartera subcartera : subcarteras) {
-							lista.add(diccionarioApi.dameValorDiccionarioByCod(clase, subcartera.getCodigo()));
+						if (DDCartera.class.equals(clase)) {
+							valoresDiccionario.add(diccionarioApi.dameValorDiccionarioByCod(clase, usu.getCartera().getCodigo()));
+						} else if (usu.getSubCartera() != null) {
+							valoresDiccionario.add(diccionarioApi.dameValorDiccionarioByCod(clase, usu.getSubCartera().getCodigo()));
+						} else {
+							Filter f1 = genericDao.createFilter(FilterType.EQUALS, "cartera.codigo", usu.getCartera().getCodigo());
+							Filter f2 = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+							List<DDSubcartera> subcarteras = genericDao.getList(DDSubcartera.class, f1, f2);
+
+							valoresDiccionario.addAll(subcarteras);
 						}
 					}
 				}				
 			}
 			
 			if(usuarioCartera == null || usuarioCartera.isEmpty()) {
-				lista = diccionarioApi.dameValoresDiccionario(clase);
+				valoresDiccionario.addAll(diccionarioApi.dameValoresDiccionario(clase));
 			}
 		}
-		return lista;
+		return new ArrayList<Dictionary>(valoresDiccionario);
 	}
 	
 	public List<Dictionary> getDiccionarioDeGastos(String diccionario) {

@@ -1,0 +1,99 @@
+--/*
+--##########################################
+--## AUTOR=IVAN REPISO
+--## FECHA_CREACION=20221222
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=REMVIP-12072
+--## PRODUCTO=NO
+--##
+--## Finalidad:
+--## INSTRUCCIONES:
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
+SET DEFINE OFF;
+DECLARE
+
+    V_ESQUEMA VARCHAR2(25 CHAR) := '#ESQUEMA#'; -- Configuracion Esquema.
+    V_ESQUEMA_MASTER VARCHAR2(25 CHAR) := '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master.
+    ERR_NUM NUMBER(25); -- Vble. auxiliar para registrar errores en el script.
+    ERR_MSG VARCHAR2(10024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+   
+    V_USUARIOMODIFICAR VARCHAR(100 CHAR) := 'REMVIP-12072'; -- Vble. para el usuario modificar.
+    V_MSQL VARCHAR2(32000 CHAR); -- Vble. auxiliar para almacenar la sentencia a ejecutar.
+	V_COUNT VARCHAR2(16 CHAR); -- Vble. auxiliar para almacenar si existe el gestor en el activo.
+
+BEGIN	
+    
+    DBMS_OUTPUT.PUT_LINE('[INICIO]');
+    
+	DBMS_OUTPUT.PUT_LINE('	[INFO]	Borrado de la tabla de gestores: GEE_GESTOR_ENTIDAD');
+
+	V_MSQL := 'SELECT COUNT(1)
+				FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
+				JOIN '||V_ESQUEMA||'.DD_SCR_SUBCARTERA SCR ON SCR.DD_SCR_ID = ACT.DD_SCR_ID AND DD_SCR_CODIGO IN (''135'',''39'',''37'')
+				JOIN '||V_ESQUEMA||'.GAC_GESTOR_ADD_ACTIVO GAC ON GAC.ACT_ID = ACT.ACT_ID
+				JOIN '||V_ESQUEMA||'.GEE_GESTOR_ENTIDAD GEE ON GEE.GEE_ID = GAC.GEE_ID AND GEE.BORRADO = 0
+				JOIN '||V_ESQUEMA_MASTER||'.DD_TGE_TIPO_GESTOR TGE ON TGE.DD_TGE_ID = GEE.DD_TGE_ID AND DD_TGE_CODIGO = ''GIAADMT''
+				WHERE ACT.BORRADO = 0';
+	EXECUTE IMMEDIATE V_MSQL INTO V_COUNT;
+
+	IF V_COUNT > 0 THEN
+
+	   	V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.GEE_GESTOR_ENTIDAD T1 USING (
+	   	                SELECT DISTINCT GEE.GEE_ID
+        				FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
+        				JOIN '||V_ESQUEMA||'.DD_SCR_SUBCARTERA SCR ON SCR.DD_SCR_ID = ACT.DD_SCR_ID AND DD_SCR_CODIGO IN (''135'',''39'',''37'')
+        				JOIN '||V_ESQUEMA||'.GAC_GESTOR_ADD_ACTIVO GAC ON GAC.ACT_ID = ACT.ACT_ID
+        				JOIN '||V_ESQUEMA||'.GEE_GESTOR_ENTIDAD GEE ON GEE.GEE_ID = GAC.GEE_ID AND GEE.BORRADO = 0
+        				JOIN '||V_ESQUEMA_MASTER||'.DD_TGE_TIPO_GESTOR TGE ON TGE.DD_TGE_ID = GEE.DD_TGE_ID AND DD_TGE_CODIGO = ''GIAADMT''
+        				WHERE ACT.BORRADO = 0) T2
+        			ON (T1.GEE_ID = T2.GEE_ID)
+        			WHEN MATCHED THEN UPDATE SET
+        			T1.BORRADO = 1,
+        			T1.USUARIOBORRAR = '''||V_USUARIOMODIFICAR||''',
+        			T1.FECHABORRAR = SYSDATE';
+		EXECUTE IMMEDIATE V_MSQL;
+
+		DBMS_OUTPUT.PUT_LINE('[INFO]: '|| SQL%ROWCOUNT ||' REGISTROS BORRADOS GEE ');
+
+	END IF;
+
+	DBMS_OUTPUT.PUT_LINE('	[INFO]	Finalizado el periodo en la tabla histórica GEH_GESTOR_ENTIDAD_HIST');
+
+	V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.GEH_GESTOR_ENTIDAD_HIST T1 USING (
+                        SELECT DISTINCT GEH.GEH_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
+        				JOIN '||V_ESQUEMA||'.DD_SCR_SUBCARTERA SCR ON SCR.DD_SCR_ID = ACT.DD_SCR_ID AND DD_SCR_CODIGO IN (''135'',''39'',''37'')
+                        JOIN '||V_ESQUEMA||'.GAH_GESTOR_ACTIVO_HISTORICO GAC ON GAC.ACT_ID = ACT.ACT_ID
+                        JOIN '||V_ESQUEMA||'.GEH_GESTOR_ENTIDAD_HIST GEH ON GEH.GEH_ID = GAC.GEH_ID AND GEH.BORRADO = 0
+                        JOIN '||V_ESQUEMA_MASTER||'.DD_TGE_TIPO_GESTOR TGE ON TGE.DD_TGE_ID = GEH.DD_TGE_ID AND DD_TGE_CODIGO = ''GIAADMT''
+                        WHERE ACT.BORRADO = 0 AND GEH.GEH_FECHA_HASTA IS NULL) T2
+                    ON (T1.GEH_ID = T2.GEH_ID)
+                    WHEN MATCHED THEN UPDATE SET
+					T1.GEH_FECHA_HASTA = SYSDATE,
+					T1.USUARIOMODIFICAR = '''||V_USUARIOMODIFICAR||''',
+					T1.FECHAMODIFICAR = SYSDATE';
+    EXECUTE IMMEDIATE V_MSQL;
+
+    DBMS_OUTPUT.PUT_LINE('[INFO]: '|| SQL%ROWCOUNT ||' REGISTROS CON FECHA FIN GEH ');
+
+    DBMS_OUTPUT.PUT_LINE('[FIN]');
+    COMMIT;
+
+EXCEPTION
+     WHEN OTHERS THEN
+          ERR_NUM := SQLCODE;
+          ERR_MSG := SQLERRM;
+          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
+          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+          DBMS_OUTPUT.put_line(ERR_MSG);
+          ROLLBACK;
+          RAISE;   
+END;
+/
+EXIT;

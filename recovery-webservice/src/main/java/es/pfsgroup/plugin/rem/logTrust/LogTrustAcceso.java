@@ -27,7 +27,7 @@ public class LogTrustAcceso extends LogTrust {
 		builder.append(SEPARADOR);
 		builder.append(getUsernameUsuarioLogueado());
 		builder.append(SEPARADOR);
-		builder.append(getCodigoCarteraUsuarioLogueado());
+		builder.append(getCodigosCarterasUsuarioLogueado());
 		
 		this.registrarMensaje(builder.toString());
 	}

@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.api;
 import java.io.IOException;
 import java.util.List;
 
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.springframework.transaction.annotation.Transactional;
@@ -83,5 +84,7 @@ public interface ConcurrenciaApi {
 	List<VGridOfertasActivosAgrupacionConcurrencia> getListOfertasTerminadasConcurrentes(Long idActivo, Long idConcurrencia);
 
 	boolean getTabConcurrenciaByActivo(Activo activo);
+
+	boolean checkOfertaConcurrencia(TareaExterna tareaExterna);
 
 }

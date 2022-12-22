@@ -25,5 +25,9 @@ public interface UsuarioRemApi{
 	public void rellenaListaCorreos(Usuario usuarioGestor, String codigoTipo, List<String> mailsPara, List<String> mailsCC , boolean addDirector);
 	
 	public void rellenaListaCorreosPorDefecto(String codigoTipo, List<String> mailsPara);
+
+	public List<String> getCodigosCarterasUsuario(Boolean tieneSubcartera, Usuario usuario);
+
+	public List<String> getCodigosSubcarterasUsuario(String codCartera, Usuario usuario);
 	
 }

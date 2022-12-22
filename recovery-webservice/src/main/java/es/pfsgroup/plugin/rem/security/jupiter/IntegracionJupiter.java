@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.security.jupiter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -16,6 +17,7 @@ import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.utils.DbIdContextHolder;
 import es.capgemini.pfs.users.dao.UsuarioDao;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 
 @Service("integracionJupiter")
 public class IntegracionJupiter implements IntegracionJupiterApi {
@@ -122,7 +124,8 @@ public class IntegracionJupiter implements IntegracionJupiterApi {
 					List<String> codigosGruposJupiter = new ArrayList<String>();
 					List<String> codigosCarterasJupiter = new ArrayList<String>();
 					List<String> codigosSubcarterasJupiter = new ArrayList<String>();
-					traducirYSeparar(listaCodigosJupiter, mapaTraductor, codigosPerfilesJupiter, codigosGruposJupiter, codigosCarterasJupiter, codigosSubcarterasJupiter);
+					List<String> listaBajaCarterasPorTenerSubcartera = new ArrayList<String>();
+					traducirYSeparar(listaCodigosJupiter, mapaTraductor, codigosPerfilesJupiter, codigosGruposJupiter, codigosCarterasJupiter, codigosSubcarterasJupiter, listaBajaCarterasPorTenerSubcartera);
 					
 					List<String>  altasGrupos = new ArrayList<String>();
 					List<String>  bajasGrupos = new ArrayList<String>();
@@ -146,15 +149,11 @@ public class IntegracionJupiter implements IntegracionJupiterApi {
 						altasCarteras = new ArrayList<String>();
 					}
 					integracionJupiterDao.actualizarCarteras(usuario, altasCarteras, bajasCarteras);
-					int numCarteras = integracionJupiterDao.getCodigosCarterasREM(usuario).size();
-					
 					List<String> altasSubcarteras = new ArrayList<String>();
 					List<String> bajasSubcarteras = new ArrayList<String>();
 					List<String> codigosSubcarterasREM = integracionJupiterDao.getCodigosSubcarterasREM(usuario);
 					obtenerListaAltasBajas(codigosSubcarterasJupiter, codigosSubcarterasREM, altasSubcarteras, bajasSubcarteras);
-					if (numCarteras > 0 && codigosSubcarterasJupiter.size()>0) {
-						integracionJupiterDao.eliminarCarteras(usuario);
-					}
+					eliminarCarterasPorTenerSubcartera(listaBajaCarterasPorTenerSubcartera,usuario);
 					integracionJupiterDao.actualizarSubcarteras(usuario, altasSubcarteras, bajasSubcarteras);
 				}
 			} catch (Exception e) {
@@ -207,8 +206,8 @@ public class IntegracionJupiter implements IntegracionJupiterApi {
 
 	private void traducirYSeparar(List<String> listaCodigosJupiter, Map<String, MapeoJupiterREM> mapaTraductor,
 			List<String> codigosPerfiles, List<String> codigosGrupos, List<String> codigosCarteras,
-			List<String> codigosSubcarteras) {
-		
+			List<String> codigosSubcarteras, List<String> listaBajaCarterasPorTenerSubcartera) {
+		HashSet<String> listaBajaCarterasPorTenerSubcarteraNoRepetidas = new HashSet<String>();
 		for (String codigoJupiter : listaCodigosJupiter) {
 			String codigoJupiterCorregido = corregirCodigoJupiter(codigoJupiter);
 			if (!"".contentEquals(codigoJupiterCorregido.trim()) & !"999".contentEquals(codigoJupiterCorregido)) {
@@ -225,7 +224,10 @@ public class IntegracionJupiter implements IntegracionJupiterApi {
 						codigosCarteras.add(traduccion.getCodigoREM());
 					} else if (SUBCARTERA.equals(tipoPerfil)) {
 						//El código de subcartera viene con el código de cartera por delante más un separador <espacio>/<espacio>. Hay que extraerlo.
-						codigosSubcarteras.add(extraerCodigoSubcartera(traduccion.getCodigoREM()));
+						codigosSubcarteras.add(traduccion.getCodigoREM());
+						DDCartera cartera  = integracionJupiterDao.obtenerCarteraBySubcarteraCodigo(traduccion.getCodigoREM());
+						listaBajaCarterasPorTenerSubcarteraNoRepetidas.add(cartera.getCodigo());
+
 					} else {
 						logger.error("IntegracionJupiter: Error al traducir el codigo desde Jupiter: " + codigoJupiter + " tiene un tipo de perfil no soportado " + traduccion.getTipoPerfil());
 					}
@@ -233,6 +235,8 @@ public class IntegracionJupiter implements IntegracionJupiterApi {
 			}
 		}
 		
+		List<String> listaAuxiliar = new ArrayList<String>(listaBajaCarterasPorTenerSubcarteraNoRepetidas);
+		listaBajaCarterasPorTenerSubcartera.addAll(listaAuxiliar);
 	}
 
 	private String corregirCodigoJupiter(String codigoJupiter) {
@@ -249,14 +253,14 @@ public class IntegracionJupiter implements IntegracionJupiterApi {
 		}
 	}
 
-	private String extraerCodigoSubcartera(String codigoSubcarteraREM) {
-		final String SEPARADOR = " / "; 
-		if (codigoSubcarteraREM.length()<=SEPARADOR.length()) {
-			return codigoSubcarteraREM;
-		} else {
-			return codigoSubcarteraREM.split(SEPARADOR)[1];
-		}	
-	}
+//	private String extraerCodigoSubcartera(String codigoSubcarteraREM) {
+//		final String SEPARADOR = " / "; 
+//		if (codigoSubcarteraREM.length()<=SEPARADOR.length()) {
+//			return codigoSubcarteraREM;
+//		} else {
+//			return codigoSubcarteraREM.split(SEPARADOR)[1];
+//		}	
+//	}
 
 	private List<String> extraerListaCodigosJupiter(String listaRoles) {
 		
@@ -266,5 +270,12 @@ public class IntegracionJupiter implements IntegracionJupiterApi {
 		return listaJupiter;
 
 	}
+	
+	private void eliminarCarterasPorTenerSubcartera(List<String> listaBajaCarterasPorTenerSubcartera, Usuario usuario) {	
+		for (String cartera : listaBajaCarterasPorTenerSubcartera) {
+			integracionJupiterDao.eliminarCarteraByUsuarioAndCartera(usuario, cartera);
+		}
+	}
 
+	
 }

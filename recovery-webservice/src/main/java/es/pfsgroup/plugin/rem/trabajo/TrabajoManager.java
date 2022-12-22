@@ -23,6 +23,8 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import es.pfsgroup.commons.utils.HQLBuilder;
+import es.pfsgroup.plugin.rem.usuarioRem.UsuarioRemApi;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -115,7 +117,6 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.AdjuntoTrabajo;
 import es.pfsgroup.plugin.rem.model.AgendaTrabajo;
-import es.pfsgroup.plugin.rem.model.Albaran;
 import es.pfsgroup.plugin.rem.model.CFGComiteSancionador;
 import es.pfsgroup.plugin.rem.model.CFGFinalizarTrabajos;
 import es.pfsgroup.plugin.rem.model.CFGPlazosTareas;
@@ -145,7 +146,6 @@ import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.HistorificadorPestanas;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.Prefactura;
-import es.pfsgroup.plugin.rem.model.Prefacturas;
 import es.pfsgroup.plugin.rem.model.PresupuestoTrabajo;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
@@ -156,7 +156,6 @@ import es.pfsgroup.plugin.rem.model.TrabajoFoto;
 import es.pfsgroup.plugin.rem.model.TrabajoObservacion;
 import es.pfsgroup.plugin.rem.model.TrabajoProvisionSuplido;
 import es.pfsgroup.plugin.rem.model.TrabajoRecargosProveedor;
-import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VActivosAgrupacionTrabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajoParticipa;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajoPresupuesto;
@@ -372,6 +371,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	
 	@Autowired
 	private ActivoTrabajoDao activoTrabajoDao;
+
+	@Autowired
+	private UsuarioRemApi usuarioRemApi;
 	
 	@Resource(name = "entityTransactionManager")
 	private PlatformTransactionManager transactionManager;
@@ -398,25 +400,10 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		} else if (dto.getEsIncluidoFacturaGastos() != null) {
 			esIncluidoFactura = dto.getEsIncluidoFacturaGastos();
 		}
-		
 
-		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,
-				genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
-		
-		
 		if(dto.getEsHistoricoPeticionActivo() != null) {
 			esHistoricoPeticion = dto.getEsHistoricoPeticionActivo();
 		}
-		
-		if (!Checks.esNulo(usuarioCartera)){
-			if(!Checks.esNulo(usuarioCartera.getSubCartera())){
-				dto.setCartera(usuarioCartera.getCartera().getCodigo());
-				dto.setSubcartera(usuarioCartera.getSubCartera().getCodigo());
-			}else{
-				dto.setCartera(usuarioCartera.getCartera().getCodigo());
-			}
-		}
-		
 		
 		// Comprobar si el usuario es externo y, en tal caso, seteamos proveedor
 		// y según HREOS-2272 en el modulo de trabajos
@@ -3573,8 +3560,6 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		DtoGestionEconomicaTrabajo dtoTrabajo = new DtoGestionEconomicaTrabajo();
 		Usuario usuariologado = adapter.getUsuarioLogado();
 		String casoActual = esEstadoValidoGDAOProveedor(trabajo, usuariologado);
-		
-		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class, genericDao.createFilter(FilterType.EQUALS,"usuario.id" , usuariologado.getId()));
 
 		beanUtilNotNull.copyProperties(dtoTrabajo, trabajo);
 		beanUtilNotNull.copyProperty(dtoTrabajo.getNumTrabajo(), "numTrabajo", trabajo.getNumTrabajo());
@@ -3638,12 +3623,15 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			dtoTrabajo.setEsProveedorEditable(false);
 			dtoTrabajo.setEsGridSuplidosEditable(true);
 		}
-		
-		if(usuarioCartera != null) {
+
+		List<String> codigosCarteras = usuarioRemApi.getCodigosCarterasUsuario(null, usuariologado);
+
+		if(!Checks.estaVacio(codigosCarteras)) {
 			dtoTrabajo.setEsUsuarioCliente(true);
-		}else {
+		} else {
 			dtoTrabajo.setEsUsuarioCliente(false);
 		}
+
 		if(trabajo.getFechaCompromisoEjecucion() != null) {
 			dtoTrabajo.setFechaCompromisoEjecucion(trabajo.getFechaCompromisoEjecucion());
 		}

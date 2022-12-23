@@ -1,18 +1,19 @@
 --/*
 --#########################################
---## AUTOR=Santi Monzó
---## FECHA_CREACION=20211015
+--## AUTOR=Alejandra García
+--## FECHA_CREACION=20221209
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## ARTEFACTO=batch
---## INCIDENCIA_LINK=HREOS-15592
+--## INCIDENCIA_LINK=HREOS-19071
 --## PRODUCTO=NO
 --## 
 --## Finalidad:
 --##			
 --## INSTRUCCIONES:  
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial - [HREOS-15592] - Santi Monzó (20211015)
+--##        0.2 Modificar el insert de la APU para que todos los campos se cojan directamente del activo anterior sin cálculos - [HREOS-19071] - Alejandra García (20221209)
 --#########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -191,13 +192,9 @@ V_SQL := 'INSERT INTO     '||V_ESQUEMA||'.AUX_AGA_AGR
         ACT2.ACT_ID,
 		APU.DD_TPU_ID,
 
-		(SELECT DD_EPV_ID FROM '||V_ESQUEMA||'.DD_EPV_ESTADO_PUB_VENTA WHERE DD_EPV_CODIGO = ''03'') DD_EPV_ID,
+		APU.DD_EPV_ID DD_EPV_ID,
         
-        CASE
-        WHEN (SELECT DD_SCM_ID FROM '||V_ESQUEMA||'.DD_SCM_SITUACION_COMERCIAL WHERE DD_SCM_CODIGO = ''10'') = ACT.DD_SCM_ID 
-        THEN (SELECT DD_EPA_ID FROM '||V_ESQUEMA||'.DD_EPA_ESTADO_PUB_ALQUILER WHERE DD_EPA_CODIGO = ''03'')
-        ELSE (SELECT DD_EPA_ID FROM '||V_ESQUEMA||'.DD_EPA_ESTADO_PUB_ALQUILER WHERE DD_EPA_CODIGO = ''01'')
-        END DD_EPA_ID,
+        APU.DD_EPA_ID DD_EPA_ID,
 
 		APU.DD_TCO_ID,
 		APU.DD_MTO_V_ID,

@@ -1,25 +1,5 @@
 package es.pfsgroup.plugin.rem.adapter;
 
-import java.lang.reflect.InvocationTargetException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
-import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.interceptor.TransactionAspectSupport;
-
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
@@ -53,18 +33,17 @@ import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.model.NMBLocalizacionesBienInfo;
-import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
-import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionDao;
-import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
-import es.pfsgroup.plugin.rem.activo.dao.ActivoHistoricoPatrimonioDao;
-import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioDao;
+import es.pfsgroup.plugin.rem.activo.dao.*;
 import es.pfsgroup.plugin.rem.activo.publicacion.dao.ActivoPublicacionDao;
 import es.pfsgroup.plugin.rem.activo.valoracion.dao.ActivoValoracionDao;
+import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
+import es.pfsgroup.plugin.rem.concurrencia.dao.ConcurrenciaDao;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.api.AgrupacionAvisadorApi;
+import es.pfsgroup.plugin.rem.api.ConcurrenciaApi;
 import es.pfsgroup.plugin.rem.api.DepositoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
@@ -72,7 +51,6 @@ import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.api.TramitacionOfertasApi;
-import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
@@ -122,14 +100,15 @@ import es.pfsgroup.plugin.rem.model.OfertaExclusionBulk;
 import es.pfsgroup.plugin.rem.model.OfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.TmpClienteGDPR;
-import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VAgrupacionActivosGestorComercial;
 import es.pfsgroup.plugin.rem.model.VBusquedaVisitasDetalle;
 import es.pfsgroup.plugin.rem.model.VCalculosActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.VCambioActivoPrecioPublicacionAgrupaciones;
 import es.pfsgroup.plugin.rem.model.VCondicionantesAgrDisponibilidad;
 import es.pfsgroup.plugin.rem.model.VFechasPubCanalesAgr;
+import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionConcurrencia;
 import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionIncAnuladas;
+import es.pfsgroup.plugin.rem.model.VGridOfertasActivosConcurrencia;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
@@ -172,6 +151,19 @@ import es.pfsgroup.plugin.rem.validate.AgrupacionValidator;
 import es.pfsgroup.plugin.rem.validate.AgrupacionValidatorFactoryApi;
 import es.pfsgroup.plugin.rem.validate.BusinessValidators;
 import es.pfsgroup.recovery.api.UsuarioApi;
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
+
+import javax.annotation.Resource;
+import java.lang.reflect.InvocationTargetException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service
 public class AgrupacionAdapter {
@@ -258,7 +250,6 @@ public class AgrupacionAdapter {
 
 	@Autowired
 	private ParticularValidatorApi particularValidator;
-
 	
 	@Autowired
 	private ActivoValoracionDao activoValoracionDao;
@@ -300,11 +291,16 @@ public class AgrupacionAdapter {
 	private ParticularValidatorApi particularValidatorApi;
 	
 	@Autowired
+	private ConcurrenciaApi concurrenciaApi;
+
+	@Autowired
 	private DepositoApi depositoApi;
 
 	@Autowired
+	private ConcurrenciaDao concurrenciaDao;
+	
+	@Autowired
 	private TramitacionOfertasApi tramitacionOfertasApi;
-
 
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -977,6 +973,7 @@ public class AgrupacionAdapter {
 				}
 				dtoAgrupacion.setTramitable(activoAgrupacionApi.isTramitable(agrupacion));
 				dtoAgrupacion.setEsHayaHome(activoApi.esActivoHayaHome(null, agrupacion));
+				dtoAgrupacion.setEnConcurrencia(concurrenciaApi.isAgrupacionEnConcurrencia(agrupacion));
 			}
 			
 		
@@ -986,6 +983,11 @@ public class AgrupacionAdapter {
 				dtoAgrupacion.setDireccion(activoCero.getDireccionCompleta());
 			}
 			
+			
+			dtoAgrupacion.setAgrConOfertasConcurrencia(concurrenciaApi.tieneAgrupacionOfertasDeConcurrencia(agrupacion));
+			dtoAgrupacion.setIsConcurrencia(concurrenciaApi.isAgrupacionEnConcurrencia(agrupacion) || concurrenciaApi.tieneAgrupacionOfertasDeConcurrencia(agrupacion));
+			
+			dtoAgrupacion.setBloquearEdicionEstadoOfertas(concurrenciaApi.bloquearEditarOfertasPorConcurrenciaAgrupacion(agrupacion));
 
 		} catch (IllegalAccessException e) {
 			logger.error("error en agrupacionAdapter", e);
@@ -1055,17 +1057,6 @@ public class AgrupacionAdapter {
 	public Page getListAgrupaciones(DtoAgrupacionFilter dtoAgrupacionFilter) {
 
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,
-				genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
-				
-		if (!Checks.esNulo(usuarioCartera)){
-			if(!Checks.esNulo(usuarioCartera.getSubCartera())){
-				dtoAgrupacionFilter.setCodCartera(usuarioCartera.getCartera().getCodigo());
-				dtoAgrupacionFilter.setSubcarteraCodigo(usuarioCartera.getSubCartera().getCodigo());
-			}else{
-				dtoAgrupacionFilter.setCodCartera(usuarioCartera.getCartera().getCodigo());
-			}
-		}
 
 		Page temp = (Page) activoAgrupacionApi.getListAgrupaciones(dtoAgrupacionFilter, usuarioLogado);
 		return temp;
@@ -1167,6 +1158,18 @@ public class AgrupacionAdapter {
 			}
 		}
 		
+		if(concurrenciaApi.tieneActivoOfertasDeConcurrencia(activo))
+			throw new JsonViewerException("El activo que intenta insertar tiene ofertas en periodo de concurrencia");
+
+		if(concurrenciaApi.isActivoEnConcurrencia(activo))
+			throw new JsonViewerException("El activo que intenta insertar se encuetra en periodo de concurrencia");
+
+		if(concurrenciaApi.tieneAgrupacionOfertasDeConcurrencia(agrupacion))
+			throw new JsonViewerException("La agrupación tiene ofertas en un periodo de concurrencia");
+
+		if(concurrenciaApi.isAgrupacionEnConcurrencia(agrupacion))
+			throw new JsonViewerException("La agrupación está en un periodo de concurrencia");
+
 		if (activo != null && activo.getNumActivo() != null) {
 			if (agrupacion != null && 
 					(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())
@@ -1471,6 +1474,39 @@ public class AgrupacionAdapter {
 
 		try {
 			// Validaciones
+			if (Checks.esNulo(agrupacion)) {
+				throw new JsonViewerException("La agrupación no existe");
+			}
+
+			if (Checks.esNulo(activo)) {
+				throw new JsonViewerException("El activo no existe");
+			}
+
+			Filter filterAga = genericDao.createFilter(FilterType.EQUALS, "agrupacion.id", agrupacion.getId());
+			List <ActivoAgrupacionActivo> activoAgrupacion = genericDao.getList(ActivoAgrupacionActivo.class, filterAga);
+
+			if (activoAgrupacion != null) {
+				for (ActivoAgrupacionActivo activoAgrupacionActivo : activoAgrupacion) {
+					if (activoAgrupacionActivo != null) {
+						if (activoAgrupacionActivo.getActivo().getNumActivo().equals(activo.getNumActivo())) {
+							return;
+						}
+					}
+				}
+			}
+
+			if(concurrenciaApi.tieneActivoOfertasDeConcurrencia(activo))
+				throw new JsonViewerException("El activo que intenta insertar tiene ofertas en periodo de concurrencia");
+
+			if(concurrenciaApi.isActivoEnConcurrencia(activo))
+				throw new JsonViewerException("El activo que intenta insertar se encuetra en periodo de concurrencia");
+
+			if(concurrenciaApi.tieneAgrupacionOfertasDeConcurrencia(agrupacion))
+				throw new JsonViewerException("La agrupación tiene ofertas en un periodo de concurrencia");
+
+			if(concurrenciaApi.isAgrupacionEnConcurrencia(agrupacion))
+				throw new JsonViewerException("La agrupación está en un periodo de concurrencia");
+
 			int num = activoAgrupacionActivoApi.numActivosPorActivoAgrupacion(agrupacion.getId());
 
 			// Si es el primer activo, validamos si tenemos los datos necesarios
@@ -2902,7 +2938,7 @@ public class AgrupacionAdapter {
 				if (dto.getTelefono2Rte() != null) {
 					clienteComercial.setTelefonoRepresentante2(dto.getTelefono2Rte());
 				}
-				
+
 				if (dto.getProvinciaRteCodigo() != null && !dto.getProvinciaRteCodigo().trim().isEmpty())
 					clienteComercial.setProvinciaRepresentante(genericDao.get(
 							DDProvincia.class,genericDao.createFilter(
@@ -3074,7 +3110,9 @@ public class AgrupacionAdapter {
 			
 			if(activo != null && activo.getSubcartera() != null &&
 					(DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(activo.getSubcartera().getCodigo())
-					|| DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo()))) {
+					|| DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())
+					|| DDSubcartera.CODIGO_JAGUAR.equals(activo.getSubcartera().getCodigo())
+					|| DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(activo.getSubcartera().getCodigo()))) {
 				String codigoBulk = Double.parseDouble(dto.getImporteOferta()) > 750000d 
 						? DDSinSiNo.CODIGO_SI : DDSinSiNo.CODIGO_NO;
 				
@@ -3197,7 +3235,7 @@ public class AgrupacionAdapter {
 					
 				ofertaApi.setEstadoOfertaBC(ofertaNueva, null);
 				ofrCaixa.setCanalDistribucionBc(calcularCanalDistribucionBcOfrCaixa(agrupacion, oferta.getTipoOferta()));
-				
+
 				if (dto.getCheckSubasta() != null){
 					ofrCaixa.setCheckSubasta(dto.getCheckSubasta());
 					genericDao.save(OfertaCaixa.class,ofrCaixa);
@@ -3206,6 +3244,8 @@ public class AgrupacionAdapter {
 				if (DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION.equals(codigoEstado)) {
 					ofertaApi.llamadaPbc(oferta, DDTipoOfertaAcciones.ACCION_SOLICITUD_DOC_MINIMA);
 				}
+
+				ofertaApi.setEstadoOfertaBC(oferta, null);
 
 			}
 			
@@ -5610,6 +5650,24 @@ public class AgrupacionAdapter {
 	public DtoAgrupacionesCreateDelete createAgrupacionesGrid(DtoAgrupacionesCreateDelete dto) throws Exception {		
 		dto.setTipoAgrupacion(dto.getTipoAgrupacionDescripcion());
 		return this.createAgrupacion(dto);
+	}
+	
+	public List<VGridOfertasActivosConcurrencia> getListOfertasVivasConcurrenciaAgrupacion(Long idAgrupacion) {
+		
+		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(idAgrupacion);
+		
+		return concurrenciaDao.getListOfertasVivasAgrupacionConcurrentes(agrupacion.getId(), agrupacion.getNumAgrupRem(), null);
+
+	}
+
+	public List<VGridOfertasActivosAgrupacionConcurrencia> getListOfertasTerminadasConcurrenciaAgrupacion(Long idAgrupacion) {
+
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idAgrupacion", idAgrupacion);
+
+		List<VGridOfertasActivosAgrupacionConcurrencia> ofertasAgrupacion = genericDao.getList(VGridOfertasActivosAgrupacionConcurrencia.class, filtro);
+
+		return ofertasAgrupacion;
+
 	}
 
 

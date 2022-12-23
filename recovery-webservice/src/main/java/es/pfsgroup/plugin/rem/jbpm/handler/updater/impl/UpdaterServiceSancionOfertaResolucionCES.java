@@ -1,7 +1,9 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -9,6 +11,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.ui.ModelMap;
 
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
@@ -21,6 +24,8 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.api.ConcurrenciaApi;
+import es.pfsgroup.plugin.rem.api.DepositoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
@@ -70,6 +75,12 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 	
 	@Autowired
 	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
+	
+	@Autowired
+	private DepositoApi depositoApi;
+	
+	@Autowired
+	private ConcurrenciaApi concurrenciaApi;
 
 	protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaResolucionCES.class);
 	 
@@ -96,7 +107,7 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
 
 			if (!Checks.esNulo(expediente)) {
-				
+				Boolean esOfertaAceptada = false;
 
 				Boolean reserva = expediente.getCondicionante().getSolicitaReserva() != null && RESERVA_SI.equals(expediente.getCondicionante().getSolicitaReserva()) ? true : false;
 						
@@ -123,7 +134,9 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 						}
 						if (DDResolucionComite.CODIGO_APRUEBA.equals(valor.getValor())) {
 							aprueba = true;
-							ofertaApi.congelarOfertasAndReplicate(activo, ofertaAceptada);
+							if(ofertaAceptada.getIsEnConcurrencia() == null || !ofertaAceptada.getIsEnConcurrencia()) {
+								ofertaApi.congelarOfertasAndReplicate(activo, ofertaAceptada);
+							}
 							
 							if(reserva && ge!=null && gestorExpedienteComercialApi.getGestorByExpedienteComercialYTipo(expediente, "GBOAR") == null) {
 								EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi
@@ -141,6 +154,8 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 								expediente.setEstadoBc(estadoBc);
 							}
 							dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_APRUEBA);
+							
+							esOfertaAceptada = true;
 						} else {
 							if (DDResolucionComite.CODIGO_RECHAZA.equals(valor.getValor())) {
 								rechazar = true;
@@ -178,7 +193,8 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 						if(activo != null && activo.getSubcartera() != null &&
 								(DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(activo.getSubcartera().getCodigo())
 								|| DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())
-								|| DDSubcartera.CODIGO_JAGUAR.equals(activo.getSubcartera().getCodigo()))) {
+								|| DDSubcartera.CODIGO_JAGUAR.equals(activo.getSubcartera().getCodigo())
+								|| DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(activo.getSubcartera().getCodigo()))) {
 							String codigoBulk = nuevoImporte > 750000d ? DDSinSiNo.CODIGO_SI : DDSinSiNo.CODIGO_NO;
 							
 							OfertaExclusionBulk ofertaExclusionBulk = genericDao.get(OfertaExclusionBulk.class, 
@@ -226,9 +242,29 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 						dtoHistoricoBC.setObservacionesBC(valor.getValor());
 					}
 				}
+				
+				if(esOfertaAceptada && ofertaAceptada.getIsEnConcurrencia() != null && ofertaAceptada.getIsEnConcurrencia()) {
+					concurrenciaApi.caducaOfertasRelacionadasConcurrencia(activo.getId(), ofertaAceptada.getId(), ConcurrenciaApi.COD_OFERTAS_PERDEDORAS);
+					
+					List<Long> idOfertaList = new ArrayList<Long>();
+					idOfertaList.add(ofertaAceptada.getId());
+					try {
+						concurrenciaApi.comunicacionSFMC(idOfertaList, ConcurrenciaApi.COD_OFERTA_GANADORA, ConcurrenciaApi.TIPO_ENVIO_UNICO, new ModelMap());		
+					} catch (IOException ioex) {
+						logger.error(ioex.getMessage());
+						ioex.printStackTrace();
+					} catch (Exception exc) {
+						logger.error(exc.getMessage());
+						exc.printStackTrace();
+					}
+					
+				}
+				
 				if(ofertaExclusionBulkNew != null) {
 					genericDao.save(OfertaExclusionBulk.class, ofertaExclusionBulkNew);
 				}
+
+				
 				genericDao.save(Oferta.class, ofertaAceptada);
 				genericDao.save(ExpedienteComercial.class, expediente);
 				
@@ -243,7 +279,6 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 					
 					genericDao.save(HistoricoTareaPbc.class, htp);
 				}
-
 				
 				HistoricoSancionesBc historico = expedienteComercialApi.dtoRespuestaToHistoricoSancionesBc(dtoHistoricoBC, expediente);
 				

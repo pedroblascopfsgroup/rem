@@ -64,6 +64,10 @@ public class AccionesCaixaController extends ParadiseJsonController {
     public static final String ACCION_RECHAZO_MODIFICACION_TITULARES = "025";
     public static final String ACCION_BLOQUEO_SCORING = "042";
     public static final String ACCION_DESBLOQUEO_SCORING = "043";
+    public static final String ACCION_RESCINDIR_CONTRATO = "048";
+    public static final String ACCION_APROBADO_CONTRAOFERTA = "049";
+    public static final String ACCION_IMPOSIBILIDAD_FIRMA_FIRMAR = "060";
+    public static final String ACCION_IMPOSIBILIDAD_FIRMA_CANCELAR = "061";
 
 
     private final Log logger = LogFactory.getLog(getClass());
@@ -222,7 +226,7 @@ public class AccionesCaixaController extends ParadiseJsonController {
         return createModelAndViewJson(model);
     }
 
-    public ModelAndView accionFirmaContratoAprobada(DtoFirmaContratoCaixa dto){
+    public ModelAndView accionFirmaContratoAprobada(JSONObject dto){
         ModelMap model = new ModelMap();
         try {
             accionesCaixaApi.accionFirmaContratoAprobada(dto);
@@ -433,7 +437,7 @@ public class AccionesCaixaController extends ParadiseJsonController {
         return createModelAndViewJson(model);
     }
 
-    public ModelAndView accionFirmaContratoRechazada(DtoFirmaContratoCaixa dto) {
+    public ModelAndView accionFirmaContratoRechazada(JSONObject dto) {
         ModelMap model = new ModelMap();
         try {
             accionesCaixaApi.accionFirmaContratoRechazada(dto);
@@ -609,6 +613,104 @@ public class AccionesCaixaController extends ParadiseJsonController {
             e.printStackTrace();
             model.put("success", false);
             model.put("msgError", e.getMessage());
+        }
+
+        return createModelAndViewJson(model);
+    }
+    
+    public ModelAndView accionNegociacionClausulasAlquiler(JSONObject dto){
+    	ModelMap model = new ModelMap();
+        try {
+            boolean success = accionesCaixaApi.avanzarTareaGenericoSinReplicar(dto);
+            model.put("success", success);
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.put("success", false);
+            model.put("msgError", e.getMessage() == null ? RestApi.REST_MSG_UNEXPECTED_ERROR : e.getMessage());
+        }
+
+        return createModelAndViewJson(model);
+    }
+    
+    public ModelAndView accionEntregaFianzas(JSONObject dto){
+    	ModelMap model = new ModelMap();
+        try {
+            boolean success = accionesCaixaApi.avanzarTareaGenericoSinReplicar(dto);
+            model.put("success", success);
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.put("success", false);
+            model.put("msgError", e.getMessage() == null ? RestApi.REST_MSG_UNEXPECTED_ERROR : e.getMessage());
+        }
+
+        return createModelAndViewJson(model);
+    }
+    
+    public ModelAndView accionRespuestaBcContraoferta(JSONObject dto){
+    	ModelMap model = new ModelMap();
+        try {
+            boolean success = accionesCaixaApi.avanzarTareaGenericoSinReplicar(dto);
+            model.put("success", success);
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.put("success", false);
+            model.put("msgError", e.getMessage() == null ? RestApi.REST_MSG_UNEXPECTED_ERROR : e.getMessage());
+        }
+
+        return createModelAndViewJson(model);
+    }
+    
+    public ModelAndView accionRespuestaBcOfertaAlquiler(JSONObject dto){
+    	ModelMap model = new ModelMap();
+        try {
+            boolean success = accionesCaixaApi.avanzarTareaGenericoSinReplicar(dto);
+            model.put("success", success);
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.put("success", false);
+            model.put("msgError", e.getMessage() == null ? RestApi.REST_MSG_UNEXPECTED_ERROR : e.getMessage());
+        }
+
+        return createModelAndViewJson(model);
+    }
+    
+    public ModelAndView accionRespuestaBcReagendacion(JSONObject dto){
+    	ModelMap model = new ModelMap();
+        try {
+            boolean success = accionesCaixaApi.avanzarTareaGenericoSinReplicar(dto);
+            model.put("success", success);
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.put("success", false);
+            model.put("msgError", e.getMessage() == null ? RestApi.REST_MSG_UNEXPECTED_ERROR : e.getMessage());
+        }
+
+        return createModelAndViewJson(model);
+    }
+    
+    public ModelAndView accionImposibilidadFirmaFirmar(JSONObject dto){
+    	ModelMap model = new ModelMap();
+        try {
+            boolean success = accionesCaixaApi.avanzarTareaGenericoSinReplicar(dto);
+            model.put("success", success);
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.put("success", false);
+            model.put("msgError", e.getMessage() == null ? RestApi.REST_MSG_UNEXPECTED_ERROR : e.getMessage());
+        }
+
+        return createModelAndViewJson(model);
+    }
+    
+    public ModelAndView accionImposibilidadFirmaCancelar(JSONObject dto){
+    	ModelMap model = new ModelMap();
+        try {
+            boolean success = accionesCaixaApi.avanzarTareaGenericoSinReplicar(dto);
+            model.put("success", success);
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.put("success", false);
+            model.put("msgError", e.getMessage() == null ? RestApi.REST_MSG_UNEXPECTED_ERROR : e.getMessage());
         }
 
         return createModelAndViewJson(model);

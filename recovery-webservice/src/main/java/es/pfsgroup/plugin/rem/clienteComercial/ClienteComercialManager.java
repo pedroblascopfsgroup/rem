@@ -594,15 +594,20 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 	@Override
 	public boolean updateClienteComercial(ClienteComercial cliente, ClienteDto clienteDto, Object jsonFields) throws Exception{
 
-		boolean isRelevanteBC = interlocutorCaixaService.esClienteInvolucradoBC(cliente);
+		boolean isRelevanteBC = cliente.getIdPersonaHayaCaixa() != null;
 		Boolean documentoModificado = false;
 		Boolean documentoRteModificado = false;
 		DtoInterlocutorBC oldData = new DtoInterlocutorBC();
 		DtoInterlocutorBC newData = new DtoInterlocutorBC();
+		DtoInterlocutorBC newDataRepr = new DtoInterlocutorBC();
+		DtoInterlocutorBC oldDataRepr = new DtoInterlocutorBC();
 		boolean newRepresentanteImplicadoCaixa = false;
 
 		if (isRelevanteBC){
 			oldData.clienteToDto(cliente);
+			if (cliente.getDocumentoRepresentante() != null){
+				oldDataRepr.representateToDto(cliente);
+			}
 		}
 
 		if (((JSONObject) jsonFields).containsKey("idClienteWebcom")) {
@@ -660,7 +665,7 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 				cliente.setTipoDocumentoRepresentante(null);
 			}
 		}
-		if (((JSONObject) jsonFields).containsKey("documentoRepresentante")) {
+		if (((JSONObject) jsonFields).containsKey("documentoRepresentante") && clienteDto.getDocumentoRepresentante() != null) {
 			documentoRteModificado = !clienteDto.getDocumentoRepresentante().equals(cliente.getDocumentoRepresentante());
 			if (cliente.getDocumentoRepresentante() == null && cliente.getIdPersonaHayaCaixa() != null)
 				newRepresentanteImplicadoCaixa = true;
@@ -1159,7 +1164,8 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 
 		if (isRelevanteBC){
 			newData.clienteToDto(cliente);
-			return interlocutorCaixaService.hasChangestoBC(oldData,newData,cliente.getIdPersonaHayaCaixa());
+			newDataRepr.representateToDto(cliente);
+			return interlocutorCaixaService.hasChangestoBC(oldData,newData,cliente.getIdPersonaHayaCaixa()) || interlocutorCaixaService.hasChangestoBC(oldDataRepr,newDataRepr,cliente.getIdPersonaHayaCaixaRepresentante());
 		}
 		return false;
 	}

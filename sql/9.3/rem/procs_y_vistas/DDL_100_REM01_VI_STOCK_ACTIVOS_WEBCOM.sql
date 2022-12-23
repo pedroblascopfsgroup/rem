@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20220620
+--## AUTOR=Vicente Martinez
+--## FECHA_CREACION=20221013
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=REMVIP-11188
+--## INCIDENCIA_LINK=HREOS-18353
 --## PRODUCTO=NO
 --## Finalidad: Tabla para almacentar el historico del stock de activos enviados a webcom.
 --##           
@@ -42,6 +42,8 @@
 --##		0.25 Versión Julián Dolz -> HREOS-16549 - Añadir campo CAT_CORRECTO
 --##		0.26 Versión IRC -> REMVIP-11188 - Añadimos gestor comercial de alquiler
 --##		0.26 Versión Jesus J -> REMVIP-11865 - Eliminar campos WS Activo
+--##        0.27 Añadir campos concurrencia - Vicente Martinez - [HREOS-18353]
+--##		0.28 Versión IRC -> REMVIP-12573 - Añadimos codEstadoRegistralActivo del activo
 --##########################################
 --*/
 
@@ -122,7 +124,12 @@ BEGIN/*Versión 0.18*/
 			JOIN '||V_ESQUEMA||'.GEE_GESTOR_ENTIDAD GEE ON GEE.GEE_ID = GAC.GEE_ID
 			JOIN '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR TGE ON (GEE.DD_TGE_ID = TGE.DD_TGE_ID AND DD_TGE_CODIGO = ''GESTCOMALQ'' AND  GEE.BORRADO = 0)
 			JOIN '||V_ESQUEMA_M||'.USU_USUARIOS USU ON USU.USU_ID = GEE.USU_ID
-		)
+		), CONCURRENCIA_ULTIMA AS (
+			SELECT ACT_ID, CON_FECHA_INI, CON_FECHA_FIN, CON_ID FROM (
+			SELECT ACT_ID, CON_FECHA_INI, CON_FECHA_FIN, CON_ID, 
+			ROW_NUMBER() OVER (PARTITION BY ACT_ID  ORDER BY CON_ID DESC) ROW_NUM 
+			FROM '||V_ESQUEMA||'.CON_CONCURRENCIA) WHERE ROW_NUM = 1
+			)
 		SELECT DISTINCT
 		CAST(ACT.ACT_NUM_ACTIVO || LLV.LLV_ID AS NUMBER(32,0))    							AS ID,
 		CAST(ACT.ACT_NUM_ACTIVO AS NUMBER(16,0)) 											AS ID_ACTIVO_HAYA,
@@ -428,7 +435,20 @@ BEGIN/*Versión 0.18*/
 		CAST(GALQ.USU_TELEFONO AS VARCHAR2(14 CHAR)) 												AS TELEFONO_GESTOR_COMERCIAL_ALQUILER,
 		CAST(GALQ.USU_MAIL AS VARCHAR2(60 CHAR)) 													AS EMAIL_GESTOR_COMERCIAL_ALQUILER,
         CAST(PRO.PRO_NOMBRE AS VARCHAR2(20 CHAR))                                                   AS PRO_NOMBRE,
-        CAT.CAT_CORRECTO
+        CAT.CAT_CORRECTO,
+		CASE WHEN (ACO.CON_FECHA_INI IS NOT NULL) 
+			THEN CAST(TO_CHAR(ACO.CON_FECHA_INI ,
+				''YYYY-MM-DD"T"HH24:MM:SS'') AS VARCHAR2(50 CHAR))
+			ELSE NULL
+		END                                                                            				DESDE_PERIODO_CONCURRENCIA,
+		CASE WHEN (ACO.CON_FECHA_FIN IS NOT NULL) 
+			THEN CAST(TO_CHAR(ACO.CON_FECHA_FIN ,
+				''YYYY-MM-DD"T"HH24:MM:SS'') AS VARCHAR2(50 CHAR))
+			ELSE NULL
+		END                                                                          				HASTA_PERIODO_CONCURRENCIA,
+        ACO.CON_ID                                                                                  AS ID_PERIODO_CONCURRENCIA,
+		CAST(DDERA.DD_ERA_CODIGO AS VARCHAR2(10 CHAR))	 											AS COD_ESTADO_REGISTRAL_ACTIVO
+
     	FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
 		INNER JOIN '||V_ESQUEMA||'.ACT_LOC_LOCALIZACION LOC ON LOC.ACT_ID = ACT.ACT_ID
 		INNER JOIN '||V_ESQUEMA||'.BIE_LOCALIZACION BLOC ON BLOC.BIE_LOC_ID = LOC.BIE_LOC_ID
@@ -607,6 +627,8 @@ BEGIN/*Versión 0.18*/
 		LEFT JOIN '||V_ESQUEMA||'.ACT_PAC_PROPIETARIO_ACTIVO PAC on PAC.ACT_ID = act.ACT_ID 
 		LEFT JOIN '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO PRO on PAC.PRO_ID = PRO.PRO_ID 
 		LEFT JOIN GCALQ GALQ ON GALQ.ACT_ID = ACT.ACT_ID
+		LEFT JOIN CONCURRENCIA_ULTIMA ACO ON ACT.ACT_ID = ACO.ACT_ID
+		LEFT JOIN '||V_ESQUEMA||'.DD_ERA_ESTADO_REG_ACTIVO DDERA ON DDERA.DD_ERA_ID = ACT.DD_ERA_ID AND DDERA.BORRADO = 0
 		where act.borrado = 0';
 
 

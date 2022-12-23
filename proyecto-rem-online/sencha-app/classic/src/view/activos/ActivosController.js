@@ -20,9 +20,18 @@ Ext.define('HreRem.view.activos.ActivosController', {
     //Funcion que se ejecuta al hacer click en el botón buscar
 	
 	onSearchClick: function(btn) {
-		
 		var me = this;
-		this.lookupReference('activoslist').getStore().loadPage(1);
+		refCatastralValue = this.lookupReference('activossearch').down('[name="refCatastral"]').value;
+		
+		if (!Ext.isEmpty(refCatastralValue)){
+			if (refCatastralValue.length==20){
+				this.registrarBusqueda(btn, this);	
+			}else{
+				me.fireEvent("warnToast",HreRem.i18n("msg.warn.refCatastral.noLongitud"));
+			}
+		}else{
+			this.registrarBusqueda(btn, this);
+		}
         
 	},
 	
@@ -386,6 +395,28 @@ Ext.define('HreRem.view.activos.ActivosController', {
     	comboTipoActivo.clearValue();
     	comboSubTipoActivo.clearValue();
     	
-    }
+    },
+
+	registrarBusqueda: function(btn, parent){
+		var me = this;
+		var params = btn.up('formBase').getValues();
+		params.buscador = 'activos';
+		Ext.Ajax.request({			
+		     url: $AC.getRemoteUrl("activo/registrarBusqueda"),
+		     params: params,
+		     method: 'POST',
+		     success: function(response, opts) {
+		    	 data = Ext.decode(response.responseText);
+		    	 if(data.success == "true"){
+					parent.lookupReference('activoslist').getStore().loadPage(1);
+		    	 }else{
+    		    	 me.fireEvent("errorToastLong", data.error == "tiempo" ? HreRem.i18n("msg.error.buscar") : HreRem.i18n("msg.operacion.ko"));
+		    	 }
+		     },
+		     failure: function(response) {
+		    	 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+		     }
+		});
+	}
     
 });

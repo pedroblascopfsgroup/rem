@@ -10,10 +10,8 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
-import es.pfsgroup.plugin.rem.api.ActivoApi;
-import es.pfsgroup.plugin.rem.api.DepositoApi;
-import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
-import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.activo.valoracion.dao.ActivoValoracionDao;
+import es.pfsgroup.plugin.rem.api.*;
 import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDeposito;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
@@ -49,6 +47,12 @@ public class DepositoManager extends BusinessOperationOverrider<DepositoApi> imp
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
 
+	@Autowired
+	private ActivoValoracionDao activoValoracionDao;
+
+	@Autowired
+	private ConcurrenciaApi concurrenciaApi;
+
 	@Override
 	public String managerName() {
 		return "depositoManager";
@@ -61,7 +65,7 @@ public class DepositoManager extends BusinessOperationOverrider<DepositoApi> imp
 		
 		if(oferta != null && oferta.getActivoPrincipal() != null 
 				&& oferta.getActivoPrincipal().getSubcartera() != null && DDTipoOferta.isTipoVenta(oferta.getTipoOferta())) {
-			return esNecesarioDepositoBySubcartera(oferta.getActivoPrincipal().getSubcartera().getCodigo());
+			return esNecesarioDepositoBySubcartera(oferta.getActivoPrincipal().getSubcartera().getCodigo()) || concurrenciaApi.isOfertaEnConcurrencia(oferta);
 		}
 		
 		return false;
@@ -122,13 +126,13 @@ public class DepositoManager extends BusinessOperationOverrider<DepositoApi> imp
 	}
 	
 	@Override
-	public boolean esNecesarioDepositoNuevaOferta(Activo ActivoCuentaVirtual) {
+	public boolean esNecesarioDepositoNuevaOferta(Activo activo) {
 		
-		if(ActivoCuentaVirtual != null 
-				&& ActivoCuentaVirtual.getSubcartera() != null ) {
+		if(activo != null
+				&& activo.getSubcartera() != null ) {
 			ConfiguracionDeposito conDep = genericDao.get(ConfiguracionDeposito.class
-					,genericDao.createFilter(FilterType.EQUALS,"subcartera.codigo", ActivoCuentaVirtual.getSubcartera().getCodigo()));
-			if(conDep != null && conDep.getDepositoNecesario()) {
+					,genericDao.createFilter(FilterType.EQUALS,"subcartera.codigo", activo.getSubcartera().getCodigo()));
+			if((conDep != null && conDep.getDepositoNecesario()) || concurrenciaApi.isActivoEnConcurrencia(activo)) {
 				return true;
 			}
 		}
@@ -162,7 +166,7 @@ public class DepositoManager extends BusinessOperationOverrider<DepositoApi> imp
 	@Override
 	public Double getImporteDeposito(Oferta oferta) {
 		Double importeDeposito = null;
-		Double precioVentaActivo = activoApi.getImporteValoracionActivoByCodigo(oferta.getActivoPrincipal(), DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA);
+		Double precioVentaActivo = getPrecioVenta(oferta);
 
 		if(precioVentaActivo != null) {
 			Filter filterSubcartera = genericDao.createFilter(FilterType.EQUALS, "subcartera", oferta.getActivoPrincipal().getSubcartera());
@@ -172,13 +176,25 @@ public class DepositoManager extends BusinessOperationOverrider<DepositoApi> imp
 			if (parametrizacionDeposito != null) {
 				for (ParametrizacionDeposito paramDeposito: parametrizacionDeposito) {
 					if (paramDeposito.getPrecioVenta() != null && paramDeposito.getPrecioVenta() < precioVentaActivo) {
-						importeDeposito = paramDeposito.getImporteDeposito();
+						importeDeposito = precioVentaActivo > paramDeposito.getImporteDeposito() ? paramDeposito.getImporteDeposito() : paramDeposito.getImporteDeposito()/2;
 					}
 				}
 			}
 		}
 		
 		return importeDeposito;
+	}
+	
+	private Double getPrecioVenta(Oferta oferta) {
+		Double precioVenta = null;
+		
+		if (!Checks.esNulo(oferta.getAgrupacion())) {
+			precioVenta = activoValoracionDao.getImporteValoracionVentaWebPorIdAgrupacion(oferta.getAgrupacion().getId());
+		} else {
+			precioVenta = activoValoracionDao.getImporteValoracionVentaWebPorIdActivo(oferta.getActivoPrincipal().getId());
+		}
+		
+		return precioVenta;
 	}
 
 	@Override
@@ -290,6 +306,11 @@ public class DepositoManager extends BusinessOperationOverrider<DepositoApi> imp
 		Oferta oferta = expediente.getOferta();
 		Filter filterOferta =  genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId());
 		Deposito deposito = genericDao.get(Deposito.class, filterOferta);
+		DDEstadoDeposito estado = null;
+		
+		if (!Checks.esNulo(dto.getEstadoCodigo())) {
+			estado = genericDao.get(DDEstadoDeposito.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getEstadoCodigo()));
+		}
 
 		if (Checks.esNulo(deposito)) {
 			deposito = new Deposito();
@@ -297,6 +318,7 @@ public class DepositoManager extends BusinessOperationOverrider<DepositoApi> imp
 			deposito.setIbanDevolucion(dto.getIbanDevolucionDeposito());
 			deposito.setAuditoria(Auditoria.getNewInstance());
 			deposito.setOferta(oferta);
+			deposito.setEstadoDeposito(estado);
 			
 			genericDao.save(Deposito.class, deposito);
 		}
@@ -307,6 +329,9 @@ public class DepositoManager extends BusinessOperationOverrider<DepositoApi> imp
 			}
 			if (dto.getIbanDevolucionDeposito() != null) {
 				deposito.setIbanDevolucion(dto.getIbanDevolucionDeposito());
+			}
+			if (!Checks.esNulo(estado)) {
+				deposito.setEstadoDeposito(estado);
 			}
 			
 			genericDao.update(Deposito.class, deposito);
@@ -327,9 +352,26 @@ public class DepositoManager extends BusinessOperationOverrider<DepositoApi> imp
 		if (Checks.esNulo(deposito))
 			return;
 
+		Oferta oferta = deposito.getOferta();
+		if (Checks.esNulo(oferta))
+			return;
+		
+		boolean isOfertaAnulada = oferta.esOfertaAnulada() || DDEstadoOferta.isCaducada(oferta.getEstadoOferta());
+
+		String codigoEstadoDeposito = isOfertaAnulada ? DDEstadoDeposito.CODIGO_PDTE_DECISION_DEVOLUCION_INCAUTACION
+				: DDEstadoDeposito.CODIGO_INGRESADO;
+
 		deposito.setFechaIngreso(new Date());
-		deposito.setEstadoDeposito(genericDao.get(DDEstadoDeposito.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoDeposito.CODIGO_INGRESADO)));
-			
+		deposito.setEstadoDeposito(genericDao.get(DDEstadoDeposito.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoEstadoDeposito)));
+
+		if(deposito.getOferta() != null && (DDEstadoOferta.isPteDoc(deposito.getOferta().getEstadoOferta()) || DDEstadoOferta.isPendienteDocumentacionTitularesAdicionales(deposito.getOferta().getEstadoOferta()))) {
+			deposito.setFechaInicio(new Date());
+		}
+		
+
+		if(deposito.getOferta() != null && (DDEstadoOferta.isPteDoc(deposito.getOferta().getEstadoOferta()) || DDEstadoOferta.isPendienteDocumentacionTitularesAdicionales(deposito.getOferta().getEstadoOferta()))) {
+			deposito.setFechaInicio(new Date());
+		}
 		genericDao.save(Deposito.class, deposito);
 	}
 

@@ -1,6 +1,10 @@
 #!/bin/bash
- 
-fichero="${1}_"
+
+if [ "$1" == "URSITPAG" ]; then
+    fichero="${1}_"
+else
+    fichero="${1}_?????_"
+fi
 fecha=$2
 
 if [[ -z ${DIR_DESTINO} ]] || [[ ! -d ${DIR_DESTINO} ]]; then
@@ -21,18 +25,18 @@ echo "Hora actual: $hora_actual - Hora limite: $hora_limite"
 
 for fichero in $arrayfichero
 do
-    var=$(ls ${DIR_DESTINO}$fichero*)
+    var=$(ls ${DIR_DESTINO}$fichero*$extensionTxt)
     if [ -f $var ]; then
-        mv ${DIR_DESTINO}$fichero* ${DIR_BACKUP}
-    fi    
-    
+        mv ${DIR_DESTINO}$fichero*$extensionTxt ${DIR_BACKUP}
+    fi
+
     ficheroTxt=$DIR_INPUT_AUX$fichero$fecha$extensionTxt
 
     echo "$ficheroTxt"
     if [[ "$#" -eq 2 ]]; then
         ./ftp/ftp_get_from_bc.sh $fichero$fecha$extensionTxt
     fi
-        while [[ "$hora_actual" -lt "$hora_limite" ]] && [[ ! -e $ficheroTxt ]]; do
+        while [[ "$hora_actual" -lt "$hora_limite" ]] && [[ ! -e $(ls $ficheroTxt) ]]; do
             sleep 10
             hora_actual=`date +%Y%m%d%H%M%S`
         if [[ "$#" -eq 2 ]]; then

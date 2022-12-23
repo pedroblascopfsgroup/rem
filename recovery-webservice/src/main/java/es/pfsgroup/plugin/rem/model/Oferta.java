@@ -5,7 +5,24 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -16,22 +33,29 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.model.dd.DDCanalPrescripcion;
+import es.pfsgroup.plugin.rem.model.dd.DDClaseCondicion;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseContratoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDClasificacionContratoAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDDerechoArrendamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadFinanciera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoJustificacionOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
+import es.pfsgroup.plugin.rem.model.dd.DDOrigenContratoEcc;
 import es.pfsgroup.plugin.rem.model.dd.DDResponsableDocumentacionCliente;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
+import es.pfsgroup.plugin.rem.model.dd.DDRetencionImpuestos;
 import es.pfsgroup.plugin.rem.model.dd.DDRiesgoOperacion;
-import es.pfsgroup.plugin.rem.model.dd.DDSistemaOrigen;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
+import es.pfsgroup.plugin.rem.model.dd.DDSistemaOrigen;
 import es.pfsgroup.plugin.rem.model.dd.DDSnsSiNoNosabe;
+import es.pfsgroup.plugin.rem.model.dd.DDSuborigenContratoEcc;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoOfertaAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTfnTipoFinanciacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAdenda;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoInquilino;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
@@ -476,19 +500,23 @@ public class Oferta implements Serializable, Auditable {
     private OfertaCaixa ofertaCaixa;
     
     @Column(name = "OFR_CONCURRENCIA")
-	private Boolean concurrencia;
+	private Boolean isEnConcurrencia;
+	
     @Column(name = "CHECK_FORM_CAJAMAR")
     private Boolean checkFormCajamar;
-    
+
     @Column(name = "CHECK_FORZADO_CAJAMAR")
     private Boolean checkForzadoCajamar;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USUARIO_FORZADO_CAJAMAR")
     private Usuario usuarioForzadoCajamar;
-    
+
     @Column(name="FECHA_FORZADO_CAJAMAR")
 	private Date fechaForzadoCajamar;
+    
+    @Column(name="OFR_FECHA_LIQUIDA")
+	private Date fechaLiquida;
 
 	@Transient
 	private Boolean replicateBC;
@@ -500,6 +528,50 @@ public class Oferta implements Serializable, Auditable {
 	@OneToOne(mappedBy = "oferta", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private Deposito deposito;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_TAD_ID")
+	private DDTipoAdenda tipoAdenda;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_SOA_ID")
+    private DDSubtipoOfertaAlquiler subtipoOfertaAlquiler;
+	
+	@Column(name="FECHA_INICIO_SUBROGACION")
+	private Date fechaInicioSubrogacion;
+	
+	@Column(name = "AUTO_FIRME")
+    private Boolean autoFirme;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "CON_ID")
+	private Concurrencia concurrencia;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_CCD_ID")
+    private DDClaseCondicion claseCondicion;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_DAR_ID")
+    private DDDerechoArrendamiento derechoArrendamiento;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_RIM_ID")
+    private DDRetencionImpuestos retencionImpuestos;
+	
+	@Column(name = "OFR_GRUPO_CONTRATO_CBK")
+    private Boolean grupoContratoCBK;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_OCN_ID")
+    private DDOrigenContratoEcc origenContratoEcc;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_SCN_ID")
+    private DDSuborigenContratoEcc suborigenContratoEcc;
+
+	@Column(name = "OFR_IMPORTE_FIANZA_ANT")
+	private Double importeFianzaAnterior;
 
 	public Date getFechaAlta() {
 		return fechaAlta;
@@ -1165,7 +1237,7 @@ public class Oferta implements Serializable, Auditable {
 	public void setFechaCreacionOpSf(Date fechaCreacionOpSf) {
 		this.fechaCreacionOpSf = fechaCreacionOpSf;
 	}
-		
+
 	public Date getFechaEntradaCRMSF() {
 		return fechaEntradaCRMSF;
 	}
@@ -1570,12 +1642,20 @@ public class Oferta implements Serializable, Auditable {
 		this.cuentaVirtual = cuentaVirtual;
 	}
 
-	public Boolean getConcurrencia() {
-		return concurrencia;
+	public Boolean getIsEnConcurrencia() {
+		return isEnConcurrencia;
 	}
 
-	public void setConcurrencia(Boolean concurrencia) {
-		this.concurrencia = concurrencia;
+	public void setIsEnConcurrencia(Boolean concurrencia) {
+		this.isEnConcurrencia = concurrencia;
+	}
+
+	public boolean esOfertaAnulada(){
+		return DDEstadoOferta.isRechazada(this.estadoOferta);
+	}
+	
+	public boolean esOfertaCaducada(){
+		return DDEstadoOferta.isCaducada(this.estadoOferta);
 	}
 
 	public Boolean getCheckFormCajamar() {
@@ -1609,7 +1689,15 @@ public class Oferta implements Serializable, Auditable {
 	public void setFechaForzadoCajamar(Date fechaForzadoCajamar) {
 		this.fechaForzadoCajamar = fechaForzadoCajamar;
 	}
+	
+	public Date getFechaLiquida() {
+		return fechaLiquida;
+	}
 
+	public void setFechaLiquida(Date fechaLiquida) {
+		this.fechaLiquida = fechaLiquida;
+	}
+	
 	public Deposito getDeposito() {
 		return deposito;
 	}
@@ -1617,5 +1705,100 @@ public class Oferta implements Serializable, Auditable {
 	public void setDeposito(Deposito deposito) {
 		this.deposito = deposito;
 	}
+
+	public DDTipoAdenda getTipoAdenda() {
+		return tipoAdenda;
+	}
+
+	public void setTipoAdenda(DDTipoAdenda tipoAdenda) {
+		this.tipoAdenda = tipoAdenda;
+	}
 	
+	public DDSubtipoOfertaAlquiler getSubtipoOfertaAlquiler() {
+		return subtipoOfertaAlquiler;
+	}
+
+	public void setSubtipoOfertaAlquiler(DDSubtipoOfertaAlquiler subtipoOfertaAlquiler) {
+		this.subtipoOfertaAlquiler = subtipoOfertaAlquiler;
+	}
+
+	public Date getFechaInicioSubrogacion() {
+		return fechaInicioSubrogacion;
+	}
+
+	public void setFechaInicioSubrogacion(Date fechaInicioSubrogacion) {
+		this.fechaInicioSubrogacion = fechaInicioSubrogacion;
+	}
+
+	public Boolean getAutoFirme() {
+		return autoFirme;
+	}
+
+	public void setAutoFirme(Boolean autoFirme) {
+		this.autoFirme = autoFirme;
+	}
+	
+	public Concurrencia getConcurrencia() {
+		return concurrencia;
+	}
+
+	public void setConcurrencia(Concurrencia concurrencia) {
+		this.concurrencia = concurrencia;
+	}
+
+	public DDClaseCondicion getClaseCondicion() {
+		return claseCondicion;
+	}
+
+	public void setClaseCondicion(DDClaseCondicion claseCondicion) {
+		this.claseCondicion = claseCondicion;
+	}
+
+	public DDDerechoArrendamiento getDerechoArrendamiento() {
+		return derechoArrendamiento;
+	}
+
+	public void setDerechoArrendamiento(DDDerechoArrendamiento derechoArrendamiento) {
+		this.derechoArrendamiento = derechoArrendamiento;
+	}
+
+	public DDRetencionImpuestos getRetencionImpuestos() {
+		return retencionImpuestos;
+	}
+
+	public void setRetencionImpuestos(DDRetencionImpuestos retencionImpuestos) {
+		this.retencionImpuestos = retencionImpuestos;
+	}
+
+	public Boolean getGrupoContratoCBK() {
+		return grupoContratoCBK;
+	}
+
+	public void setGrupoContratoCBK(Boolean grupoContratoCBK) {
+		this.grupoContratoCBK = grupoContratoCBK;
+	}
+
+	public DDOrigenContratoEcc getOrigenContratoEcc() {
+		return origenContratoEcc;
+	}
+
+	public void setOrigenContratoEcc(DDOrigenContratoEcc origenContratoEcc) {
+		this.origenContratoEcc = origenContratoEcc;
+	}
+
+	public DDSuborigenContratoEcc getSuborigenContratoEcc() {
+		return suborigenContratoEcc;
+	}
+
+	public void setSuborigenContratoEcc(DDSuborigenContratoEcc suborigenContratoEcc) {
+		this.suborigenContratoEcc = suborigenContratoEcc;
+	}
+
+	public Double getImporteFianzaAnterior() {
+		return importeFianzaAnterior;
+	}
+
+	public void setImporteFianzaAnterior(Double importeFianzaAnterior) {
+		this.importeFianzaAnterior = importeFianzaAnterior;
+	}
 }

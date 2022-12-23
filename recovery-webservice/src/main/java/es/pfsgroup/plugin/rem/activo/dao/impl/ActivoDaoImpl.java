@@ -13,7 +13,9 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import es.pfsgroup.plugin.rem.adapter.RemUtils;
 import es.pfsgroup.plugin.rem.model.*;
+import es.pfsgroup.plugin.rem.usuarioRem.UsuarioRemApi;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
@@ -27,12 +29,14 @@ import org.springframework.transaction.annotation.Transactional;
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
+import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -46,6 +50,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.PerfilApi;
+import es.pfsgroup.plugin.rem.concurrencia.dao.ConcurrenciaDao;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
@@ -78,7 +83,6 @@ import es.pfsgroup.plugin.rem.model.HistoricoDestinoComercial;
 import es.pfsgroup.plugin.rem.model.HistoricoPeticionesPrecios;
 import es.pfsgroup.plugin.rem.model.HistoricoRequisitosFaseVenta;
 import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
-import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
@@ -119,6 +123,15 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	
 	@Autowired
 	private GenericAdapter genericAdapter;
+	
+	@Autowired
+	private ConcurrenciaDao concurrenciaDao;
+	
+	@Autowired
+	private ApiProxyFactory proxyFactory;
+
+	@Autowired
+	private UsuarioRemApi usuarioRemApi;
 
 	private static final String EXISTEN_UNIDADES_ALQUILABLES_CON_OFERTAS_VIVAS ="activo.matriz.con.unidades.alquilables.ofertas.vivas";
 	private static final String EXISTE_ACTIVO_MATRIZ_CON_OFERTAS_VIVAS ="activo.unidad.alquilable.con.activo.matriz.ofertas.vivas";
@@ -127,18 +140,50 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	private static final String isPrincipalQueryString ="select count(*) from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.agrupacion.activoPrincipal.id = :actId and act.agrupacion.tipoAgrupacion.codigo = :codAgrupacion";
 	private static final String isPrincipalQueryStringIn ="select count(*) from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.agrupacion.activoPrincipal.id = :actId and act.agrupacion.tipoAgrupacion.codigo in (:codAgrupacion)";
 	private static final String activoAgrupacionQueryString ="select act from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.activo.id = :actId and act.agrupacion.tipoAgrupacion.codigo = :codAgrupacion";
-
+	private static final String usuarioSuper = "HAYASUPER";
+	
 	@Override
 	public Object getListActivos(DtoActivoFilter dto, Usuario usuLogado) {
 
 		HQLBuilder hb = new HQLBuilder(buildFrom(dto));
-		 
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivo", dto.getNumActivo());
 
-		if (dto.getEntidadPropietariaCodigo() != null)
+		List<String> codigosSubcarteras;
+
+		if(!Checks.esNulo(dto.getEntidadPropietariaCodigoAvanzado())) {
+			codigosSubcarteras = usuarioRemApi.getCodigosSubcarterasUsuario(dto.getEntidadPropietariaCodigoAvanzado(), adapter.getUsuarioLogado());
+		} else {
+			codigosSubcarteras = usuarioRemApi.getCodigosSubcarterasUsuario(dto.getEntidadPropietariaCodigo(), adapter.getUsuarioLogado());
+		}
+
+		if (!Checks.esNulo(dto.getSubcarteraCodigoAvanzado())) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "scr.codigo", dto.getSubcarteraCodigoAvanzado());
+		} else if (!Checks.esNulo(dto.getSubcarteraCodigo())) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "scr.codigo", dto.getSubcarteraCodigo());
+		} else if (!Checks.estaVacio(codigosSubcarteras)) {
+			List<String> codigosCarterasConSubcartera = usuarioRemApi.getCodigosCarterasUsuario(true, adapter.getUsuarioLogado());
+			List<String> codigosCarterasSinSubcartera = usuarioRemApi.getCodigosCarterasUsuario(false, adapter.getUsuarioLogado());
+
+			if (!Checks.estaVacio(codigosCarterasConSubcartera) && !Checks.estaVacio(codigosCarterasSinSubcartera)) {
+				hb.appendWhere("act.entidadPropietariaCodigo in ("+ RemUtils.join(",", codigosCarterasConSubcartera) +") " +
+						"and scr.codigo in ("+ RemUtils.join(",", codigosSubcarteras) +") " +
+						"or act.entidadPropietariaCodigo in ("+ RemUtils.join(",", codigosCarterasSinSubcartera) +")");
+			} else if (!Checks.estaVacio(codigosCarterasConSubcartera) && Checks.estaVacio(codigosCarterasSinSubcartera)) {
+				hb.appendWhere("act.entidadPropietariaCodigo in ("+ RemUtils.join(",", codigosCarterasConSubcartera)+") " +
+						"and scr.codigo in ("+ RemUtils.join(",", codigosSubcarteras) +")");
+			}
+		}
+
+		List<String> codigosCarteras = usuarioRemApi.getCodigosCarterasUsuario(null, adapter.getUsuarioLogado());
+
+		if (!Checks.esNulo(dto.getEntidadPropietariaCodigoAvanzado())) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.entidadPropietariaCodigo", dto.getEntidadPropietariaCodigoAvanzado());
+		} else if (!Checks.esNulo(dto.getEntidadPropietariaCodigo())) {
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.entidadPropietariaCodigo", dto.getEntidadPropietariaCodigo());
+		} else if (!Checks.estaVacio(codigosCarteras) && Checks.estaVacio(codigosSubcarteras)) {
+			HQLBuilder.addFiltroWhereInSiNotNull(hb, "act.entidadPropietariaCodigo", codigosCarteras);
+		}
 
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.entidadPropietariaCodigo", dto.getEntidadPropietariaCodigoAvanzado());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivo", dto.getNumActivo());
 
 		if (dto.getTipoTituloActivoCodigo() != null)
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.tipoTituloActivoCodigo", dto.getTipoTituloActivoCodigo());
@@ -220,9 +265,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		if (dto.getApiPrimarioId() != null) {
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.apiPrimarioId", dto.getApiPrimarioId());
 		}
-		
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "scr.codigo", dto.getSubcarteraCodigo());
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "scr.codigo", dto.getSubcarteraCodigoAvanzado());
+
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.tipoActivoCodigo", dto.getTipoActivoCodigo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tud.codigo", dto.getTipoUsoDestinoCodigo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "ca.codigo", dto.getClaseActivoBancarioCodigo());
@@ -294,16 +337,21 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		if (dto.getUsuarioGestoria()) {
 			sb.append(" ,VBusquedaActivosGestorias bag ");
 		}
-		
-		if (!Checks.esNulo(dto.getSubcarteraCodigo()) || !Checks.esNulo(dto.getSubcarteraCodigoAvanzado())) {
+
+		List<String> codigosSubcarteras;
+		if(!Checks.esNulo(dto.getEntidadPropietariaCodigoAvanzado())) {
+			codigosSubcarteras = usuarioRemApi.getCodigosSubcarterasUsuario(dto.getEntidadPropietariaCodigoAvanzado(), adapter.getUsuarioLogado());
+		} else {
+			codigosSubcarteras = usuarioRemApi.getCodigosSubcarterasUsuario(dto.getEntidadPropietariaCodigo(), adapter.getUsuarioLogado());
+		}
+
+		if(!Checks.esNulo(dto.getSubcarteraCodigoAvanzado()) || !Checks.esNulo(dto.getSubcarteraCodigo()) || !Checks.estaVacio(codigosSubcarteras)) {
 			sb.append(" join act.subcartera scr ");
 		}
 
 		if (!Checks.esNulo(dto.getTipoUsoDestinoCodigo())) {
 			sb.append(" join act.tipoUsoDestino tud ");
 		}
-		
-		
 		
 		if (!Checks.esNulo(dto.getClaseActivoBancarioCodigo())
 				|| !Checks.esNulo(dto.getSubClaseActivoBancarioCodigo())) {
@@ -804,10 +852,34 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.numActivo", dto.getNumActivo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.tipoActivoCodigo", dto.getTipoActivo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.subtipoActivoCodigo", dto.getSubtipoActivo());
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.cartera", dto.getCartera());
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.subCartera", dto.getSubCartera());
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.estadoPublicacionCodigo",
-				dto.getEstadoPublicacionCodigo());
+
+		List<String> codigosSubcarteras = usuarioRemApi.getCodigosSubcarterasUsuario(dto.getCartera(), adapter.getUsuarioLogado());
+
+		if (!Checks.esNulo(dto.getSubCartera())) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.subCartera", dto.getSubCartera());
+		} else if (!Checks.estaVacio(codigosSubcarteras)) {
+			List<String> codigosCarterasConSubcartera = usuarioRemApi.getCodigosCarterasUsuario(true, adapter.getUsuarioLogado());
+			List<String> codigosCarterasSinSubcartera = usuarioRemApi.getCodigosCarterasUsuario(false, adapter.getUsuarioLogado());
+
+			if (!Checks.estaVacio(codigosCarterasConSubcartera) && !Checks.estaVacio(codigosCarterasSinSubcartera)) {
+				hb.appendWhere("activopubli.cartera in ("+ RemUtils.join(",", codigosCarterasConSubcartera) +") " +
+						"and activopubli.subCartera in ("+ RemUtils.join(",", codigosSubcarteras) +") " +
+						"or activopubli.cartera in ("+ RemUtils.join(",", codigosCarterasSinSubcartera) +")");
+			} else if (!Checks.estaVacio(codigosCarterasConSubcartera) && Checks.estaVacio(codigosCarterasSinSubcartera)) {
+				hb.appendWhere("activopubli.cartera in ("+ RemUtils.join(",", codigosCarterasConSubcartera)+") " +
+						"and activopubli.subCartera in ("+ RemUtils.join(",", codigosSubcarteras) +")");
+			}
+		}
+
+		List<String> codigosCarteras = usuarioRemApi.getCodigosCarterasUsuario(null, adapter.getUsuarioLogado());
+
+		if (!Checks.esNulo(dto.getCartera())) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.cartera", dto.getCartera());
+		} else if (!Checks.estaVacio(codigosCarteras) && Checks.estaVacio(codigosSubcarteras)) {
+			HQLBuilder.addFiltroWhereInSiNotNull(hb, "activopubli.cartera", codigosCarteras);
+		}
+
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.estadoPublicacionCodigo", dto.getEstadoPublicacionCodigo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.admision", dto.getAdmision());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.gestion", dto.getGestion());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.publicacion", dto.getPublicacion());
@@ -826,32 +898,38 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	
 	@Override
 	public Page getBusquedaPublicacionGrid(DtoPublicacionGridFilter dto, Long usuarioId) {
-		List<UsuarioCartera> usuarioCartera = genericDao.getList(UsuarioCartera.class ,genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioId));
-		List<String> subcarteras = new ArrayList<String>();
-		
-		HQLBuilder hb = new HQLBuilder(" from VGridBusquedaPublicaciones vgrid");
 
-		if (usuarioCartera != null && !usuarioCartera.isEmpty()) {
-			dto.setCarteraCodigo(usuarioCartera.get(0).getCartera().getCodigo());
-			
-			if (dto.getSubcarteraCodigo() == null) {
-				for (UsuarioCartera usu : usuarioCartera) {
-					if (usu.getSubCartera() != null) {
-						subcarteras.add(usu.getSubCartera().getCodigo());
-					}
-				}
-			}
-		}		
+		HQLBuilder hb = new HQLBuilder(" from VGridBusquedaPublicaciones vgrid");
 		
 		if (dto.getNumActivo() != null && StringUtils.isNumeric(dto.getNumActivo()))
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.numActivo", Long.valueOf(dto.getNumActivo()));
 
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.carteraCodigo", dto.getCarteraCodigo());
-		if (subcarteras != null && !subcarteras.isEmpty()) {
-			HQLBuilder.addFiltroWhereInSiNotNull(hb, "vgrid.subcarteraCodigo", subcarteras);
-		} else {
+		List<String> codigosSubcarteras = usuarioRemApi.getCodigosSubcarterasUsuario(dto.getCarteraCodigo(), adapter.getUsuarioLogado());
+
+		if (!Checks.esNulo(dto.getSubcarteraCodigo())) {
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.subcarteraCodigo", dto.getSubcarteraCodigo());
+		} else if (!Checks.estaVacio(codigosSubcarteras)) {
+			List<String> codigosCarterasConSubcartera = usuarioRemApi.getCodigosCarterasUsuario(true, adapter.getUsuarioLogado());
+			List<String> codigosCarterasSinSubcartera = usuarioRemApi.getCodigosCarterasUsuario(false, adapter.getUsuarioLogado());
+
+			if (!Checks.estaVacio(codigosCarterasConSubcartera) && !Checks.estaVacio(codigosCarterasSinSubcartera)) {
+				hb.appendWhere("vgrid.carteraCodigo in ("+ RemUtils.join(",", codigosCarterasConSubcartera) +") " +
+						"and vgrid.subcarteraCodigo in ("+ RemUtils.join(",", codigosSubcarteras) +") " +
+						"or vgrid.carteraCodigo in ("+ RemUtils.join(",", codigosCarterasSinSubcartera) +")");
+			} else if (!Checks.estaVacio(codigosCarterasConSubcartera) && Checks.estaVacio(codigosCarterasSinSubcartera)) {
+				hb.appendWhere("vgrid.carteraCodigo in ("+ RemUtils.join(",", codigosCarterasConSubcartera)+") " +
+						"and vgrid.subcarteraCodigo in ("+ RemUtils.join(",", codigosSubcarteras) +")");
+			}
 		}
+
+		List<String> codigosCarteras = usuarioRemApi.getCodigosCarterasUsuario(null, adapter.getUsuarioLogado());
+
+		if (!Checks.esNulo(dto.getCarteraCodigo())) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.carteraCodigo", dto.getCarteraCodigo());
+		} else if (!Checks.estaVacio(codigosCarteras) && Checks.estaVacio(codigosSubcarteras)) {
+			HQLBuilder.addFiltroWhereInSiNotNull(hb, "vgrid.carteraCodigo", codigosCarteras);
+		}
+
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.estadoPublicacionVentaCodigo", dto.getEstadoPublicacionVentaCodigo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.motivosOcultacionVentaCodigo", dto.getMotivosOcultacionVentaCodigo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.estadoPublicacionAlquilerCodigo", dto.getEstadoPublicacionAlquilerCodigo());
@@ -1160,9 +1238,9 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 			hb.appendWhere(" voa.idOferta in (" + listaIdsOfertas + ") ");
 		}
 
-		return (List<VGridOfertasActivosAgrupacionIncAnuladas>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString())
-				.list();
-
+		List<VGridOfertasActivosAgrupacionIncAnuladas> listOfertasActivo = (List<VGridOfertasActivosAgrupacionIncAnuladas>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
+		
+		return listOfertasActivo;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -1188,10 +1266,20 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 
 			hb.appendWhere(" voa2.idOferta in (" + listaIdsOfertas + ") ");
 		}
+		
 
-		return (List<VGridOfertasActivosAgrupacion>) this.getSessionFactory().getCurrentSession()
-				.createQuery(hb.toString()).list();
-
+		List<VGridOfertasActivosAgrupacion> listOfertasTramitadasPendientesActivo = this.getSessionFactory().getCurrentSession()
+		.createQuery(hb.toString()).list();
+		Usuario usuPef=proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+		boolean isHayaSuper =  genericAdapter.isSuper(usuPef);
+		boolean isConcurrencia = concurrenciaDao.isActivoEnConcurrencia(idActivo);
+		if (!isHayaSuper && isConcurrencia) {
+			for (VGridOfertasActivosAgrupacion ofertaTramitadasPendientesActivo : listOfertasTramitadasPendientesActivo) {
+				ofertaTramitadasPendientesActivo.setImporteOferta(null);
+			}
+		}
+		
+		return listOfertasTramitadasPendientesActivo;
 	}
 
 	@Override
@@ -2052,28 +2140,43 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	@Override
 	public Object getBusquedaActivosGrid(DtoActivoGridFilter dto, Usuario usuLogado, boolean devolverPage) throws Exception {
 		sanitizarDescripciones(dto);
-		List<UsuarioCartera> usuarioCartera = genericDao.getList(UsuarioCartera.class,genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuLogado.getId()));
-		List<String> subcarteras = new ArrayList<String>();
+		boolean filtroRefCatastral = !Checks.esNulo(dto.getRefCatastral());
 		
 		HQLBuilder hb = new HQLBuilder(" select vgrid from VGridBusquedaActivos vgrid ");
-		
-		if (usuarioCartera != null && !usuarioCartera.isEmpty()) {
-			dto.setCarteraCodigo(usuarioCartera.get(0).getCartera().getCodigo());
-			
-			if (dto.getSubcarteraCodigo() == null) {
-				for (UsuarioCartera uca : usuarioCartera) {
-					if (uca.getSubCartera() != null)
-						subcarteras.add(uca.getSubCartera().getCodigo());
-				}
+
+		List<String> codigosSubcarteras;
+		if(!Checks.esNulo(dto.getCarteraAvanzadaCodigo())) {
+			codigosSubcarteras = usuarioRemApi.getCodigosSubcarterasUsuario(dto.getCarteraAvanzadaCodigo(), adapter.getUsuarioLogado());
+		} else {
+			codigosSubcarteras = usuarioRemApi.getCodigosSubcarterasUsuario(dto.getCarteraCodigo(), adapter.getUsuarioLogado());
+		}
+
+		if (!Checks.esNulo(dto.getSubcarteraAvanzadaCodigo())) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.subcarteraCodigo", dto.getSubcarteraAvanzadaCodigo());
+		} else if (!Checks.esNulo(dto.getSubcarteraCodigo())) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.subcarteraCodigo", dto.getSubcarteraCodigo());
+		} else if (!Checks.estaVacio(codigosSubcarteras)) {
+			List<String> codigosCarterasConSubcartera = usuarioRemApi.getCodigosCarterasUsuario(true, adapter.getUsuarioLogado());
+			List<String> codigosCarterasSinSubcartera = usuarioRemApi.getCodigosCarterasUsuario(false, adapter.getUsuarioLogado());
+
+			if (!Checks.estaVacio(codigosCarterasConSubcartera) && !Checks.estaVacio(codigosCarterasSinSubcartera)) {
+				hb.appendWhere("vgrid.carteraCodigo in ("+ RemUtils.join(",", codigosCarterasConSubcartera) +") " +
+						"and vgrid.subcarteraCodigo in ("+ RemUtils.join(",", codigosSubcarteras) +") " +
+						"or vgrid.carteraCodigo in ("+ RemUtils.join(",", codigosCarterasSinSubcartera) +")");
+			} else if (!Checks.estaVacio(codigosCarterasConSubcartera) && Checks.estaVacio(codigosCarterasSinSubcartera)) {
+				hb.appendWhere("vgrid.carteraCodigo in ("+ RemUtils.join(",", codigosCarterasConSubcartera)+") " +
+						"and vgrid.subcarteraCodigo in ("+ RemUtils.join(",", codigosSubcarteras) +")");
 			}
 		}
-		
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.carteraCodigo", dto.getCarteraAvanzadaCodigo() != null ?  dto.getCarteraAvanzadaCodigo() : dto.getCarteraCodigo());		
-		
-		if (subcarteras != null && !subcarteras.isEmpty()) {
-			HQLBuilder.addFiltroWhereInSiNotNull(hb, "vgrid.subcarteraCodigo", subcarteras);
-		} else {
-			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.subcarteraCodigo", dto.getSubcarteraAvanzadaCodigo() != null ?  dto.getSubcarteraAvanzadaCodigo() : dto.getSubcarteraCodigo());
+
+		List<String> codigosCarteras = usuarioRemApi.getCodigosCarterasUsuario(null, adapter.getUsuarioLogado());
+
+		if (!Checks.esNulo(dto.getCarteraAvanzadaCodigo())) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.carteraCodigo", dto.getCarteraAvanzadaCodigo());
+		} else if (!Checks.esNulo(dto.getCarteraCodigo())) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.carteraCodigo", dto.getCarteraCodigo());
+		} else if (!Checks.estaVacio(codigosCarteras) && Checks.estaVacio(codigosSubcarteras)) {
+			HQLBuilder.addFiltroWhereInSiNotNull(hb, "vgrid.carteraCodigo", codigosCarteras);
 		}
 		
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "vgrid.localidadDescripcion", dto.getLocalidadAvanzadaDescripcion() != null ?  dto.getLocalidadAvanzadaDescripcion() : dto.getLocalidadDescripcion(), true);
@@ -2083,10 +2186,10 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		HQLBuilder.montaAppendWhere(hb," exists (select 1 from ActivoAgrupacionActivo aga where aga.agrupacion.numAgrupRem = #PARAM# and vgrid.id = aga.activo.id) ", 
 				new String[] {"aga.agrupacion.numAgrupRem"},new Object[] {dto.getNumAgrupacion()},"#PARAM#", false);
 		
-		HQLBuilder.montaAppendWhere(hb," exists (select 1 from ActivoCatastro cat where upper(cat.catastro.refCatastral) like '%'||#PARAM#||'%' and vgrid.id = cat.activo.id) or exists (select 1 from ActivoCatastro cat where upper(cat.refCatastral) like '%'||#PARAM#||'%' and vgrid.id = cat.activo.id) ",
-					new String[] {"cat.catastro.refCatastral","cat.refCatastral"},
-					new Object[] {dto.getRefCatastral(),dto.getRefCatastral()},
-					"#PARAM#",true);			
+		HQLBuilder.montaAppendWhere(hb," exists (select 1 from ActivoCatastro cat where cat.catastro.refCatastral = #PARAM# and vgrid.id = cat.activo.id) or exists (select 1 from ActivoCatastro cat where cat.refCatastral = #PARAM# and vgrid.id = cat.activo.id) ",
+				new String[] {"cat.catastro.refCatastral","cat.refCatastral"},
+				new Object[] {dto.getRefCatastral(),dto.getRefCatastral()},
+				"#PARAM#",true);
 		
 		if (dto.getNumActivo() != null && StringUtils.isNumeric(dto.getNumActivo()))
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.numActivo", Long.valueOf(dto.getNumActivo()));						
@@ -2141,9 +2244,13 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		HQLBuilder.montaAppendWhere(hb, " exists (select 1 from GestorActivo ga where ga.tipoGestor.codigo = #PARAM# and ga.usuario.id = #PARAM# and vgrid.id = ga.activo.id) ",
 					new String[] {"ga.tipoGestor.codigo","ga.usuario.id"},
 					new Object[] {dto.getTipoGestorCodigo(),dto.getUsuarioGestor()}, "#PARAM#", false);
+		
+		if (!filtroRefCatastral) {
 		HQLBuilder.montaAppendWhere(hb, " exists (select 1 from VBusquedaActivosGestorias bag where bag.gestoria = #PARAM# and vgrid.id = bag.id) ",
 					new String[] {"bag.gestoria"},
 					new Object[] {dto.getGestoria()}, "#PARAM#", false);
+		}
+		
 		HQLBuilder.montaAppendWhere(hb, " exists (select 1 from ActivoInfoComercial aic where aic.mediadorInforme.id = #PARAM# and vgrid.id = aic.activo.id) ",
 					new String[] {"aic.mediadorInforme.id"},
 					new Object[] {dto.getApiPrimarioId()}, "#PARAM#", false);
@@ -2245,12 +2352,37 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	}
 
 	@Override
-	public Activo existeActivoUsuarioCarterizado(Long numActivo, Long idCartera, List<Long> idSubcarteras) {
+	public Activo existeActivoUsuarioCarterizado(Long numActivo, String codCartera, List<String> codSubcarteras) {
 		
 		HQLBuilder hql = new HQLBuilder("from Activo");
 		HQLBuilder.addFiltroIgualQueSiNotNull(hql, "numActivo", numActivo);
-		HQLBuilder.addFiltroIgualQueSiNotNull(hql, "cartera.id", idCartera);
-		HQLBuilder.addFiltroWhereInSiNotNull(hql, "subcartera.id", idSubcarteras);
+
+		List<String> codigosSubcarteras = usuarioRemApi.getCodigosSubcarterasUsuario(codCartera, adapter.getUsuarioLogado());
+
+		if (!Checks.estaVacio(codSubcarteras)) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hql, "subcartera.codigo", codSubcarteras);
+		} else if (!Checks.estaVacio(codigosSubcarteras)) {
+			List<String> codigosCarterasConSubcartera = usuarioRemApi.getCodigosCarterasUsuario(true, adapter.getUsuarioLogado());
+			List<String> codigosCarterasSinSubcartera = usuarioRemApi.getCodigosCarterasUsuario(false, adapter.getUsuarioLogado());
+
+			if (!Checks.estaVacio(codigosCarterasConSubcartera) && !Checks.estaVacio(codigosCarterasSinSubcartera)) {
+				hql.appendWhere("cartera.codigo in ("+ RemUtils.join(",", codigosCarterasConSubcartera) +") " +
+						"and subcartera.codigo in ("+ RemUtils.join(",", codigosSubcarteras) +") " +
+						"or cartera.codigo in ("+ RemUtils.join(",", codigosCarterasSinSubcartera) +")");
+			} else if (!Checks.estaVacio(codigosCarterasConSubcartera) && Checks.estaVacio(codigosCarterasSinSubcartera)) {
+				hql.appendWhere("cartera.codigo in ("+ RemUtils.join(",", codigosCarterasConSubcartera)+") " +
+						"and subcartera.codigo in ("+ RemUtils.join(",", codigosSubcarteras) +")");
+			}
+		}
+
+		List<String> codigosCarteras = usuarioRemApi.getCodigosCarterasUsuario(null, adapter.getUsuarioLogado());
+
+		if (!Checks.esNulo(codCartera)) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hql, "cartera.codigo", codCartera);
+		} else if (!Checks.estaVacio(codigosCarteras) && Checks.estaVacio(codigosSubcarteras)) {
+			HQLBuilder.addFiltroWhereInSiNotNull(hql, "cartera.codigo", codigosCarteras);
+		}
+
 		List<Activo> activos = HibernateQueryUtils.list(this, hql);
 		
 		if (activos != null && !activos.isEmpty()) {
@@ -2555,5 +2687,22 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 				+ "         AND ROWNUM = 1 ");
 
 		return descripcionComunidadAutonoma;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<LocalizacionSubestadoGestion> getLocalizacionSubestadoGestionByIdEstadoLocalizacion(Long idEstadoLocalizacion) {
+
+		HQLBuilder hb = new HQLBuilder(" from LocalizacionSubestadoGestion lsg");
+
+		hb.appendWhere("lsg.primaryKey.estadoLocalizacion.id = :idEstadoLocalizacion");
+		hb.appendWhere("lsg.auditoria.borrado = 0");
+
+		Query q = this.getSessionFactory().getCurrentSession().createQuery(hb.toString());
+
+		if(idEstadoLocalizacion != null)
+			q.setParameter("idEstadoLocalizacion", idEstadoLocalizacion);
+
+		return (List<LocalizacionSubestadoGestion>) q.list();
 	}
 }

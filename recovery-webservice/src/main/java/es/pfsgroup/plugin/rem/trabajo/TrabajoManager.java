@@ -23,6 +23,8 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import es.pfsgroup.commons.utils.HQLBuilder;
+import es.pfsgroup.plugin.rem.usuarioRem.UsuarioRemApi;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -50,7 +52,6 @@ import es.capgemini.pfs.users.dao.UsuarioDao;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
@@ -61,17 +62,14 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.framework.paradise.agenda.adapter.TareaAdapter;
 import es.pfsgroup.framework.paradise.bulkUpload.adapter.ProcessAdapter;
-import es.pfsgroup.framework.paradise.bulkUpload.api.ExcelManagerApi;
 import es.pfsgroup.framework.paradise.bulkUpload.api.impl.MSVProcesoManager;
+import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
 import es.pfsgroup.framework.paradise.bulkUpload.dao.MSVFicheroDao;
-import es.pfsgroup.framework.paradise.bulkUpload.dao.MSVProcesoDao;
-import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDEstadoProceso;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDocumentoMasivo;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVProcesoMasivo;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
-import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.http.client.HttpSimpleGetRequest;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
@@ -113,14 +111,12 @@ import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.ActivoSareb;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
-import es.pfsgroup.plugin.rem.model.ActivoSareb;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo.ActivoTrabajoPk;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.AdjuntoTrabajo;
 import es.pfsgroup.plugin.rem.model.AgendaTrabajo;
-import es.pfsgroup.plugin.rem.model.Albaran;
 import es.pfsgroup.plugin.rem.model.CFGComiteSancionador;
 import es.pfsgroup.plugin.rem.model.CFGFinalizarTrabajos;
 import es.pfsgroup.plugin.rem.model.CFGPlazosTareas;
@@ -150,7 +146,6 @@ import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.HistorificadorPestanas;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.Prefactura;
-import es.pfsgroup.plugin.rem.model.Prefacturas;
 import es.pfsgroup.plugin.rem.model.PresupuestoTrabajo;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
@@ -161,12 +156,12 @@ import es.pfsgroup.plugin.rem.model.TrabajoFoto;
 import es.pfsgroup.plugin.rem.model.TrabajoObservacion;
 import es.pfsgroup.plugin.rem.model.TrabajoProvisionSuplido;
 import es.pfsgroup.plugin.rem.model.TrabajoRecargosProveedor;
-import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VActivosAgrupacionTrabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajoParticipa;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajoPresupuesto;
 import es.pfsgroup.plugin.rem.model.VBusquedaPresupuestosActivo;
 import es.pfsgroup.plugin.rem.model.VProveedores;
+import es.pfsgroup.plugin.rem.model.VUsuarioGestorProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDAcoAprobacionComite;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstEstadoPrefactura;
@@ -376,6 +371,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	
 	@Autowired
 	private ActivoTrabajoDao activoTrabajoDao;
+
+	@Autowired
+	private UsuarioRemApi usuarioRemApi;
 	
 	@Resource(name = "entityTransactionManager")
 	private PlatformTransactionManager transactionManager;
@@ -402,25 +400,10 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		} else if (dto.getEsIncluidoFacturaGastos() != null) {
 			esIncluidoFactura = dto.getEsIncluidoFacturaGastos();
 		}
-		
 
-		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,
-				genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
-		
-		
 		if(dto.getEsHistoricoPeticionActivo() != null) {
 			esHistoricoPeticion = dto.getEsHistoricoPeticionActivo();
 		}
-		
-		if (!Checks.esNulo(usuarioCartera)){
-			if(!Checks.esNulo(usuarioCartera.getSubCartera())){
-				dto.setCartera(usuarioCartera.getCartera().getCodigo());
-				dto.setSubcartera(usuarioCartera.getSubCartera().getCodigo());
-			}else{
-				dto.setCartera(usuarioCartera.getCartera().getCodigo());
-			}
-		}
-		
 		
 		// Comprobar si el usuario es externo y, en tal caso, seteamos proveedor
 		// y según HREOS-2272 en el modulo de trabajos
@@ -1808,7 +1791,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				}
 				presupuesto.setFecha(new Date());
 				presupuesto.setEstadoPresupuesto(estadoPresupuesto);
-				presupuesto.setImporte(dtoTrabajo.getImportePresupuesto().floatValue());
+				presupuesto.setImporte(dtoTrabajo.getImportePresupuesto());
 				if(dtoTrabajo.getRefImportePresupueso() != null) {
 					presupuesto.setRefPresupuestoProveedor(dtoTrabajo.getRefImportePresupueso());
 				}
@@ -1995,7 +1978,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 						}
 						presupuesto.setFecha(new Date());
 						presupuesto.setEstadoPresupuesto(estadoPresupuesto);
-						presupuesto.setImporte(dtoTrabajo.getImportePresupuesto().floatValue());
+						presupuesto.setImporte(dtoTrabajo.getImportePresupuesto());
 						if(dtoTrabajo.getRefImportePresupueso() != null) {
 							presupuesto.setRefPresupuestoProveedor(dtoTrabajo.getRefImportePresupueso());
 						}
@@ -2056,7 +2039,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 					}
 					presupuesto.setFecha(new Date());
 					presupuesto.setEstadoPresupuesto(estadoPresupuesto);
-					presupuesto.setImporte(dtoTrabajo.getImportePresupuesto().floatValue());
+					presupuesto.setImporte(dtoTrabajo.getImportePresupuesto());
 					if(dtoTrabajo.getRefImportePresupueso() != null) {
 						presupuesto.setRefPresupuestoProveedor(dtoTrabajo.getRefImportePresupueso());
 					}
@@ -2399,7 +2382,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				}
 				presupuesto.setEstadoPresupuesto(estadoPresupuesto);
 				presupuesto.setFecha(new Date());
-				presupuesto.setImporte(dtoTrabajo.getImportePresupuesto().floatValue());
+				presupuesto.setImporte(dtoTrabajo.getImportePresupuesto());
 				if(dtoTrabajo.getRefImportePresupueso() != null) {
 					presupuesto.setRefPresupuestoProveedor(dtoTrabajo.getRefImportePresupueso());
 				}
@@ -3535,8 +3518,6 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		DtoGestionEconomicaTrabajo dtoTrabajo = new DtoGestionEconomicaTrabajo();
 		Usuario usuariologado = adapter.getUsuarioLogado();
 		String casoActual = esEstadoValidoGDAOProveedor(trabajo, usuariologado);
-		
-		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class, genericDao.createFilter(FilterType.EQUALS,"usuario.id" , usuariologado.getId()));
 
 		beanUtilNotNull.copyProperties(dtoTrabajo, trabajo);
 		beanUtilNotNull.copyProperty(dtoTrabajo.getNumTrabajo(), "numTrabajo", trabajo.getNumTrabajo());
@@ -3600,12 +3581,15 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			dtoTrabajo.setEsProveedorEditable(false);
 			dtoTrabajo.setEsGridSuplidosEditable(true);
 		}
-		
-		if(usuarioCartera != null) {
+
+		List<String> codigosCarteras = usuarioRemApi.getCodigosCarterasUsuario(null, usuariologado);
+
+		if(!Checks.estaVacio(codigosCarteras)) {
 			dtoTrabajo.setEsUsuarioCliente(true);
-		}else {
+		} else {
 			dtoTrabajo.setEsUsuarioCliente(false);
 		}
+
 		if(trabajo.getFechaCompromisoEjecucion() != null) {
 			dtoTrabajo.setFechaCompromisoEjecucion(trabajo.getFechaCompromisoEjecucion());
 		}
@@ -6387,6 +6371,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	public List<DtoAgendaTrabajo> getListAgendaTrabajo(Long idTrabajo) {
 		List<AgendaTrabajo> listAgenda = null; 
 		List<DtoAgendaTrabajo> listDtoAgenda = new ArrayList<DtoAgendaTrabajo>();
+		String gestor = "Gestor";
+		String proveedor = "Proveedor";
 		try {	
 		
 			Filter filtroTrabajo = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", idTrabajo);
@@ -6400,7 +6386,19 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 					DtoAgendaTrabajo dto = new DtoAgendaTrabajo();
 					dto.setIdAgenda(agendaTrabajo.getId());
 					dto.setIdTrabajo(agendaTrabajo.getTrabajo().getId());
-					dto.setGestorAgenda(agendaTrabajo.getGestor().getUsername());
+					if (agendaTrabajo.getGestor() != null) {
+						Filter filterTipo = genericDao.createFilter(FilterType.EQUALS, "id", agendaTrabajo.getGestor().getId());
+						VUsuarioGestorProveedor usuarioGestorOrProveedor = genericDao.get(VUsuarioGestorProveedor.class, filterTipo);
+						if (usuarioGestorOrProveedor != null) {
+							if (usuarioGestorOrProveedor.getIsGestor() != null && usuarioGestorOrProveedor.getIsGestor() == true) {
+								dto.setGestorAgenda(gestor);
+							} else if(usuarioGestorOrProveedor.getIsProveedor() != null && usuarioGestorOrProveedor.getIsProveedor() == true) {
+								dto.setGestorAgenda(proveedor);
+							}
+							dto.setNombreGestorOrProveedor(agendaTrabajo.getGestor().getApellidoNombre());
+						}
+					}
+					//dto.setGestorAgenda(agendaTrabajo.getGestor().getUsername());
 					dto.setFechaAgenda(agendaTrabajo.getFecha());
 					dto.setTipoGestion(agendaTrabajo.getTipoGestion().getCodigo());
 					dto.setObservacionesAgenda(agendaTrabajo.getObservaciones());
@@ -6420,6 +6418,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	public boolean createAgendaTrabajo(DtoAgendaTrabajo dtoAgendaTrabajo) {
 		AgendaTrabajo agenda = new AgendaTrabajo();
 		Trabajo trabajo = null;
+		Boolean proveedor = false;
+		Boolean gestor = false;
 		
 		if(dtoAgendaTrabajo.getIdTrabajo() != null) {
 			trabajo = trabajoDao.get(dtoAgendaTrabajo.getIdTrabajo());
@@ -6462,7 +6462,28 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				}
 			}
 		}
-
+		
+		
+		if (usuarioManager.getUsuarioLogado() != null) {
+			Filter filterTipo = genericDao.createFilter(FilterType.EQUALS, "id", usuarioManager.getUsuarioLogado().getId());
+			VUsuarioGestorProveedor usuarioGestorOrProveedor = genericDao.get(VUsuarioGestorProveedor.class, filterTipo);
+			if (usuarioGestorOrProveedor != null) {
+				if (usuarioGestorOrProveedor.getIsGestor() != null && usuarioGestorOrProveedor.getIsGestor() == true) {
+					if (DDTipoApunte.CODIGO_GESTION_LLAVES_ACCESO.equals(dtoAgendaTrabajo.getTipoGestion()) || DDTipoApunte.CODIGO_ENVIADAS_INSTRUCCIONES.equals(dtoAgendaTrabajo.getTipoGestion())
+							|| DDTipoApunte.CODIGO_PTO_APROBADO.equals(dtoAgendaTrabajo.getTipoGestion())) {
+						gestor = true;
+						this.enviarCorreoAgendaTrabajo(agenda, trabajo, dtoAgendaTrabajo, proveedor, gestor);
+					}
+				} else if(usuarioGestorOrProveedor.getIsProveedor() != null && usuarioGestorOrProveedor.getIsProveedor() == true) {
+					if (DDTipoApunte.CODIGO_LLAVES_ACCESO.equals(dtoAgendaTrabajo.getTipoGestion()) || DDTipoApunte.CODIGO_PTE_INSTRUCCIONES.equals(dtoAgendaTrabajo.getTipoGestion())
+							|| DDTipoApunte.CODIGO_PTE_APR_PRESUPUESTO.equals(dtoAgendaTrabajo.getTipoGestion()) || DDTipoApunte.CODIGO_FINALIZADO.equals(dtoAgendaTrabajo.getTipoGestion())) {
+						proveedor = true;
+						this.enviarCorreoAgendaTrabajo(agenda, trabajo, dtoAgendaTrabajo, proveedor, gestor);
+					}
+				}
+			}
+		}
+		
 		return true;
 	}
 	
@@ -7012,5 +7033,77 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		return false;
 	}
 	
+	@Override
+	public void enviarCorreoAgendaTrabajo(AgendaTrabajo agenda, Trabajo trabajo, DtoAgendaTrabajo dtoAgendaTrabajo, Boolean proveedor, Boolean gestor) {
+		
+		if(trabajo == null) {
+			return;
+		}
+		
+		DtoSendNotificator dtoSendNotificator = trabajoToDtoSendNotificator(trabajo);
+		List<String> mailsPara = new ArrayList<String>();
+		
+		String contenido = "";
+		String titulo = "";
+		String descripcionTrabajo = !Checks.esNulo(trabajo.getDescripcion()) ? (trabajo.getDescripcion() + " - ") : "";
+	   
+//	    if (proveedor) {
+//	    	if (!Checks.esNulo(trabajo.getUsuarioGestorActivoResponsable()) && !Checks.esNulo(trabajo.getUsuarioGestorActivoResponsable().getEmail())) {
+//				mailsPara.add(trabajo.getUsuarioGestorActivoResponsable().getEmail());
+//			}else if(!Checks.esNulo(trabajo.getUsuarioResponsableTrabajo()) && !Checks.esNulo(trabajo.getUsuarioResponsableTrabajo().getEmail())){
+//				mailsPara.add(trabajo.getUsuarioGestorActivoResponsable().getEmail());
+//			}
+//	    	
+//	    	if (DDTipoApunte.CODIGO_LLAVES_ACCESO.equals(dtoAgendaTrabajo.getTipoGestion())) {
+//	    		contenido = "<p>Activo "+  trabajo.getActivo().getNumActivo() + " OT " + trabajo.getNumTrabajo() + "</p>"
+//	    				+"<p>Sin acceso por falta de llaves.</p>"
+//	    				+"<p>Urgente envío</p>";
+//				titulo = "Notificación de inserción de registro en la agenda de trabajo en REM (" + descripcionTrabajo + "Nº Trabajo "+dtoSendNotificator.getNumTrabajo()+")";
+//			} else if (DDTipoApunte.CODIGO_PTE_INSTRUCCIONES.equals(dtoAgendaTrabajo.getTipoGestion())) {
+//				contenido = "<p>Activo "+  trabajo.getActivo().getNumActivo() + " OT " + trabajo.getNumTrabajo() + "</p>"
+//	    				+"<p>Pte. Instrucciones.</p>"
+//	    				+"<p>Urgente envío</p>";
+//				titulo = "Notificación de inserción de registro en la agenda de trabajo en REM (" + descripcionTrabajo + "Nº Trabajo "+dtoSendNotificator.getNumTrabajo()+")";
+//			} else if (DDTipoApunte.CODIGO_PTE_APR_PRESUPUESTO.equals(dtoAgendaTrabajo.getTipoGestion())) {
+//				contenido = "<p>Activo "+  trabajo.getActivo().getNumActivo() + " OT " + trabajo.getNumTrabajo() + "</p>"
+//	    				+"<p>Pte de aprobación presupuesto.</p>"
+//	    				+"<p>Urgente envío</p>";
+//				titulo = "Notificación de inserción de registro en la agenda de trabajo en REM (" + descripcionTrabajo + "Nº Trabajo "+dtoSendNotificator.getNumTrabajo()+")";
+//			} else if (DDTipoApunte.CODIGO_FINALIZADO.equals(dtoAgendaTrabajo.getTipoGestion())) {
+//				contenido = "<p>Activo "+  trabajo.getActivo().getNumActivo() + " OT " + trabajo.getNumTrabajo() + "</p>"
+//	    				+"<p>Finalizado.</p>";
+//				titulo = "Notificación de inserción de registro en la agenda de trabajo en REM (" + descripcionTrabajo + "Nº Trabajo "+dtoSendNotificator.getNumTrabajo()+")";
+//			}
+//		}
+	    if (gestor) {
+			
+			if (!Checks.esNulo(trabajo.getProveedorContacto()) && !Checks.esNulo(trabajo.getProveedorContacto().getEmail())) {
+	    		if(!Checks.esNulo(trabajo.getProveedorContacto())) {
+	    			mailsPara.add(trabajo.getProveedorContacto().getEmail());
+	    		}
+		    	if(!Checks.esNulo(trabajo.getProveedorContacto().getProveedor()) && !Checks.esNulo(trabajo.getProveedorContacto().getProveedor().getEmail())) {
+		    		mailsPara.add(trabajo.getProveedorContacto().getProveedor().getEmail());
+		    	}
+
+			}
+			if (DDTipoApunte.CODIGO_GESTION_LLAVES_ACCESO.equals(dtoAgendaTrabajo.getTipoGestion())) {
+				contenido = "<p>Activo "+  trabajo.getActivo().getNumActivo() + " OT " + trabajo.getNumTrabajo() + "</p>"
+	    				+"<p>Llaves gestionadas.</p>";
+				titulo = "Notificación de inserción de registro en la agenda de trabajo en REM (" + descripcionTrabajo + "Nº Trabajo "+dtoSendNotificator.getNumTrabajo()+")";
+			} else if (DDTipoApunte.CODIGO_ENVIADAS_INSTRUCCIONES.equals(dtoAgendaTrabajo.getTipoGestion())) {
+				contenido = "<p>Activo "+  trabajo.getActivo().getNumActivo() + " OT " + trabajo.getNumTrabajo() + "</p>"
+	    				+"<p>Enviadas instrucciones.</p>";
+				titulo = "Notificación de inserción de registro en la agenda de trabajo en REM (" + descripcionTrabajo + "Nº Trabajo "+dtoSendNotificator.getNumTrabajo()+")";
+			} else if (DDTipoApunte.CODIGO_PTO_APROBADO.equals(dtoAgendaTrabajo.getTipoGestion())) {
+				contenido = "<p>Activo "+  trabajo.getActivo().getNumActivo() + " OT " + trabajo.getNumTrabajo() + "</p>"
+	    				+"<p>Pto. Aprobado.</p>";
+				titulo = "Notificación de inserción de registro en la agenda de trabajo en REM (" + descripcionTrabajo + "Nº Trabajo "+dtoSendNotificator.getNumTrabajo()+")";
+			}
+			
+			genericAdapter.sendMail(mailsPara, null, titulo, generateCuerpo(dtoSendNotificator, contenido));
+		}
+	   
+		
+	}
 
 }

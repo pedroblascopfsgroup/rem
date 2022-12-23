@@ -8,18 +8,26 @@ import org.springframework.stereotype.Service;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.TramiteAlquilerNoComercialApi;
+import es.pfsgroup.plugin.rem.factory.TramiteAlquilerNoComercialFactory;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
+import es.pfsgroup.plugin.rem.model.ActivoCaixa;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
+import es.pfsgroup.plugin.rem.model.DtoTareasFormalizacion;
 import es.pfsgroup.plugin.rem.model.DtoTiposAlquilerNoComercial;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoOfertaAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAdenda;
 
 @Service("tramiteAlquilerNoComercialManager")
 public class TramiteAlquilerNoComercialManager implements TramiteAlquilerNoComercialApi {
@@ -32,6 +40,9 @@ public class TramiteAlquilerNoComercialManager implements TramiteAlquilerNoComer
 	
 	@Autowired
 	private GenericABMDao genericDao;
+	
+	@Autowired
+	private TramiteAlquilerNoComercialFactory tramiteNoComercialFactory;
 		
 	private static final String CODIGO_SI = "01";
 	
@@ -195,4 +206,183 @@ public class TramiteAlquilerNoComercialManager implements TramiteAlquilerNoComer
 		return null;
 	}
 	
+	@Override
+	public boolean esAlquilerSocial(TareaExterna tareaExterna) {
+		ExpedienteComercial eco = expedienteComercialApi.tareaExternaToExpedienteComercial(tareaExterna);
+		Oferta ofr = eco.getOferta();
+		if(DDSubtipoOfertaAlquiler.CODIGO_ALQUILER_SOCIAL_DACION.equals(ofr.getSubtipoOfertaAlquiler().getCodigo()) 
+				|| DDSubtipoOfertaAlquiler.CODIGO_ALQUILER_SOCIAL_EJECUCION.equals(ofr.getSubtipoOfertaAlquiler().getCodigo())
+				|| DDSubtipoOfertaAlquiler.CODIGO_OCUPA.equals(ofr.getSubtipoOfertaAlquiler().getCodigo())) {
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public boolean esSubrogacionCompraVenta(TareaExterna tareaExterna) {
+		ExpedienteComercial eco = expedienteComercialApi.tareaExternaToExpedienteComercial(tareaExterna);
+		Oferta ofr = eco.getOferta();
+		if(DDSubtipoOfertaAlquiler.CODIGO_SUBROGACION_DACION.equals(ofr.getSubtipoOfertaAlquiler().getCodigo())) {
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public boolean esRenovacion(TareaExterna tareaExterna) {
+		ExpedienteComercial eco = expedienteComercialApi.tareaExternaToExpedienteComercial(tareaExterna);
+		Oferta ofr = eco.getOferta();
+		if(DDSubtipoOfertaAlquiler.CODIGO_NOVACIONES.equals(ofr.getSubtipoOfertaAlquiler().getCodigo())
+				|| DDSubtipoOfertaAlquiler.CODIGO_RENOVACIONES.equals(ofr.getSubtipoOfertaAlquiler().getCodigo())) {
+			return true;
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean noEsSubrogacion(TareaExterna tareaExterna) {
+		ExpedienteComercial eco = expedienteComercialApi.tareaExternaToExpedienteComercial(tareaExterna);
+		Oferta ofr = eco.getOferta();
+		if(!DDSubtipoOfertaAlquiler.CODIGO_SUBROGACION_DACION.equals(ofr.getSubtipoOfertaAlquiler().getCodigo())
+				&& !DDSubtipoOfertaAlquiler.CODIGO_SUBROGACION_EJECUCION.equals(ofr.getSubtipoOfertaAlquiler().getCodigo())) {
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public boolean esSubrogacionHipoteca(TareaExterna tareaExterna) {
+		ExpedienteComercial eco = expedienteComercialApi.tareaExternaToExpedienteComercial(tareaExterna);
+		Oferta ofr = eco.getOferta();
+		if(DDSubtipoOfertaAlquiler.CODIGO_SUBROGACION_EJECUCION.equals(ofr.getSubtipoOfertaAlquiler().getCodigo())) {
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public boolean conAdenda(TareaExterna tareaExterna, String tipoAdenda) {
+		boolean resultado = false;
+		if(!Checks.esNulo(tipoAdenda) && !DDTipoAdenda.CODIGO_NO_APLICA_ADENDA.equals(tipoAdenda)) {
+			resultado = true;
+		}
+		return resultado;
+	}
+
+	@Override
+	public boolean esCarteraConcentrada(TareaExterna tareaExterna) {
+		boolean resultado = false;
+		ExpedienteComercial eco = expedienteComercialApi.tareaExternaToExpedienteComercial(tareaExterna);
+		if (eco != null && eco.getOferta() != null) {
+			Oferta ofr = eco.getOferta();
+			if (ofr != null) {
+				Filter filterActivo =  genericDao.createFilter(FilterType.EQUALS, "activo.id", ofr.getActivoPrincipal().getId());
+				ActivoCaixa activoCaixa = genericDao.get(ActivoCaixa.class, filterActivo);
+				if (activoCaixa != null 
+						&& (activoCaixa.getCarteraConcentrada().equals(true) || activoCaixa.getCarteraConcentrada() == true)) {
+					resultado = true;
+				}
+			}
+		}
+			
+		return resultado;
+	}
+
+	@Override
+	public boolean isAdendaVacio(TareaExterna tareaExterna) {
+		
+		TramiteAlquilerNoComercial tramiteNoComercial = tramiteNoComercialFactory.getTramiteAlquilerNoComercialByTareaExterna(tareaExterna);
+		
+		boolean tipoAdendaVacio = tramiteNoComercial.isAdendaVacio(tareaExterna);
+		
+		return tipoAdendaVacio;
+	}
+
+	@Override
+	public boolean firmaMenosTresVeces(TareaExterna tareaExterna) {
+		
+		TramiteAlquilerNoComercial tramiteNoComercial = tramiteNoComercialFactory.getTramiteAlquilerNoComercialByTareaExterna(tareaExterna);
+		
+		boolean firmaMenosTresVeces = tramiteNoComercial.firmaMenosTresVeces(tareaExterna);
+		
+		return firmaMenosTresVeces;
+	}
+	
+	@Override
+	public void saveHistoricoFirmaAdenda(DtoTareasFormalizacion dto, Oferta oferta) {
+		if(oferta.getSubtipoOfertaAlquiler() != null) {
+		
+			TramiteAlquilerNoComercial tramiteNoComercial = tramiteNoComercialFactory.getTramiteAlquilerNoComercial(oferta.getSubtipoOfertaAlquiler().getCodigo());
+			tramiteNoComercial.saveHistoricoFirmaAdenda(dto, oferta);
+		}
+	}
+	
+	@Override
+	public boolean modificarFianza (ExpedienteComercial eco) {
+		if(eco.getOferta().getSubtipoOfertaAlquiler() == null) {
+			return true;
+		}
+		
+		TramiteAlquilerNoComercial tramiteNoComercial = tramiteNoComercialFactory.getTramiteAlquilerNoComercial(eco.getOferta().getSubtipoOfertaAlquiler().getCodigo());
+		if(tramiteNoComercial != null) {
+			return tramiteNoComercial.modificarFianza(eco);
+		}else {
+			return false;
+		}
+	}
+
+	@Override
+	public boolean rechazaMenosTresVeces(TareaExterna tareaExterna) {
+		
+		return false;
+	}
+	
+	@Override
+	public boolean estanCamposRellenosParaFormalizacion(ExpedienteComercial eco) {
+		
+		if(eco.getOferta() == null || eco.getOferta().getSubtipoOfertaAlquiler() == null)
+			return false;
+		
+		TramiteAlquilerNoComercial tramiteNoComercial = tramiteNoComercialFactory.getTramiteAlquilerNoComercial(eco.getOferta().getSubtipoOfertaAlquiler().getCodigo());
+		
+		return tramiteNoComercial.estanCamposRellenosParaFormalizacion(eco);
+	}
+	
+	@Override
+	public boolean estanCamposParaDefinicionOfertaRellenos(ExpedienteComercial eco) {
+		Oferta oferta = eco.getOferta();
+		if(oferta == null) {
+			return false;
+		}
+		
+		if(oferta.getOrigenContratoEcc() == null || oferta.getSuborigenContratoEcc() == null || oferta.getClasificacion() == null) {
+			return false;
+		}
+		
+		if(eco.getCondicionante() != null && eco.getCondicionante().getMetodoActualizacionRenta() == null) {
+			return false;
+		}
+		
+		return true;
+	}
+	
+	@Override
+	public boolean permiteClaseCondicion(ExpedienteComercial eco) {
+		if(eco.getOferta() == null || eco.getOferta().getSubtipoOfertaAlquiler() == null) {
+			return false;
+		}
+		
+		TramiteAlquilerNoComercial tramiteNoComercial = tramiteNoComercialFactory.getTramiteAlquilerNoComercial(eco.getOferta().getSubtipoOfertaAlquiler().getCodigo());
+		return tramiteNoComercial.permiteClaseCondicion();
+	}
+
+	@Override
+	public boolean permiteImporteFianzaAnterior(ExpedienteComercial eco) {
+		if(eco.getOferta() == null || eco.getOferta().getSubtipoOfertaAlquiler() == null) {
+			return false;
+		}
+
+		TramiteAlquilerNoComercial tramiteNoComercial = tramiteNoComercialFactory.getTramiteAlquilerNoComercial(eco.getOferta().getSubtipoOfertaAlquiler().getCodigo());
+		return tramiteNoComercial.permiteImporteFianzaAnterior();
+	}
 }

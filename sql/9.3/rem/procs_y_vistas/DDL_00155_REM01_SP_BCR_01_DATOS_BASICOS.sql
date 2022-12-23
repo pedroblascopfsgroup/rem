@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20220517
+--## FECHA_CREACION=20220922
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-11670
@@ -36,6 +36,8 @@
 --##	      0.24 Corrección número anterior [HREOS-17614] - Daniel Algaba
 --##	      0.25 Añadir merge a la ACT_ACTIVO_CAIXA para rellenar el DD_CBC_ID de los activos vendidos de Caixa [REMVIP-11683] - Alejandra García
 --##	      0.26 Tipo/subtipo [REMVIP-11670] - Daniel Algaba
+--##	      0.27 Tipo/subtipo, usando CLASE_USO si es nulo CLASE_USO_REGISTRAL [REMVIP-12292] - IVAN REPISO
+--##	      0.28 Insertar EST_CONSERVACION en activo caixa [REMVIP-12391] - IVAN REPISO
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -109,12 +111,14 @@ BEGIN
                      WHEN aux.SUBTIPO_VIVIENDA IS NOT NULL THEN sac_viv.DD_TPA_ID
                      WHEN aux.SUBTIPO_SUELO IS NOT NULL THEN sac_suelo.DD_TPA_ID
                      WHEN sac_uso.DD_TPA_ID IS NOT NULL THEN sac_uso.DD_TPA_ID
+                     WHEN AUX.CLASE_USO_REGISTRAL IS NULL AND SAC_TASA.DD_TPA_ID IS NOT NULL THEN SAC_TASA.DD_TPA_ID
                      ELSE TPA.DD_TPA_ID
                   END DD_TPA_ID,
                   CASE 
                      WHEN aux.SUBTIPO_VIVIENDA IS NOT NULL THEN sac_viv.DD_SAC_ID
                      WHEN aux.SUBTIPO_SUELO IS NOT NULL THEN sac_suelo.DD_SAC_ID
                      WHEN sac_uso.DD_SAC_ID IS NOT NULL THEN sac_uso.DD_SAC_ID
+                     WHEN AUX.CLASE_USO_REGISTRAL IS NULL AND SAC_TASA.DD_SAC_ID IS NOT NULL THEN SAC_TASA.DD_SAC_ID
                      WHEN TPA.DD_TPA_ID IS NOT NULL AND SAC.DD_SAC_ID IS NOT NULL THEN ACT.DD_SAC_ID
                      ELSE NULL
                   END DD_SAC_ID,
@@ -122,8 +126,10 @@ BEGIN
                   COALESCE(STA_OR.DD_STA_ID, STA.DD_STA_ID) AS DD_STA_ID,
                   prp.DD_PRP_ID as DD_PRP_ID,
                   CASE
-                     WHEN AUX.CLASE_USO_REGISTRAL=''0001'' AND AUX.VIVIENDA_HABITUAL=''S'' THEN (SELECT DD_TUD_ID FROM '|| V_ESQUEMA ||'.DD_TUD_TIPO_USO_DESTINO WHERE DD_TUD_CODIGO=''01'')
-                     WHEN AUX.CLASE_USO_REGISTRAL=''0001'' AND AUX.VIVIENDA_HABITUAL=''N'' THEN (SELECT DD_TUD_ID FROM '|| V_ESQUEMA ||'.DD_TUD_TIPO_USO_DESTINO WHERE DD_TUD_CODIGO=''06'')
+                     WHEN (AUX.CLASE_USO_REGISTRAL=''0001'' OR (AUX.CLASE_USO_REGISTRAL IS NULL AND AUX.CLASE_USO=''0001'')) 
+                           AND AUX.VIVIENDA_HABITUAL=''S'' THEN (SELECT DD_TUD_ID FROM '|| V_ESQUEMA ||'.DD_TUD_TIPO_USO_DESTINO WHERE DD_TUD_CODIGO=''01'')
+                     WHEN (AUX.CLASE_USO_REGISTRAL=''0001'' OR (AUX.CLASE_USO_REGISTRAL IS NULL AND AUX.CLASE_USO=''0001'')) 
+                           AND AUX.VIVIENDA_HABITUAL=''N'' THEN (SELECT DD_TUD_ID FROM '|| V_ESQUEMA ||'.DD_TUD_TIPO_USO_DESTINO WHERE DD_TUD_CODIGO=''06'')
                      ELSE NULL
                   END AS DD_TUD_ID,
                   tcr.DD_TCR_ID as DD_TCR_ID,
@@ -156,9 +162,11 @@ BEGIN
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_PRP_PROCEDENCIA_PRODUCTO prp ON prp.DD_PRP_CODIGO = eqv5.DD_CODIGO_REM     
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv7 ON eqv7.DD_NOMBRE_CAIXA = ''CANAL_DISTRIBUCION_VENTA''  AND eqv7.DD_CODIGO_CAIXA = aux.CANAL_DISTRIBUCION_VENTA AND EQV7.BORRADO=0
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_TCR_TIPO_COMERCIALIZAR tcr ON tcr.DD_TCR_CODIGO = eqv7.DD_CODIGO_REM
-                  LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv11 ON eqv11.DD_NOMBRE_CAIXA = ''TIPO_ACTIVO'' AND eqv11.DD_CODIGO_CAIXA = aux.CLASE_USO_REGISTRAL AND eqv11.BORRADO = 0
+                  LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv11 ON eqv11.DD_NOMBRE_CAIXA = ''TIPO_ACTIVO'' AND eqv11.DD_CODIGO_CAIXA = NVL(aux.CLASE_USO_REGISTRAL,aux.CLASE_USO) AND eqv11.BORRADO = 0
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_TPA_TIPO_ACTIVO TPA ON TPA.DD_TPA_CODIGO = eqv11.DD_CODIGO_REM
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_SAC_SUBTIPO_ACTIVO SAC ON ACT.DD_SAC_ID = SAC.DD_SAC_ID AND TPA.DD_TPA_ID = SAC.DD_TPA_ID AND SAC.BORRADO = 0
+                  LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM EQV12 ON EQV12.DD_NOMBRE_CAIXA = ''CLASE_USO''  AND EQV12.DD_CODIGO_CAIXA = aux.CLASE_USO AND EQV12.BORRADO=0
+                  LEFT JOIN '|| V_ESQUEMA ||'.DD_SAC_SUBTIPO_ACTIVO SAC_TASA ON SAC_TASA.DD_SAC_CODIGO = EQV12.DD_CODIGO_REM
                   WHERE aux.FLAG_EN_REM = '|| FLAG_EN_REM ||'
                                        
                                  ) us ON (us.act_id = act.act_id)
@@ -168,6 +176,7 @@ BEGIN
                                                          WHEN us.DD_SAC_ID IS NOT NULL THEN us.DD_SAC_ID 
                                                          WHEN us.DD_TPA_ID IS NULL THEN act.DD_SAC_ID 
                                                          WHEN us.DD_TPA_ID IS NOT NULL AND us.DD_SAC_ID IS NULL AND us.DD_TPA_ID = act.DD_TPA_ID THEN act.DD_SAC_ID 
+                                                         ELSE NULL
                                                       END
                                     ,act.DD_TTA_ID = NVL(us.DD_TTA_ID,act.DD_TTA_ID)
                                     ,act.DD_STA_ID = NVL(us.DD_STA_ID,act.DD_STA_ID)
@@ -359,7 +368,8 @@ BEGIN
                   ELSE (SELECT DD_CBC_ID FROM '|| V_ESQUEMA ||'.DD_CBC_CARTERA_BC WHERE DD_CBC_CODIGO = ''01'')
                END AS DD_CBC_ID,
                TVC.DD_TVC_ID DD_TVC_ID,
-               TEC.DD_TEC_ID DD_TEC_ID
+               TEC.DD_TEC_ID DD_TEC_ID,
+               AUX.EST_CONSERVACION
                FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK aux
                JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT2 ON ACT2.ACT_NUM_ACTIVO_CAIXA = aux.NUM_IDENTIFICATIVO AND ACT2.BORRADO = 0  
                LEFT JOIN  '|| V_ESQUEMA ||'.ACT_ACTIVO_CAIXA CAIXA ON ACT2.ACT_ID=CAIXA.ACT_ID AND CAIXA.BORRADO=0
@@ -417,7 +427,8 @@ BEGIN
                               ,act1.CBX_NUMERO_INMUEBLE_ANTERIOR = us.CBX_NUMERO_INMUEBLE_ANTERIOR   
                               ,act1.dd_cbc_id = us.dd_cbc_id
                               ,act1.DD_TVC_ID = NVL(US.DD_TVC_ID,act1.DD_TVC_ID)
-                              ,act1.DD_TEC_ID = NVL(US.DD_TEC_ID,act1.DD_TEC_ID)                                                                                                               
+                              ,act1.DD_TEC_ID = NVL(US.DD_TEC_ID,act1.DD_TEC_ID)  
+                              ,ACT1.DD_ECV_STOCK_BC = US.EST_CONSERVACION                                                                                                             
                               ,act1.USUARIOMODIFICAR = ''STOCK_BC''
                               ,act1.FECHAMODIFICAR = sysdate
                               
@@ -451,6 +462,7 @@ BEGIN
                                           dd_cbc_id,
                                           DD_TVC_ID,
                                           DD_TEC_ID,
+                                          DD_ECV_STOCK_BC,
                                           USUARIOCREAR,
                                           FECHACREAR
                                           )
@@ -483,6 +495,7 @@ BEGIN
                                           us.dd_cbc_id,
                                           us.DD_TVC_ID,
                                           us.DD_TEC_ID,
+                                          US.EST_CONSERVACION,  
                                           ''STOCK_BC'',
                                           sysdate)';
 

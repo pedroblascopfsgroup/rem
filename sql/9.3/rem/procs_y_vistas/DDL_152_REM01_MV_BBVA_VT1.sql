@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Joaquin Arnal
---## FECHA_CREACION=20210805
+--## FECHA_CREACION=20221004
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-10975
@@ -12,6 +12,7 @@
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##        0.2 REMVIP-8960 - VRO - se pone LEFT en dd_eca_estado_carga_activos y se mete tabla BIE_DATOS_REGISTRALES en vista vi_nor_bbva_vt1
+--##        0.3 REMVIP-12483 - VRO - Se corrige join por left con tabla ACT_BBVA_UIC UIC por que hay activos que no salen en vista vi_nor_bbva_vt1 
 --##########################################
 --*/
 

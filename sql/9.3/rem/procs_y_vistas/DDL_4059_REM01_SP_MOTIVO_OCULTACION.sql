@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20220124
+--## FECHA_CREACION=20221130
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-11055
@@ -23,6 +23,8 @@
 --##   		0.11 REMVIP-10864 - Nuevo motivo ocultacion "Oferta aprobada" caixa, si ha pasado las tareas ''T017_ResolucionCES'',''T015_ElevarASancion''
 --##    0.11 REMVIP-11055 - Se añade el motivo de ocultación "Oferta aprobada" para ofertas migradas
 --##    0.12 REMVIP-11055 - Se borra el motivo "Oferta aprobada" si ha pasado las tareas ''T017_ResolucionCES'',''T015_ElevarASancion''. Está ocultando inclusive si la oferta se anula
+--##      0.13 REMVIP-12146 - Nuevos estados para no ocultar por oferta aprobada
+--##      0.14 REMVIP-12537 - Titulizadas protocolo para oferta aprobada
 --##########################################
 --*/
 
@@ -170,13 +172,17 @@ create or replace PROCEDURE SP_MOTIVO_OCULTACION (pACT_ID IN NUMBER
                                , 1 OCULTO /*Aprobado*/
                                , MTO.DD_MTO_CODIGO
                                , MTO.DD_MTO_ORDEN ORDEN
-                                    FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
-                                    JOIN '||V_ESQUEMA||'.ACT_OFR AO ON AO.ACT_ID = ACT.ACT_ID
-									                  JOIN '||V_ESQUEMA||'.OFR_OFERTAS OFR ON OFR.OFR_ID = AO.OFR_ID
-                                    JOIN '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.OFR_ID = OFR.OFR_ID AND ECO.BORRADO = 0
-                                    LEFT JOIN '||V_ESQUEMA||'.DD_MTO_MOTIVOS_OCULTACION MTO ON MTO.DD_MTO_CODIGO = ''18'' AND MTO.BORRADO = 0 /*Aprobado*/
-                                    JOIN '||V_ESQUEMA||'.DD_EEB_ESTADO_EXPEDIENTE_BC EEB ON EEB.DD_EEB_ID = ECO.DD_EEB_ID
-                                    WHERE EEB.DD_EEB_CODIGO NOT IN (''001'',''002'',''022'',''030'',''037'')
+                                    FROM '|| V_ESQUEMA ||'.ACT_ACTIVO ACT
+                                    JOIN '|| V_ESQUEMA ||'.ACT_OFR AO ON AO.ACT_ID = ACT.ACT_ID
+                                    JOIN '|| V_ESQUEMA ||'.OFR_OFERTAS OFR ON OFR.OFR_ID = AO.OFR_ID
+                                    JOIN '|| V_ESQUEMA ||'.ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.OFR_ID = OFR.OFR_ID AND ECO.BORRADO = 0
+                                    JOIN '|| V_ESQUEMA ||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID AND CRA.BORRADO = 0 AND DD_CRA_CODIGO IN (''03'',''18'')
+                                    LEFT JOIN '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION MTO ON MTO.DD_MTO_CODIGO = ''18'' AND MTO.BORRADO = 0 /*Aprobado*/
+                                    LEFT JOIN '|| V_ESQUEMA ||'.DD_EEB_ESTADO_EXPEDIENTE_BC EEB ON EEB.DD_EEB_ID = ECO.DD_EEB_ID
+                                    WHERE ACT.BORRADO = 0
+                                            AND (EEB.DD_EEB_CODIGO NOT IN (''001'',''002'',''022'',''030'',''037'', ''023'', ''050'', ''028'')
+                                            OR ECO.DD_EEB_ID IS NULL AND ECO.DD_EEC_ID = (SELECT DD_EEC_ID FROM '|| V_ESQUEMA ||'.DD_EEC_EST_EXP_COMERCIAL WHERE DD_EEC_CODIGO = ''11'')
+                                            AND OFR.DD_EOF_ID = (SELECT DD_EOF_ID FROM '|| V_ESQUEMA ||'.DD_EOF_ESTADOS_OFERTA WHERE DD_EOF_CODIGO = ''01''))
                                     AND ACT.ACT_ID ='||pACT_ID||'
                             UNION
                           SELECT APU.ACT_ID

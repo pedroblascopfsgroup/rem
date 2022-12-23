@@ -171,7 +171,7 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 				 	CODIGO_T017_RESOLUCION_PRO_MANZANA,CODIGO_T017_RESOLUCION_EXPEDIENTE,CODIGO_T017_INSTRUCCIONES_RESERVA,CODIGO_T017_OBTENCION_CONTRATO_RESERVA,
 				 	CODIGO_T017_POSICIONAMIENTO_FIRMA,CODIGO_T017_DOCUMENTOS_POSTVENTA,CODIGO_T017_CIERRE_ECONOMICO, CODIGO_T017_RESOLUCION_DIVARIAN, CODIGO_T017_RESOLUCION_ARROW,
 				 	CODIGO_T017_RATIFICACION_COMITE_CES, CODIGO_T017_AGENDAR_ARRAS, CODIGO_T017_CONFIRMAR_ARRAS, CODIGO_T017_AGENDAR_FIRMA, CODIGO_T017_CONFIRMAR_FIRMA,
-					CODIGO_T017_FIRMA, CODIGO_T017_PBC_CN};
+					CODIGO_T017_FIRMA, CODIGO_T017_PBC_CN,CODIGO_T013_PBC_RESERVA};
 
 	}
 
@@ -304,14 +304,15 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 			}	
 		}
 		
-		if((DDCartera.CODIGO_CARTERA_CERBERUS.equals(codigoCartera) && (CODIGO_T017_PBC_VENTA.equals(codigoTarea) || CODIGO_T017_PBC_RESERVA.equals(codigoTarea)))
-				|| (DDCartera.CODIGO_CARTERA_BBVA.equals(codigoCartera) && (CODIGO_T017_PBC_VENTA.equals(codigoTarea) || CODIGO_T017_PBC_RESERVA.equals(codigoTarea)))
-				|| ((DDCartera.CODIGO_CARTERA_BANKIA.equals(codigoCartera)
-						|| DDCartera.CODIGO_CARTERA_LIBERBANK.equals(codigoCartera)
-						|| DDCartera.CODIGO_CARTERA_SAREB.equals(codigoCartera)
-						|| (DDCartera.CODIGO_CARTERA_CAJAMAR.equals(codigoCartera) && !formalizacionCajamar)
-						|| DDCartera.CODIGO_CARTERA_TITULIZADA.equals(codigoCartera))
-						&& CODIGO_T013_RESULTADO_PBC.equals(codigoTarea))) {		
+		if((DDCartera.CODIGO_CARTERA_CERBERUS.equals(codigoCartera) 
+				|| DDCartera.CODIGO_CARTERA_BBVA.equals(codigoCartera)
+				|| DDCartera.CODIGO_CARTERA_BANKIA.equals(codigoCartera))
+					&& (CODIGO_T017_PBC_VENTA.equals(codigoTarea) || CODIGO_T017_PBC_RESERVA.equals(codigoTarea))
+				|| (DDCartera.CODIGO_CARTERA_LIBERBANK.equals(codigoCartera)
+				|| DDCartera.CODIGO_CARTERA_SAREB.equals(codigoCartera)
+				|| (DDCartera.CODIGO_CARTERA_CAJAMAR.equals(codigoCartera) && !formalizacionCajamar)
+				|| DDCartera.CODIGO_CARTERA_TITULIZADA.equals(codigoCartera))
+					&& (CODIGO_T013_RESULTADO_PBC.equals(codigoTarea) || CODIGO_T013_PBC_RESERVA.equals(codigoTarea))) {		
 			Filter filtroUsuario = genericDao.createFilter(FilterType.EQUALS, "username", USUARIO_GESTOR_FORMALIZACION);
 			usuarioDevolver = genericDao.get(Usuario.class, filtroUsuario);
 			

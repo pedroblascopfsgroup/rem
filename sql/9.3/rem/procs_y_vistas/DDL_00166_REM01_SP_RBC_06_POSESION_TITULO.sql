@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Javier Esbri
---## FECHA_CREACION=20220304
+--## FECHA_CREACION=20220907
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-17329
+--## INCIDENCIA_LINK=REMVIP-12388
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -18,6 +18,7 @@
 --##	    0.6 Filtramos las consultas para que no salgan los activos titulizados - HREOS-15423
 --##        0.7 Se cambian los NIFs de titulizados - [HREOS-15634] - Daniel Algaba
 --##        0.8 Se quitan los campos año concesión y fecha fin concesión - [HREOS-17329] - Javier Esbri
+--##        0.9 Se añade un case en grado propiedad para evitar duplicados - [REMVIP-12388] - Juan Bautista Alfonso
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -56,11 +57,13 @@ BEGIN
 
     V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.AUX_APR_RBC_STOCK AUX
                 USING (
-                    SELECT
+                    SELECT DISTINCT
                          ACT.ACT_NUM_ACTIVO_CAIXA AS NUM_IDENTIFICATIVO      
                         ,ACT.ACT_NUM_ACTIVO AS NUM_INMUEBLE                        
                         ,PAC.PAC_PORC_PROPIEDAD * 100 AS CUOTA
-                        ,eqv1.DD_CODIGO_CAIXA AS GRADO_PROPIEDAD
+                        ,CASE WHEN TGP.DD_TGP_CODIGO = ''06'' THEN ''06''
+                        ELSE eqv1.DD_CODIGO_CAIXA 
+                        END AS GRADO_PROPIEDAD
                         ,CASE
                             WHEN SPS.SPS_OCUPADO=1 AND TPA.DD_TPA_CODIGO IN (''02'',''03'') THEN ''S''
                             ELSE ''N''

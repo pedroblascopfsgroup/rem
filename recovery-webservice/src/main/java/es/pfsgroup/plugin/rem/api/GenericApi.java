@@ -19,7 +19,6 @@ import es.pfsgroup.plugin.rem.model.ActivoProveedorReducido;
 import es.pfsgroup.plugin.rem.model.AuthenticationData;
 import es.pfsgroup.plugin.rem.model.AvanzarDatosPBCDto;
 import es.pfsgroup.plugin.rem.model.ConfiguracionSubpartidasPresupuestarias;
-import es.pfsgroup.plugin.rem.model.DatosPBCDto;
 import es.pfsgroup.plugin.rem.model.DtoDiccionario;
 import es.pfsgroup.plugin.rem.model.DtoLocalidadSimple;
 import es.pfsgroup.plugin.rem.model.DtoMenuItem;
@@ -32,6 +31,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDCondicionIndicadorPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdmision;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoDeposito;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
@@ -48,12 +48,14 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlta;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoApunte;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoBloqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoTributos;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOperacionGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoRolMediador;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
@@ -370,9 +372,9 @@ public interface GenericApi {
 	
 	List<DDEstadoAdmision> getComboEstadoAdmisionFiltrado(Set<String> tipoEstadoAdmisionCodigo);
 
-	List<ImagenWebDto> getFichaComercialFotosActivo(Long id, String urlBase);
+	boolean getFichaComercialFotosActivo(Long id);
 	
-	List<ImagenWebDto> getFichaComercialFotosAgrupacion(Long id, String urlBase);
+	boolean getFichaComercialFotosAgrupacion(Long id);
 	
 	List<DDTipoDocumentoActivoDto> getDiccionarioTiposDocumentoBySubtipoTrabajo(String subtipoTrabajo,String entidad);
 	
@@ -409,6 +411,8 @@ public interface GenericApi {
 
 	Boolean avanzaDatosPbc(AvanzarDatosPBCDto dto) throws Exception;
 
+	public List<DDTipoApunte> getTipoApunteByUsuarioLog();
+	
 	public List<DDCategoriaConductaInapropiada> getComboCategoriaConducta(String idTipoConducta);
 
 	public DDNivelConductaInapropiada getComboNivelConducta(String idCategoriaConducta);
@@ -416,4 +420,7 @@ public interface GenericApi {
 	public List<DDTipoDocumentoProveedor> getDocumentosProveedor(String codBloque);
 	
 	public List<DDEstadoOferta> getDiccionarioEstadosOfertasAgrupacion(Long idAgrupacion);
+
+	public List<DDEstadoDeposito> getDiccionarioEstadoDeposito(Long idActivo);
+
 }

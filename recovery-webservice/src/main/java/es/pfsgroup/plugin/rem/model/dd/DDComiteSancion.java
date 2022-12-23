@@ -68,6 +68,7 @@ public class DDComiteSancion implements Auditable, Dictionary {
 	public static final String CODIGO_HAYA_APPLE = "42";
 	public static final String CODIGO_CES_REMAINING = "43";
 	public static final String CODIGO_CES_APPLE = "44";
+	public static final String CODIGO_CES_JAGUAR = "55";
 	
 	public static final String CODIGO_HAYA_BBVA = "47";
 	public static final String CODIGO_BBVA = "48";
@@ -98,7 +99,7 @@ public class DDComiteSancion implements Auditable, Dictionary {
 
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_SCR_ID")
-	private DDSubcartera Subcartera;
+	private DDSubcartera subcartera;
     
     @Transient
     private String carteraCodigo;
@@ -150,11 +151,11 @@ public class DDComiteSancion implements Auditable, Dictionary {
 	}
 
 	public DDSubcartera getSubcartera() {
-		return Subcartera;
+		return subcartera;
 	}
 
-	public void setSubcartera(DDSubcartera Subcartera) {
-		this.Subcartera = Subcartera;
+	public void setSubcartera(DDSubcartera subcartera) {
+		this.subcartera = subcartera;
 	}
 
 	public String getCarteraCodigo() {

@@ -1485,13 +1485,19 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		var esCarteraGaleonOZeus =  ('15' == carteraCodigo || '14' == carteraCodigo);
 		var tipoOferta = me.getViewModel().get('expediente.tipoExpedienteCodigo');
 		var esCarteraGaleonOZeus =  ('15' == carteraCodigo || '14' == carteraCodigo);
+		var porcentajeReservaBBDD = me.getView().getViewModel().get('condiciones.porcentajeReserva');
+		var importeReservaBBDD = me.getView().getViewModel().get('condiciones.importeReserva');
+		var tipoCalculoBBDD = me.getView().getViewModel().get('condiciones.tipoCalculo');
 		
-		if (CONST.SUBCARTERA['DIVARIANREMAINING'] == subcarteraCodigo && value==1){ 
-			var porcentajeReservaBBDD = me.getView().getViewModel().get('condiciones.porcentajeReserva');
-			tipoCalculo.setValue(CONST.TIPOS_CALCULO['PORCENTAJE']);
-			tipoCalculo.setDisabled(false);
-			if(Ext.isEmpty(porcentajeReservaBBDD)){
-				porcentajeReserva.setValue('5');
+		if (CONST.SUBCARTERA['DIVARIANREMAINING'] == subcarteraCodigo && value==1){
+			if(Ext.isEmpty(tipoCalculoBBDD) || CONST.TIPOS_CALCULO['PORCENTAJE'] === tipoCalculoBBDD){
+				if (Ext.isEmpty(porcentajeReservaBBDD)){
+					porcentajeReserva.setValue('5');
+				}
+			} else {
+				if(!Ext.isEmpty(importeReservaBBDD)){
+					importeReserva.setValue(importeReservaBBDD);
+				}
 			}
 		} else if(!esCarteraGaleonOZeus && value==1 && CONST.TIPOS_OFERTA['VENTA'] == tipoOferta){
 			tipoCalculo.setDisabled(false);
@@ -2721,9 +2727,9 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 					tipoAplicableBkAlq.setDisabled(false);
 	    			tipoAplicableBkAlq.allowBlank = false;
 				}else{
+					tipoAplicableBkAlq.reset();
 					tipoAplicableBkAlq.setDisabled(true);
 	    			tipoAplicableBkAlq.allowBlank = true;
-	    			tipoAplicableBkAlq.reset();
 				}
 				
 				if(CONST.TIPO_GRUPO_IMPUESTO['CODIGO_TASA_CERO'] == value){
@@ -2731,6 +2737,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	    			tipoAplicableBkAlq.allowBlank = true;
 	    			tipoAplicableBkAlq.reset();
 	    		}else{
+	    		    tipoAplicableBkAlq.reset();
 	    			tipoAplicableBkAlq.setDisabled(false);
 	    			tipoAplicableBkAlq.allowBlank = false;
 	    		}
@@ -3124,18 +3131,17 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		    	}
 		    	
 	    		if(CONST.TIPO_IMPUESTO['ITP'] == value){
-	    				    				
+
+                    if(esBankia){
+                        grupoImpuesto.clearValue();
+                        grupoImpuesto.setDisabled(true);
+                    }
 	    			inversionSujetoPasivo.reset();
 	    			renunciaExencion.reset();
 	    			tipoAplicable.reset();
 	    			tipoAplicable.setDisabled(true);
 	    			renunciaExencion.setDisabled(true);
 	    			inversionSujetoPasivo.setDisabled(true);
-	    			
-	    			if(esBankia){
-	    				grupoImpuesto.clearValue();
-	    				grupoImpuesto.setDisabled(true);
-	    			}
 	    			
 	    		}else{
 	    			
@@ -3155,31 +3161,31 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		    			grupoImpuesto.allowBlank = false;
 		    			grupoImpuesto.setDisabled(false);
 		    			tributosPropiedad.setDisabled(false);
-	    			}
 	    			
-		    		if ( CONST.TIPO_GRUPO_IMPUESTO['CODIGO_EXENTO'] == grupoImpuesto.value ) {
-		    			tipoAplicable.setDisabled(false);
-		    			tipoAplicable.allowBlank = false;
-		    			renunciaExencion.setDisabled(false);
-		    		}else{
-		    			tipoAplicable.setDisabled(true);
-		    			tipoAplicable.allowBlank = true;
-		    			tipoAplicable.reset();
-		    			renunciaExencion.setDisabled(true);
-		    			renunciaExencion.reset();
-		    		}
-		    		
-		    		if(CONST.TIPO_GRUPO_IMPUESTO['CODIGO_TASA_CERO'] == grupoImpuesto.value){
-		    			tipoAplicable.setDisabled(true);
-		    			tipoAplicable.allowBlank = true;
-		    			tipoAplicable.reset();
-		    			renunciaExencion.setDisabled(true);
-		    			renunciaExencion.reset();
-		    		}else{
-		    			tipoAplicable.setDisabled(false);
-		    			tipoAplicable.allowBlank = false;
-		    			renunciaExencion.setDisabled(false);
-		    		}
+			    		if ( CONST.TIPO_GRUPO_IMPUESTO['CODIGO_EXENTO'] == grupoImpuesto.value ) {
+			    			tipoAplicable.setDisabled(false);
+			    			tipoAplicable.allowBlank = false;
+			    			renunciaExencion.setDisabled(false);
+			    		}else{
+			    			tipoAplicable.setDisabled(true);
+			    			tipoAplicable.allowBlank = true;
+			    			tipoAplicable.reset();
+			    			renunciaExencion.setDisabled(true);
+			    			renunciaExencion.reset();
+			    		}
+			    		
+			    		if(CONST.TIPO_GRUPO_IMPUESTO['CODIGO_TASA_CERO'] == grupoImpuesto.value){
+			    			tipoAplicable.setDisabled(true);
+			    			tipoAplicable.allowBlank = true;
+			    			tipoAplicable.reset();
+			    			renunciaExencion.setDisabled(true);
+			    			renunciaExencion.reset();
+			    		}else{
+			    			tipoAplicable.setDisabled(false);
+			    			tipoAplicable.allowBlank = false;
+			    			renunciaExencion.setDisabled(false);
+			    		}
+	    			}
 	    		}
 
 			}
@@ -5806,13 +5812,12 @@ comprobarFormatoModificar: function() {
 	    			inversionSujetoPasivo.allowBlank = true;
 	    			
 		    		if(CONST.TIPO_IMPUESTO['ITP'] == value){
-		    			tipoAplicableBk.reset();
+                        if(esBankia){
+                            grupoImpuesto2.clearValue();
+                            grupoImpuesto2.setDisabled(true);
+                        }
 		    			tipoAplicableBk.setDisabled(true);
-		    			if(esBankia){
-		    				grupoImpuesto2.clearValue();
-		    				grupoImpuesto2.setDisabled(true);
-		    			}
-		    			
+
 		    		}else{
 		    			tipoAplicableBk.setDisabled(false);
 		    			if(esBankia){
@@ -5933,6 +5938,17 @@ comprobarFormatoModificar: function() {
 			    	 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 			 	}
 		});
-	}
+	},
+	
+	esEjecucionHipotecaria: function(){
+		
+    	var me = this;
+
+    	if(me.getViewModel().get('expediente.tipoOfertaAlquilerCodigo') == "01"){
+    		return true;
+    	}else{
+    		return false;
+    	}
+    }
 	
 });

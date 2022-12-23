@@ -863,5 +863,19 @@ public interface OfertaApi {
 
 	void rechazoOfertasMotivoVendido(Oferta oferta);
 
+	void rechazoOfertaNew(Oferta oferta, String codEstadoExp);
+
+	void llamarCambioEstadoReplicarNoSession(Long idOferta, String codigoEstado);
+	
 	void actualizarOfertaBoarding(Oferta oferta, TareaExterna tareaExterna);
+
+	List<DtoHistoricoAntiguoDeudor> getDtoHistoricoAntiguoDeudorList(Long idOferta) throws IllegalAccessException, InvocationTargetException;
+
+	List<HistoricoAntiguoDeudor> getHistoricoAntiguoDeudorList(Long idOferta);
+	
+	boolean createHistoricoAntiguoDeudor(DtoHistoricoAntiguoDeudor dtoHitoricoAntiguoDeudor, Long idOferta);
+
+	boolean updateHistoricoAntiguoDeudor(DtoHistoricoAntiguoDeudor dtoHitoricoAntiguoDeudor);
+	boolean isIngresoDepositoOfertaCancelada(Oferta oferta);
+
 }

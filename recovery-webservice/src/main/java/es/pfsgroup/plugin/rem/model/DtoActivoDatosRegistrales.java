@@ -161,6 +161,7 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	private Date fechaPosesion;
 	
 	private String superficieParcelaUtil;
+	private String superficieAlquilable;
 	
 	private String sociedadOrigenCodigo;
 	private String sociedadOrigenDescripcion;
@@ -944,6 +945,12 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	}
 	public void setSuperficieParcelaUtil(String superficieParcelaUtil) {
 		this.superficieParcelaUtil = superficieParcelaUtil;
+	}
+	public String getSuperficieAlquilable() {
+		return superficieAlquilable;
+	}
+	public void setSuperficieAlquilable(String superficieAlquilable) {
+		this.superficieAlquilable = superficieAlquilable;
 	}
 	public String getSociedadOrigenCodigo() {
 		return sociedadOrigenCodigo;

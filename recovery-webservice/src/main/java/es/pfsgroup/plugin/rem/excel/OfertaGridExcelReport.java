@@ -20,12 +20,14 @@ public class OfertaGridExcelReport extends AbstractExcelReport implements ExcelR
 	private boolean esCarteraLBK;	
 	private HashMap<Long,String> fechasReunionComite;	
 	private HashMap<Long,String> sancionadores;
+	private boolean isSuper;
 	
-	public OfertaGridExcelReport(List<VGridBusquedaOfertas> listaOfertas, boolean esCarteraLBK, HashMap<Long,String> fechasReunionComite, HashMap<Long,String> sancionadores) {
+	public OfertaGridExcelReport(List<VGridBusquedaOfertas> listaOfertas, boolean esCarteraLBK, HashMap<Long,String> fechasReunionComite, HashMap<Long,String> sancionadores, boolean isSuper) {
 		this.listaOfertas = listaOfertas;		
 		this.esCarteraLBK = esCarteraLBK;
 		this.fechasReunionComite = fechasReunionComite;
 		this.sancionadores = sancionadores;
+		this.isSuper = isSuper;
 	}
 
 	public List<String> getCabeceras() {
@@ -55,6 +57,11 @@ public class OfertaGridExcelReport extends AbstractExcelReport implements ExcelR
 		for(VGridBusquedaOfertas oferta: listaOfertas){
 			List<String> fila = new ArrayList<String>();
 			
+			String importeOferta = oferta.getImporteOferta() != null ? oferta.getImporteOferta().toString() : "";
+			if (oferta.getConcurrenciaActiva() == 1 && !isSuper) {
+				importeOferta = "*****";
+			}
+			
 			fila.add(oferta.getNumOferta() != null ? oferta.getNumOferta().toString() : "");
 			fila.add(oferta.getNumActivoAgrupacion() != null ? oferta.getNumActivoAgrupacion().toString() : "");
 			fila.add(oferta.getDescripcionEstadoOferta());
@@ -62,7 +69,7 @@ public class OfertaGridExcelReport extends AbstractExcelReport implements ExcelR
 			fila.add(this.getDateStringValue(oferta.getFechaCreacion()));
 			fila.add(oferta.getNumExpediente() != null ? oferta.getNumExpediente().toString() : "");
 			fila.add(oferta.getDescripcionEstadoExpediente());
-			fila.add(oferta.getImporteOferta() != null ? oferta.getImporteOferta().toString() : "");
+			fila.add(importeOferta);
 			fila.add(oferta.getOfertante());
 			fila.add(oferta.getNombreCanal());
 			fila.add(oferta.getCanalDescripcion());	

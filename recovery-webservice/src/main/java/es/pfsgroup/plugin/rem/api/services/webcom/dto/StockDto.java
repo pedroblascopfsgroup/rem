@@ -1,16 +1,12 @@
 package es.pfsgroup.plugin.rem.api.services.webcom.dto;
 
-import java.util.List;
-
-import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.BooleanDataType;
-import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.DateDataType;
-import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.DoubleDataType;
-import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.LongDataType;
-import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.StringDataType;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.*;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.DecimalDataTypeFormat;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.MappedColumn;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.NestedDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.WebcomRequired;
+
+import java.util.List;
 
 public class StockDto implements WebcomRESTDto{
 	@WebcomRequired //No se puede quitar
@@ -386,6 +382,12 @@ public class StockDto implements WebcomRESTDto{
 	private BooleanDataType disponible;
 	
 	private StringDataType codMotivoIndisponibilidad;
+
+	private DateDataType desdePeriodoConcurrencia;
+	private DateDataType hastaPeriodoConcurrencia;
+	private LongDataType idPeriodoConcurrencia;
+	
+	private StringDataType codEstadoRegistralActivo;
 	
 	public LongDataType getIdActivoHaya() {
 		return idActivoHaya;
@@ -1254,5 +1256,35 @@ public class StockDto implements WebcomRESTDto{
 	}
 	public void setEmailGestorComercialAlquiler(StringDataType emailGestorComercialAlquiler) {
 		this.emailGestorComercialAlquiler = emailGestorComercialAlquiler;
+	}
+
+	public DateDataType getDesdePeriodoConcurrencia() {
+		return desdePeriodoConcurrencia;
+	}
+
+	public void setDesdePeriodoConcurrencia(DateDataType desdePeriodoConcurrencia) {
+		this.desdePeriodoConcurrencia = desdePeriodoConcurrencia;
+	}
+
+	public DateDataType getHastaPeriodoConcurrencia() {
+		return hastaPeriodoConcurrencia;
+	}
+
+	public void setHastaPeriodoConcurrencia(DateDataType hastaPeriodoConcurrencia) {
+		this.hastaPeriodoConcurrencia = hastaPeriodoConcurrencia;
+	}
+
+	public LongDataType getIdPeriodoConcurrencia() {
+		return idPeriodoConcurrencia;
+	}
+
+	public void setIdPeriodoConcurrencia(LongDataType idPeriodoConcurrencia) {
+		this.idPeriodoConcurrencia = idPeriodoConcurrencia;
+	}
+	public StringDataType getCodEstadoRegistralActivo() {
+		return codEstadoRegistralActivo;
+	}
+	public void setCodEstadoRegistralActivo(StringDataType codEstadoRegistralActivo) {
+		this.codEstadoRegistralActivo = codEstadoRegistralActivo;
 	}
 }

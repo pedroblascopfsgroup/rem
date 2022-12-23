@@ -32,10 +32,8 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
-import edu.emory.mathcs.backport.java.util.Arrays;
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.files.FileItem;
@@ -72,7 +70,9 @@ import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoPropagacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
+import es.pfsgroup.plugin.rem.api.AuditoriaExportacionesApi;
 import es.pfsgroup.plugin.rem.api.CatastroApi;
+import es.pfsgroup.plugin.rem.api.ConcurrenciaApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.excel.ActivoGridExcelReport;
@@ -91,7 +91,9 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
 import es.pfsgroup.plugin.rem.model.AdjuntoComprador;
 import es.pfsgroup.plugin.rem.model.AuditoriaExportaciones;
+import es.pfsgroup.plugin.rem.model.Concurrencia;
 import es.pfsgroup.plugin.rem.model.DtoActivoAdministracion;
+import es.pfsgroup.plugin.rem.model.DtoActivoBbvaUic;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargas;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargasTab;
 import es.pfsgroup.plugin.rem.model.DtoActivoCatastro;
@@ -103,7 +105,6 @@ import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivoGridFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivoInformacionAdministrativa;
 import es.pfsgroup.plugin.rem.model.DtoActivoInformacionComercial;
-import es.pfsgroup.plugin.rem.model.DtoActivoInformeComercial;
 import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
 import es.pfsgroup.plugin.rem.model.DtoActivoOcupanteLegal;
 import es.pfsgroup.plugin.rem.model.DtoActivoPatrimonio;
@@ -124,8 +125,6 @@ import es.pfsgroup.plugin.rem.model.DtoComunidadpropietariosActivo;
 import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.DtoCondicionHistorico;
 import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
-import es.pfsgroup.plugin.rem.model.DtoDatosCatastro;
-import es.pfsgroup.plugin.rem.model.DtoDatosCatastroGrid;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionDq;
 import es.pfsgroup.plugin.rem.model.DtoDistribucion;
@@ -135,6 +134,7 @@ import es.pfsgroup.plugin.rem.model.DtoFiltroTasaciones;
 import es.pfsgroup.plugin.rem.model.DtoFoto;
 import es.pfsgroup.plugin.rem.model.DtoGastoAsociadoAdquisicion;
 import es.pfsgroup.plugin.rem.model.DtoGenerarDocGDPR;
+import es.pfsgroup.plugin.rem.model.DtoHistoricoConcurrencia;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoDestinoComercial;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
@@ -148,6 +148,7 @@ import es.pfsgroup.plugin.rem.model.DtoMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.DtoMovimientoLlave;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
+import es.pfsgroup.plugin.rem.model.DtoOrganismos;
 import es.pfsgroup.plugin.rem.model.DtoPaginadoHistoricoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoPlusvaliaFilter;
 import es.pfsgroup.plugin.rem.model.DtoPrecioVigente;
@@ -157,6 +158,7 @@ import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.DtoPublicacionGridFilter;
+import es.pfsgroup.plugin.rem.model.DtoPujaDetalle;
 import es.pfsgroup.plugin.rem.model.DtoReglasPublicacionAutomatica;
 import es.pfsgroup.plugin.rem.model.DtoSubirDocumento;
 import es.pfsgroup.plugin.rem.model.DtoTasacion;
@@ -253,8 +255,14 @@ public class ActivoController extends ParadiseJsonController {
 	private CaixaBcRestClient caixaBcRestClient;
 	
 	@Autowired
+	private ConcurrenciaApi concurrenciaApi;
+
+	@Autowired
 	private CatastroApi catastroApi;
 	
+	@Autowired 
+	private AuditoriaExportacionesApi auditoriaExportacionesApi;
+
 	@Resource
 	private Properties appProperties;
 
@@ -277,7 +285,7 @@ public class ActivoController extends ParadiseJsonController {
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			model.put(RESPONSE_ERROR_KEY, e.getMessage());
 		}
-		
+
 		return createModelAndViewJson(model);
 	}
 
@@ -625,10 +633,17 @@ public class ActivoController extends ParadiseJsonController {
 	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListAsociadosById(DtoActivoVistaPatrimonioContrato dto, ModelMap model) {
+		List<?> resultCount = null;
+		Integer totalCount = 0;
 		try {
 			DtoPage page = adapter.getListAsociadosById(dto);
-			model.put(RESPONSE_DATA_KEY, page.getResults());
-			model.put(RESPONSE_TOTALCOUNT_KEY, page.getTotalCount());
+			
+			if(page != null) {
+				resultCount = page.getResults();
+				totalCount = page.getTotalCount();
+			}
+			model.put(RESPONSE_DATA_KEY, resultCount);
+			model.put(RESPONSE_TOTALCOUNT_KEY, totalCount);
 			model.put(RESPONSE_SUCCESS_KEY, true);
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
@@ -1389,7 +1404,13 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("data", adapter.getListOfertasActivos(id)); 
 		}
 		else {
-			model.put("data", adapter.getListOfertasTramitadasVendidasActivos(id));
+			if(concurrenciaApi.isActivoEnConcurrencia(activoDao.getActivoById(id))) {
+				model.put("data", concurrenciaApi.getListOfertasVivasConcurrentes(id, null));
+			} else if (concurrenciaApi.isConcurrenciaTerminadaOfertasEnProgresoActivo(activoDao.getActivoById(id))) {
+				model.put("data", concurrenciaApi.getListOfertasTerminadasConcurrentes(id, null));
+			} else {
+				model.put("data", adapter.getListOfertasTramitadasVendidasActivos(id));
+			}
 		}
 		return createModelAndViewJson(model);
 	}
@@ -4448,5 +4469,176 @@ public class ActivoController extends ParadiseJsonController {
 		}
 
 		return new ModelAndView("jsonView", model);
+	}
+
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getOrganismosByActivo(Long idActivo, ModelMap model) {
+		try {
+			List<DtoOrganismos> lista = activoApi.getOrganismosByActivo(idActivo);
+			model.put(RESPONSE_DATA_KEY, lista);
+			model.put(RESPONSE_SUCCESS_KEY, true);
+
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+		}
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getActivoBbvaUic(Long id, ModelMap model) {
+		
+		try {
+			List<DtoActivoBbvaUic> dtoActivoBbvaUicList = adapter.getActivoBbvaUic(id);
+			model.put("data", dtoActivoBbvaUicList);
+			model.put("success", true);			
+		} catch (Exception e) {
+			logger.error(e.getMessage(),e);
+			model.put("success", false);		
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	List<DtoActivoBbvaUic> getActivoBbvaUic(Long id){
+		return adapter.getActivoBbvaUic(id);
+	}
+	
+	@RequestMapping(method = RequestMethod.POST)
+		public ModelAndView createActivoBbvaUic(DtoActivoBbvaUic dto, ModelMap model) {
+			try {
+				Boolean success = activoApi.createOrUpdateActivoBbvaUic(dto);
+				model.put(RESPONSE_SUCCESS_KEY, success);
+
+			} catch (Exception e) {
+				model.put(RESPONSE_SUCCESS_KEY, false);
+				model.put(RESPONSE_ERROR_MESSAGE_KEY, e.getMessage());
+				logger.error("error en createActivoBbvaUic", e);
+			}
+
+			return createModelAndViewJson(model);
+		}
+	
+	@RequestMapping(method = RequestMethod.POST)
+		public ModelAndView destroyActivoBbvaUic(Long idActivo, String uicBbva,ModelMap model) {
+			try {
+				Boolean success = activoApi.destroyActivoBbvaUic(idActivo, uicBbva);
+				model.put(RESPONSE_SUCCESS_KEY, success);
+
+			} catch (Exception e) {
+				model.put(RESPONSE_SUCCESS_KEY, false);
+				logger.error("error en destroyActivoBbvaUic", e);
+			}
+
+			return createModelAndViewJson(model);
+		}
+	
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView updateActivoBbvaUicProp(DtoActivoBbvaUic dto, ModelMap model) {
+		try {
+			Boolean success = activoApi.updateActivoBbvaUicProp(dto);
+			model.put(RESPONSE_SUCCESS_KEY, success);
+
+		} catch (Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_MESSAGE_KEY, e.getMessage());
+			logger.error("error en createActivoBbvaUic", e);
+		}
+		return createModelAndViewJson(model);
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getListConcurrenciasActivoById(Long idActivo,Long idConcurrencia, ModelMap model) {
+		model.put(RESPONSE_DATA_KEY, concurrenciaApi.getListOfertasVivasConcurrentes(idActivo,idConcurrencia));
+
+		return createModelAndViewJson(model);
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getPujasDetalleByIdOferta(Long idActivo, Long idOferta) {
+		ModelMap model = new ModelMap();
+
+		try {
+			List<DtoPujaDetalle> dtoPujasOfertaActivoConcurrencia = concurrenciaApi.getPujasDetalleByIdOferta(idActivo, idOferta);
+			model.put("data", dtoPujasOfertaActivoConcurrencia);
+			model.put("success", true);
+		} catch (Exception e) {
+			logger.error(e.getMessage(),e);
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView deleteOrganismoById(Long idOrganismo,  ModelMap model) {
+		try {
+			activoApi.deleteOrganismoById(idOrganismo);
+			model.put(RESPONSE_DATA_KEY, true);
+			model.put(RESPONSE_SUCCESS_KEY, true);
+
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+		}
+		return createModelAndViewJson(model);
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getHistoricoConcurrencia(Long id) {
+		ModelMap model = new ModelMap();
+
+		try {
+			List<DtoHistoricoConcurrencia> listHistoricoConcurrencia = concurrenciaApi.getHistoricoConcurrencia(id);
+			model.put("data", listHistoricoConcurrencia);
+			model.put("success", true);
+		} catch (Exception e) {
+			logger.error(e.getMessage(),e);
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveOrganismo(Long idActivo, DtoOrganismos dto, ModelMap model) {
+		try {
+			activoApi.saveOrUpdateOrganismo(idActivo, dto);
+			model.put(RESPONSE_DATA_KEY, true);
+			model.put(RESPONSE_SUCCESS_KEY, true);
+
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+		}
+		return createModelAndViewJson(model);
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getListCambiosPeriodoConcurenciaByIdConcurrencia(Long idConcurrencia, ModelMap model) {
+		model.put(RESPONSE_DATA_KEY, concurrenciaApi.getListCambiosPeriodoConcurenciaByIdConcurrencia(idConcurrencia));
+
+		return createModelAndViewJson(model);
+	}
+	
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView registrarBusqueda(DtoActivoGridFilter dto, String buscador){
+		ModelMap model = new ModelMap();		 
+		Usuario user = usuarioManager.getUsuarioLogado();
+		
+		try {
+			boolean success = auditoriaExportacionesApi.permiteBusqueda(dto, user, buscador);
+			
+			model.put(RESPONSE_SUCCESS_KEY, success);
+			model.put(RESPONSE_ERROR_KEY, success ? "" : "tiempo");
+		}catch(Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+			logger.error("error en activoController::registrarBusqueda", e);
+		}
+		return createModelAndViewJson(model);
 	}
 }

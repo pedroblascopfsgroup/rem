@@ -16,10 +16,9 @@ import javax.ws.rs.PathParam;
 
 import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
 import es.pfsgroup.plugin.rem.accionesCaixa.CaixaBcReplicationDataHolder;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.oferta.ReplicacionOfertasManager;
 import es.pfsgroup.plugin.rem.restclient.caixabc.CaixaBcRestClient;
-import org.apache.commons.io.FileUtils;
+import es.pfsgroup.plugin.rem.usuarioRem.UsuarioRemApi;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +29,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.pagination.Page;
@@ -47,7 +45,6 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
-import es.pfsgroup.framework.paradise.http.client.HttpSimplePostRequest;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.activo.ActivoManager;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
@@ -63,12 +60,9 @@ import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.OfertaGridExcelReport;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceSancionOfertaAceptacionYRechazo;
 import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.AuditoriaExportaciones;
-import es.pfsgroup.plugin.rem.model.DtoDatosBancariosDeposito;
-import es.pfsgroup.plugin.rem.model.DtoDeposito;
 import es.pfsgroup.plugin.rem.model.DtoExcelFichaComercial;
 import es.pfsgroup.plugin.rem.model.DtoHonorariosOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertaGridFilter;
@@ -80,7 +74,6 @@ import es.pfsgroup.plugin.rem.model.DtoVListadoOfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.OfertasAgrupadasLbk;
-import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VGridBusquedaOfertas;
 import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionIncAnuladas;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
@@ -98,7 +91,6 @@ import es.pfsgroup.plugin.rem.rest.dto.ReportGeneratorResponse;
 import es.pfsgroup.plugin.rem.rest.dto.TareaRequestDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.ActivoTareaExternaDao;
-import es.pfsgroup.plugin.rem.thread.ConvivenciaRecovery;
 import es.pfsgroup.plugin.rem.thread.EnviarCorreoFichaComercialExcel;
 import es.pfsgroup.plugin.rem.utils.EmptyParamDetector;
 import net.sf.json.JSONObject;
@@ -176,6 +168,9 @@ public class OfertasController {
 
 	@Autowired
 	private ActivoTramiteApi activoTramiteApi;
+
+	@Autowired
+	private UsuarioRemApi usuarioRemApi;
 	
 	public static final String ERROR_NO_EXISTE_OFERTA_O_TAREA = "El número de oferta es inválido o no existe la tarea.";
 	
@@ -192,17 +187,19 @@ public class OfertasController {
 	public void generateExcel(DtoOfertaGridFilter dto, HttpServletRequest request, HttpServletResponse response) throws IOException {
 		dto.setStart(excelReportGeneratorApi.getStart());
 		dto.setLimit(excelReportGeneratorApi.getLimit());
-		
+
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
+		List<String> codigosCarteras = usuarioRemApi.getCodigosCarterasUsuario(null, usuarioLogado);
 		List<VGridBusquedaOfertas> listaOfertas = (List<VGridBusquedaOfertas>) ofertaApi.getBusquedaOfertasGridUsuario(dto).getResults();
 		HashMap<Long,String> fechasReunionComite = new HashMap<Long, String>();
 		HashMap<Long,String> sancionadores = new HashMap<Long, String>();
 		boolean esCarteraLBK = false;
-		
-		if((usuarioCartera != null  && DDCartera.CODIGO_CARTERA_LIBERBANK.equals(usuarioCartera.getCartera().getCodigo()))
-				|| DDCartera.CODIGO_CARTERA_LIBERBANK.equals(dto.getCarteraCodigo())){			
+
+		if(codigosCarteras.contains(DDCartera.CODIGO_CARTERA_LIBERBANK) || DDCartera.CODIGO_CARTERA_LIBERBANK.equals(dto.getCarteraCodigo())) {
 			esCarteraLBK = true;
+		}
+
+		if(esCarteraLBK) {
 			for(VGridBusquedaOfertas oferta : listaOfertas){
 				List<Long> tareasExternasId = activoTareaExternaDao.getTareasExternasIdByOfertaId(oferta.getId());
 				Filter filterTap01 = genericDao.createFilter(FilterType.EQUALS, "codigo", "T013_ResolucionComite");
@@ -231,7 +228,7 @@ public class OfertasController {
 		}
 
 		new EmptyParamDetector().isEmpty(listaOfertas.size(), "ofertas",  usuarioManager.getUsuarioLogado().getUsername());		
-		ExcelReport report = new OfertaGridExcelReport(listaOfertas, esCarteraLBK, fechasReunionComite, sancionadores);
+		ExcelReport report = new OfertaGridExcelReport(listaOfertas, esCarteraLBK, fechasReunionComite, sancionadores,genericAdapter.isSuper(usuarioLogado));
 		excelReportGeneratorApi.generateAndSend(report, response);
 	}	
 	
@@ -351,7 +348,7 @@ public class OfertasController {
 		ArrayList<DtoReplicarOferta> listaReplica = new ArrayList<DtoReplicarOferta>();
 
 		try {
-
+			
 			jsonFields = request.getJsonObject();
 			jsonData = (OfertaRequestDto) request.getRequestData(OfertaRequestDto.class);
 			listaOfertaDto = jsonData.getData();

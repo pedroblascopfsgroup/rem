@@ -9,7 +9,7 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
     requires: ['HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaAgrupacion', 'HreRem.view.activos.detalle.MotivoRechazoOfertaForm'],
     
    	removeButton: false,
-   	
+   	editable : '{agrupacionficha.bloquearEdicionEstadoOfertas}',
     listeners	: {
     	select: 'onSelectedRow',
     	deselect: 'onDeselectedRow',
@@ -23,7 +23,10 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
     initComponent: function () {
     	        
         var me = this;
-        var agrupacion = me.lookupController().getViewModel().get('agrupacionficha').getData();
+		var agrupacion = me.lookupController().getViewModel().get('agrupacionficha');
+		var enConcurrencia = me.lookupController().getViewModel().getData().agrupacionficha.get('enConcurrencia');
+		var userPefSuper = $AU.userIsRol(CONST.PERFILES['HAYASUPER']);
+        
         me.topBar = $AU.userHasFunction(['EDITAR_TAB_COMERCIAL_AGRUPACION']);
         
         me.columns= [
@@ -67,10 +70,17 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 		        {
 		            dataIndex: 'importeOferta',
 		            text: HreRem.i18n('header.oferta.importeOferta'),
-		            flex: 1
+		            flex: 1,
+		            renderer: function(value, metadata, record) {
+			        	if (!userPefSuper && enConcurrencia && record.get("ofertaEnConcurrenciaActiva")) {
+			        		return "*****";
+			        	} else {
+			        		return  value;
+			        	}
+			        }
 		        },
 		        {
-		            dataIndex: 'codigoEstadoOferta',
+		            dataIndex: 'estadoOferta',
 		            text: HreRem.i18n('header.oferta.estadoOferta'),
 					editor: {
 						xtype: 'combobox',								        		
@@ -92,17 +102,35 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 			        		store, record;
 			        		
 			        		if(!Ext.isEmpty(comboEditor)) {
-				        		store = comboEditor.getStore(),							        		
-				        		record = store.findRecord("codigo", value);
-			        		
-				        		if(!Ext.isEmpty(record)) {								        			
-				        			return record.get("descripcion");								        		
+				        		store = comboEditor.getStore();
+				        		if(!Ext.isEmpty(store) && store.data.length > 0) {
+				        			record = store.findRecord("descripcion", value);				        		
+					        		if(!Ext.isEmpty(record)) {								        			
+					        			return record.get("descripcion");								        		
+					        		} else {
+					        			comboEditor.setValue(value);								        			
+					        		}
 				        		} else {
-				        			comboEditor.setValue(value);								        			
+				        			return record.data.estadoOferta;
 				        		}
 			        		}
 			        },
 		            flex: 1
+		        },
+		        {   
+		    		text: HreRem.i18n('header.oferta.ofertaCreadaConcurrencia'),
+			    	dataIndex: 'ofertaCreadaConcurrencia',
+			    	align	 : 'center',
+			    	renderer : function(value) {
+			    		if(value == true){
+			    			return "Si";
+			    		}else if(value == false){
+			    			return "No";
+			    		}else {
+			    			return "";
+			    		}
+			    	},
+			    	flex: 1
 		        },
 		        {
 	    			xtype: 'actioncolumn',
@@ -164,8 +192,23 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
          	
          	if(this.editOnSelect) {
 	            var estado = context.record.get("codigoEstadoOferta");  
-	            var allowEdit = estado != '01' && estado != '02' && estado != '05' && estado != '06';
+	            var allowEdit = estado != '01' && estado != '02' && estado != '05' && estado != '06' && estado != '08';
+	            var enConcurrencia = me.lookupController().getViewModel().getData().agrupacionficha.get('enConcurrencia');
 
+	            if(!enConcurrencia) {
+	            	var bloqueoEditarOferta = me.lookupController().getViewModel().get('agrupacionficha').get("bloquearEdicionEstadoOfertas"); 
+					if(bloqueoEditarOferta){
+						allowEdit = false;
+					}else{
+						allowEdit = true;
+					}
+	            } else {
+	            	allowEdit = false;
+	            }
+	            
+	            if ($AU.userIsRol(CONST.PERFILES['HAYASUPER'])) {
+	            	allowEdit = true;
+	            }
 	            this.editOnSelect = allowEdit;
          	}
             return this.editOnSelect;
@@ -200,6 +243,7 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 		var codigoCartera = me.lookupController().getViewModel().getData().agrupacionficha.getData().codigoCartera;
 		var codigoTipoAlquiler = me.lookupController().getViewModel().getData().agrupacionficha.getData().tipoAlquilerCodigo;
 		var tipoComercializacion = me.lookupController().getViewModel().data.agrupacionficha.data.tipoComercializacionCodigo;
+		var tipoComercialAlquiler = me.lookupController().getViewModel().data.agrupacionficha.data.tipoAgrupacionCodigo;
 
 		for(var i=0;i<=items.length;i++){
 			if(items[i].getXType()=='fichaagrupacion'){
@@ -230,10 +274,9 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 			
 		if (numActivos == null || numActivos == '' || numActivos == '0') {
 			me.fireEvent("errorToast", HreRem.i18n("msg.comercialAnyadirOferta.agrupacion.sin.activos.error"));	
-		}else if (tipoComercializacion == CONST.TIPOS_COMERCIALIZACION['ALQUILER_VENTA'] || tipoComercializacion == CONST.TIPOS_COMERCIALIZACION['SOLO_ALQUILER']) {
-			if (codigoTipoAlquiler == null || codigoTipoAlquiler == '' || codigoTipoAlquiler == '05') {
-				me.fireEvent("errorToast", HreRem.i18n("msg.comercialAnyadirTipoAlquiler.error"));
-			}
+		}else if ((tipoComercializacion == CONST.TIPOS_COMERCIALIZACION['ALQUILER_VENTA'] || tipoComercializacion == CONST.TIPOS_COMERCIALIZACION['SOLO_ALQUILER']) 
+				&& codigoTipoAlquiler != null && codigoTipoAlquiler != '' && codigoTipoAlquiler == '05') {
+			me.fireEvent("errorToast", HreRem.i18n("msg.comercialAnyadirTipoAlquiler.error"));
 		}
 		else {
 			var parent= me.up('ofertascomercialagrupacion');
@@ -259,13 +302,70 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 		
 	},
 	
+	decisionTramitarOferta: function(editor, context) {
+		   var me = this;
+		   var gencat = context.record.get("gencat");
+		   var msg = HreRem.i18n('msg.desea.aceptar.oferta');
+		   var agrupacion = me.lookupController().getViewModel().get('agrupacionficha');
+		   var enConcurrencia = me.lookupController().getViewModel().getData().agrupacionficha.get('enConcurrencia');
+	       
+		   var url = $AC.getRemoteUrl('ofertas/isEpaAlquilado');
+			Ext.Ajax.request({
+				url: url,
+				method: 'POST',
+				params:{
+					idAgrupacion : agrupacion.id
+				},
+				success: function (response){
+					var data = Ext.decode(response.responseText);
+					if(data.agrupacionEpaAlquilado == '1'){
+						msg = HreRem.i18n('msg.activo.epa');
+					}
+					if (data.agrupacionEpaAlquilado == '2'){
+						msg = HreRem.i18n("msg.activo.alquilados");
+					}if(data.agrupacionEpaAlquilado == '3'){
+						msg = HreRem.i18n("msg.activo.epa.alquilados");
+					}
+					if (gencat == "true") {
+						msg = HreRem.i18n('msg.desea.aceptar.oferta.activos.gencat');
+					}
+					
+					if (msg == HreRem.i18n('msg.desea.aceptar.oferta') && enConcurrencia) {
+						if (context.record.get("descripcionTipoOferta") == CONST.TIPO_COMERCIALIZACION_ACTIVO['VENTA']) {
+				        	me.up('agrupacionesdetallemain').lookupController().mostrarCrearOfertaTramitada(editor, me, context);
+						} else {
+							me.saveFn(editor, me, context);
+						}
+					} else {
+						Ext.Msg.show({
+						   title: HreRem.i18n('title.confirmar.oferta.aceptacion'),
+						   msg: msg,
+						   buttons: Ext.MessageBox.YESNO,
+						   fn: function(buttonId) {
+						        if (buttonId == 'yes' && context.record.get("descripcionTipoOferta") == CONST.TIPO_COMERCIALIZACION_ACTIVO['VENTA']) {
+						        	me.up('agrupacionesdetallemain').lookupController().mostrarCrearOfertaTramitada(editor, me, context);
+								} else if (buttonId == 'yes') {
+									me.saveFn(editor, me, context);
+								} else{
+						    		me.getStore().load();	
+						    	}
+							}
+						});
+					}
+				}
+			});
+	   },
+	
 	editFuncion: function(editor, context){
 
 		var me= this;
-		var estado = context.record.get("codigoEstadoOferta");
+		var estado = context.record.get("estadoOferta");
+		var	estadoAnterior = context.record.get("codigoEstadoOferta");
 		var gencat = context.record.get("gencat");
 		var msg = HreRem.i18n('msg.desea.aceptar.oferta');
 		var agrupacion = me.lookupController().getViewModel().get('agrupacionficha');
+		var enConcurrencia = me.lookupController().getViewModel().getData().agrupacionficha.get('enConcurrencia');
+		var agrConOfertasConcurrencia = me.lookupController().getViewModel().getData().agrupacionficha.get('agrConOfertasConcurrencia');
         var codigoTipoOferta = context.record.get('codigoTipoOferta');
 
 		if(CONST.ESTADOS_OFERTA['PENDIENTE'] != estado){
@@ -292,7 +392,7 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 						return false;
 					}
 				}
-				if(agrupacion.get('cambioEstadoPrecio')){
+				if(agrupacion.get('cambioEstadoPrecio') && !enConcurrencia && !agrConOfertasConcurrencia){
 					if($AU.userHasFunction(['CAMBIAR_ESTADO_OFERTA_BANKIA'])){
 						me.fireEvent("warnToast", HreRem.i18n("msg.cambio.valor.precio"));
 					}else{
@@ -301,7 +401,7 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 						return false;
 					}
 				}
-				if(agrupacion.get('cambioEstadoPublicacion')){
+				if(agrupacion.get('cambioEstadoPublicacion') && !enConcurrencia && !agrConOfertasConcurrencia){
 					if($AU.userHasFunction(['CAMBIAR_ESTADO_OFERTA_BANKIA']) || activo.get('estadoVentaCodigo') == '03'){
 						me.fireEvent("warnToast", HreRem.i18n("msg.cambio.estado.publicacion"));
 					}else{
@@ -313,53 +413,45 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 				
 			} 
 			
-			if (agrupacion.get('tipoComercializacionCodigo') == CONST.TIPOS_COMERCIALIZACION['SOLO_ALQUILER'] && agrupacion.get('perimetroMacc')){
+			if (agrupacion.get('esHayaHome') == "true") {
 				me.fireEvent("errorToast", HreRem.i18n("msg.oferta.haya.home"));
 				me.lookupController().lookupReference('activosagrupacion').lookupController().refrescarAgrupacion(true);
 				return false;
 			} 
 		}
 		
-		if(CONST.ESTADOS_OFERTA['ACEPTADA'] == estado){
-			var url = $AC.getRemoteUrl('ofertas/isEpaAlquilado');
-			Ext.Ajax.request({
-				url: url,
-				method: 'POST',
-				params:{
-					idAgrupacion : agrupacion.id
-				},
-				success: function (response){
-					var data = JSON.parse(response.responseText);
-					if(data.agrupacionEpaAlquilado == '1'){
-						msg = HreRem.i18n('msg.activo.epa');
+		if(CONST.ESTADOS_OFERTA['ACEPTADA'] == estado) {
+			
+			if(agrConOfertasConcurrencia) {
+				var items = this.store.data.items;
+				var ordenGanador = context.record.data.ordenGanador;
+				var esganadora = true;
+				for( var i = 0; i < items.length; i++){
+					if(ordenGanador > items[i].data.ordenGanador){
+						esganadora = false;
+						break;
 					}
-					if (data.agrupacionEpaAlquilado == '2'){
-						msg = HreRem.i18n("msg.activo.alquilados");
-					}if(data.agrupacionEpaAlquilado == '3'){
-						msg = HreRem.i18n("msg.activo.epa.alquilados");
-					}
-					if (gencat == "true") {
-						msg = HreRem.i18n('msg.desea.aceptar.oferta.activos.gencat');
-					}
+				}
+				if(!esganadora){
 					Ext.Msg.show({
 					   title: HreRem.i18n('title.confirmar.oferta.aceptacion'),
-					   msg: msg,
+					   msg: HreRem.i18n('msg.desea.aceptar.oferta.concurrencia'),
 					   buttons: Ext.MessageBox.YESNO,
 					   fn: function(buttonId) {
-					        if (buttonId == 'yes' && context.record.get("descripcionTipoOferta") == CONST.TIPO_COMERCIALIZACION_ACTIVO['VENTA']) {
-					        	me.up('agrupacionesdetallemain').lookupController().mostrarCrearOfertaTramitada(editor, me, context);
-					        	
-					        	//me.saveFn(editor, me, context);
-							} else if (buttonId == 'yes') {
-								me.saveFn(editor, me, context);
-							} else{
-					    		me.getStore().load();	
-					    	}
+					        if (buttonId == 'yes') {
+					        	me.decisionTramitarOferta(editor, context);
+					        } else {
+								me.getStore().load(); 	
+							}
 						}
-					});
+					});	
+				}else {
+					me.decisionTramitarOferta(editor, context);
 				}
-			})
-			
+			} else {
+				me.decisionTramitarOferta(editor, context);
+			}
+
 		} else {
 			
 			//Si todos los estados de las Ofertas = Rechazada -> Se podran agregar activos a al agrupacion
@@ -383,8 +475,22 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 				}
 				
             	me.onCambioARechazoOfertaList(me, context.record);
-			} else if(CONST.ESTADOS_OFERTA['PENDIENTE'] == estado && $AU.userIsRol(CONST.PERFILES['HAYASUPER']) && agrupacion.get('codigoCartera')==CONST.CARTERA['BANKIA'] ){
-				me.saveFn(editor, me, context);
+			} else if(CONST.ESTADOS_OFERTA['PENDIENTE'] == estado && $AU.userIsRol(CONST.PERFILES['HAYASUPER']) 
+						&& CONST.ESTADOS_OFERTA['PDTE_DEPOSITO'] == estadoAnterior && CONST.TIPOS_OFERTA["VENTA"] == codigoTipoOferta){
+				var idOferta = context.record.get('idOferta');
+				me.mask(HreRem.i18n("msg.mask.espere"));
+                Ext.Ajax.request({
+                    url: $AC.getRemoteUrl('ofertas/actualizaEstadoOferta'),
+                	params: {idOferta: idOferta, codigoEstado: estado},
+                	success: function(response, opts){
+						me.unmask();
+                	    me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+                	},
+                    callback: function(record, operation) {
+						me.unmask();
+                        me.getStore().load();
+                    }
+                });
             } else {
             	me.saveFn(editor, me, context);
 			}
@@ -441,7 +547,7 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 		for (i=0; !hayOfertaAceptada && i<me.getStore().getData().items.length;i++){
 			
 			if(me.getStore().getData().items[i].data.idOferta != record.data.idOferta){
-				var codigoEstadoOferta=  me.getStore().getData().items[i].data.codigoEstadoOferta;
+				var codigoEstadoOferta=  me.getStore().getData().items[i].data.estadoOferta;
 				hayOfertaAceptada = CONST.ESTADOS_OFERTA['ACEPTADA'] == codigoEstadoOferta;
 				var codigoEstadoExpediente=  me.getStore().getData().items[i].data.codigoEstadoExpediente;
 				var expedienteBlocked = CONST.ESTADOS_EXPEDIENTE['APROBADO'] == codigoEstadoExpediente || CONST.ESTADOS_EXPEDIENTE['RESERVADO'] == codigoEstadoExpediente 
@@ -454,7 +560,7 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 			}
 		}
 
-		var codigoEstadoNuevo = record.data.codigoEstadoOferta;
+		var codigoEstadoNuevo = record.data.estadoOferta;
 
 		if(codigoEstadoAnterior != null && CONST.ESTADOS_OFERTA['PDTE_DEPOSITO'] == codigoEstadoAnterior 
 				&& CONST.ESTADOS_OFERTA['RECHAZADA'] != codigoEstadoNuevo && CONST.ESTADO_DEPOSITO['COD_INGRESADO'] != record.get('codigoEstadoDeposito')){
@@ -537,7 +643,7 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 	
 	saveSuccessFn: function (oferta, operation, c) {
    		var me = this;
-		if(oferta.get('codigoEstadoOferta') == CONST.ESTADOS_OFERTA['ACEPTADA']){
+		if(oferta.get('estadoOferta') == CONST.ESTADOS_OFERTA['ACEPTADA']){
 			me.mask(HreRem.i18n("msg.mask.espere"));			
 			Ext.Ajax.request({
 				url : $AC.getRemoteUrl('tramitacionofertas/doTramitacionOferta'),
@@ -660,8 +766,11 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 		if(agr.get('esHayaHome')=="true"){ 
 			me.setTopBar(false);
 		}
+
+		if(agr.get('isConcurrencia')==true){
+			me.setTopBar(false);
+		}
 		
    }
    	
 });
-

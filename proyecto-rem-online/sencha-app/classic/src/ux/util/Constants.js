@@ -168,7 +168,8 @@ Ext.define('HreRem.ux.util.Constants', {
 		OFERTASAGRU:	'comercialagrupacion.ofertascomercialagrupacion',
 		PROPUESTAS:		'preciosactivo.propuestaspreciosactivo',
 		PLUSVALIA:		'plusvaliaactivo',
-		PRECIOS_TASACION: 'preciosactivo.tasacionesactivo'
+		PRECIOS_TASACION: 'preciosactivo.tasacionesactivo',
+		PUJAS:		'comercialactivo.pujascomercialactivo'
 //		INVISIBLE:		Si creamos un registro-enlace-activo en TFI y como codigo (en TFI_NOMBRE) damos este valor, ocultara el enlace
 	},
 
@@ -1075,13 +1076,19 @@ Ext.define('HreRem.ux.util.Constants', {
 	    SERVICIOS_PROFESIONALES_INDEPE: '11',
 	    ALQUILER: '19'
 	},
-	 
+	TIPO_OPERACION_GASTO: {
+	    PAGO_GASTO: '01',
+	    PAGO_GASTO_INVERSION: '02',
+	    ABONO_FACTURA_RECTIFICATIVA: '03',
+	    COBRO_RENTA_ALQUILER: '04',
+	    COBRO_PRECIO_VENTA: '05',
+	    DOMICILIACION: '06'
+	},
 	 TIPO_OFERTA_ALQUILER_NO_COMERCIAL:{
 		CODIGO_RENOVACION : 'REN',
 		CODIGO_SUBROGACION : 'SUB',
 		CODIGO_ALQUILER_SOCIAL : 'ALS'
 	 },
-	 
 	 TIPO_RESOLUCION_DUDAS: {
 		APRUEBA: '01',
 		RECHAZA: '02',
@@ -1107,5 +1114,23 @@ Ext.define('HreRem.ux.util.Constants', {
 	},
 	MOTIVOS_RECHAZO_GASTO:{
 		OTROS: '07'
+	},
+	CODIGO_DECISION_COMITE:{
+		NUEVAS_CONDICIONES: '01',
+		REAGENDAR: '02',
+		CANCELAR: '03'
+	},
+	CODIGO_TIPO_ACTIVO_RESCISION:{
+		RESIDENCIAL: '01',
+		TERCIARIA: '02'
+	},
+	
+	CODIGO_TIPO_ADENDA:{
+		CODIGO_MODIFICAR_RENTA: 'A',
+		CODIGO_DERECHO_COMPRA: 'B',
+		CODIGO_DERECHO_SUBARRIENDO: 'C', 
+		CODIGO_DERECHO_TANTEO_RETRACTO: 'D',
+		CODIGO_OTROS: 'E',
+		CODIGO_NO_APLICA_ADENDA: 'F'
 	}
 });

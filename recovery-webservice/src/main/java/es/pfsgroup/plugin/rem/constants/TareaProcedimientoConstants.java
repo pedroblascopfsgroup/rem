@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.constants;
 public class TareaProcedimientoConstants {
 
     public static final String CODIGO_RESOLUCION_EXPEDIENTE_T013 = "T013_ResolucionExpediente";
+    public static final String CODIGO_RESOLUCION_COMITE_T013 = "T013_ResolucionComite";
     public static final String CODIGO_RESOLUCION_EXPEDIENTE_T017 = "T017_ResolucionExpediente";
     public static final String CODIGO_BLOQUEO_SCREENING_T017 = "T017_BloqueoScreening";
     public static final String CODIGO_CONFIRMAR_FECHA_ESCRITURA_T017 = "T017_ConfirmarFechaEscritura";
@@ -10,7 +11,6 @@ public class TareaProcedimientoConstants {
     public static final String CODIGO_RESOLUCION_CES_T017 = "T017_ResolucionCES";
     public static final String CODIGO_SANCION_BC = "T015_SancionBC";
     public static final String CODIGO_T018_AGENDAR_FIRMAR = "T018_AgendarYFirmar";
-    public static final String CODIGO_T015_FIRMA = "T015_Firma";
     public static final String CODIGO_T018_DEFINICION_OFERTA = "T018_DefinicionOferta";
     public static final String CODIGO_T018_ANALISIS_TECNICO = "T018_AnalisisTecnico";
     public static final String CODIGO_T018_ANALISIS_BC = "T018_AnalisisBc";
@@ -40,6 +40,13 @@ public class TareaProcedimientoConstants {
     	public static final String CODIGO_DATOSPBC = "T015_DatosPBC";
     	public static final String CODIGO_CALCULO_RIESGO = "T015_CalculoRiesgo";
     	public static final String CODIGO_PBC_ALQUILER = "T015_PBC";
+    	public static final String CODIGO_APROB_OFERTA_ALQ_COMERCIAL = "T015_AprobacionOfertaAlquilerComercial";
+    	public static final String CODIGO_APROB_CLIENTE_CLAUSULAS = "T015_AprobacionClienteClausulas";
+    	public static final String CODIGO_NEGOCIACION_CLAUSULAS_ALQ = "T015_NegociacionClausulasAlquiler";
+    	public static final String CODIGO_ENTREGA_FIANZAS = "T015_EntregaFianzas";
+    	public static final String CODIGO_RESPUESTA_BC_REAGENDACION = "T015_RespuestaBcReagendacion";
+    	public static final String CODIGO_CIERRE_CONTRATO = "T015_CierreContrato";
+    	public static final String CODIGO_FIRMA = "T015_Firma";
     }
     
     public class TramiteAlquilerNoCmT018{
@@ -48,6 +55,11 @@ public class TareaProcedimientoConstants {
     	public static final String CODIGO_DATOSPBC = "T018_DatosPBC";
     	public static final String CODIGO_CALCULO_RIESGO = "T018_CalculoRiesgo";
     	public static final String CODIGO_PBC_ALQUILER = "T018_PbcAlquiler";
+    	public static final String CODIGO_AGENDAR_FIRMA = "T018_AgendarFirma";
+    	public static final String CODIGO_RESPUESTA_REAGENDACION_BC = "T018_RespuestaReagendacionBC";
+    	public static final String CODIGO_FIRMA = "T018_FirmaContrato";
+    	public static final String CODIGO_BLOQUEO_SCREENING = "T018_BloqueoScreening";
+		public static final String CODIGO_BLOQUEO_SCORING = "T018_BloqueoScoring";
     }
 
 }

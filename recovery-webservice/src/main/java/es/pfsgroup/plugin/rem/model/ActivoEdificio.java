@@ -5,6 +5,7 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -17,6 +18,8 @@ import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
@@ -54,7 +57,8 @@ public class ActivoEdificio implements Serializable, Auditable {
     @JoinColumn(name = "ICO_ID")
     private ActivoInfoComercial infoComercial;
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
+	@NotFound(action = NotFoundAction.EXCEPTION)
 	@JoinColumn(name = "DD_ECV_ID")
 	private DDEstadoConservacion estadoConservacionEdificio;
 	

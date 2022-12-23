@@ -340,9 +340,62 @@ Ext.define('HreRem.model.DatosBasicosOferta', {
             {
             	name:'modificarFormalizacionCajamar',
     			type: 'boolean'   	
-            }
-            
-    		
+            },
+    		{
+    			name: 'codigoTipoAdenda'
+    		},
+    		{
+    			name: 'descripcionTipoAdenda'
+    		},
+            {
+            	name:'fechaInicioSubrogacion',
+            	type:'date',
+        		dateFormat: 'c'
+            },
+            {
+            	name:'autoFirme',
+    			type: 'boolean'   	
+			},
+			
+			{
+				name: 'codigoClaseCondicion'
+			},
+			{
+				name: 'codigoDerechoArrendamiento'
+			},
+			{
+				name: 'codigoRetenciondeImpuestos'
+			},
+			{
+				name: 'codigoGrupoContratoCBK'
+			},
+			{
+				name: 'origenContratoEccCodigo'
+			},
+			{
+				name: 'origenContratoEccDescripcion'
+			},
+			{
+				name: 'suborigenContratoEccCodigo'
+			},
+			{
+				name: 'suborigenContratoEccDescripcion'
+			},
+			{
+				name: 'importeFianzaAnterior'
+			},
+			{
+				name: 'permiteImporteFianzaAnterior',
+				type: 'boolean'
+			},
+            {
+    			name: 'fechaLiquida',
+    			type:'date', 
+        		dateFormat: 'c'
+    		},
+    		{
+    		    name: 'ibanDevolucionCliente'
+    		}
     ],
 
 	proxy: {

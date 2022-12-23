@@ -11,14 +11,15 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 	
 	recordClass: "HreRem.model.Activo",
     
-    requires: ['HreRem.model.Activo','HreRem.view.activos.detalle.HistoricoDestinoComercialActivo', 'HreRem.view.common.ComboBoxFieldBaseDD', 'HreRem.view.activos.detalle.CatastroGrid'],
+    requires: ['HreRem.model.Activo','HreRem.view.activos.detalle.HistoricoDestinoComercialActivo', 'HreRem.view.common.ComboBoxFieldBaseDD', 'HreRem.view.activos.detalle.CatastroGrid', 'HreRem.view.activos.detalle.OrganismosGrid'],
     
     initComponent: function () {
 
         var me = this;
         var isCarteraBbva = me.lookupController().getViewModel().getData().activo.getData().isCarteraBbva;
         var usuariosValidos = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) || $AU.userIsRol(CONST.PERFILES['SUPERVISOR_ADMISION']);
-        
+       
+
 		me.setTitle(HreRem.i18n('title.datos.basicos'));
         var items= [ 	
 			{
@@ -1603,28 +1604,42 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 									rawValue: '{activo.entradaActivoBankiaDescripcion}'
 								}
 							},
-							{
-								xtype:'textfieldbase',
-								fieldLabel: HreRem.i18n('fieldlabel.activobbva.iucBbva'),
-								bind: {
-									readOnly : '{!isGestorAdmisionAndSuper}',
-									hidden: '{!activo.isCarteraBbva}',
-									value: '{activo.uicBbva}'
-								}
-							},
-							{
+							/*{
 								xtype:'textfieldbase',
 								fieldLabel: HreRem.i18n('fieldlabel.activobbva.cexperBbva'),
+								colspan: 3,
 								bind: {
 									readOnly : '{!isGestorAdmisionAndSuper}',
 									hidden: '{!activo.isCarteraBbva}',
 									value: '{activo.cexperBbva}'
 								}
+							},*/
+							{	
+								xtype:'fieldsettable',
+								defaultType: 'textfieldbase',
+								title: HreRem.i18n('fieldlabel.datos.uic'),
+								colspan: 3,
+								bind: {
+									hidden: '{!activo.isCarteraBbva}'
+								},
+								items :
+									[
+									{
+										xtype: 'activobbvauicgrid',
+										idPrincipal : 'activo.id',
+										propagationButton: true,
+										reference: 'activobbvauicgridref',
+										targetGrid	: 'activobbvauic',
+										bind: {
+									        store: '{storeActivoBbvaUic}'
+									    }
+									}
+									]
 							}
 						]
 						
 					}, //Fin activo bancario
-					//Activo EPA
+					/*//Activo EPA
 		            {
 						xtype:'fieldsettable',
 						defaultType: 'textfieldbase',
@@ -1722,7 +1737,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 									}
 								]
 						}]
-					}, //Fin activo EPA
+					}, //Fin activo EPA*/
 					
 		            {//Per�metro e    
 		                
@@ -1817,7 +1832,18 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						xtype: 'historicodestinocomercialactivoform'
 					}
 					]
-			} // Fin Histórico Destino Comercial
+			}, // Fin Histórico Destino Comercial
+			{	// Registro Comunicación organismos ---------------------------------------------------------
+				xtype:'fieldsettable',
+				defaultType: 'textfieldbase',
+				title: HreRem.i18n('title.historico.comunicacion.organismos'),
+				items :
+					[
+						{
+							xtype: 'organismosGrid'
+						}
+					]
+			} //Registro Comunicación organismos
             
      ];
 	me.addPlugin({ptype: 'lazyitems', items: items });
@@ -1833,6 +1859,8 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
     },
     funcionRecargar: function() {
     	var me = this; 
+		var listadoUic = me.down("[reference=activobbvauicgridref]");
+		listadoUic.getStore().load();
 		me.recargar = false;
 		me.lookupController().cargarTabData(me);
     },

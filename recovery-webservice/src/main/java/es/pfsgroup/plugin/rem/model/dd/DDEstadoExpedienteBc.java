@@ -79,6 +79,21 @@ public class DDEstadoExpedienteBc implements Auditable, Dictionary {
 	public static final String PTE_SANCION_BC = "047";
 	public static final String PTE_SANCION_PBC_SERVICER = "049";
 	public static final String CODIGO_SOLICITAR_DEVOLUCION_DEPOSITO_BC = "050";
+	public static final String CODIGO_BORRADOR_ENVIADO = "063";
+	public static final String CODIGO_PTE_VALIDACION_CAMBIOS_CLAUSURADO = "052";
+	public static final String CODIGO_CLAUSULADO_NO_COMERCIABLE = "053";
+	public static final String CODIGO_ENTREGA_GARANTIAS_FIANZAS_AVAL = "054";
+	public static final String CODIGO_BORRADOR_ACEPTADO = "055";
+	public static final String CODIGO_COMUNICAR_SUBROGACION_CONTRATO = "056";
+	public static final String CODIGO_ADENDA_NECESARIA = "057";
+	public static final String CODIGO_GESTION_ADECUCIONES_CERTIFICACIONES_CLIENTE = "058";
+	public static final String CODIGO_RECESION_CONTRATO = "059";
+	public static final String CODIGO_RECESION_AGENDADA = "060";
+	public static final String CODIGO_OFERTA_TRAMITE_CONCURRENCIA_TRAMITACION = "051";
+	public static final String CODIGO_JUDICIALIZAR_COMITE_POSESIONES = "062";
+	public static final String CODIGO_IMPOSIBILIDAD_FIRMA = "061";
+	public static final String CODIGO_PENDIENTE_CP_GED = "065";
+	public static final String CODIGO_NUEVAS_CONDICIONES_COMITE_POSESIONES = "064";
 	
 	private static final long serialVersionUID = 1L;
 
@@ -184,4 +199,12 @@ public class DDEstadoExpedienteBc implements Auditable, Dictionary {
 		this.codigoC4C = codigoC4C;
 	}
 
+	public static boolean isCompromisoCancelado (DDEstadoExpedienteBc estado) {
+		boolean is = false;
+		if(estado != null && CODIGO_COMPROMISO_CANCELADO.equals(estado.getCodigo())) {
+			is = true;
+		}
+		
+		return is;
+	}
 }

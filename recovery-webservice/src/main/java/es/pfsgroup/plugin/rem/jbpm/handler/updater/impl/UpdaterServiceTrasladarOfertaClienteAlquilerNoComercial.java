@@ -54,7 +54,7 @@ public class UpdaterServiceTrasladarOfertaClienteAlquilerNoComercial implements 
 			if(COMBO_RESULTADO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 				if(DDSiNo.SI.equals(valor.getValor())) {
 					estadoExpedienteComercial =  DDEstadosExpedienteComercial.PTE_PBC_ALQUILER_HRE;
-					estadoExpedienteBc = DDEstadoExpedienteBc.PTE_PBC_ALQUILER_HRE;
+					// estadoExpedienteBc = DDEstadoExpedienteBc.PTE_PBC_ALQUILER_HRE;
 
 				}else {
 					estadoExpedienteComercial = DDEstadosExpedienteComercial.PTE_REVISAR_CONDICIONES_BC;
@@ -62,8 +62,10 @@ public class UpdaterServiceTrasladarOfertaClienteAlquilerNoComercial implements 
 				}
 				
 				expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", estadoExpedienteComercial)));
-				expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class,genericDao.createFilter(FilterType.EQUALS,"codigo", estadoExpedienteBc)));
 
+				if (estadoExpedienteBc != null) {
+					expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoExpedienteBc)));
+				}
 			}
 		}
 

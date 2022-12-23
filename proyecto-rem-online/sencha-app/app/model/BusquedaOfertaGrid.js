@@ -135,6 +135,9 @@ Ext.define('HreRem.model.BusquedaOfertaGrid', {
 			},
 			{ 
 			    name: 'codigoEstadoC4C'
+			},
+			{
+				name: 'concurrenciaActiva'
 			}
 	
     ]

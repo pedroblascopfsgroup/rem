@@ -42,6 +42,7 @@ import es.pfsgroup.plugin.rem.model.TextosOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDRespuestaOfertante;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
@@ -890,27 +891,27 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 				
 			}
 			
+			Object importeOferta = oferta.getImporteOferta() != null && !oferta.getIsEnConcurrencia() 
+					? NumberFormat.getNumberInstance(new Locale("es", "ES")).format(oferta.getImporteOferta()) : "*****";
+			
 			String contenido = String.format("<p>Ha recibido una nueva oferta con número identificador %s, a nombre de %s con identificador %s %s con teléfono %s y e-mail %s, por importe de %s €. Prescriptor: %s %s.</p>",
-							oferta.getNumOferta().toString(), oferta.getCliente().getNombreCompleto(),tipoDocIndentificacion,docIdentificacion, oferta.getCliente().getTelefono1(), oferta.getCliente().getEmail(), NumberFormat.getNumberInstance(new Locale("es", "ES")).format(oferta.getImporteOferta()),codigoPrescriptor,nombrePrescriptor );
+							oferta.getNumOferta().toString(), oferta.getCliente().getNombreCompleto(),tipoDocIndentificacion,docIdentificacion, oferta.getCliente().getTelefono1(), oferta.getCliente().getEmail(), importeOferta,codigoPrescriptor,nombrePrescriptor );
 						
-			contenido += "<br><p>Titulares: <br><ul>";
+			
 			if (!Checks.esNulo(oferta.getCliente())) {
-				boolean gdpr = !Checks.esNulo(oferta.getCliente().getCesionDatos()) 
-						&& !Checks.esNulo(oferta.getCliente().getTransferenciasInternacionales())
-						&& !Checks.esNulo(oferta.getCliente().getComunicacionTerceros());
-				contenido += String.format("<li>%s : %s ha confirmado GDPR</li>", oferta.getCliente().getNombreCompleto(),gdpr ? "" : "No");
+				contenido += "<br><p>Titulares: <br><ul>";
+				contenido += String.format("<li>%s : confirmado GDPR</li>", oferta.getCliente().getNombreCompleto(),
+						DDSinSiNo.cambioDiccionarioaBooleanoNativo(oferta.getCliente().getAceptacionOferta()) ? "Ha" : "No ha");
 				if(!Checks.esNulo(oferta.getTitularesAdicionales()) && !oferta.getTitularesAdicionales().isEmpty()) {
 					for (int i = 0;i < oferta.getTitularesAdicionales().size() && i < 3; i++) {
-						gdpr = !Checks.esNulo(oferta.getTitularesAdicionales().get(i).getRechazarCesionDatosPropietario())
-								&& !Checks.esNulo(oferta.getTitularesAdicionales().get(i).getRechazarCesionDatosProveedores())
-								&& !Checks.esNulo(oferta.getTitularesAdicionales().get(i).getRechazarCesionDatosPublicidad());
-						contenido += String.format("<li>%s : %s ha confirmado GDPR</li>", oferta.getTitularesAdicionales().get(i).getNombreCompleto(),gdpr ? "" : "No");
+						contenido += String.format("<li>%s : %s ha confirmado GDPR</li>", oferta.getTitularesAdicionales().get(i).getNombreCompleto(),
+								DDSinSiNo.cambioDiccionarioaBooleanoNativo(oferta.getTitularesAdicionales().get(i).getAceptacionOferta()) ? "Ha" : "No ha");
 					}
 				}
+				contenido += "</ul></p>";
 			}
-			contenido += "</ul></p>";
 			
-			contenido += String.format("<br><p>Estado de la oferta: %s. Importe inicial: %s €.", oferta.getEstadoOferta().getDescripcion(), NumberFormat.getNumberInstance(new Locale("es", "ES")).format(oferta.getImporteOferta()));
+			contenido += String.format("<br><p>Estado de la oferta: %s. Importe inicial: %s €.", oferta.getEstadoOferta().getDescripcion(), importeOferta);
 			
 			contenido += String.format("<br><p>Activo: %s", activo.getNumActivo());
 			

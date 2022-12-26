@@ -9747,8 +9747,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		 FROM GPV_GASTOS_PROVEEDOR GPV"
-				+ "		 JOIN ADG_ADJUNTOS_GASTO ADG ON GPV.GPV_ID = ADG.GPV_ID AND ADG.BORRADO = 0"
-				+ "		 WHERE GPV.GPV_NUM_GASTO_HAYA = :numGasto "
+				+ "		 WHERE GPV.GPV_NUM_GASTO_HAYA = :numGasto AND GPV.GPV_EXISTE_DOCUMENTO = 1 "
 				+ "		 	AND GPV.BORRADO = 0");
 		return !"0".equals(resultado);
 	}

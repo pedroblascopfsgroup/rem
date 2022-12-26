@@ -1,6 +1,8 @@
 package es.pfsgroup.plugin.rem.adapter;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
@@ -138,7 +140,14 @@ public class GenericAdapter {
 				valoresDiccionario.addAll(diccionarioApi.dameValoresDiccionario(clase));
 			}
 		}
-		return new ArrayList<Dictionary>(valoresDiccionario);
+		ArrayList<Dictionary> listaDic = new ArrayList<Dictionary>(valoresDiccionario);
+		 Collections.sort(listaDic, new Comparator<Dictionary>() {
+
+		        public int compare(Dictionary o1, Dictionary o2) {
+		            return o1.getDescripcion().compareTo(o2.getDescripcion());
+		        }
+		    });
+		return listaDic;
 	}
 	
 	public List<Dictionary> getDiccionarioDeGastos(String diccionario) {

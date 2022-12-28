@@ -1,7 +1,7 @@
 --/*
 --#########################################
 --## AUTOR=Juan Bautista Alfonso
---## FECHA_CREACION=20221228
+--## FECHA_CREACION=20221229
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-12996
@@ -38,7 +38,10 @@ DECLARE
       --DD_ETG_CODIGO  Elemento PEP	CLASE/GRUPO	  TIPO	SUBTIPO	DD_TGA_CODIGO	DD_STG_CODIGO	PRO_SOCIEDAD_PAGADORA  EJE_ANYO
 
 		--BANKIA
-		T_TABLA('1125','XXXX-21-2-LEGAL','2','2','56','11','164','null','2021')
+		T_TABLA('1125','XXXX-21-2-LEGAL','2','2','56','11','164','null','2021'),
+
+        --BH
+        T_TABLA('1126','XXXX-21-2-LEGAL','2','2','56','11','164','3148','2021')
     ); 
     V_TMP_TABLA T_TABLA;
 	

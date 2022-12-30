@@ -1,10 +1,10 @@
 --/*
 --#########################################
 --## AUTOR=Juan Bautista Alfonso
---## FECHA_CREACION=20221205
+--## FECHA_CREACION=20221230
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=REMVIP-12770
+--## INCIDENCIA_LINK=REMVIP-13013
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Actualizacion registros 
@@ -49,6 +49,7 @@
 --##		0.36 Añadir DD_CBC_CODIGO alquiler para las pep XXXX-22-2-INF MNTO - Inspección técnica de edificios - [REMVIP-12844] - Juan Bautista Alfonso (29/11/22)
 --##		0.37 Añadir DD_CBC_CODIGO Venta para las pep XXXX-22-3-A-T JD DES - Deshaucios - [REMVIP-12859] - Juan Bautista Alfonso (02/12/22)
 --##		0.38 Añadir DD_CBC_CODIGO Alquiler rotacional para las pep XXXX-22-2-A-COM - CCPP Suministros - [REMVIP-12770] - Juan Bautista Alfonso (05/12/22)
+--##		0.39 Añadir DD_CBC_CODIGO Alquiler Alquilado para pep OX-XXXX-22-3-A_EST_CAPA - [REMVIP-13013] - Juan Bautista Alfonso (30/12/22)
 --#########################################
 --*/
 
@@ -64,7 +65,7 @@ DECLARE
 	ERR_MSG VARCHAR2(2048);-- Mensaje de error
 	V_SQL VARCHAR2(4000 CHAR);
 	PL_OUTPUT VARCHAR2(32000 CHAR);
-	V_USUARIO VARCHAR2(50 CHAR) := 'REMVIP-12231';
+	V_USUARIO VARCHAR2(50 CHAR) := 'REMVIP-13013';
 	V_NUM_REGISTROS NUMBER; -- Cuenta registros 
 	V_NUM NUMBER;
 	V_FLAG_VACIADO NUMBER := 0;
@@ -542,8 +543,11 @@ DECLARE
 		--Añadir DD_CBC_CODIGO Venta para las pep XXXX-22-3-A-T JD DES - REMVIP-12844 (29/11/22)
 		T_TABLA('1123','XXXX-22-3-A-T JD DES','22','01','2','02','163','01','','','null','','','','2022'),
 
-		-- Añadir DD_CBC_CODIGO Alquiler rotacional para las pep XXXX-22-2-A-COM - REMVIP-12770 (05/12/22)
-		T_TABLA('1124','XXXX-22-2-A-COM','22','00','3','05','132','02','','','null','','','','2022')
+		-- Añadir DD_CBC_CODIGO Alquiler rotacional para las pep XXXX-22-2-A-COM - REMVIP-12770 (05/12/22),
+		T_TABLA('1124','XXXX-22-2-A-COM','22','00','3','05','132','02','','','null','','','','2022'),
+
+		--Añadir DD_CBC_CODIGO Alquiler Alquilado para pep OX-XXXX-22-3-A_EST_CAPA - REMVIP-13013 (30/12/22)
+		T_TABLA('1295','OX-XXXX-22-3-A_EST_CAPA','22','02','67','11','95','03','','','null','','','','2022')
 
 
     ); 

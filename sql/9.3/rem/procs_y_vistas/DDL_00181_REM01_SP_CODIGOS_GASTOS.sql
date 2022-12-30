@@ -1,10 +1,10 @@
 --/* 
 --##########################################
---## AUTOR=Alejandra García
---## FECHA_CREACION=20220510
+--## AUTOR=Juan Bautista Alfonso
+--## FECHA_CREACION=20221230
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-17802
+--## INCIDENCIA_LINK=REMVIP-12965
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -23,6 +23,7 @@
 --##        0.11 Quitar la versión 1.10 - [HREOS-17704] - Alejandra García
 --##        0.12 Quitar cálculo primera toma de posesion en la ETG- [HREOS-17802] - Alejandra García
 --##        0.13 Añadido pro_id al order by del row_number en caso de que sea mayor a 2022 - [REMVIP-12105] - Juan Bautista Alfonso
+--##        0.14 Modificado filtro eje_id para que por defecto ponga el ejercicio del gasto - [REMVIP-12965] - Juan Bautista Alfonso
 --##########################################
 --*/
 
@@ -113,7 +114,7 @@ BEGIN
                     AND NVL(ETG.EJE_ID, 0) = CASE
                                         WHEN EJE.EJE_ANYO <= ''2021'' THEN (SELECT EJE2.EJE_ID FROM '|| V_ESQUEMA ||'.ACT_EJE_EJERCICIO EJE2 WHERE EJE2.EJE_ANYO = ''2021'')
                                         WHEN TGA.DD_TGA_CODIGO = ''26'' THEN 0
-                                        ELSE (SELECT EJE2.EJE_ID FROM '|| V_ESQUEMA ||'.ACT_EJE_EJERCICIO EJE2 WHERE EJE2.EJE_ANYO = ''2022'')
+                                        ELSE EJE.EJE_ID
                                     END
                     AND NVL(ETG.DD_SED_ID, NVL(GEN.DD_SED_ID, 0)) = NVL(GEN.DD_SED_ID, 0)
                     AND NVL(ETG.DD_PRO_ID, NVL(GEN.DD_PRO_ID, 0)) = NVL(GEN.DD_PRO_ID, 0)
@@ -172,7 +173,7 @@ BEGIN
                     AND NVL(ETG.EJE_ID, 0) = CASE
                                         WHEN EJE.EJE_ANYO <= ''2021'' THEN (SELECT EJE2.EJE_ID FROM '|| V_ESQUEMA ||'.ACT_EJE_EJERCICIO EJE2 WHERE EJE2.EJE_ANYO = ''2021'')
                                         WHEN TGA.DD_TGA_CODIGO = ''26'' THEN 0
-                                        ELSE (SELECT EJE2.EJE_ID FROM '|| V_ESQUEMA ||'.ACT_EJE_EJERCICIO EJE2 WHERE EJE2.EJE_ANYO = ''2022'')
+                                        ELSE EJE.EJE_ID
                                     END
                     AND NVL(ETG.DD_PRO_ID, NVL(GLD.DD_PRO_ID, 0)) = NVL(GLD.DD_PRO_ID, 0)
                     AND ETG.BORRADO = 0
@@ -250,7 +251,7 @@ BEGIN
                     AND NVL(ETG.EJE_ID, 0) = CASE
                                         WHEN EJE.EJE_ANYO <= ''2021'' THEN (SELECT EJE2.EJE_ID FROM '|| V_ESQUEMA ||'.ACT_EJE_EJERCICIO EJE2 WHERE EJE2.EJE_ANYO = ''2021'')
                                         WHEN TGA.DD_TGA_CODIGO = ''26'' THEN 0
-                                        ELSE (SELECT EJE2.EJE_ID FROM '|| V_ESQUEMA ||'.ACT_EJE_EJERCICIO EJE2 WHERE EJE2.EJE_ANYO = ''2022'')
+                                        ELSE EJE.EJE_ID
                                     END
                     AND NVL(ETG.DD_SED_ID, NVL(GEN.DD_SED_ID, 0)) = NVL(GEN.DD_SED_ID, 0)
                     AND NVL(ETG.DD_PRO_ID, NVL(GEN.DD_PRO_ID, 0)) = NVL(GEN.DD_PRO_ID, 0)
@@ -309,7 +310,7 @@ BEGIN
                     AND NVL(ETG.EJE_ID, 0) = CASE
                                         WHEN EJE.EJE_ANYO <= ''2021'' THEN (SELECT EJE2.EJE_ID FROM '|| V_ESQUEMA ||'.ACT_EJE_EJERCICIO EJE2 WHERE EJE2.EJE_ANYO = ''2021'')
                                         WHEN TGA.DD_TGA_CODIGO = ''26'' THEN 0
-                                        ELSE (SELECT EJE2.EJE_ID FROM '|| V_ESQUEMA ||'.ACT_EJE_EJERCICIO EJE2 WHERE EJE2.EJE_ANYO = ''2022'')
+                                        ELSE EJE.EJE_ID
                                     END
                     AND NVL(ETG.DD_PRO_ID, NVL(GLD.DD_PRO_ID, 0)) = NVL(GLD.DD_PRO_ID, 0)
                     AND ETG.BORRADO = 0

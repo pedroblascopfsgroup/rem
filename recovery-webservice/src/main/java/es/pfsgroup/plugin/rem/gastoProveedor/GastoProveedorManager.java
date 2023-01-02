@@ -3964,7 +3964,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	@Override
 	public Double recalcularImporteTotalGasto(GastoDetalleEconomico gasto) {
 
-		Double importeTotal = 0.0, cuotaIvaRetenida = 0.0;
+		Double importeTotal = 0.0, cuotaIvaRetenida = 0.0, cuotaRetGar = 0.0;
 		boolean retencionAntes = false;
 
 		if (gasto.getGastoProveedor() != null) {
@@ -4007,17 +4007,23 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			if (gasto.getIrpfBase() != null && gasto.getIrpfTipoImpositivo() != null) {
 				importeTotal = importeTotal - ((gasto.getIrpfBase() * gasto.getIrpfTipoImpositivo()) / 100);
 			}
+			
+			if (gasto.getRetencionGarantiaTipoImpositivo() != null)
+			cuotaRetGar = gasto.getRetencionGarantiaTipoImpositivo();
+			
+			importeTotal = redondeaAlzaImportes(importeTotal);
+			cuotaRetGar = redondeaAlzaImportes(cuotaRetGar);
+			cuotaIvaRetenida = redondeaAlzaImportes(cuotaIvaRetenida);
 
 			if (gasto.getRetencionGarantiaBase() != null && gasto.getRetencionGarantiaTipoImpositivo() != null
 					&& gasto.getRetencionGarantiaAplica() != null && gasto.getRetencionGarantiaAplica()) {
-				importeTotal = importeTotal
-						- ((gasto.getRetencionGarantiaBase() * gasto.getRetencionGarantiaTipoImpositivo()) / 100);
+				importeTotal = importeTotal	- ((gasto.getRetencionGarantiaBase() * cuotaRetGar) / 100);
 			}
 
 			if (retencionAntes && gasto.getRetencionGarantiaTipoImpositivo() != null && carteraGasto != null
 					&& DDCartera.CODIGO_CARTERA_LIBERBANK.equals(carteraGasto.getCodigo())) {
 				try {
-					importeTotal = importeTotal - (cuotaIvaRetenida / 100 * gasto.getRetencionGarantiaTipoImpositivo());
+					importeTotal = importeTotal - (cuotaIvaRetenida / 100 * cuotaRetGar);
 
 				} catch (ArithmeticException e) {
 					e.printStackTrace();
@@ -4027,6 +4033,19 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 		}
 		return importeTotal;
+	}
+	
+	private Double redondeaAlzaImportes(Double importe){
+		double importeRedondeado = 0.0;
+		
+		if (importe != null && importe != 0) {
+			BigDecimal mValue = new BigDecimal(importe);
+			BigDecimal roundValue = mValue.setScale(2, RoundingMode.HALF_UP);
+			importeRedondeado = roundValue.doubleValue();
+		}
+		
+		return importeRedondeado;
+		
 	}
 
 	private Double sumaImportesLineaDetalle(Double importeTotal, GastoLineaDetalle gastoLineaDetalle) {

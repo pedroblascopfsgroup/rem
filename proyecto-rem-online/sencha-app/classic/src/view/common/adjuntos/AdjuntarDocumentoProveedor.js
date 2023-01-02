@@ -139,7 +139,8 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoProveedor', {
 				                	name: 'descripcion',
 				                	maxLength: 256,
 				                	msgTarget: 'side',
-				                	width: '100%'
+				                	width: '100%',
+				                	hidden: isConductas
 				                	
 			            		}
     					]

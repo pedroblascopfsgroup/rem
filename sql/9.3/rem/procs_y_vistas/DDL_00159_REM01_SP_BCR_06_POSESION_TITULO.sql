@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20220504
+--## FECHA_CREACION=20230103
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-17788
@@ -35,6 +35,7 @@
 --##        0.23 Añadido posibilidad de revivir activos si vuelven a llegar - [HREOS-16087] - Daniel Algaba
 --##        0.24 Añadido tipo alquiler - [HREOS-17150] - Javier Esbri
 --##        0.25 Control de nulos en tabla de título - [HREOS-17788] - Daniel Algaba
+--##        0.26 Desvincular campos ocupaciones de BC - [REMVIP-12734] - IRC
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -108,28 +109,6 @@ BEGIN
 
    SALIDA := SALIDA || '[INFO] SE HAN INSERTADO '|| SQL%ROWCOUNT||' REGISTROS EN TMP_ACT_SCM CAMBIO DE FECHA POSESIÓN [INFO]'|| CHR(10);
 
-   V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.TMP_ACT_SCM (
-                  ACT_ID
-                  , FECHA_CALCULO
-               )
-               SELECT
-               DISTINCT ACT.ACT_ID
-               , SYSDATE
-               FROM '||V_ESQUEMA||'.AUX_APR_BCR_STOCK APR
-               JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = APR.NUM_IDENTIFICATIVO AND ACT.BORRADO = 0
-               JOIN '||V_ESQUEMA||'.ACT_SPS_SIT_POSESORIA SPS ON ACT.ACT_ID = SPS.ACT_ID AND SPS.BORRADO = 0
-               LEFT JOIN '||V_ESQUEMA||'.DD_TPA_TIPO_TITULO_ACT TPA ON SPS.DD_TPA_ID = TPA.DD_TPA_ID AND TPA.BORRADO = 0
-               WHERE (APR.ESTADO_POSESORIO IN (''P01'', ''P06'', ''P05'') AND SPS.SPS_OCUPADO = 1
-               OR APR.ESTADO_POSESORIO IN (''P02'', ''P03'',''P04'') AND SPS.SPS_OCUPADO = 0
-               OR APR.ESTADO_POSESORIO IN (''P02'', ''P04'') AND NOT (SPS.SPS_OCUPADO = 1 AND TPA.DD_TPA_CODIGO = ''01'')
-               OR APR.ESTADO_POSESORIO = ''P03'' AND NOT (SPS.SPS_OCUPADO = 1 AND TPA.DD_TPA_CODIGO = ''02''))
-               AND NOT EXISTS (SELECT 1 FROM '||V_ESQUEMA||'.TMP_ACT_SCM SCM WHERE SCM.ACT_ID = ACT.ACT_ID)
-               AND APR.FLAG_EN_REM = '||FLAG_EN_REM||'';
-
-   EXECUTE IMMEDIATE V_MSQL;
-
-   SALIDA := SALIDA || '[INFO] SE HAN INSERTADO '|| SQL%ROWCOUNT||' REGISTROS EN TMP_ACT_SCM POR CAMBIO DE ESTADO POSESORIO [INFO]'|| CHR(10);
-
    SALIDA := SALIDA || '[INFO] SE VA A PROCEDER A ACTUALIZAR/INSERTAR CAMPOS DE POSESIÓN Y TÍTULO.'|| CHR(10);
 
    SALIDA := SALIDA || '   [INFO] 1 - ACT_TIT_TITULO'||CHR(10);
@@ -198,13 +177,6 @@ BEGIN
                    TO_DATE(AUX.FEC_VALIDO_DE,''yyyymmdd'') AS SPS_FECHA_TOMA_POSESION 
                   ,TO_DATE(AUX.FEC_ESTADO_POSESORIO,''yyyymmdd'') AS SPS_FECHA_REVISION_ESTADO
                   ,CASE
-                     WHEN AUX.ESTADO_POSESORIO IN (''P02'',''P03'',''P04'') THEN 1
-                   ELSE 0 END AS SPS_OCUPADO
-                  ,CASE
-                     WHEN AUX.ESTADO_POSESORIO IN (''P02'',''P04'') THEN (SELECT DD_TPA_ID FROM '|| V_ESQUEMA ||'.DD_TPA_TIPO_TITULO_ACT WHERE DD_TPA_CODIGO=''01'')
-                     WHEN AUX.ESTADO_POSESORIO=''P03'' THEN (SELECT DD_TPA_ID FROM '|| V_ESQUEMA ||'.DD_TPA_TIPO_TITULO_ACT WHERE DD_TPA_CODIGO=''02'')
-                   ELSE NULL END AS DD_TPA_ID
-                  ,CASE
                      WHEN AUX.ESTADO_POSESORIO=''P05'' THEN 1
                    ELSE 0 END AS SPS_VERTICAL
                   ,ACT2.ACT_ID AS ACT_ID
@@ -215,8 +187,6 @@ BEGIN
                WHEN MATCHED THEN UPDATE SET
                    ACT.SPS_FECHA_TOMA_POSESION=US.SPS_FECHA_TOMA_POSESION
                   ,ACT.SPS_FECHA_REVISION_ESTADO=US.SPS_FECHA_REVISION_ESTADO
-                  ,ACT.SPS_OCUPADO=US.SPS_OCUPADO
-                  ,ACT.DD_TPA_ID=US.DD_TPA_ID
                   ,ACT.SPS_VERTICAL=US.SPS_VERTICAL
                   ,ACT.USUARIOMODIFICAR = ''STOCK_BC''
                   ,ACT.FECHAMODIFICAR = SYSDATE
@@ -225,8 +195,6 @@ BEGIN
                   ,SPS_FECHA_TOMA_POSESION
                   ,SPS_FECHA_REVISION_ESTADO
                   ,ACT_ID
-                  ,SPS_OCUPADO
-                  ,DD_TPA_ID
                   ,SPS_VERTICAL
                   ,USUARIOCREAR  
                   ,FECHACREAR             
@@ -235,8 +203,6 @@ BEGIN
                      ,US.SPS_FECHA_TOMA_POSESION
                      ,US.SPS_FECHA_REVISION_ESTADO
                      ,US.ACT_ID
-                     ,US.SPS_OCUPADO
-                     ,US.DD_TPA_ID
                      ,US.SPS_VERTICAL
                      ,''STOCK_BC''
                      ,SYSDATE

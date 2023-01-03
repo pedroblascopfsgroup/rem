@@ -20,7 +20,7 @@ SET DEFINE OFF;
 
 DECLARE
 	
-	V_TABLA_TMP VARCHAR2(50 CHAR) := 'AUX_REMVIP_12233'; -- Variable para tabla 	
+	V_TABLA_TMP VARCHAR2(50 CHAR) := 'AUX_REMVIP_12888'; -- Variable para tabla
 	V_ESQUEMA VARCHAR2(25 CHAR):= 'REM01';-- '#ESQUEMA#'; -- Configuracion Esquema
 	V_ESQUEMA_M VARCHAR2(25 CHAR):= 'REMMASTER';-- '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
 	ERR_NUM NUMBER;-- Numero de errores

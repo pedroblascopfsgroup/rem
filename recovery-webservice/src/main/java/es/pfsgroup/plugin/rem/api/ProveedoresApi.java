@@ -30,6 +30,7 @@ import es.pfsgroup.plugin.rem.model.DtoPersonaContacto;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.VHistoricoBloqueosApis;
 import es.pfsgroup.plugin.rem.model.dd.DDCodigoPostal;
+import org.springframework.transaction.annotation.Transactional;
 
 public interface ProveedoresApi {
 	
@@ -325,7 +326,7 @@ public interface ProveedoresApi {
 
 	void saveBloqueoProveedorById(Long id, DtoBloqueoApis dto);
 
-	String uploadConducta(WebFileItem fileItem) throws Exception;
+	void uploadConducta(WebFileItem fileItem) throws Exception;
 
 	void isProveedorValidoParaActivo(ActivoProveedor proveedor, Activo activo) throws JsonViewerException;
 	
@@ -337,4 +338,6 @@ public interface ProveedoresApi {
 	
 	List<DtoCodigoPostalCombo> getComboCodigoPostalMultiple(String codigoMunicipio);
 
+    @Transactional(readOnly = false)
+    boolean deleteAdjuntoConductasInapropiadas(DtoAdjunto dtoAdjunto);
 }

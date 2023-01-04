@@ -566,4 +566,12 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 			return null;
 		}
 	}
+
+	@Override
+	public void deleteConductaById(Long id) {
+
+		StringBuilder sb = new StringBuilder("delete from AdjuntoConductasInapropiadas aci where aci.id = :id ");
+		this.getSessionFactory().getCurrentSession().createQuery(sb.toString()).setParameter("id", id).executeUpdate();
+
+	}
 }

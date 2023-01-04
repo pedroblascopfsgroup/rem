@@ -108,4 +108,6 @@ public interface ProveedoresDao extends AbstractDao<ActivoProveedor, Long>{
 	public List<Localidad> getMunicipiosList(String codigoProvincia);
 	
 	public List<DDCodigoPostal> getCodigosPostalesList(String codigoMunicipio);
+
+    void deleteConductaById(Long id);
 }

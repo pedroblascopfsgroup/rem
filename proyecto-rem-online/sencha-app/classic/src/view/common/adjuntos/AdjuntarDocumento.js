@@ -102,14 +102,14 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumento', {
 									width: '100%',
 									filtradoEspecial: true
 						        },
-						        {
+        				        {
 				                	xtype: 'textarea',
 				                	fieldLabel: HreRem.i18n('fieldlabel.descripcion'),
 				                	name: 'descripcion',
 				                	maxLength: 256,
 				                	msgTarget: 'side',
 				                	width: '100%'
-			            		}
+        				        }
     					]
     				}
     	];

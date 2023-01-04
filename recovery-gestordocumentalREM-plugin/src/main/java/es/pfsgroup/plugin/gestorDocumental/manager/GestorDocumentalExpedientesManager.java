@@ -19,6 +19,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.gestorDocumental.api.GestorDocumentalExpedientesApi;
 import es.pfsgroup.plugin.gestorDocumental.api.RestClientApi;
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearActuacionTecnicaDto;
+import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearConductasInapropiadasDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearEntidadCompradorDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearExpedienteComercialDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearGastoDto;
@@ -55,6 +56,7 @@ public class GestorDocumentalExpedientesManager implements GestorDocumentalExped
 	private static final String DESCRIPCION_EXPEDIENTE = "descripcionExpediente";
 	private static final String GASTO_METADATOS="gastoMetadatos";
 	private static final String EXPEDIENTE_COMERCIAL_METADATOS = "operacionMetadatos";
+	private static final String EXPEDIENTE_CLASE = "clase_expediente";
 
 	
 	public static final String URL_REST_CLIENT_GESTOR_DOCUMENTAL_EXPEDIENTES = "rest.client.gestor.documental.expedientes";
@@ -501,4 +503,47 @@ public class GestorDocumentalExpedientesManager implements GestorDocumentalExped
 				.field(DESCRIPCION_EXPEDIENTE, proyectoDto.getProyectoDescripcion());
 		return multipart;
 	}
+
+	@Override
+	public RespuestaCrearExpediente crearConductasInapropiadas(CrearConductasInapropiadasDto crearConductasInapropiadasDto) throws GestorDocumentalException {
+		ServerRequest serverRequest = new ServerRequest();
+		serverRequest.setMethod(RestClientManager.METHOD_POST);
+		serverRequest.setPath(getPathCrearConductasInapropiadas(crearConductasInapropiadasDto));
+		serverRequest.setMultipart(getMultipartCrearConductasInapropiadas(crearConductasInapropiadasDto));
+		serverRequest.setResponseClass(RespuestaCrearExpediente.class);
+		RespuestaCrearExpediente respuesta = (RespuestaCrearExpediente) getResponse(serverRequest);
+		
+		if(!Checks.esNulo(respuesta) && !Checks.esNulo(respuesta.getMensajeError())) {
+			logger.debug(respuesta.getCodigoError() + "-" + respuesta.getMensajeError());
+			throw new GestorDocumentalException(respuesta.getCodigoError() + "-" + respuesta.getMensajeError());
+		}
+		if(Checks.esNulo(respuesta)) {
+			throw new GestorDocumentalException(ERROR_SERVER_NOT_RESPONDING);
+		}
+		
+		return respuesta;
+	}
+	
+	private String getPathCrearConductasInapropiadas(CrearConductasInapropiadasDto crearConductasInapropiadasDto) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("/CrearContenedor");
+		sb.append("?").append(USUARIO_PATH).append(crearConductasInapropiadasDto.getUsuario());
+		sb.append("&").append(PASSWORD_PATH).append(crearConductasInapropiadasDto.getPassword());
+		sb.append("&").append(CLASE_EXPEDIENTE_PATH).append("01");
+		sb.append("&").append(USUARIO_OPERACIONAL_PATH).append(crearConductasInapropiadasDto.getUsuarioOperacional());
+		sb.append("&").append(EXPEDIENTE_COMERCIAL_METADATOS_PATH).append(UriComponent.encode(crearConductasInapropiadasDto.getMetadata(), UriComponent.Type.QUERY_PARAM_SPACE_ENCODED));
+		sb.append("&").append(TIPO_EXPEDIENTE_PATH).append(crearConductasInapropiadasDto.getTipoClase());
+		return sb.toString();
+	}
+	
+	private MultiPart getMultipartCrearConductasInapropiadas(CrearConductasInapropiadasDto crearConductasInapropiadasDto){
+		final MultiPart multipart = new FormDataMultiPart()
+				.field(USUARIO, crearConductasInapropiadasDto.getUsuario())
+				.field(PASSWORD,  crearConductasInapropiadasDto.getPassword())
+				.field(EXPEDIENTE_CLASE, "01")
+				.field(EXPEDIENTE_COMERCIAL_METADATOS, crearConductasInapropiadasDto.getMetadata())
+				.field(DESCRIPCION_EXPEDIENTE, crearConductasInapropiadasDto.getDescripcionConductasInapropiadas());
+		return multipart;
+	}
+	
 }

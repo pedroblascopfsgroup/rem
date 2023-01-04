@@ -402,6 +402,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("segmentacionCartera", DDCarteraBc.class);
 		mapa.put("motivoExoneracionCee", DDMotivoExoneracionCee.class);
 		mapa.put("incidenciaCee", DDIncidenciaCee.class);
+		mapa.put("conductasInapropiadas", DDTipoDocumentoConductasInapropiadas.class);
 		mapa.put("estadoAdenda", DDTipoAdenda.class);
 		mapa.put("estadoDeposito", DDEstadoDeposito.class);
 		mapa.put("claseCondicion", DDClaseCondicion.class);

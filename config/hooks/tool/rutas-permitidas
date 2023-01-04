@@ -374,3 +374,7 @@ func-rem-modificacionStockUAs|R-Buu
 rem_mirror|func-rem-formalizacionAlquileres
 func-rem-nuevaCargaMasivaEstadosGastos|R-Fuji
 func-rem-perfiladoVariasCarteras|R-Fuji
+func-rem-verDocsIdentifEco|R-Tirana
+func-rem-ventaSobrePlanoPromocionesON|R-Tirana
+func-rem-nuevosTrabajosSeguridad|R-Tirana
+func-rem-gestionAPIs-F2|R-Tirana

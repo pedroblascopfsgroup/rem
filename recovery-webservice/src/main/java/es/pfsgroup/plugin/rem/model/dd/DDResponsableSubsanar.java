@@ -1,7 +1,5 @@
 package es.pfsgroup.plugin.rem.model.dd;
 
-import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -12,6 +10,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
+import es.capgemini.pfs.diccionarios.Dictionary;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Where;
@@ -29,7 +28,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 @Table(name = "DD_RSU_RESPONSABLE_SUBSANAR", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Where(clause = Auditoria.UNDELETED_RESTICTION)
-public class DDResponsableSubsanar implements Serializable, Auditable {
+public class DDResponsableSubsanar implements Auditable, Dictionary{
 	/**
 	 * 
 	 */

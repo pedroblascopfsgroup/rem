@@ -307,7 +307,10 @@ rem_mirror|func-rem-bloqueoScoring
 rem_mirror|func-rem-hydra-modificacionesEnero
 func-rem-hydra-modificacionesEnero|R-Ellendale
 func-rem-bloqueoScoring|R-Ellendale
+<<<<<<< HEAD
 rem_mirror|func-rem-variosUICsPorEntidad
+=======
+>>>>>>> func-rem-verDocsIdentifEco
 rem_mirror|func-rem-reposicionamientoCalculoRiesgo
 func-rem-automatizacionBajasContablesBBVA|R-Navelate
 rem_mirror|func-rem-onuFase2
@@ -317,7 +320,10 @@ func-rem-stockHydra-F1.1|R-Jaffa
 func-rem-catastro|R-Jaffa
 rem_mirror|func-rem-stockHydra-F1.1
 rem_mirror|func-rem-cambioJerarquiaPrefacturasBBVA
+<<<<<<< HEAD
 rem_mirror|func-rem-ventaSobrePlanoPromocionesON
+=======
+>>>>>>> func-rem-verDocsIdentifEco
 R-Jaffa|R-Jaffa-ContrasteListas
 rem_mirror|func-rem-volcadoPagosUrgentesASPRO
 func-rem-cambioJerarquiaPrefacturasBBVA|R-Ortanique
@@ -328,6 +334,10 @@ rem_mirror|func-rem-visibleComercialDespublicar
 rem_mirror|func-rem-primTomaPosGastos
 func-rem-desvincularCierreEconomico|R-Navelate
 rem_mirror|func-rem-desligarDisponibilidadJuridicaBankia
+<<<<<<< HEAD
+=======
+rem_mirror|func-rem-verDocsIdentifEco
+>>>>>>> func-rem-verDocsIdentifEco
 rem_mirror|func-rem-pbcSinArras
 rem_mirror|func-rem-formalizacionAlquileres
 func-rem-concurrencia|R-Tyrael
@@ -337,13 +347,13 @@ func-rem-deposito|R-Baalina
 rem_mirror|version-@-rem
 func-rem-HREOS-16365|R-Caracara
 func-rem-reposicionamientoCalculoRiesgo|R-Caracara
+rem_mirror|func-rem-deposito
+func-rem-deposito|R-BASE_INSTALLER_DIR
 func-rem-deposito|R-Baal
 rem_mirror|@
 func-rem-viviendaVaciaVPO|R-Annie
 func-rem-agendaIdentificarEstado|R-Annie
 func-rem-NNRRActualizacionCCPP|R-Annie
-func-rem-proveedoresNoHomologables|R-Nagami
-func-rem-datosProveedores|R-Nagami
 remvip-11238-rem|R-Caracara
 func-rem-gestionAPIs|R-Ashe
 rem_mirror|func-rem-nuevaCargaMasivaEstadosGastos

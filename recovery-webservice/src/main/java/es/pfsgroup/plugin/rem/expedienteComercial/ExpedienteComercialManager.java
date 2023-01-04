@@ -3942,12 +3942,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 
 		for (DDTipoDocumentoExpediente tipDocExp : listaTipDocExp) {
-			DtoTipoDocExpedientes aux = new DtoTipoDocExpedientes();
-			aux.setId(tipDocExp.getId());
-			aux.setCodigo(tipDocExp.getCodigo());
-			aux.setDescripcion(tipDocExp.getDescripcion());
-			aux.setDescripcionLarga(tipDocExp.getDescripcionLarga());
-			listDto.add(aux);
+			if(!DDTipoDocumentoExpediente.CODIGO_DOCUMENTOS_PERSONA.equals(tipDocExp.getCodigo())){
+				DtoTipoDocExpedientes aux = new DtoTipoDocExpedientes();
+				aux.setId(tipDocExp.getId());
+				aux.setCodigo(tipDocExp.getCodigo());
+				aux.setDescripcion(tipDocExp.getDescripcion());
+				aux.setDescripcionLarga(tipDocExp.getDescripcionLarga());
+				listDto.add(aux);
+			}
 		}
 
 		Collections.sort(listDto);

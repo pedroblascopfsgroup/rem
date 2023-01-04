@@ -1,24 +1,13 @@
 package es.pfsgroup.plugin.rem.model.dd;
 
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Version;
-
+import es.capgemini.pfs.auditoria.Auditable;
+import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.diccionarios.Dictionary;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Where;
 
-import es.capgemini.pfs.auditoria.Auditable;
-import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.capgemini.pfs.diccionarios.Dictionary;
+import javax.persistence.*;
 
 /**
  * Modelo que gestiona el diccionario de los tipos de documentos adjuntados al expediente comercial
@@ -39,6 +28,7 @@ public class DDTipoDocumentoExpediente implements Auditable, Dictionary {
     public static final String CODIGO_DOCUMENTO_ALQUILER = "06";
     public static final String CODIGO_DOCUMENTO_ALQUILER_NO_COMERCIAL = "09";
     public static final String CODIGO_DOCUMENTOS_COMPRADORES = "08";
+	public static final String CODIGO_DOCUMENTOS_PERSONA = "10";
 	    
 	/**
 	 * 

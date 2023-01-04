@@ -1,7 +1,7 @@
 --/*
 --#########################################
 --## AUTOR=Juanjo Arbona
---## FECHA_CREACION=20190509
+--## FECHA_CREACION=20230104
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=2.0.14
 --## INCIDENCIA_LINK=HREOS-5933

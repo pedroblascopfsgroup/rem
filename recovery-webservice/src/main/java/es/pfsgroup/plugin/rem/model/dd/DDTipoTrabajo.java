@@ -41,6 +41,7 @@ public class DDTipoTrabajo implements Auditable, Dictionary {
     public static final String CODIGO_COMERCIALIZACION = "06";
     public static final String CODIGO_EDIFICACION = "07";
     public static final String CODIGO_SUELO = "08";
+    public static final String CODIGO_VIGILANCIA_SEGURIDAD = "09";
     
 	/**
 	 * 

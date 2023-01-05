@@ -1,7 +1,7 @@
 --/*
 --#########################################
 --## AUTOR=Juanjo Arbona
---## FECHA_CREACION=20230104
+--## FECHA_CREACION=20230105
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=2.0.14
 --## INCIDENCIA_LINK=HREOS-5933
@@ -12,6 +12,7 @@
 --## INSTRUCCIONES:  
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 [IRC] REMVIP-12974 - Comentamos PL_OUTPUT porque da problemas en PRO y no lo usamos para ver el resultado
 --#########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -64,8 +65,8 @@ create or replace PROCEDURE SP_CREAR_TAREA (USUARIO VARCHAR2
     
 BEGIN
 
-    PL_OUTPUT := '[INICIO] Inicio del proceso de reposicionamiento de trámites de ofertas.';
-    PL_OUTPUT := PL_OUTPUT ||chr(10) || '';
+    /*PL_OUTPUT := '[INICIO] Inicio del proceso de reposicionamiento de trámites de ofertas.';
+    PL_OUTPUT := PL_OUTPUT ||chr(10) || '';*/
 
     V_USUARIO := USUARIO;
     COD_ITEM := V_USUARIO;
@@ -90,7 +91,7 @@ BEGIN
 
     V_MSQL := 'SELECT COUNT(DISTINCT TRA_ID) FROM '||V_ESQUEMA||'.OFERTAS_REPOSICIONAR';
     EXECUTE IMMEDIATE V_MSQL INTO V_COUNT;
-    PL_OUTPUT := PL_OUTPUT ||chr(10) || '   [INFO] '|| V_COUNT ||' trámites a reposicionar.';
+    --PL_OUTPUT := PL_OUTPUT ||chr(10) || '   [INFO] '|| V_COUNT ||' trámites a reposicionar.';
     
   
     
@@ -124,7 +125,7 @@ BEGIN
     EXECUTE IMMEDIATE V_MSQL;
     PL_OUTPUT := PL_OUTPUT ||chr(10) || '   [INFO] Borrados '||SQL%ROWCOUNT||' trabajos.';*/
 
-    PL_OUTPUT := PL_OUTPUT ||chr(10) || '   [INFO] APROVISIONANDO LA TABLA AUXILIAR '||V_TABLA||'...';
+    --PL_OUTPUT := PL_OUTPUT ||chr(10) || '   [INFO] APROVISIONANDO LA TABLA AUXILIAR '||V_TABLA||'...';
       V_MSQL := 'DELETE FROM  '||V_ESQUEMA||'.MIG2_TRAMITES_OFERTAS_REP';
       EXECUTE IMMEDIATE V_MSQL;
       V_MSQL := '
@@ -139,7 +140,7 @@ BEGIN
             JOIN '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP ON TAP.TAP_CODIGO = '''||TRAM_DESTINO||''' AND TAP.BORRADO = 0';
       EXECUTE IMMEDIATE V_MSQL;
 
-      PL_OUTPUT := PL_OUTPUT ||chr(10) || '   [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.';
+      --PL_OUTPUT := PL_OUTPUT ||chr(10) || '   [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.';
 
       V_UPDATE := 0;
       V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.MIG2_TRAMITES_OFERTAS_REP T1
@@ -168,7 +169,7 @@ BEGIN
         WHERE T1.USU_ID IS NULL AND T1.TAP_ID IN (SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO IN (''T013_PosicionamientoYFirma''))';
       EXECUTE IMMEDIATE V_MSQL;
       V_UPDATE := V_UPDATE + SQL%ROWCOUNT;
-      PL_OUTPUT := PL_OUTPUT ||chr(10) || '   [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' actualizada (Gestoría comercialización). '||V_UPDATE||' Filas.';
+      --PL_OUTPUT := PL_OUTPUT ||chr(10) || '   [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' actualizada (Gestoría comercialización). '||V_UPDATE||' Filas.';
 
       V_UPDATE := 0;
       V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.MIG2_TRAMITES_OFERTAS_REP T1
@@ -197,7 +198,7 @@ BEGIN
         WHERE T1.SUP_ID IS NULL AND T1.TAP_ID IN (SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO IN (''T013_PosicionamientoYFirma''))';
       EXECUTE IMMEDIATE V_MSQL;
       V_UPDATE := V_UPDATE + SQL%ROWCOUNT;
-      PL_OUTPUT := PL_OUTPUT ||chr(10) || '   [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' actualizada (Gestor comercial). '||V_UPDATE||' Filas.';
+      --PL_OUTPUT := PL_OUTPUT ||chr(10) || '   [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' actualizada (Gestor comercial). '||V_UPDATE||' Filas.';
 
       V_UPDATE := 0;
       V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.MIG2_TRAMITES_OFERTAS_REP T1
@@ -226,7 +227,7 @@ BEGIN
         WHERE T1.USU_ID IS NULL AND T1.TAP_ID IN (SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO IN (''T013_DefinicionOferta'',''T013_InstruccionesReserva'',''T013_RespuestaOfertante'',''T013_ResolucionComite'',''T013_CierreEconomico'',''T013_ResolucionExpediente'',''T014_DefinicionOferta'',''T013_RespuestaBankiaDevolucion'',''T013_PendienteDevolucion'',''T013_RespuestaBankiaAnulacionDevolucion''))';
       EXECUTE IMMEDIATE V_MSQL;
       V_UPDATE := V_UPDATE + SQL%ROWCOUNT;
-      PL_OUTPUT := PL_OUTPUT ||chr(10) || '   [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' actualizada (Gestor comercial). '||V_UPDATE||' Filas.';
+      --PL_OUTPUT := PL_OUTPUT ||chr(10) || '   [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' actualizada (Gestor comercial). '||V_UPDATE||' Filas.';
 
       V_UPDATE := 0;
       V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.MIG2_TRAMITES_OFERTAS_REP T1
@@ -255,7 +256,7 @@ BEGIN
         WHERE T1.SUP_ID IS NULL AND T1.TAP_ID IN (SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO IN (''T013_DefinicionOferta'',''T013_InstruccionesReserva'',''T013_RespuestaOfertante'',''T013_ResolucionComite'',''T013_CierreEconomico'',''T013_ResolucionExpediente'',''T014_DefinicionOferta'',''T013_RespuestaBankiaDevolucion'',''T013_PendienteDevolucion'',''T013_RespuestaBankiaAnulacionDevolucion''))';
       EXECUTE IMMEDIATE V_MSQL;
       V_UPDATE := V_UPDATE + SQL%ROWCOUNT;
-      PL_OUTPUT := PL_OUTPUT ||chr(10) || '   [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' actualizada (Supervisor comercial). '||V_UPDATE||' Filas.';
+      --PL_OUTPUT := PL_OUTPUT ||chr(10) || '   [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' actualizada (Supervisor comercial). '||V_UPDATE||' Filas.';
 
       V_UPDATE := 0;
       V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.MIG2_TRAMITES_OFERTAS_REP T1
@@ -284,7 +285,7 @@ BEGIN
         WHERE T1.USU_ID IS NULL AND T1.TAP_ID = (SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO = (''T013_ResultadoPBC''))';
       EXECUTE IMMEDIATE V_MSQL;
       V_UPDATE := V_UPDATE + SQL%ROWCOUNT;
-      PL_OUTPUT := PL_OUTPUT ||chr(10) || '   [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' actualizada (Gestor formalización). '||V_UPDATE||' Filas.';
+      --PL_OUTPUT := PL_OUTPUT ||chr(10) || '   [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' actualizada (Gestor formalización). '||V_UPDATE||' Filas.';
 
       V_UPDATE := 0;
       V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.MIG2_TRAMITES_OFERTAS_REP T1
@@ -322,13 +323,13 @@ BEGIN
         WHERE T1.SUP_ID IS NULL AND T1.TAP_ID = (SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO = (''T013_ResultadoPBC''))';
       EXECUTE IMMEDIATE V_MSQL;
       V_UPDATE := V_UPDATE + SQL%ROWCOUNT;
-      PL_OUTPUT := PL_OUTPUT ||chr(10) || '   [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' actualizada (Supervisor formalización). '||V_UPDATE||' Filas.';
+      --PL_OUTPUT := PL_OUTPUT ||chr(10) || '   [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' actualizada (Supervisor formalización). '||V_UPDATE||' Filas.';
 
       ---------------------------------------------------------------------------------------------------------------
       -- UPDATE MIG2_TRAMITES_OFERTAS_REP (TBJ_ID, TRA_ID, TAR_ID, TEX_ID) --
       ---------------------------------------------------------------------------------------------------------------
 
-      PL_OUTPUT := PL_OUTPUT ||chr(10) || '   [INFO] GENERANDO TBJ_ID, TRA_ID, TAR_ID, TEX_ID...';
+      --PL_OUTPUT := PL_OUTPUT ||chr(10) || '   [INFO] GENERANDO TBJ_ID, TRA_ID, TAR_ID, TEX_ID...';
 
       OPEN CURSOR_OFERTAS;
 
@@ -357,9 +358,9 @@ BEGIN
 
       CLOSE CURSOR_OFERTAS;
 
-      PL_OUTPUT := PL_OUTPUT ||chr(10) || '   [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' actualizada.';
+      /*PL_OUTPUT := PL_OUTPUT ||chr(10) || '   [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' actualizada.';
 
-      PL_OUTPUT := PL_OUTPUT ||chr(10) || '   [INFO] COMIENZA EL VOLCADO A LAS TABLAS DEFINITIVAS';
+      PL_OUTPUT := PL_OUTPUT ||chr(10) || '   [INFO] COMIENZA EL VOLCADO A LAS TABLAS DEFINITIVAS';*/
 
       /*PL_OUTPUT := PL_OUTPUT ||chr(10) || '   [INFO] CREANDO TRABAJOS...';
 
@@ -496,13 +497,13 @@ BEGIN
       ;
       EXECUTE IMMEDIATE V_MSQL;
 
-      PL_OUTPUT := PL_OUTPUT ||chr(10) || '   [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_ECO||' cargada. '||SQL%ROWCOUNT||' Filas.';
+      --PL_OUTPUT := PL_OUTPUT ||chr(10) || '   [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_ECO||' cargada. '||SQL%ROWCOUNT||' Filas.';
 
       ---------------------------------------------------------------------------------------------------------------
       -- INSERT ACT_TRA_TRAMITE --
       ---------------------------------------------------------------------------------------------------------------
 
-      PL_OUTPUT := PL_OUTPUT ||chr(10) || '   [INFO] ACTUALIZANDO TRAMITES...';
+      --PL_OUTPUT := PL_OUTPUT ||chr(10) || '   [INFO] ACTUALIZANDO TRAMITES...';
 
       V_MSQL := '
             MERGE INTO '||V_ESQUEMA||'.'||V_TABLA_TRA||' T1
@@ -517,13 +518,13 @@ BEGIN
       ;
       EXECUTE IMMEDIATE V_MSQL;
 
-      PL_OUTPUT := PL_OUTPUT ||chr(10) || '   [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_TRA||' actualizada. '||SQL%ROWCOUNT||' Filas.';
+      --PL_OUTPUT := PL_OUTPUT ||chr(10) || '   [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_TRA||' actualizada. '||SQL%ROWCOUNT||' Filas.';
 
       ---------------------------------------------------------------------------------------------------------------
       -- INSERT TAR_TAREAS_NOTIFICACIONES --
       ---------------------------------------------------------------------------------------------------------------
 
-      PL_OUTPUT := PL_OUTPUT ||chr(10) || '   [INFO] CREANDO TAREAS NOTIFICACIONES...';
+      --PL_OUTPUT := PL_OUTPUT ||chr(10) || '   [INFO] CREANDO TAREAS NOTIFICACIONES...';
 
       V_MSQL := '
             INSERT INTO '||V_ESQUEMA||'.'||V_TABLA_TAR||'
@@ -575,13 +576,13 @@ BEGIN
       ;
       EXECUTE IMMEDIATE V_MSQL;
 
-      PL_OUTPUT := PL_OUTPUT ||chr(10) || '   [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_TAR||' cargada. '||SQL%ROWCOUNT||' Filas.';
+      --PL_OUTPUT := PL_OUTPUT ||chr(10) || '   [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_TAR||' cargada. '||SQL%ROWCOUNT||' Filas.';
 
       ---------------------------------------------------------------------------------------------------------------
       -- INSERT ETN_EXTAREAS_NOTIFICACIONES --
       ---------------------------------------------------------------------------------------------------------------
 
-      PL_OUTPUT := PL_OUTPUT ||chr(10) || '   [INFO] CREANDO TAREAS EXTERNAS NOTIFICACIONES...';
+      --PL_OUTPUT := PL_OUTPUT ||chr(10) || '   [INFO] CREANDO TAREAS EXTERNAS NOTIFICACIONES...';
 
       V_MSQL := '
             INSERT INTO '||V_ESQUEMA||'.'||V_TABLA_ETN||'
@@ -597,13 +598,13 @@ BEGIN
       ;
       EXECUTE IMMEDIATE V_MSQL;
 
-      PL_OUTPUT := PL_OUTPUT ||chr(10) || '   [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_ETN||' cargada. '||SQL%ROWCOUNT||' Filas.';
+      --PL_OUTPUT := PL_OUTPUT ||chr(10) || '   [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_ETN||' cargada. '||SQL%ROWCOUNT||' Filas.';
 
       ---------------------------------------------------------------------------------------------------------------
       -- INSERT TEX_TAREA_EXTERNA --
       ---------------------------------------------------------------------------------------------------------------
 
-      PL_OUTPUT := PL_OUTPUT ||chr(10) || '   [INFO] CREANDO TAREAS EXTERNAS...';
+      --PL_OUTPUT := PL_OUTPUT ||chr(10) || '   [INFO] CREANDO TAREAS EXTERNAS...';
 
       V_MSQL := '
             INSERT INTO '||V_ESQUEMA||'.'||V_TABLA_TEX||'
@@ -638,13 +639,13 @@ BEGIN
       ;
       EXECUTE IMMEDIATE V_MSQL;
 
-      PL_OUTPUT := PL_OUTPUT ||chr(10) || '   [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_TEX||' cargada. '||SQL%ROWCOUNT||' Filas.';
+      --PL_OUTPUT := PL_OUTPUT ||chr(10) || '   [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_TEX||' cargada. '||SQL%ROWCOUNT||' Filas.';
 
       ---------------------------------------------------------------------------------------------------------------
       -- INSERT TAC_TAREAS_ACTIVOS --
       ---------------------------------------------------------------------------------------------------------------
 
-      PL_OUTPUT := PL_OUTPUT ||chr(10) || '   [INFO] CREANDO RELACION TAREAS ACTIVOS...';
+      --PL_OUTPUT := PL_OUTPUT ||chr(10) || '   [INFO] CREANDO RELACION TAREAS ACTIVOS...';
 
       V_MSQL := '
             INSERT INTO '||V_ESQUEMA||'.'||V_TABLA_TAC||'
@@ -685,11 +686,11 @@ BEGIN
       ;
       EXECUTE IMMEDIATE V_MSQL;
 
-      PL_OUTPUT := PL_OUTPUT ||chr(10) || '   [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_TAC||' cargada. '||SQL%ROWCOUNT||' Filas.';
+      --PL_OUTPUT := PL_OUTPUT ||chr(10) || '   [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_TAC||' cargada. '||SQL%ROWCOUNT||' Filas.';
 
     IF LIST_EXP_EEC IS NOT NULL AND EEC_DESTINO IS NOT NULL THEN
 
-    	PL_OUTPUT := PL_OUTPUT ||chr(10) || '';
+    	--PL_OUTPUT := PL_OUTPUT ||chr(10) || '';
     	V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.'||V_TABLA_ECO||' T1
     		USING '||V_ESQUEMA||'.DD_EEC_EST_EXP_COMERCIAL T2
     		ON (T2.DD_EEC_CODIGO = '''||EEC_DESTINO||''')
@@ -697,12 +698,12 @@ BEGIN
     			T1.DD_EEC_ID = T2.DD_EEC_ID, T1.USUARIOMODIFICAR = '''||V_USUARIO||''', T1.FECHAMODIFICAR = SYSDATE
     		WHERE T1.ECO_NUM_EXPEDIENTE IN ('||LIST_EXP_EEC||')';
     	EXECUTE IMMEDIATE V_MSQL;
-    	PL_OUTPUT := PL_OUTPUT ||chr(10) || '   [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_ECO||' actualizada. '||SQL%ROWCOUNT||' Filas.';
+    	--PL_OUTPUT := PL_OUTPUT ||chr(10) || '   [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_ECO||' actualizada. '||SQL%ROWCOUNT||' Filas.';
 
     END IF;
 
-    PL_OUTPUT := PL_OUTPUT ||chr(10) || '';
-    PL_OUTPUT := PL_OUTPUT ||chr(10) || '[FIN] Reposicionamiento de trámites de expedientes comerciales.';
+    /*PL_OUTPUT := PL_OUTPUT ||chr(10) || '';
+    PL_OUTPUT := PL_OUTPUT ||chr(10) || '[FIN] Reposicionamiento de trámites de expedientes comerciales.';*/
 
     REM01.ALTA_BPM_INSTANCES(V_USUARIO,PL_OUTPUT2);
 

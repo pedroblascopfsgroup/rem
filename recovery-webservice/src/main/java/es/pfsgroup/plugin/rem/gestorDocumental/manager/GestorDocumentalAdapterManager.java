@@ -422,7 +422,8 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 			if(ade != null && ade.getIdDocRestClient() != null) {
 				respuesta = gestorDocumentalApi.bajaDocumento(login, ade.getIdDocRestClient().intValue());
 			}else {
-				logger.debug("No existe el documento en BBDD o no tiene id de GD");		
+				//logger.debug("No existe el documento en BBDD o no tiene id de GD");
+				respuesta = gestorDocumentalApi.bajaDocumento(login, idDocumento.intValue());
 			}
 			
 			if(!Checks.esNulo(respuesta) && !Checks.esNulo(respuesta.getCodigoError())) {

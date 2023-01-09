@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20220922
+--## FECHA_CREACION=20230109
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-18646
@@ -25,6 +25,7 @@
 --##	     0.13 Añadir valores CLASE_USO - [REMVIP-11860] - Juan Bautista Alfonso
 --##	     0.14 Modificar mapeo EST_CONSERVACION - [REMVIP-12391] - IVAN REPISO
 --##       0.15 Modificaciones [HREOS-18646] Alejandra García
+--##	     0.16 Modificar mapeo SUBTIPO_VIVIENDA (CODIGO 005816) - [REMVIP-12978] - IVAN REPISO
 --##########################################
 --*/
 
@@ -805,7 +806,7 @@ DECLARE
         T_TIPO_DATA('SUBTIPO_VIVIENDA','005813','Comercial	Admisión','DD_SAC_SUBTIPO_ACTIVO','13','0'),
         T_TIPO_DATA('SUBTIPO_VIVIENDA','005814','Industrial	Admisión','DD_SAC_SUBTIPO_ACTIVO','17','0'),
         T_TIPO_DATA('SUBTIPO_VIVIENDA','005815','Almacén	Admisión','DD_SAC_SUBTIPO_ACTIVO','15','0'),
-        T_TIPO_DATA('SUBTIPO_VIVIENDA','005816','Entremedianeras	Admisión','DD_SAC_SUBTIPO_ACTIVO','28','0'),
+        T_TIPO_DATA('SUBTIPO_VIVIENDA','005816','Entremedianeras	Admisión','DD_SAC_SUBTIPO_ACTIVO','09','0'),
       --Tipo Suelo   
         T_TIPO_DATA('SUBTIPO_SUELO','U17','Resto de suelo urbanizable','DD_SAC_SUBTIPO_ACTIVO','02','0'),
         T_TIPO_DATA('SUBTIPO_SUELO','U15','Suelo urbanizable organizado','DD_SAC_SUBTIPO_ACTIVO','03','0'),

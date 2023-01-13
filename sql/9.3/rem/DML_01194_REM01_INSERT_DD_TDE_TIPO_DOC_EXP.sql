@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=IVAN REPISO
---## FECHA_CREACION=20230112
+--## FECHA_CREACION=20230113
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-12538
@@ -37,7 +37,7 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
                 --CODIGO    DESCRIPCION
-	    T_TIPO_DATA('10',	'10.- Honorarios', 'Honorarios', '01')
+	    T_TIPO_DATA('11',	'11.- Honorarios', 'Honorarios', '01')
 
 		); 
     V_TMP_TIPO_DATA T_TIPO_DATA;

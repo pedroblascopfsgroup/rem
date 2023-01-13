@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Juan Bautista Alfonso
---## FECHA_CREACION=20220407
+--## FECHA_CREACION=20230113
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=REMVIP-11485
+--## INCIDENCIA_LINK=REMVIP-13107
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -14,6 +14,7 @@
 --##	    0.2 Juan Bautista Alfonso - REMVIP-8566 - Añadido campo TAS_ILOCALIZABLE
 --##	    0.3 Juan Bautista Alfonso - REMVIP-9171 - Modificado actualizacion para que actualice por TAS_ID en vez de por ID_EXTERNO
 --##	    0.4 Juan Bautista Alfonso - REMVIP-11485 - Añadidos filtros de borrados logicos para quitar duplicados
+--##	    0.5 Juan Bautista Alfonso - REMVIP-13107 - Subido tamaño VARCHAR2 del array de 150 a 250 para que no falle por longitud
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -93,7 +94,7 @@ FECHA_HOY TIMESTAMP := SYSTIMESTAMP;
 VALOR VARCHAR2 (256 CHAR);
 
 
-TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
+TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(250);
 TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
 V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
 

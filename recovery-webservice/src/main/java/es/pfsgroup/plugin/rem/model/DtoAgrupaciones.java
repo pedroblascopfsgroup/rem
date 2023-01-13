@@ -90,6 +90,15 @@ public class DtoAgrupaciones extends WebDto {
 	
 	private Boolean perimetroMacc;
 	private Boolean esHayaHome;
+	private Boolean esONDnd;
+	private Long idObraNueva;
+	
+	private String idOnvDnd;
+	
+	private Date fechaPrevFinalizacion;
+	private Date fechaEscrituraDesde;
+	private Date fechaEscrituraHasta;
+	private String idActivoPisoPiloto;
 	
 	private Boolean enConcurrencia;
 	private Boolean isConcurrencia;
@@ -563,11 +572,53 @@ public class DtoAgrupaciones extends WebDto {
 	public void setEsHayaHome(Boolean esHayaHome) {
 		this.esHayaHome = esHayaHome;
 	}
+	public Boolean getEsONDnd() {
+		return esONDnd;
+	}
+	public void setEsONDnd(Boolean esONDnd) {
+		this.esONDnd = esONDnd;
+	}
+	public Long getIdObraNueva() {
+		return idObraNueva;
+	}
+	public void setIdObraNueva(Long idObraNueva) {
+		this.idObraNueva = idObraNueva;
+	}	
+	public String getIdOnvDnd() {
+		return idOnvDnd;
+	}
+	public void setIdOnvDnd(String idOnvDnd) {
+		this.idOnvDnd = idOnvDnd;
+	}
 	public Boolean getEsNecesarioDeposito() {
 		return esNecesarioDeposito;
 	}
 	public void setEsNecesarioDeposito(Boolean esNecesarioDeposito) {
 		this.esNecesarioDeposito = esNecesarioDeposito;
+	}
+	public Date getFechaPrevFinalizacion() {
+		return fechaPrevFinalizacion;
+	}
+	public void setFechaPrevFinalizacion(Date fechaPrevFinalizacion) {
+		this.fechaPrevFinalizacion = fechaPrevFinalizacion;
+	}
+	public Date getFechaEscrituraDesde() {
+		return fechaEscrituraDesde;
+	}
+	public void setFechaEscrituraDesde(Date fechaEscrituraDesde) {
+		this.fechaEscrituraDesde = fechaEscrituraDesde;
+	}
+	public Date getFechaEscrituraHasta() {
+		return fechaEscrituraHasta;
+	}
+	public void setFechaEscrituraHasta(Date fechaEscrituraHasta) {
+		this.fechaEscrituraHasta = fechaEscrituraHasta;
+	}
+	public String getIdActivoPisoPiloto() {
+		return idActivoPisoPiloto;
+	}
+	public void setIdActivoPisoPiloto(String idActivoPisoPiloto) {
+		this.idActivoPisoPiloto = idActivoPisoPiloto;
 	}
 	public Boolean getEnConcurrencia() {
 		return enConcurrencia;

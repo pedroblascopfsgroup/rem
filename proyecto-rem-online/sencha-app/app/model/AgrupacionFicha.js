@@ -340,6 +340,50 @@ Ext.define('HreRem.model.AgrupacionFicha', {
                 	name: 'perimetroMacc',
     	 			type: 'boolean'
                 },
+                {
+	            	name: 'isObraNueva',
+	            	calculate: function(data) {
+	        			return data.tipoAgrupacionCodigo == CONST.TIPOS_AGRUPACION['OBRA_NUEVA'];
+	        		},
+	        		depends: ['tipoAgrupacionCodigo']
+	            },
+    			{
+                	name: 'esONDnd',
+    	 			type: 'boolean'
+                },
+	            {
+	            	name: 'isComercialVentaRestringidaVsP',
+	            	calculate: function(data) {
+	            		return (data.tipoAgrupacionCodigo == CONST.TIPOS_AGRUPACION['RESTRINGIDA'] 
+	            			|| data.tipoAgrupacionCodigo == CONST.TIPOS_AGRUPACION['COMERCIAL_VENTA'])
+							&& data.ventaSobrePlano;
+	            	},
+	            	depends: ['tipoAgrupacionCodigo', 'ventaSobrePlano']
+	            },
+				{
+					name: 'idObraNueva'
+				},
+				{
+					name: 'idOnvDnd'
+				},						
+				{
+		    		name : 'fechaPrevFinalizacion',
+		    		type : 'date',
+		    		dateFormat: 'c'
+		    	},
+		    	{
+		    		name : 'fechaEscrituraDesde',
+		    		type : 'date',
+		    		dateFormat: 'c'
+		    	},
+		    	{
+		    		name : 'fechaEscrituraHasta',
+		    		type : 'date',
+		    		dateFormat: 'c'
+		    	},
+		    	{
+					name: 'idActivoPisoPiloto'
+				},
     			{
                 	name: 'esNecesarioDeposito',
     	 			type: 'boolean'

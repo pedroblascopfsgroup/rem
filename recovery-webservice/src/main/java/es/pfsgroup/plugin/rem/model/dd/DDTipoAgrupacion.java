@@ -144,5 +144,19 @@ public class DDTipoAgrupacion implements Auditable, Dictionary {
 		return isRestringida;
 	}
 	
+	public static boolean isON(DDTipoAgrupacion agrupacion) {
+		boolean isON = false;
+		if(agrupacion != null && (AGRUPACION_OBRA_NUEVA.equals(agrupacion.getCodigo()))) {
+			isON = true;
+		}		
+		return isON;
+	}
 	
+	public static boolean isComercialVenta(DDTipoAgrupacion agrupacion) {
+		boolean isComercialVenta = false;
+		if(agrupacion != null && (AGRUPACION_LOTE_COMERCIAL_VENTA.equals(agrupacion.getCodigo()))) {
+			isComercialVenta = true;
+		}		
+		return isComercialVenta;
+	}
 }

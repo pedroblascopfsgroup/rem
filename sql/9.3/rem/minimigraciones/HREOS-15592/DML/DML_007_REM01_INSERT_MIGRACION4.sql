@@ -1,18 +1,22 @@
 --/*
 --#########################################
---## AUTOR=Santi Monzó
---## FECHA_CREACION=20211015
+--## AUTOR=Alejandra García
+--## FECHA_CREACION=20221221
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## ARTEFACTO=batch
---## INCIDENCIA_LINK=HREOS-15592
+--## INCIDENCIA_LINK=HREOS-19105
 --## PRODUCTO=NO
 --## 
 --## Finalidad:
 --##			
 --## INSTRUCCIONES:  
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial - [HREOS-15592] - Santi Monzó (20211015)
+--##        0.2 Modificar ADN_FECHA_TITULO a 15/12/22 - [HREOS-19071] - Alejandra García (20221209)
+--##        0.3 Modificar ADN_FECHA_TITULO a 20/12/22 - [HREOS-19071] - Alejandra García (20221212)
+--##        0.4 Modificar ADN_FECHA_TITULO a 21/12/22 - [HREOS-19105] - Alejandra García (20221219)
+--##        0.5 Modificar ADN_FECHA_TITULO a 20/12/22 - [HREOS-19105] - Alejandra García (20221221)
 --#########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -58,8 +62,8 @@ BEGIN
 	ADN_ID,
 	ACT_ID,
 	ADN_FECHA_TITULO,
-	ADN_TRAMITADOR_TITULO,
 	ADN_VALOR_ADQUISICION,
+	ADN_TRAMITADOR_TITULO,
 	ADN_NUM_REFERENCIA,
 	VERSION,
 	USUARIOCREAR,
@@ -74,19 +78,19 @@ BEGIN
 	SELECT
 	'||V_ESQUEMA||'.S_ACT_ADN_ADJNOJUDICIAL.NEXTVAL     ADN_ID,
 	ACT2.ACT_ID											ACT_ID,
-	NULL             									ADN_FECHA_TITULO,
-	NULL                             					ADN_TRAMITADOR_TITULO,
-	NULL												ADN_VALOR_ADQUISICION,
-	NULL                               					ADN_NUM_REFERENCIA,
-	''0''                                               VERSION,
+	TO_DATE(''20/12/2022'', ''DD/MM/YYYY'')              ADN_FECHA_TITULO,	
+	NULL												 ADN_VALOR_ADQUISICION,
+   '''' 								 ADN_TRAMITADOR_TITULO,
+	NULL                               					 ADN_NUM_REFERENCIA,
+	0                                                 VERSION,
 	'''||V_USUARIO||'''                                 USUARIOCREAR,
 	SYSDATE                                             FECHACREAR,
 	NULL                                                USUARIOMODIFICAR,
 	NULL                                                FECHAMODIFICAR,
 	NULL                                                USUARIOBORRAR,
 	NULL                                                FECHABORRAR,
-	0                                         BORRADO,
-	NULL									FECHA_POSESION
+	0                                         			BORRADO,
+	NULL												FECHA_POSESION
 	FROM '||V_ESQUEMA||'.'||V_TABLA_AUX||' AUX
 	JOIN '||V_ESQUEMA||'.'||V_TABLA_ACT||' ACT2 ON AUX.ACT_NUM_ACTIVO_NUV = ACT2.ACT_NUM_ACTIVO
 	')

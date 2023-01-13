@@ -185,6 +185,8 @@ public class DtoFichaExpediente extends WebDto {
 	
 	private String codigoEstadoComunicacionC4C;
 	
+	private Boolean esActivoDnd;
+
 	private Date fechaLiquida;
 
 	private Boolean ofertaConDeposito;
@@ -969,6 +971,14 @@ public class DtoFichaExpediente extends WebDto {
 
 	public void setFechaLiquida(Date fechaLiquida) {
 		this.fechaLiquida = fechaLiquida;
+	}
+
+	public Boolean getEsActivoDnd() {
+		return esActivoDnd;
+	}
+
+	public void setEsActivoDnd(Boolean esActivoDnd) {
+		this.esActivoDnd = esActivoDnd;
 	}
 
 	public Boolean getOfertaConDeposito() {

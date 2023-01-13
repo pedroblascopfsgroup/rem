@@ -1,18 +1,20 @@
 --/*
 --#########################################
---## AUTOR=Santi Monzó
---## FECHA_CREACION=20212002
+--## AUTOR=Alejandra García
+--## FECHA_CREACION=20221221
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## ARTEFACTO=batch
---## INCIDENCIA_LINK=HREOS-16550
+--## INCIDENCIA_LINK=HREOS-19105
 --## PRODUCTO=NO
 --## 
 --## Finalidad:
 --##			
 --## INSTRUCCIONES:  
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial - [HREOS-16550] - Santi Monzó (20212002)
+--##        0.2 Eliminar de la segunda validción los estados anulados y denegados del expediente comercial, poner NOT para el DD_EEC_ID - [HREOS-19071] - Alejandra García (20221209)
+--##        0.3 Modificar la condición del DD_EEC_ID para que tenga un NOT IN y luego un IN - [HREOS-19105] - Alejandra García (20221221)
 --#########################################
 --*/
 
@@ -115,7 +117,7 @@ BEGIN
 					LEFT JOIN '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.OFR_ID = OFR.OFR_ID
 					
 					WHERE OFR.DD_EOF_ID IN (SELECT DD_EOF_ID FROM '||V_ESQUEMA||'.DD_EOF_ESTADOS_OFERTA WHERE DD_EOF_CODIGO = (''01''))
-					AND ECO.DD_EEC_ID NOT IN (SELECT DD_EEC_ID FROM '||V_ESQUEMA||'.DD_EEC_EST_EXP_COMERCIAL WHERE DD_EEC_CODIGO IN (''01'',''02'',''04'',''10'',''12'',''14'',''38'',''43'')))
+					AND ECO.DD_EEC_ID NOT IN (SELECT DD_EEC_ID FROM '||V_ESQUEMA||'.DD_EEC_EST_EXP_COMERCIAL WHERE DD_EEC_CODIGO IN (''01'',''04'',''10'',''14'',''38'',''43'')))
 					
 					us ON (us.ID_ACTIVO_CAJAMAR = AUX.ID_ACTIVO_CAJAMAR )
 										WHEN MATCHED THEN UPDATE SET

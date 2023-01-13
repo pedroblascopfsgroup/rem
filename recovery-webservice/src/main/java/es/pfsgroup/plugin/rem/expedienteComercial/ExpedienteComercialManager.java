@@ -2096,6 +2096,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					dto.setEstadoPbcAlquiler(Integer.parseInt(valorPbcAlquiler));
 				}
 			}
+			
+			for (ActivoAgrupacionActivo agrupacionActivo : activo.getAgrupaciones()) {
+	            if(activoAgrupacionApi.isAgrupacionONDnd(agrupacionActivo.getAgrupacion()))
+	                dto.setEsActivoDnd(true);
+	        }
+			
 			dto.setOfertaConDeposito(depositoApi.esOfertaConDeposito(oferta));
 			dto.setUsuCrearOfertaDepositoExterno(depositoApi.esUsuarioCrearOfertaDepositoExterno(oferta));
 			
@@ -3936,12 +3942,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 
 		for (DDTipoDocumentoExpediente tipDocExp : listaTipDocExp) {
-			DtoTipoDocExpedientes aux = new DtoTipoDocExpedientes();
-			aux.setId(tipDocExp.getId());
-			aux.setCodigo(tipDocExp.getCodigo());
-			aux.setDescripcion(tipDocExp.getDescripcion());
-			aux.setDescripcionLarga(tipDocExp.getDescripcionLarga());
-			listDto.add(aux);
+			if(!DDTipoDocumentoExpediente.CODIGO_DOCUMENTOS_PERSONA.equals(tipDocExp.getCodigo())){
+				DtoTipoDocExpedientes aux = new DtoTipoDocExpedientes();
+				aux.setId(tipDocExp.getId());
+				aux.setCodigo(tipDocExp.getCodigo());
+				aux.setDescripcion(tipDocExp.getDescripcion());
+				aux.setDescripcionLarga(tipDocExp.getDescripcionLarga());
+				listDto.add(aux);
+			}
 		}
 
 		Collections.sort(listDto);
@@ -15747,8 +15755,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			boolean prescriptorConfigurado = !Checks.esNulo(pveFormalizacion) ? true : false;
 
 			oferta.setCheckFormCajamar(false);
-
-			if (importeCorrecto && activosPermitidos && prescriptorConfigurado)
+			
+			if (importeCorrecto && activosPermitidos && prescriptorConfigurado && !ofertaApi.isOfertaONVentaSobrePlano(oferta))
 				oferta.setCheckFormCajamar(true);
 
 			genericDao.save(Oferta.class, oferta);

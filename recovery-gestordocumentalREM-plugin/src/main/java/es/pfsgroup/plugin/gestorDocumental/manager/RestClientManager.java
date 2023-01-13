@@ -1,18 +1,10 @@
 package es.pfsgroup.plugin.gestorDocumental.manager;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-import java.util.Properties;
-
-import javax.annotation.Resource;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.Response;
-
+import es.capgemini.devon.beans.Service;
+import es.capgemini.pfs.config.ConfigManager;
+import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.plugin.gestorDocumental.api.RestClientApi;
+import es.pfsgroup.plugin.gestorDocumental.model.ServerRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.glassfish.jersey.jackson.JacksonFeature;
@@ -20,11 +12,17 @@ import org.glassfish.jersey.media.multipart.BodyPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import es.capgemini.devon.beans.Service;
-import es.capgemini.pfs.config.ConfigManager;
-import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.plugin.gestorDocumental.api.RestClientApi;
-import es.pfsgroup.plugin.gestorDocumental.model.ServerRequest;
+import javax.annotation.Resource;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.Response;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+import java.util.Properties;
 
 
 @Service
@@ -54,6 +52,7 @@ public class RestClientManager implements RestClientApi {
 		String url = restClientUrl + serverRequest.getPath();
 		url = url.replaceAll("%7B", "{");
 		url = url.replaceAll("%7D", "}");
+		url = url.replaceAll("\"", "%22");
 		WebTarget webTarget = client.target(url);
 		Response response = null;
 		
@@ -88,6 +87,7 @@ public class RestClientManager implements RestClientApi {
 		} catch(Exception e) {			
 			logger.warn("No se ha podido conectar con el servidor del gestor documental.");
 			logger.warn("Cause: "+e.getCause());
+			e.printStackTrace();
 		}
 		
 		logger.debug("--------------------------");

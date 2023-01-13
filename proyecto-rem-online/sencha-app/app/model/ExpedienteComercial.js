@@ -384,6 +384,10 @@ Ext.define('HreRem.model.ExpedienteComercial', {
             	name: 'peticionarioAnulacion'
             },
             {
+            	name: 'esActivoDnd',
+            	type: 'boolean'
+            },
+            {
     			name: 'fechaLiquida',
     			type:'date', 
         		dateFormat: 'c'
@@ -400,7 +404,6 @@ Ext.define('HreRem.model.ExpedienteComercial', {
     			name: 'ecoConFianza',
        			type: 'boolean'
     		}
-    		
     ],
     formulas: {
     	esExpedienteBloqueado: function(get) {

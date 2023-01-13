@@ -1423,5 +1423,28 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
        return (!isSuper && !isGestorActivos && !isGestorAlquiler && !isUserGestedi);
         					 
        
-    }
+    },
+
+	checkIdON: function(field){
+		var me = this;
+		var numAgrupacionON = field.getValue();
+	  	var idAgrupacion = me.getViewModel().get("agrupacionficha.id");
+		if (numAgrupacionON != "" && numAgrupacionON != undefined){
+    		Ext.Ajax.request({
+	    	    url: $AC.getRemoteUrl('agrupacion/checkIdON'),
+	    	    params: {idAgrupacion: idAgrupacion, numAgrupacionON: numAgrupacionON},
+				success: function(response, opts) {
+	  				if(Ext.decode(response.responseText).success == "false") {
+						me.fireEvent("errorToast", Ext.decode(response.responseText).error);
+						field.setValue(null);
+	    	        }
+	    	    },
+	    	    failure: function (a, operation, context) {
+	           	  	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				  	field.setValue(null);
+	           	}
+    	 	});
+			
+		}
+	}
 });

@@ -86,6 +86,15 @@ public class DDSubtipoTrabajo implements Auditable, Dictionary {
 	public static final String CODIGO_OBRAS_URBANIZAVION = "OBU";
 	public static final String CODIGO_PREVIOS = "PRV";
 	public static final String CODIGO_SITUACION_INICIAL = "STI";
+	
+	public static final String CODIGO_ALARMAS_INSTALACION = "147";
+	public static final String CODIGO_ALARMAS_MANTENIMIENTO = "148";
+	public static final String CODIGO_VIGILANCIA = "149";
+	public static final String CODIGO_COLOCACION_PUERTA_ANTIOCUPA = "150";
+	public static final String CODIGO_ACUDAS = "151";
+	public static final String CODIGO_CRA = "152";
+	public static final String CODIGO_ALQUILER_PAO = "153";
+	public static final String CODIGO_ALQUILER_ALARMAS = "154";
 
 
 	@Id

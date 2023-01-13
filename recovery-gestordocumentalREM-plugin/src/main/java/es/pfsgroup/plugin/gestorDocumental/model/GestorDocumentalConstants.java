@@ -21,6 +21,7 @@ public class GestorDocumentalConstants {
 	public static final String CODIGO_TIPO_EXPEDIENTE_PROPUESTAS = "PR";
 	public static final String CODIGO_TIPO_JUNTA = "OP";
 	public static final String CODIGO_TIPO_PLUSVALIAS = "OP";
+	public static final String CODIGO_TIPO_CONDUCTAS_INAPROPIADAS = "PC";
 	
 	public static final String CODIGO_CLASE_EXPEDIENTE_PROYECTO = "01";
 	public static final String CODIGO_CLASE_EXPEDIENTE_PROMOCION = "02";
@@ -30,6 +31,7 @@ public class GestorDocumentalConstants {
 	public static final String CODIGO_CLASE_PROMOCIONES = "09";
 	public static final String CODIGO_CLASE_PROYECTO = "09";
 	public static final String CODIGO_CLASE_AGRUPACIONES = "08";
+	public static final String CODIGO_CLASE_DOCUMENTOS_PERSONA = "25";
 	public static final String CODIGO_CLASE_ACTUACION_TECNICA = "13";
 	public static final String CODIGO_CLASE_TRABAJO = "13";
 
@@ -44,6 +46,8 @@ public class GestorDocumentalConstants {
 	public static final String AGRUPACION_PROMOCION = "\"Promoción\":";
 	public static final String ENTIDAD = "\"Entidad\":";
 	public static final String GASTOS = "\"Gastos\":";
+	public static final String PROCESOS_CLASIFICADOS = "\"Procesos clasificados\":";
+	public static final String CONDUCTAS_INAPROPIADAS = "\"Conductas inapropiadas\":";
 	
 	public static final String[] generalDocumento = {"Número Registro:", "Fecha Documento:", "Fecha Baja Lógica:", "Fecha Caducidad:", "Fecha Expurgo:", "Proceso Carga:", "LOPD:", "Serie Documental:", "TDN1:", "TDN2:"};
 	public static final String[] generalDocumentoModif = {"Número Registro:", "Fecha Baja Lógica:", "Fecha Caducidad:", "Fecha Expurgo:", "Proceso Carga:", "LOPD:", "Serie Documental:", "TDN1:", "TDN2:"};
@@ -53,6 +57,8 @@ public class GestorDocumentalConstants {
 	
 	public static final String[] gastoMetadatos = {"'ID':", "'ID Gasto':", "'ID Reo':", "'Fecha gasto':", "'Cliente':"};
 	public static final String[] metadataCrearContenedor = {"\"ID\":", "\"ID Externo\":", "\"ID Sistema Origen\":", "\"Cliente\":"};
+	public static final String[] metadataCrearContenedorConductasInapropiadas = {"\"ID\":", "\"ID Externo\":", "\"ID Sistema Origen\":", "\"Estado del Expediente\":", "\"Cliente\":"};
+	public static final String[] metadataCrearContenedorConductasInapropiadasExtendido = {"\"Fecha caducidad\":", "\"Origen\":", "\"Fecha creación\":", "\"Privacidad\":"};
 
 	public static final String[] metadataEspecifica = {"\"Aplica\":","\"Fecha emision\":", "\"Fecha caducidad\":", "\"Fecha obtencion\":", "\"Fecha etiqueta\":", "\"Registro\":"};
 

@@ -32,7 +32,38 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.json.JsonWriterConfiguratorTemplateRegistry;
 import org.springframework.web.servlet.view.json.writer.sojo.SojoConfig;
 import org.springframework.web.servlet.view.json.writer.sojo.SojoJsonWriterConfiguratorTemplate;
-
+import es.capgemini.devon.dto.WebDto;
+import es.capgemini.devon.exception.UserException;
+import es.capgemini.devon.files.FileItem;
+import es.capgemini.devon.files.WebFileItem;
+import es.capgemini.pfs.diccionarios.Dictionary;
+import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
+import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.adapter.RemCorreoUtils;
+import es.pfsgroup.plugin.rem.api.AccionesCaixaApi;
+import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.GenericApi;
+import es.pfsgroup.plugin.rem.api.GestorActivoApi;
+import es.pfsgroup.plugin.rem.api.UploadApi;
+import es.pfsgroup.plugin.rem.logTrust.LogTrustAcceso;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDTareaDestinoSalto;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
+import es.pfsgroup.plugin.rem.rest.api.RestApi;
+import es.pfsgroup.plugin.rem.rest.dto.CierreOficinaBankiaDto;
+import es.pfsgroup.plugin.rem.rest.dto.CierreOficinaBankiaRequestDto;
+import es.pfsgroup.plugin.rem.rest.dto.CorreoDto;
+import es.pfsgroup.plugin.rem.rest.dto.DDTipoDocumentoActivoDto;
+import es.pfsgroup.plugin.rem.rest.dto.DocumentoDto;
+import es.pfsgroup.plugin.rem.rest.dto.DocumentoRequestDto;
+import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
+import es.pfsgroup.plugin.rem.restclient.exception.RestClientException;
+import es.pfsgroup.plugin.rem.utils.ImagenWebDto;
+import net.sf.json.JSONObject;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -71,6 +102,9 @@ public class GenericController extends ParadiseJsonController{
 	
 	@Autowired
     public AccionesCaixaApi accionesCaixaApi;
+	
+	@Autowired
+	private RemCorreoUtils remCorreoUtils;
 	
 	@Autowired
 	private DepositoApi depositoApi;
@@ -937,12 +971,39 @@ public class GenericController extends ParadiseJsonController{
 		restApi.sendResponse(response, model, request);
 	}
 	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST, value = "/generic/mail")
+	public void sendMail(ModelMap model, RestRequestWrapper request, HttpServletResponse response) {
+		CorreoDto jsonMail = null;
+
+		try {
+
+			JSONObject jsonFields = request.getJsonObject();
+			jsonMail = (CorreoDto) request.getRequestData(CorreoDto.class);
+
+			if (jsonFields == null || jsonFields != null && jsonFields.isEmpty()) {
+				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
+			} else {
+				String body = remCorreoUtils.generateCuerpoCorreo(jsonMail.getSubject(), jsonMail.getBody());
+				adapter.sendMail(jsonMail.getTo(), jsonMail.getToCC(), jsonMail.getSubject(), body);
+
+				model.put("succes", true);
+				model.put("error", null);
+			}
+		} catch (Exception e) {
+			logger.error("Error GenericController.sendMail() > ", e);
+			model.put("success", false);
+			model.put("error", e.getMessage());
+		}
+		
+		restApi.sendResponse(response, model, request);
+	}
+
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getTipoApunteByUsuarioLog(){
 		return createModelAndViewJson(new ModelMap("data", genericApi.getTipoApunteByUsuarioLog()));	
 	}
 
-	
 	@RequestMapping(method= RequestMethod.GET)
 	public ModelAndView getComboCategoriaConducta(String idTipoConducta) {
 		return createModelAndViewJson(new ModelMap("data", genericApi.getComboCategoriaConducta(idTipoConducta)));	
@@ -957,6 +1018,7 @@ public class GenericController extends ParadiseJsonController{
 	public ModelAndView getDocumentosProveedor(String codBloque) {
 		return createModelAndViewJson(new ModelMap("data", genericApi.getDocumentosProveedor(codBloque)));	
 	}
+	
 	@RequestMapping(method = RequestMethod.POST, value = "/generic/avanzaTarea")
 	public void avanzaTarea(ModelMap model, RestRequestWrapper request, HttpServletResponse response) {
 

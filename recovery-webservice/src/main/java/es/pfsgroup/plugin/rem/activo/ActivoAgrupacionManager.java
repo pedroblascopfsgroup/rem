@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.files.WebFileItem;
+import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
@@ -41,6 +42,7 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoAutorizacionTramitacionOfertas;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
+import es.pfsgroup.plugin.rem.model.ActivoObraNueva;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
@@ -131,6 +133,9 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 
 	@Resource(name = "entityTransactionManager")
 	private PlatformTransactionManager transactionManager;
+
+	@Resource
+	private MessageService messageServices;
 	
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	
@@ -1150,6 +1155,71 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 	}
 	
 	@Override
+	public boolean isAgrupacionONDnd(ActivoAgrupacion agrupacion) {
+		if (DDTipoAgrupacion.isON(agrupacion.getTipoAgrupacion())) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", agrupacion.getId());
+			ActivoObraNueva on = genericDao.get(ActivoObraNueva.class, filtro);
+			return !Checks.esNulo(on) && !Checks.esNulo(on.getIdOnvDnd()) ? true : false;
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean isONVentaSobrePlano(ActivoAgrupacion agrupacion) {
+		if (DDTipoAgrupacion.isON(agrupacion.getTipoAgrupacion())) {
+			if(!Checks.esNulo(agrupacion.getVentaPlano()) && DDSinSiNo.CODIGO_SI.equals(agrupacion.getVentaPlano().getCodigo())) 
+				return true;
+		} else if (DDTipoAgrupacion.isComercialVenta(agrupacion.getTipoAgrupacion()) 
+					|| DDTipoAgrupacion.isRestringida(agrupacion.getTipoAgrupacion())) {
+			for (ActivoAgrupacionActivo activoAgrupacion : agrupacion.getActivos()) {
+				if (activoApi.isActivoONVentaSobrePlano(activoAgrupacion.getActivo())) 
+					return true;
+			}
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean isONPisoPiloto(ActivoAgrupacion agrupacion) {
+		if (DDTipoAgrupacion.isComercialVenta(agrupacion.getTipoAgrupacion()) 
+			|| DDTipoAgrupacion.isRestringida(agrupacion.getTipoAgrupacion())) {
+			for (ActivoAgrupacionActivo activoAgrupacion : agrupacion.getActivos()) {
+				if (activoApi.isActivoONPisoPiloto(activoAgrupacion.getActivo())) 
+					return true;
+			}
+		}
+		return false;
+	}
+	
+	@Override
+	public Long numAgrupacionONDnd(ActivoAgrupacion agrupacion) {
+		if (!Checks.esNulo(agrupacion.getAgrupacionONDnd())) {
+			return agrupacion.getAgrupacionONDnd().getNumAgrupRem();
+		}
+		return null;
+	}
+	
+	@Override
+	public String checkIdON(Long idAgrupacion, Long numAgrupacionON) {
+		ActivoAgrupacion agrON = genericDao.get(ActivoAgrupacion.class, genericDao.createFilter(FilterType.EQUALS, "numAgrupRem", numAgrupacionON));
+		if (!Checks.esNulo(agrON) && (Checks.esNulo(agrON.getFechaBaja()) || (!Checks.esNulo(agrON.getFechaBaja()) && agrON.getFechaBaja().before(new Date())))) {
+			if (isAgrupacionONDnd(agrON) && isONVentaSobrePlano(agrON)) {
+				ActivoAgrupacion agrupacion = genericDao.get(ActivoAgrupacion.class, genericDao.createFilter(FilterType.EQUALS, "id", idAgrupacion));
+				for (ActivoAgrupacionActivo activoAgrupacion : agrupacion.getActivos()) {
+					boolean esAgrupacionCorrecta = false;
+					for (ActivoAgrupacionActivo agrupacionActivo : activoAgrupacion.getActivo().getAgrupaciones()) {
+						if (agrupacionActivo.getAgrupacion().equals(agrON))
+							esAgrupacionCorrecta = true;
+					}
+					if (!esAgrupacionCorrecta) return messageServices.getMessage("msg.operacion.ko.check.idON.error.activo");
+				}
+				return null;
+			}
+			return messageServices.getMessage("msg.operacion.ko.check.idON");		
+		}
+		return messageServices.getMessage("msg.operacion.ko.check.idON.error.agrupacion");
+	}
+
 	@Transactional(readOnly = false)	
 	public boolean reloadFotosAgrupacionById(Long id) {
 
@@ -1177,6 +1247,5 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 		}
 		
 		return true;
-
 	}
 }

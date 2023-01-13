@@ -1,20 +1,5 @@
 package es.pfsgroup.plugin.rem.adapter;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Properties;
-
-import javax.annotation.Resource;
-
-import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.annotation.Transactional;
-
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.files.FileItem;
@@ -27,6 +12,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
+import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.bulkAdvisoryNote.dao.BulkOfertaDao;
@@ -36,19 +22,23 @@ import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.Downloader;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.DownloaderFactoryApi;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
-import es.pfsgroup.plugin.rem.model.AdjuntoComprador;
-import es.pfsgroup.plugin.rem.model.AdjuntoExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.BulkOferta;
-import es.pfsgroup.plugin.rem.model.Comprador;
-import es.pfsgroup.plugin.rem.model.DtoAdjunto;
-import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.TmpClienteGDPR;
-import es.pfsgroup.plugin.rem.model.VListadoOfertasAgrupadasLbk;
+import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.thread.EnvioDocumentoGestorDocBulk;
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import javax.ws.rs.ProcessingException;
+import java.io.UnsupportedEncodingException;
+import java.util.*;
 
 @Service
 public class ExpedienteComercialAdapter {
@@ -149,6 +139,68 @@ public class ExpedienteComercialAdapter {
 					throw gex;
 				}
 			}			
+		} else {
+			listaAdjuntos = getAdjuntos(id, listaAdjuntos);
+		}
+		return listaAdjuntos;
+	}
+
+	@Transactional(readOnly = false)
+	public List<DtoAdjunto> getAdjuntosExpedienteComercialMultiTipo(Long id) throws GestorDocumentalException, UnsupportedEncodingException {
+
+		List<DtoAdjunto> listaAdjuntos = new ArrayList<DtoAdjunto>();
+		Usuario usuario = genericAdapter.getUsuarioLogado();
+
+		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
+			ExpedienteComercial expedienteComercial = expedienteComercialApi.findOne(id);
+
+			try {
+				gestorDocumentalAdapterApi.getAdjuntosExpedienteComercial(expedienteComercial);
+			} catch (GestorDocumentalException gex) {
+				logger.debug(gex.getMessage(), gex);
+				if (GestorDocumentalException.CODIGO_ERROR_CONTENEDOR_NO_EXISTE.equals(gex.getCodigoError())) {
+					try {
+						Integer idExpediente = gestorDocumentalAdapterApi.crearExpedienteComercial(expedienteComercial, usuario.getUsername());
+						logger.debug("GESTOR DOCUMENTAL [ crearExpediente para " + expedienteComercial.getNumExpediente() + "]: ID EXPEDIENTE RECIBIDO " + idExpediente);
+					} catch (GestorDocumentalException gexc) {
+						logger.error(gexc.getMessage(), gexc);
+					}
+				} else {
+					throw gex;
+				}
+			}
+
+			try {
+				listaAdjuntos = gestorDocumentalAdapterApi.getAdjuntosExpedienteComercialMultiTipo(expedienteComercial);
+				for (DtoAdjunto adj : listaAdjuntos) {
+					AdjuntoExpedienteComercial adjuntoExpedienteComercial = expedienteComercial.getAdjuntoGD(adj.getId());
+					if (!Checks.esNulo(adjuntoExpedienteComercial)) {
+						if (!Checks.esNulo(adjuntoExpedienteComercial.getTipoDocumentoExpediente())) {
+							adj.setDescripcionTipo(adjuntoExpedienteComercial.getTipoDocumentoExpediente().getDescripcion());
+						}
+						if(!Checks.esNulo(adjuntoExpedienteComercial.getSubtipoDocumentoExpediente())){
+							adj.setDescripcionSubtipo(adjuntoExpedienteComercial.getSubtipoDocumentoExpediente().getDescripcion());
+						}
+						adj.setContentType(adjuntoExpedienteComercial.getContentType());
+						if (!Checks.esNulo(adjuntoExpedienteComercial.getAuditoria())) {
+							adj.setGestor(adjuntoExpedienteComercial.getAuditoria().getUsuarioCrear());
+						}
+						adj.setTamanyo(adjuntoExpedienteComercial.getTamanyo());
+					} else {
+						DDSubtipoDocumentoExpediente subtipoExp = ddSubtipoDocumentoExpedienteDao.getSubtipoDocumentoExpedienteComercialPorMatricula(adj.getMatricula());
+						if(!Checks.esNulo(subtipoExp)) {
+							if(!Checks.esNulo(subtipoExp.getTipoDocumentoExpediente())) {
+								adj.setDescripcionTipo(subtipoExp.getTipoDocumentoExpediente().getDescripcion());
+							}
+							adj.setDescripcionSubtipo(subtipoExp.getDescripcion());
+						}
+					}
+				}
+			} catch (GestorDocumentalException gex) {
+				logger.error(gex.getMessage(), gex);
+			} catch (ProcessingException pex){
+				pex.printStackTrace();
+			}
 		} else {
 			listaAdjuntos = getAdjuntos(id, listaAdjuntos);
 		}
@@ -466,10 +518,13 @@ public class ExpedienteComercialAdapter {
 	public boolean deleteAdjunto(DtoAdjunto dtoAdjunto) {
 		boolean borrado = false;
 			if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
+				dtoAdjunto = adjuntoExpedienteComercialDao.getAdjuntoByIdDocRest(dtoAdjunto);
+				if(dtoAdjunto.getCodigoTipo() == null){
+					throw new JsonViewerException("No se puede borrar este tipo de documentos");
+				}
 				Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 				try {
 					borrado = gestorDocumentalAdapterApi.borrarAdjunto(dtoAdjunto.getId(), usuarioLogado.getUsername());
-					dtoAdjunto = adjuntoExpedienteComercialDao.getAdjuntoByIdDocRest(dtoAdjunto);
 					if (borrado && !Checks.esNulo(dtoAdjunto) && !Checks.esNulo(dtoAdjunto.getId())) 
 						borrado = expedienteComercialApi.deleteAdjunto(dtoAdjunto);
 				} catch (Exception e) {

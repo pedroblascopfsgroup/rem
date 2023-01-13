@@ -135,6 +135,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionesDetalle', {
 			var agrupacionProyecto = false;
 			var agrupacionPromocionAlquiler = false;
 			var agrupacionesCaixa = false;
+			var agrupacionONDnd = me.lookupController().getViewModel().get('agrupacionficha.isObraNueva')
+								&& me.lookupController().getViewModel().get('agrupacionficha.esONDnd');
 			var tipoAgrupacion =  me.lookupController().getViewModel().get('agrupacionficha.tipoAgrupacionCodigo');
 			var tipoCartera =  me.lookupController().getViewModel().get('agrupacionficha.codigoCartera');
 	     	if((tipoAgrupacion == CONST.TIPOS_AGRUPACION['PROYECTO'])) {
@@ -172,8 +174,9 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionesDetalle', {
 						}
 			    	} else if (agrupacionesCaixa) {
 			    		$AU.confirmFunToFunctionExecution(editionDisabled, tab.funPermEdition);
-					}
-			    	else{
+					} else if (agrupacionONDnd){
+						$AU.confirmFunToFunctionExecution(editionDisabled, tab.funPermEdition);
+					} else{
 					    $AU.confirmFunToFunctionExecution(editionEnabled, tab.funPermEdition);
 					}
 

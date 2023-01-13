@@ -843,6 +843,12 @@ public interface OfertaApi {
 
     boolean bloqueoResolucionExpedienteCFV(Long idTarea);
 
+	boolean isOfertaONVentaSobrePlano(Oferta oferta);
+
+	boolean isOfertaONPisoPiloto(Oferta oferta);
+
+	Long numAgrupacionONVentaSobrePlano(Oferta oferta);
+	
     DDTipoComercializar calcularCanalDistribucionBcOfrCaixa(Oferta oferta, DDTipoOferta tipoOferta) throws Exception;
 
 	void llamaReplicarCambioEstado(Long idOferta, String codigoEstado);

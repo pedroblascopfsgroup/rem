@@ -1,5 +1,6 @@
-package es.pfsgroup.plugin.rem.gestorDocumental.api;
+	package es.pfsgroup.plugin.rem.gestorDocumental.api;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.util.List;
@@ -18,13 +19,13 @@ import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProyecto;
 import es.pfsgroup.plugin.rem.model.ActivoTributos;
 import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
+import es.pfsgroup.plugin.rem.model.ConductasInapropiadas;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoAgrupacion;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoPromocion;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoProyecto;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoTributo;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.GastoAsociadoAdquisicion;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.HistoricoComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.Trabajo;
@@ -98,6 +99,8 @@ public interface GestorDocumentalAdapterApi {
 
 	void crearRelacionActivosComunicacion(ComunicacionGencat comunicacionGencat, Long idDocRestClient, Activo Activo, String username, CrearRelacionExpedienteDto crearRelacionExpedienteDto) throws GestorDocumentalException;
 
+	List<DtoAdjunto> getAdjuntosExpedienteComercialMultiTipo(ExpedienteComercial expedienteComercial) throws GestorDocumentalException, UnsupportedEncodingException;
+
 	Long uploadDocumentoEntidadComprador(String idIntervinienteHaya, WebFileItem webFileItem, String userLogin, String matricula) throws GestorDocumentalException;
 
 	List<DtoAdjunto> getAdjuntosEntidadComprador(String idIntervinienteHaya) throws GestorDocumentalException;
@@ -147,5 +150,9 @@ public interface GestorDocumentalAdapterApi {
 	void actualizarAdmisionValidado(Trabajo tbj) throws ParseException;
 
 	String getMaestroPersonasByCarteraySubcarterayPropietario(DDCartera cartera, DDSubcartera subcartera,ActivoPropietario actPro);
+	
+	public Integer crearContenedorConductasInapropiadas(ConductasInapropiadas coi, String username) throws GestorDocumentalException;
+	
+	Long uploadDocumentoConductasInapropiadas(Long id, WebFileItem webFileItem, String userLogin, String matricula, DtoMetadatosEspecificos dtoMetadatos) throws Exception;
 
 }

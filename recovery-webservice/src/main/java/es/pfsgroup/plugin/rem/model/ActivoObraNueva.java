@@ -63,16 +63,13 @@ public class ActivoObraNueva extends ActivoAgrupacion implements Serializable {
 	@Column(name = "ONV_ACREEDOR_PDV")
 	private String acreedorPDV;
 	
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ONV_VENTA_PLANO")
-	private DDSinSiNo ventaPlano;
-	
 	@OneToMany(mappedBy = "obraNueva", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "AGR_ID")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private List<ActivoSubdivision> subdivision;
 	
-	
+	@Column(name = "ONV_DND_ID")
+	private String idOnvDnd;
 
 	public DDProvincia getProvincia() {
 		return provincia;
@@ -129,17 +126,18 @@ public class ActivoObraNueva extends ActivoAgrupacion implements Serializable {
 	public void setSubdivision(List<ActivoSubdivision> subdivision) {
 		this.subdivision = subdivision;
 	}
+
+	public String getIdOnvDnd() {
+		return idOnvDnd;
+	}
+
+	public void setIdOnvDnd(String idOnvDnd) {
+		this.idOnvDnd = idOnvDnd;
+	}
 	
 	public Integer getIncluidos() {
-		return Checks.estaVacio(this.getActivos()) ? 0 : this.getActivos().size();
-	}
-	
-	public DDSinSiNo getVentaPlano() {
-		return ventaPlano;
-	}
-	
-	public void setVentaPlano(DDSinSiNo ventaPlano) {
-		this.ventaPlano = ventaPlano;
-	}
+        return Checks.estaVacio(this.getActivos()) ? 0 : this.getActivos().size();
+    }
+		
 
 }

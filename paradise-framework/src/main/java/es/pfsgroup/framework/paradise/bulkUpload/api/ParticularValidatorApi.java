@@ -1507,6 +1507,12 @@ public interface ParticularValidatorApi {
 	
 	Boolean existeRecomendacionByCod(String recomendacion);
 
+	Boolean isAgrupacionONDnd(Long numAgrupacion);
+
+	Boolean isAgrupacionContieneONDnd(Long numAgrupacion);
+
+	Boolean isActivoAgrupacionONDnd(Long numAgrupacion, Long numActivo);
+
 	Boolean existeOrganismo(String codOrganismo);
 
 	Boolean existeComunidadAutonoma(String codComunidadAutonoma);

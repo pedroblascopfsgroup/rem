@@ -56,6 +56,12 @@ public class VListadoActivosExpedienteGrid implements Serializable{
 	
 	@Column(name = "BIE_LOC_DIRECCION")
 	private String direccion;
+	
+	@Column(name = "ES_PISO_PILOTO")
+	private Boolean esPisoPiloto;
+	
+	@Column(name = "AGA_FECHA_ESCRITURACION")
+   	private Date fechaEscrituracion;
 
 	public String getId() {
 		return id;
@@ -160,7 +166,22 @@ public class VListadoActivosExpedienteGrid implements Serializable{
 	public void setDireccion(String direccion) {
 		this.direccion = direccion;
 	}
-	
+
+	public Boolean getEsPisoPiloto() {
+		return esPisoPiloto;
+	}
+
+	public void setEsPisoPiloto(Boolean esPisoPiloto) {
+		this.esPisoPiloto = esPisoPiloto;
+	}
+
+	public Date getFechaEscrituracion() {
+		return fechaEscrituracion;
+	}
+
+	public void setFechaEscrituracion(Date fechaEscrituracion) {
+		this.fechaEscrituracion = fechaEscrituracion;
+	}
 	
 
 }

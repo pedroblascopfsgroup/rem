@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.gestorDocumental.manager;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -11,7 +12,6 @@ import java.util.Properties;
 
 import javax.annotation.Resource;
 
-import es.pfsgroup.plugin.rem.model.dd.*;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -43,6 +43,7 @@ import es.pfsgroup.plugin.gestorDocumental.dto.documentos.DocumentosExpedienteDt
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.DtoMetadatosEspecificos;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.RecoveryToGestorDocAssembler;
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearActuacionTecnicaDto;
+import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearConductasInapropiadasDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearEntidadCompradorDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearExpedienteComercialDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearGastoDto;
@@ -65,6 +66,8 @@ import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTributoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.FuncionesApi;
+import es.pfsgroup.plugin.rem.constants.FuncionesConstants;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.Downloader;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.gestorDocumental.dto.documentos.GestorDocToRecoveryAssembler;
@@ -84,8 +87,11 @@ import es.pfsgroup.plugin.rem.model.ActivoProyecto;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoTributos;
 import es.pfsgroup.plugin.rem.model.AdjuntoComunicacion;
+import es.pfsgroup.plugin.rem.model.AdjuntoExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.AdjuntoGastoAsociado;
+import es.pfsgroup.plugin.rem.model.CompradorExpediente;
 import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
+import es.pfsgroup.plugin.rem.model.ConductasInapropiadas;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoAgrupacion;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoPromocion;
@@ -96,10 +102,26 @@ import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.HistoricoComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.MapeoGestorDocumental;
 import es.pfsgroup.plugin.rem.model.MapeoPropietarioGestorDocumental;
+import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.RelacionHistoricoComunicacion;
 import es.pfsgroup.plugin.rem.model.TipoDocumentoSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
+import es.pfsgroup.plugin.rem.model.WhiteListMatriculas;
+import es.pfsgroup.plugin.rem.model.dd.DDBloqueDocumentoProveedor;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
+import es.pfsgroup.plugin.rem.model.dd.DDEntidadGasto;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoCalificacionEnergetica;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoComunicacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoTributos;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.perfilAdministracion.dao.PerfilAdministracionDao;
+import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
 
 
 @Service("gestorDocumentalAdapterManager")
@@ -151,6 +173,9 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 
 	@Autowired
 	private PerfilAdministracionDao perfilAdministracionDao;
+
+	@Autowired
+	private FuncionesApi funcionesApi;
 
     public static final String CODIGO_CLASE_PROYECTO = "09", CODIGO_TIPO_EXPEDIENTE_REO = "AI", CODIGO_CLASE_AGRUPACIONES = "08";
     
@@ -393,7 +418,13 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		RespuestaGeneral respuesta = null;
 
 		try {
-			respuesta = gestorDocumentalApi.bajaDocumento(login, idDocumento.intValue());
+			AdjuntoExpedienteComercial ade = genericDao.get(AdjuntoExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "id", idDocumento));
+			if(ade != null && ade.getIdDocRestClient() != null) {
+				respuesta = gestorDocumentalApi.bajaDocumento(login, ade.getIdDocRestClient().intValue());
+			}else {
+				//logger.debug("No existe el documento en BBDD o no tiene id de GD");
+				respuesta = gestorDocumentalApi.bajaDocumento(login, idDocumento.intValue());
+			}
 			
 			if(!Checks.esNulo(respuesta) && !Checks.esNulo(respuesta.getCodigoError())) {
 				logger.debug(respuesta.getCodigoError() + " - " + respuesta.getMensajeError());				
@@ -682,7 +713,111 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 
 		return list;
 	}
-	
+
+	@Override
+	public List<DtoAdjunto> getAdjuntosExpedienteComercialMultiTipo(ExpedienteComercial expedienteComercial) throws GestorDocumentalException, UnsupportedEncodingException {
+		RecoveryToGestorDocAssembler recoveryToGestorDocAssembler = new RecoveryToGestorDocAssembler(appProperties);
+		List<DtoAdjunto> list;
+
+		String codigoEstado = null;
+		if(!Checks.esNulo(expedienteComercial) && !Checks.esNulo(expedienteComercial.getOferta())){
+			if(DDTipoOferta.isTipoVenta(expedienteComercial.getOferta().getTipoOferta())){
+				codigoEstado = "06";
+			} else {
+				codigoEstado = "08";
+			}
+		}
+
+		CabeceraPeticionRestClientDto cabecera = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(
+				expedienteComercial.getNumExpediente().toString(), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_OPERACIONES, codigoEstado);
+		Usuario userLogin = genericAdapter.getUsuarioLogado();
+		List<DocumentosExpedienteDto> listaDto = new ArrayList<DocumentosExpedienteDto>();
+		DocumentosExpedienteDto dto = recoveryToGestorDocAssembler.getDocumentosExpedienteDto(userLogin.getUsername());
+		dto.setCabecera(cabecera);
+		listaDto.add(dto);
+		DocumentosExpedienteDto dtoPersona = generaDtoConWhitelistByUsuarioAndFuncion(userLogin, FuncionesConstants.FUN_VER_DOCUMENTOS_IDENTIDAD, recoveryToGestorDocAssembler);
+		dtoPersona.setCabecera(recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(
+				expedienteComercial.getNumExpediente().toString(), GestorDocumentalConstants.CODIGO_TIPO_JUNTA,
+				GestorDocumentalConstants.CODIGO_CLASE_DOCUMENTOS_PERSONA));
+		dtoPersona.setListaPersonas(generateListadoPersonas(expedienteComercial.getOferta(), expedienteComercial.getCompradores()));
+		listaDto.add(dtoPersona);
+		RespuestaDocumentosExpedientes respuesta = gestorDocumentalApi.documentosExpedienteMultiTipo(listaDto);
+
+		/*if (!Checks.esNulo(respuesta.getDocumentos())) {
+			ConsistenciaAdjuntosRunnableUtils caru = new ConsistenciaAdjuntosRunnableUtils(respuesta.getDocumentos(), GestorDocumentalConstants.Contenedor.ExpedienteComercial);
+			launchNewTasker(caru);
+		}*/
+
+		list = GestorDocToRecoveryAssembler.getListDtoAdjunto(respuesta);
+		for (DtoAdjunto adjunto : list) {
+			DDTdnTipoDocumento tipoDoc = (DDTdnTipoDocumento) diccionarioApi
+					.dameValorDiccionarioByCod(DDTdnTipoDocumento.class, adjunto.getCodigoTipo());
+			if (tipoDoc != null) {
+				adjunto.setDescripcionTipo(tipoDoc.getDescripcion());
+			}
+		}
+
+		return list;
+	}
+
+	private String generateListadoPersonas(Oferta oferta, List<CompradorExpediente> compradores) {
+		String personas = null;
+
+		ActivoPropietario actPro = oferta.getActivoPrincipal().getPropietarioPrincipal();
+		DDCartera cartera = oferta.getActivoPrincipal().getCartera();
+		DDSubcartera subcartera = oferta.getActivoPrincipal().getSubcartera();
+		if(!DDSubcartera.isSubcarteraApple(subcartera)) {
+			actPro = null;
+		}
+		
+		for(CompradorExpediente cex: compradores){
+			String idPersonaHaya = getIdPersonaHayaByCarteraAndDocumento(cartera, subcartera, actPro, cex.getPrimaryKey().getComprador().getDocumento());
+
+			if(idPersonaHaya != null){
+				if(personas == null){
+					personas = oferta.getNumOferta().toString() + "-" + idPersonaHaya;
+				}else{
+					personas = personas + "," + oferta.getNumOferta().toString() + "-" + idPersonaHaya;
+				}
+			}
+		}
+
+		return personas;
+	}
+
+	public String getIdPersonaHayaByCarteraAndDocumento(DDCartera cartera, DDSubcartera subcartera, ActivoPropietario actPro, String documento){
+
+		if (cartera != null && documento != null){
+			MaestroDePersonas maestroDePersonas = new MaestroDePersonas(getMaestroPersonasByCarteraySubcarterayPropietario(cartera,subcartera,actPro));
+			return maestroDePersonas.getIdPersonaHayaByDocumento(documento);
+		}
+		return null;
+	}
+
+	private DocumentosExpedienteDto generaDtoConWhitelistByUsuarioAndFuncion(Usuario user, String funcion, RecoveryToGestorDocAssembler recoveryToGestorDocAssembler) {
+		DocumentosExpedienteDto docExpDto = recoveryToGestorDocAssembler.getDocumentosExpedienteDto(user.getUsername());
+		String whitelist = null;
+		if(user != null && funcion != null && funcionesApi.elUsuarioTieneFuncion(funcion, user)){
+			List<WhiteListMatriculas> listaMatriculas = genericDao.getList(WhiteListMatriculas.class,
+					genericDao.createFilter(FilterType.EQUALS, "funcion.descripcion", funcion));
+			if(listaMatriculas != null){
+				for(WhiteListMatriculas wm: listaMatriculas){
+					String matricula = wm.getTipoDocumentoEntidad() != null ? wm.getTipoDocumentoEntidad().getMatricula() : null;
+					if(whitelist == null && matricula != null){
+						whitelist = matricula;
+					}else if (matricula != null){
+						whitelist = whitelist + "," + matricula;
+					}
+				}
+			}
+		}
+		if(whitelist == null || whitelist.isEmpty()){
+			whitelist = "whitelist";
+		}
+		docExpDto.setWhitelistmatriculas(whitelist);
+		return docExpDto;
+	}
+
 	@Override
 	public Long uploadDocumentoEntidadComprador(String idIntervinienteHaya, WebFileItem webFileItem, String userLogin, String matricula) throws GestorDocumentalException {
 		RecoveryToGestorDocAssembler recoveryToGestorDocAssembler = new RecoveryToGestorDocAssembler(appProperties);
@@ -1828,6 +1963,51 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 				}	
 			}
 		}		
+	}
+	
+	@Override
+	public Integer crearContenedorConductasInapropiadas(ConductasInapropiadas coi, String username)
+			throws GestorDocumentalException {
+		
+		String nifProveedor = coi.getProveedor().getDocIdentificativo();
+		String codClase = GestorDocumentalConstants.CODIGO_CLASE_EXPEDIENTE_PROYECTO;
+		String tipo = GestorDocumentalConstants.CODIGO_TIPO_CONDUCTAS_INAPROPIADAS;
+		String descripcionConductasInapropiadas = "";
+		
+		RecoveryToGestorExpAssembler recoveryToGestorAssembler = new RecoveryToGestorExpAssembler(appProperties);
+		CrearConductasInapropiadasDto crearConductasInapropiadasDto = recoveryToGestorAssembler.getCrearConductasInapropiadasDto(coi.getId(), nifProveedor, descripcionConductasInapropiadas, username, codClase, tipo);
+		RespuestaCrearExpediente respuesta;
+		
+		try {
+			respuesta = gestorDocumentalExpedientesApi.crearConductasInapropiadas(crearConductasInapropiadasDto);
+		} catch(GestorDocumentalException gex) {
+			logger.debug(gex.getMessage());
+			throw gex;
+		}
+		
+		Integer id_ConductasInapropiadas = null;
+		if(!Checks.esNulo(respuesta)) {
+			id_ConductasInapropiadas = respuesta.getIdExpediente();
+		}
+		
+		return id_ConductasInapropiadas;
+	}
+
+	@Override
+	public Long uploadDocumentoConductasInapropiadas(Long id, WebFileItem webFileItem, String userLogin,
+			String matricula, DtoMetadatosEspecificos dtoMetadatos) throws Exception, GestorDocumentalException {
+		
+		RecoveryToGestorDocAssembler recoveryToGestorDocAssembler = new RecoveryToGestorDocAssembler(appProperties);
+		CabeceraPeticionRestClientDto cabecera = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(id.toString(), GestorDocumentalConstants.CODIGO_TIPO_CONDUCTAS_INAPROPIADAS, GestorDocumentalConstants.CODIGO_CLASE_EXPEDIENTE_PROYECTO);
+		CrearDocumentoDto crearDoc = recoveryToGestorDocAssembler.getCrearDocumentoDto(webFileItem, userLogin, matricula);
+		RespuestaCrearDocumento respuestaCrearDocumento = gestorDocumentalApi.crearDocumento(cabecera, crearDoc);
+		
+		if(!Checks.esNulo(respuestaCrearDocumento) && !Checks.esNulo(respuestaCrearDocumento.getCodigoError())) {
+			logger.debug(respuestaCrearDocumento.getCodigoError() + " - " + respuestaCrearDocumento.getMensajeError());
+			throw new GestorDocumentalException(respuestaCrearDocumento.getCodigoError() + " - " + respuestaCrearDocumento.getMensajeError());
+		}
+		
+		return new Long(respuestaCrearDocumento.getIdDocumento());
 	}
 	
 }

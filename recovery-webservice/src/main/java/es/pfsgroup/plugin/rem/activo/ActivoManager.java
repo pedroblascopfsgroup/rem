@@ -9893,6 +9893,39 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 	}
 	@Override
+	public boolean isActivoONVentaSobrePlano(Activo activo) {
+		for (ActivoAgrupacionActivo agrupActivo : activo.getAgrupaciones()) {
+			if (DDTipoAgrupacion.isON(agrupActivo.getAgrupacion().getTipoAgrupacion())) {
+				if(!Checks.esNulo(agrupActivo.getAgrupacion().getVentaPlano()) && DDSinSiNo.CODIGO_SI.equals(agrupActivo.getAgrupacion().getVentaPlano().getCodigo())) 
+					return true;
+			}
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean isActivoONPisoPiloto(Activo activo) {
+		for (ActivoAgrupacionActivo agrupActivo : activo.getAgrupaciones()) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", agrupActivo.getAgrupacion().getId());
+			ActivoObraNueva obraNueva = genericDao.get(ActivoObraNueva.class, filtro);
+			if (!Checks.esNulo(obraNueva) && !Checks.esNulo(obraNueva.getIdOnvDnd())
+					&& DDTipoAgrupacion.isON(agrupActivo.getAgrupacion().getTipoAgrupacion())
+					&& !Checks.esNulo(agrupActivo.getPisoPiloto()) && agrupActivo.getPisoPiloto()) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	@Override
+	public Long numAgrupacionONVentaSobrePlano(Activo activo) {
+		for (ActivoAgrupacionActivo agrupActivo : activo.getAgrupaciones()) {
+			if (DDTipoAgrupacion.isON(agrupActivo.getAgrupacion().getTipoAgrupacion()) && activoAgrupacionApi.isONVentaSobrePlano(agrupActivo.getAgrupacion()))
+				return agrupActivo.getAgrupacion().getNumAgrupRem();
+		}
+		return null;
+	}
+
 	public List<DtoOrganismos> getOrganismosByActivo(Long idActivo) {
 		List<DtoOrganismos> organismos = new ArrayList<DtoOrganismos>();
 		
@@ -9972,7 +10005,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		genericDao.save(Organismos.class, organismo);
 	}
-	
+
 	@Override
 	public Activo getActivoMatrizIfIsUA(Long idActivo) {
 		Activo activo = this.get(idActivo);

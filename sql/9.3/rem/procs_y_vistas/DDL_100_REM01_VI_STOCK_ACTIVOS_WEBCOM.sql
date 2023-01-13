@@ -41,9 +41,10 @@
 --##		0.24 Versión Daniel Algaba -> HREOS-16087 - Quitamos campo duplicado - COD_DIR_COMERCIAL
 --##		0.25 Versión Julián Dolz -> HREOS-16549 - Añadir campo CAT_CORRECTO
 --##		0.26 Versión IRC -> REMVIP-11188 - Añadimos gestor comercial de alquiler
---##		0.26 Versión Jesus J -> REMVIP-11865 - Eliminar campos WS Activo
---##        0.27 Añadir campos concurrencia - Vicente Martinez - [HREOS-18353]
---##		0.28 Versión IRC -> REMVIP-12573 - Añadimos codEstadoRegistralActivo del activo
+--##		0.27: 20220504 Juan Jose Sanjuan. Añadir el campo de PISO_PILOTO, FECHA_ESCRITURACION de la ACT_AGR - HREOS-17546 
+--##		0.28 Versión Jesus J -> REMVIP-11865 - Eliminar campos WS Activo
+--##        0.29 Añadir campos concurrencia - Vicente Martinez - [HREOS-18353]
+--##		0.30 Versión IRC -> REMVIP-12573 - Añadimos codEstadoRegistralActivo del activo
 --##########################################
 --*/
 
@@ -186,6 +187,9 @@ BEGIN/*Versión 0.18*/
 		CAST(VCOND.ESTADO AS VARCHAR2(5 CHAR))                       						AS COD_DETALLE_PUBLICACION, 
 		CAST(PIVOT_AGR.OBRA_NUEVA_NUM_REM AS NUMBER(16,0))	                                AS CODIGO_AGRUPACION_OBRA_NUEVA,
         CAST(NVL2(PIVOT_AGR.OBRA_NUEVA_NUM_REM, SUBD_ACT.ID, NULL) AS NUMBER(16,0))         AS CODIGO_CABECERA_OBRA_NUEVA,
+		CAST(PIVOT_AGR.OBRA_NUEVA_PISO_PILOTO AS NUMBER(1,0))	  							AS ES_PISO_PILOTO,
+		CAST(TO_CHAR(PIVOT_AGR.OBRA_NUEVA_FECHA_ESCRITURACION,
+					''YYYY-MM-DD"T"HH24:MM:SS'') AS VARCHAR2(50 CHAR))						AS FECHA_ESCRITURACION, 
 		CAST(PVE_ANT.PVE_COD_REM AS NUMBER(16,0))											AS ID_PROVEEDOR_REM_ANTERIOR,		
 		CAST(PVE.PVE_COD_REM AS NUMBER(16,0))												AS ID_PROVEEDOR_REM,
 		CAST(GCO.NOMBRE AS VARCHAR2(60 CHAR)) 												AS NOMBRE_GESTOR_COMERCIAL,

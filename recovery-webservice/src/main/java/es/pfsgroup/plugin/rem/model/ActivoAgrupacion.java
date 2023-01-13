@@ -29,6 +29,7 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 
@@ -175,6 +176,23 @@ public class ActivoAgrupacion implements Serializable, Auditable {
 	
 	@Column(name = "AGR_COD_ON_SAREB")
 	private String codigoOnSareb;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "AGR_DND_ID")
+    private ActivoAgrupacion agrupacionONDnd;
+	
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "AGR_VENTA_PLANO")
+	private DDSinSiNo ventaPlano;
+    
+    @Column(name = "AGR_FECHA_PREV_FINALIZACION")
+	private Date fechaPrevFinalizacion;
+    
+    @Column(name = "AGR_FECHA_ESCRITURA_DESDE")
+	private Date fechaEscrituraDesde;
+    
+    @Column(name = "AGR_FECHA_ESCRITURA_HASTA")
+	private Date fechaEscrituraHasta;
 
 	public Long getId() {
 		return id;
@@ -456,5 +474,58 @@ public class ActivoAgrupacion implements Serializable, Auditable {
 	public void setCodigoOnSareb(String codigoOnSareb) {
 		this.codigoOnSareb = codigoOnSareb;
 	}
+
+	public Boolean getComercializableConsPlano() {
+		return comercializableConsPlano;
+	}
+
+	public Boolean getExistePiloto() {
+		return existePiloto;
+	}
+
+	public Boolean getEsVisitable() {
+		return esVisitable;
+	}
+
+	public ActivoAgrupacion getAgrupacionONDnd() {
+		return agrupacionONDnd;
+	}
+
+	public void setAgrupacionONDnd(ActivoAgrupacion agrupacionONDnd) {
+		this.agrupacionONDnd = agrupacionONDnd;
+	}
+
+	public DDSinSiNo getVentaPlano() {
+		return ventaPlano;
+	}
+
+	public void setVentaPlano(DDSinSiNo ventaPlano) {
+		this.ventaPlano = ventaPlano;
+	}
+
+	public Date getFechaPrevFinalizacion() {
+		return fechaPrevFinalizacion;
+	}
+
+	public void setFechaPrevFinalizacion(Date fechaPrevFinalizacion) {
+		this.fechaPrevFinalizacion = fechaPrevFinalizacion;
+	}
+
+	public Date getFechaEscrituraDesde() {
+		return fechaEscrituraDesde;
+	}
+
+	public void setFechaEscrituraDesde(Date fechaEscrituraDesde) {
+		this.fechaEscrituraDesde = fechaEscrituraDesde;
+	}
+
+	public Date getFechaEscrituraHasta() {
+		return fechaEscrituraHasta;
+	}
+
+	public void setFechaEscrituraHasta(Date fechaEscrituraHasta) {
+		this.fechaEscrituraHasta = fechaEscrituraHasta;
+	}
+	
 
 }

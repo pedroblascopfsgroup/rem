@@ -79,6 +79,7 @@ public class MSVAgrupacionLoteComercialExcelValidator extends MSVExcelValidatorA
 
 	public static final class AGRUPACIONES_CON_BAJA { static int codigoError = 3; static String mensajeError = "msg.error.masivo.agrupar.activos.asistida.activos.agrupacion.conBaja";};
 
+	public static final String ERROR_AGRUPACION_DND = "msg.error.masivo.agrupar.activos.on.dnd";
 
 	protected final Log logger = LogFactory.getLog(getClass());
 
@@ -163,7 +164,7 @@ public class MSVAgrupacionLoteComercialExcelValidator extends MSVExcelValidatorA
 			mapaErrores.put(messageServices.getMessage(AGRUPACIONES_CON_BAJA.mensajeError), activosAgrupMultipleValidacionRows(exc, AGRUPACIONES_CON_BAJA.codigoError));
 			mapaErrores.put(messageServices.getMessage(ACTIVOS_NO_MISMA_CARTERA.mensajeError), activosAgrupMultipleValidacionRows(exc, ACTIVOS_NO_MISMA_CARTERA.codigoError));
 			mapaErrores.put(messageServices.getMessage(AGRUPACION_ACTIVOS_SIN_OFERTAS_ACEPTADAS.mensajeError), activosAgrupMultipleValidacionRows(exc, AGRUPACION_ACTIVOS_SIN_OFERTAS_ACEPTADAS.codigoError));
-
+			mapaErrores.put(messageServices.getMessage(ERROR_AGRUPACION_DND), esActivoAgrupacionDnd(exc));
 
 			if (!mapaErrores.get(messageServices.getMessage(ACTIVO_NO_EXISTE)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_PERIODO_CONCURRENCIA)).isEmpty()
@@ -193,6 +194,7 @@ public class MSVAgrupacionLoteComercialExcelValidator extends MSVExcelValidatorA
 					|| !mapaErrores.get(messageServices.getMessage(AGRUPACION_NO_TIPO_COMERCIAL_VENTA)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(ERROR_ACTIVO_DISTINTO_PROPIETARIO)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_DISTINTA_SUBCARTERA)).isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(ERROR_AGRUPACION_DND)).isEmpty()
 					) {
 				dtoValidacionContenido.setFicheroTieneErrores(true);
 				exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
@@ -884,6 +886,26 @@ public class MSVAgrupacionLoteComercialExcelValidator extends MSVExcelValidatorA
 	@Override
 	public Integer getNumFilasHoja() {
 		return this.numFilasHoja;
+	}
+	
+	private List<Integer> esActivoAgrupacionDnd(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+
+		int i = 0;
+		
+		try {
+			for(i=1; i<this.numFilasHoja;i++){
+				if(particularValidator.isAgrupacionContieneONDnd(Long.parseLong(exc.dameCelda(i, 0))) &&
+						!particularValidator.isActivoAgrupacionONDnd(Long.parseLong(exc.dameCelda(i, 0)), Long.parseLong(exc.dameCelda(i, 1)))) 
+					listaFilas.add(i);
+			}
+		} catch (Exception e) {
+			if (i != 0) listaFilas.add(i);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		
+		return listaFilas;
 	}
 	
 }

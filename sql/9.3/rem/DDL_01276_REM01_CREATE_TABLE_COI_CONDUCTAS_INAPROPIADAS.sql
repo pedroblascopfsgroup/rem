@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=IVAN REPISO
---## FECHA_CREACION=20220729
+--## FECHA_CREACION=20220808
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-17599
@@ -12,6 +12,7 @@
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##        0.2 Juan Jose Sanjuan - HREOS-18333 - cambio de PK y asignacion de la FK en el DD
+--##        0.3 Adrian Molina - HREOS-18480 - cambio de FK para COI_ADJUNTO
 --##########################################
 --*/
 
@@ -43,11 +44,11 @@ DECLARE
     TYPE T_FK IS TABLE OF VARCHAR2(4000);
     TYPE T_ARRAY_FK IS TABLE OF T_FK;
     V_FK T_ARRAY_FK := T_ARRAY_FK(
-                --NOMBRE FK             CAMPO FK               TABLA DESTINO FK                           CAMPO DESTINO FK
-        T_FK(   'FK_COI_DELEGACION',    'COI_DELEGACION',     V_ESQUEMA||'.ACT_PRD_PROVEEDOR_DIRECCION',   'PRD_ID'),
-        T_FK(   'FK_COI_ADJUNTO',       'COI_ADJUNTO',        V_ESQUEMA||'.ACT_APR_ADJUNTO_PROVEEDOR',     'APR_ID'),
-        T_FK(   'FK_COI_PVE',           'COI_PVE',            V_ESQUEMA||'.ACT_PVE_PROVEEDOR',             'PVE_ID'),
-        T_FK(   'FK_DD_CCI',            'DD_CCI_ID',          V_ESQUEMA||'.DD_CCI_CAT_CONDUC_INAPROP',     'DD_CCI_ID')
+                --NOMBRE FK             CAMPO FK               TABLA DESTINO FK                           		CAMPO DESTINO FK
+        T_FK(   'FK_COI_DELEGACION',    'COI_DELEGACION',     V_ESQUEMA||'.ACT_PRD_PROVEEDOR_DIRECCION',   			'PRD_ID'),
+        T_FK(   'FK_COI_ADJUNTO',       'COI_ADJUNTO',        V_ESQUEMA||'.ACI_ADJUNTO_CONDUCTAS_INAPROPIADAS',     'ACI_ID'),
+        T_FK(   'FK_COI_PVE',           'COI_PVE',            V_ESQUEMA||'.ACT_PVE_PROVEEDOR',             			'PVE_ID'),
+        T_FK(   'FK_DD_CCI',            'DD_CCI_ID',          V_ESQUEMA||'.DD_CCI_CAT_CONDUC_INAPROP',     			'DD_CCI_ID')
     );
     V_T_FK T_FK;
 
@@ -122,7 +123,7 @@ BEGIN
             EXECUTE IMMEDIATE V_MSQL;	
             V_MSQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.COI_COMENTARIOS IS ''Comentarios para cada registro del grid''';
             EXECUTE IMMEDIATE V_MSQL;
-            V_MSQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.COI_ADJUNTO IS ''FK de la tabla ACT_APR_ADJUNTO_PROVEEDOR''';
+            V_MSQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.COI_ADJUNTO IS ''FK de la tabla ACI_ADJUNTO_CONDUCTAS_INAPROPIADAS''';
             EXECUTE IMMEDIATE V_MSQL;	
             V_MSQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.VERSION IS ''Versión del registro''';
             EXECUTE IMMEDIATE V_MSQL;

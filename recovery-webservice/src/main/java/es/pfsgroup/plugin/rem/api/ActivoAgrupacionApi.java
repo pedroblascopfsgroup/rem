@@ -188,5 +188,15 @@ public interface ActivoAgrupacionApi {
 
     boolean estaActivoEnAgrupacionRestringidaObRem(Activo activo);
 
+	boolean isAgrupacionONDnd(ActivoAgrupacion agrupacion);
+
+	boolean isONVentaSobrePlano(ActivoAgrupacion agrupacion);
+
+	boolean isONPisoPiloto(ActivoAgrupacion agrupacion);
+
+	Long numAgrupacionONDnd(ActivoAgrupacion agrupacion);
+
+	String checkIdON(Long idAgrupacion,Long numAgrupacionON);
+
 	boolean reloadFotosAgrupacionById(Long id);
 }

@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Roman Romanchuk
---## FECHA_CREACION=20190805
+--## AUTOR=Adrián Molina
+--## FECHA_CREACION=20221202
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-7226
+--## INCIDENCIA_LINK=HREOS-19040
 --## PRODUCTO=NO
 --## Finalidad: Tabla para almacentar el historico de las agrupaciones de Obra Nueva enviadas a webcom.
 --##           
@@ -111,7 +111,7 @@ BEGIN
 			FROM '||V_ESQUEMA||'.V_ACTIVOS_SUBDIVISION VSUB 
 			INNER JOIN '||V_ESQUEMA||'.ACT_AGR_AGRUPACION AGR ON VSUB.AGR_ID = AGR.AGR_ID 
 			INNER JOIN '||V_ESQUEMA||'.DD_TAG_TIPO_AGRUPACION TAG ON TAG.DD_TAG_ID = AGR.DD_TAG_ID 
-			WHERE AGR.AGR_NUM_AGRUP_REM IS NOT NULL AND TAG.DD_TAG_CODIGO = ''01'' AND TAG.DD_TAG_CODIGO = ''16'' 
+			WHERE AGR.AGR_NUM_AGRUP_REM IS NOT NULL AND TAG.DD_TAG_CODIGO  = ''01'' AND TAG.DD_TAG_CODIGO  = ''16''
 			AND AGR.BORRADO = 0 AND (AGR.AGR_FECHA_BAJA IS NULL OR AGR.AGR_FECHA_BAJA > TO_DATE(SYSDATE, ''DD/MM/YY''))
 		)
 		SELECT DISTINCT
@@ -169,7 +169,7 @@ BEGIN
 		-- Creamos comentario para las columnas AGR_VISITABLE y PISO_PILOTO
 		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_VISTA||'.AGR_VISITABLE IS ''Visitable''';		
 		EXECUTE IMMEDIATE V_MSQL;
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_VISTA||'.PISO_PILOTO IS ''Indica el activo seleccionado como piso piloto de la agrupación''';		
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_VISTA||'.PISO_PILOTO IS ''Indica el activo seleccionado como piso piloto de la agrupación''';
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comentarios en columnas creados.');
 	

@@ -7,6 +7,7 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.api.ExpedienteAvisadorApi;
+import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -17,24 +18,18 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 public class ExpedienteAvisoPisoPiloto implements ExpedienteAvisadorApi{
 	
 	@Autowired
-	private ActivoDao activoDao;
-	
+	private OfertaApi ofertaApi;
+
 	@Override
 	public DtoAviso getAviso(ExpedienteComercial expediente, Usuario usuarioLogado) {
+		
 		DtoAviso dtoAviso = new DtoAviso();
+		
+		if(ofertaApi.isOfertaONPisoPiloto(expediente.getOferta())){
+			dtoAviso.setDescripcion("Piso piloto incluido en la oferta");
+			dtoAviso.setId(String.valueOf(expediente.getId()));
+		}
 
-		//No se puede crear una oferta con una agrupacion de tipo Obra Nueva, 
-		//por lo tanto la oferta nunca va a tener mas de un activo asociado
-		Activo activo = expediente.getOferta().getActivoPrincipal();
-		if (DDSubcartera.CODIGO_YUBAI.equals(activo.getSubcartera().getCodigo())) {
-			//Un activo solo puede pertenecer a una agrupación de tipo Obra Nueva
-			ActivoAgrupacionActivo AgaObraNueva = activoDao.getActivoAgrupacionActivoObraNuevaPorActivoID(activo.getId());
-			if(!Checks.esNulo(AgaObraNueva) && !Checks.esNulo(AgaObraNueva.getPisoPiloto()) && AgaObraNueva.getPisoPiloto()) {
-				dtoAviso.setId(String.valueOf(expediente.getId()));
-				dtoAviso.setDescripcion("Piso Piloto");
-			}
-		}				
-				
 		return dtoAviso;
 	}
 

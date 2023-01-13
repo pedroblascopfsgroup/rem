@@ -333,7 +333,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 	    	 var esAgrupacionObraNueva = tipoAgrupacion == CONST.TIPOS_AGRUPACION['OBRA_NUEVA'];
 	    	 var esAgrupacionAsistida = tipoAgrupacion == CONST.TIPOS_AGRUPACION['ASISTIDA'];
 	    	 //Si NO es agrupación obra nueva OR sí hay fecha baja se debe ocultar
-	    	 return (existeFechaBaja || !(esAgrupacionObraNueva || esAgrupacionAsistida));
+	    	 return (existeFechaBaja || !(esAgrupacionObraNueva || esAgrupacionAsistida) || get('agrupacionONDnd'));
 	    	 
 	     },
 
@@ -788,8 +788,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 	    	return false;
 	     },
 	     
-	     esAgrupacionCaixaOrPromocionAlquiler: function(get) {
-				return get('esAgrupacionEditableCaixa') || get('esAgrupacionPromocionAlquiler');
+	     esAgrupacionCaixaOrPromocionAlquilerOrONDnd: function(get) {
+				return get('esAgrupacionEditableCaixa') || get('esAgrupacionPromocionAlquiler') || get('agrupacionONDnd');
 	     },
 	     esAgrupacionCaixaComercial: function(get){
 	     	var me = this;
@@ -825,7 +825,31 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
             var tipoCartera = get('agrupacionficha.codigoCartera');
 
             return tipoCartera == CONST.CARTERA['BANKIA'];
-         }
+         },
+
+		 agrupacionONDnd: function(get) {
+            return get('agrupacionficha.isObraNueva') && get('agrupacionficha.esONDnd');
+         },
+	     
+	     esAgrupacionEditableCaixaOrONDnd: function(get) {
+	    	return get('esAgrupacionEditableCaixa') || get('agrupacionONDnd');
+	     },
+	     
+	     hideBotoneraFotosSubdivision: function(get) {
+	    	 return get('agrupacionficha.existeFechaBaja') || get('agrupacionONDnd');
+	    	 
+	     },
+		 
+		 esAgrupacionThirdpartiesYubaiObraNuevaDnd: function(get) {
+			 	if(get('agrupacionficha.codigoCartera') == CONST.CARTERA['THIRDPARTIES']
+			     		&& get('agrupacionficha.codSubcartera') == CONST.SUBCARTERA['YUBAI']
+			     		&& get('agrupacionficha.tipoAgrupacionCodigo') == CONST.TIPOS_AGRUPACION['OBRA_NUEVA']
+						&& get('agrupacionficha.esONDnd')) {
+		     		return true;
+		     	} else {
+		     		return false;
+		     	}
+		}
     },
 				
     stores: {

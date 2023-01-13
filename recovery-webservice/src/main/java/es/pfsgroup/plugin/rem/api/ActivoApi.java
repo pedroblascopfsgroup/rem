@@ -1508,6 +1508,12 @@ public interface ActivoApi {
 	
 	Boolean updateActivoBbvaUicProp(DtoActivoBbvaUic dto)throws Exception;
 
+	boolean isActivoONVentaSobrePlano(Activo activo);
+
+	boolean isActivoONPisoPiloto(Activo activo);
+
+	Long numAgrupacionONVentaSobrePlano(Activo activo);
+
 	List<DtoOrganismos> getOrganismosByActivo(Long idActivo);
 
 	void deleteOrganismoById(Long idOrganismo);

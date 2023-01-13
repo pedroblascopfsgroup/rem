@@ -117,8 +117,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 		}
 
         // Botones genéricos de la barra del grid.
-        var configAddBtn = {iconCls:'x-fa fa-plus', itemId:'addButton', bind: {hidden: '{esAgrupacionCaixaOrPromocionAlquiler}'}, handler: 'onAddClick', scope: this}; 
-		var configRemoveBtn = {iconCls:'x-fa fa-minus', itemId:'removeButton', bind: {hidden: '{esAgrupacionEditableCaixa}'},  handler: 'onDeleteClick', scope: this, disabled: true};
+        var configAddBtn = {iconCls:'x-fa fa-plus', itemId:'addButton', bind: {hidden: '{esAgrupacionCaixaOrPromocionAlquilerOrONDnd}'}, handler: 'onAddClick', scope: this}; 
+		var configRemoveBtn = {iconCls:'x-fa fa-minus', itemId:'removeButton', bind: {hidden: '{esAgrupacionEditableCaixaOrONDnd}'},  handler: 'onDeleteClick', scope: this, disabled: true};
 		
 
 		// Se configura manualmente la Top-Bar mostrándola si se dispone de alguno de los siguientes permisos.
@@ -198,6 +198,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
     			return value; 
     		}
     	};
+
+		var esONDnd = me.up('agrupacionesdetallemain').getViewModel().get('agrupacionficha.esONDnd');
  
         me.columns= [
         	{
@@ -406,7 +408,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 		        xtype: 'actioncolumn',
 		        reference: 'esPisoPiloto',
 		        bind: {
-		        	hidden: '{!esAgrupacionThirdpartiesYubaiObraNueva}' // Agrupación Third Party - Yubai
+		        	hidden: !esONDnd 
 		        },
 		        flex: 1,
 		        width: 30,
@@ -416,16 +418,25 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 				        	{ // Check si es piso piloto
 					            getClass: function(v, meta, rec) {
 					            	if (rec.get('esPisoPiloto') != 1) {
-					                	this.items[0].handler = 'onMarcarPrincipalClick';
 					                    return 'fa fa-check';
 					                } else {
-			            				this.items[0].handler = 'onMarcarPrincipalClick';
 					                    return 'fa fa-check green-color';
 					                }
 					            }
 				        	}
 				 ]
-    		}
+    		},
+    		{   
+            	text	 : HreRem.i18n('header.fecha.escrituracion'),
+                dataIndex: 'fechaEscrituracion',
+                bind: {
+                	 hidden: !esONDnd
+		        },
+		        formatter: 'date("d/m/Y")',
+		        flex: 0.7,
+		        width: 130
+		       
+		    }
         ];
 
         me.saveSuccessFn = function() {

@@ -3994,36 +3994,37 @@ public class GastoProveedorManager implements GastoProveedorApi {
 									// op exenta vacia
 									(gastoLineaDetalle.getEsImporteIndirectoExento() == null))) {
 
-						cuotaIvaRetenida += (gastoLineaDetalle.getPrincipalSujeto()
-								* gastoLineaDetalle.getImporteIndirectoTipoImpositivo()) / 100;
+						cuotaIvaRetenida += redondeaAlzaImportes((gastoLineaDetalle.getPrincipalSujeto()
+								* gastoLineaDetalle.getImporteIndirectoTipoImpositivo()) / 100);
 
-						importeTotal += (gastoLineaDetalle.getPrincipalSujeto()
-								* gastoLineaDetalle.getImporteIndirectoTipoImpositivo()) / 100;
+						importeTotal += redondeaAlzaImportes((gastoLineaDetalle.getPrincipalSujeto()
+								* gastoLineaDetalle.getImporteIndirectoTipoImpositivo()) / 100);
 
 					}
 				}
 			}
+			
+			importeTotal = redondeaAlzaImportes(importeTotal);
+			cuotaIvaRetenida = redondeaAlzaImportes(cuotaIvaRetenida);
 
 			if (gasto.getIrpfBase() != null && gasto.getIrpfTipoImpositivo() != null) {
-				importeTotal = importeTotal - ((gasto.getIrpfBase() * gasto.getIrpfTipoImpositivo()) / 100);
+				importeTotal = importeTotal - redondeaAlzaImportes((gasto.getIrpfBase() * gasto.getIrpfTipoImpositivo()) / 100);
 			}
 			
 			if (gasto.getRetencionGarantiaTipoImpositivo() != null)
-			cuotaRetGar = gasto.getRetencionGarantiaTipoImpositivo();
+				cuotaRetGar = gasto.getRetencionGarantiaTipoImpositivo();
 			
-			importeTotal = redondeaAlzaImportes(importeTotal);
 			cuotaRetGar = redondeaAlzaImportes(cuotaRetGar);
-			cuotaIvaRetenida = redondeaAlzaImportes(cuotaIvaRetenida);
 
 			if (gasto.getRetencionGarantiaBase() != null && gasto.getRetencionGarantiaTipoImpositivo() != null
 					&& gasto.getRetencionGarantiaAplica() != null && gasto.getRetencionGarantiaAplica()) {
-				importeTotal = importeTotal	- ((gasto.getRetencionGarantiaBase() * cuotaRetGar) / 100);
+				importeTotal = importeTotal	- redondeaAlzaImportes((gasto.getRetencionGarantiaBase() * cuotaRetGar) / 100);
 			}
 
 			if (retencionAntes && gasto.getRetencionGarantiaTipoImpositivo() != null && carteraGasto != null
 					&& DDCartera.CODIGO_CARTERA_LIBERBANK.equals(carteraGasto.getCodigo())) {
 				try {
-					importeTotal = importeTotal - (cuotaIvaRetenida / 100 * cuotaRetGar);
+					importeTotal = importeTotal - redondeaAlzaImportes(cuotaIvaRetenida / 100 * cuotaRetGar);
 
 				} catch (ArithmeticException e) {
 					e.printStackTrace();
@@ -4038,10 +4039,17 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	private Double redondeaAlzaImportes(Double importe){
 		double importeRedondeado = 0.0;
 		
-		if (importe != null && importe != 0) {
-			BigDecimal mValue = new BigDecimal(importe);
-			BigDecimal roundValue = mValue.setScale(2, RoundingMode.HALF_UP);
-			importeRedondeado = roundValue.doubleValue();
+		try {
+			
+			if (importe != null && importe != 0) {
+				BigDecimal mValue = new BigDecimal(importe);
+				BigDecimal roundValue = mValue.setScale(2, RoundingMode.HALF_UP);
+				importeRedondeado = roundValue.doubleValue();
+			}
+		
+		}catch(Exception e) {
+			e.printStackTrace();
+			logger.error("Error al redondear importes GastoProveedorManager",e);
 		}
 		
 		return importeRedondeado;

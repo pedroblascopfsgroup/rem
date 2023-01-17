@@ -2404,7 +2404,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 							0:me.lookupReference('lineaDetalleGastoGrid').getStore().getData().items[linea].get('provSupl'));
 		var tipoImpositivo = parseFloat(me.lookupReference('lineaDetalleGastoGrid').getStore().getData().items[linea].get('tipoImpositivo')==null?
 							0:me.lookupReference('lineaDetalleGastoGrid').getStore().getData().items[linea].get('tipoImpositivo'));
-		var cuota = baseSujeta*tipoImpositivo/100;
+		var cuota = Number(Math.round(((baseSujeta*tipoImpositivo)/100) + "e+" + 2)  + "e-" + 2);
 		
 		var operacionExentaImp = parseFloat(me.lookupReference('lineaDetalleGastoGrid').getStore().getData().items[linea].get('operacionExentaImp')==null?
 							0:me.lookupReference('lineaDetalleGastoGrid').getStore().getData().items[linea].get('operacionExentaImp'));

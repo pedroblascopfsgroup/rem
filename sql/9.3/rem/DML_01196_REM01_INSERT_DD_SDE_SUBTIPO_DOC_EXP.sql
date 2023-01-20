@@ -1,13 +1,13 @@
 --/*
 --##########################################
 --## AUTOR=IVAN REPISO
---## FECHA_CREACION=20230119
+--## FECHA_CREACION=20230120
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-13146
 --## PRODUCTO=NO
 --##
---## Finalidad: Script que modifica en DD_SDE_SUBTIPO_DOC_EXP los datos añadidos en T_ARRAY_DATA.
+--## Finalidad: Script que INSERTA en DD_SDE_SUBTIPO_DOC_EXP los datos añadidos en T_ARRAY_DATA.
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -34,7 +34,7 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-    	T_TIPO_DATA('72','Alquiler social: documentación análisis oferta', 'OP-06-INTR-65')
+    	T_TIPO_DATA('105','Alquiler social: documentación análisis oferta','09', 'OP-06-INTR-65')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 
@@ -51,23 +51,28 @@ BEGIN
         V_TMP_TIPO_DATA := V_TIPO_DATA(I);
 
         --Comprobar el dato a insertar.
-        V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' WHERE DD_'||V_TEXT_CHARS||'_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||''' AND BORRADO = 0';
+        V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' WHERE DD_'||V_TEXT_CHARS||'_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
         EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 
-        IF V_NUM_TABLAS = 0 THEN
-          DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO CON CODIGO '||TRIM(V_TMP_TIPO_DATA(1))||' NO EXISTE. TERMINAMOS');
+        IF V_NUM_TABLAS > 0 THEN
+          DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO CON CODIGO '||TRIM(V_TMP_TIPO_DATA(1))||' YA EXISTE. TERMINAMOS');
 
        ELSE
-       	-- Si no existe se inserta.
-          DBMS_OUTPUT.PUT_LINE('[INFO]: MODIFICAR EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');
-          V_MSQL := 'UPDATE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' SET
-                      DD_'||V_TEXT_CHARS||'_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(2))||''',
-                      DD_'||V_TEXT_CHARS||'_DESCRIPCION_LARGA = '''||TRIM(V_TMP_TIPO_DATA(2))||''',
-                      DD_'||V_TEXT_CHARS||'_MATRICULA_GD = '''||TRIM(V_TMP_TIPO_DATA(3))||''',
-                      USUARIOMODIFICAR = ''REMVIP-13146'', FECHAMODIFICAR = SYSDATE
-                      WHERE DD_'||V_TEXT_CHARS||'_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||''' AND BORRADO = 0';
-          EXECUTE IMMEDIATE V_MSQL;
-          DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO MODIFICADO CORRECTAMENTE');
+            DBMS_OUTPUT.PUT_LINE('[INFO]: INSERTAR EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');
+            V_MSQL := 'SELECT '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'.NEXTVAL FROM DUAL';
+            EXECUTE IMMEDIATE V_MSQL INTO V_ID;
+            V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' (
+                        DD_'||V_TEXT_CHARS||'_ID, DD_TDE_ID, DD_'||V_TEXT_CHARS||'_CODIGO, DD_'||V_TEXT_CHARS||'_DESCRIPCION,
+                        DD_'||V_TEXT_CHARS||'_DESCRIPCION_LARGA, DD_'||V_TEXT_CHARS||'_MATRICULA_GD, USUARIOCREAR, FECHACREAR)
+                        SELECT '|| V_ID || '
+                        , (SELECT DD_TDE_ID FROM DD_TDE_TIPO_DOC_EXP WHERE DD_TDE_CODIGO = '''||V_TMP_TIPO_DATA(3)||''')
+                        , '''||V_TMP_TIPO_DATA(1)||'''
+                        ,'''||TRIM(V_TMP_TIPO_DATA(2))||'''
+                        ,'''||TRIM(V_TMP_TIPO_DATA(2))||'''
+                        , '''||TRIM(V_TMP_TIPO_DATA(4))||'''
+                        , ''REMVIP-13146'',SYSDATE FROM DUAL';
+            EXECUTE IMMEDIATE V_MSQL;
+            DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE');
 
        END IF;
       END LOOP;

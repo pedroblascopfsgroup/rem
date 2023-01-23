@@ -524,10 +524,14 @@ public class ExpedienteComercialAdapter {
 				}
 				Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 				try {
-					borrado = gestorDocumentalAdapterApi.borrarAdjunto(dtoAdjunto.getId(), usuarioLogado.getUsername());
-					if (borrado && !Checks.esNulo(dtoAdjunto) && !Checks.esNulo(dtoAdjunto.getId())) 
-						borrado = expedienteComercialApi.deleteAdjunto(dtoAdjunto);
-				} catch (Exception e) {
+						AdjuntoExpedienteComercial ade = genericDao.get(AdjuntoExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "id", dtoAdjunto.getId()));
+						if(ade != null && ade.getIdDocRestClient() != null) {
+							borrado = gestorDocumentalAdapterApi.borrarAdjunto(ade.getIdDocRestClient(), usuarioLogado.getUsername());
+							if (borrado && !Checks.esNulo(dtoAdjunto) && !Checks.esNulo(dtoAdjunto.getId())) {
+								borrado = expedienteComercialApi.deleteAdjunto(dtoAdjunto);
+							}
+						}
+					} catch (Exception e) {
 					logger.error(e.getMessage(),e);
 				}
 			} else {

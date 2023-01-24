@@ -66,7 +66,7 @@ public class ValorTareaBC implements Serializable, Auditable {
 	
 	static class ElevarSancion {
 		private String observacionesBC;
-		private String comboResolucion;
+		private String resolucionOferta;
 	}
 	
 	

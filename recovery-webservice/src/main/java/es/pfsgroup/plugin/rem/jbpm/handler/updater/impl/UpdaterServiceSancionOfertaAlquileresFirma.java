@@ -65,8 +65,8 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
     
 	private static final String FECHA_FIRMA = "fechaFirma";
 	private static final String COMBO_RESULTADO= "comboFirma";
-	private static final String FECHA_INICIO = "fechaInicio";
-	private static final String FECHA_FIN = "fechaFin";
+	private static final String FECHA_INICIO = "fechaInicioAlquiler";
+	private static final String FECHA_FIN = "fechaFinAlquiler";
 	
 	private static final String CODIGO_T015_FIRMA = "T015_Firma";
 
